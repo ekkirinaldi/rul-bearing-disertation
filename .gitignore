@@ -1,0 +1,102 @@
+# =============================================================================
+# Datasets (too large for git — see data-bearing/README.md for download)
+# =============================================================================
+# Use /* (not /) so the directory itself remains traversable and the README
+# below can be re-included with a negation pattern.
+data-bearing/*
+!data-bearing/README.md
+!data-bearing/.gitkeep
+
+# Derived feature/parquet caches (regenerable from raw datasets)
+data/cache/
+**/data_cache/
+**/hi_cache/
+
+# =============================================================================
+# Python environments and bytecode
+# =============================================================================
+.venv/
+venv/
+env/
+**/.venv/
+**/venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+.mypy_cache/
+.ruff_cache/
+
+# =============================================================================
+# ML training artefacts
+# =============================================================================
+# Heavy raw run logs (regenerable). Reports under results/reports/ ARE kept.
+**/results/runs/
+**/results/checkpoints/
+**/results/_logs/
+**/lightning_logs/
+**/mlruns/
+wandb/
+*.ckpt
+*.pt
+*.pth
+*.safetensors
+
+# =============================================================================
+# Keep dissertation evidence (override broader patterns above)
+# =============================================================================
+!Mamba-xLSTM/results/
+!Mamba-xLSTM/results/reports/
+!Mamba-xLSTM/results/reports/**
+!Mamba-xLSTM/results/_chapter_assets/
+!Mamba-xLSTM/results/_chapter_assets/**
+!Mamba-xLSTM/results/bpfx_mapping/
+!Mamba-xLSTM/results/bpfx_mapping/**
+!Mamba-xLSTM/results/_comparison_configs/
+!Mamba-xLSTM/results/_comparison_configs/**
+!Mamba-xLSTM/results/tables/
+!Mamba-xLSTM/results/tables/**
+
+# =============================================================================
+# LaTeX build artefacts (keep .tex/.bib source, drop generated PDFs/aux files)
+# =============================================================================
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+*.vrb
+disertasi-itb/build/
+disertasi-itb/output/
+disertasi-itb/disertasi.pdf
+
+# =============================================================================
+# OS / IDE / temporary files
+# =============================================================================
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.iml
