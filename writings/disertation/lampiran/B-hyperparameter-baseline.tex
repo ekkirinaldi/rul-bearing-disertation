@@ -17,16 +17,16 @@ seleksi awal.
   \centering
   \caption{Ringkasan tiga arsitektur Tier-S yang dievaluasi.}
   \label{tab:lampB_tier_s}
-  \small
-  \begin{tabular}{@{}llrr@{}}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}l X r r@{}}
     \toprule
-    \textbf{Model} & \textbf{Paradigma Inti} & \textbf{Param.\ (PHM)} & \textbf{Param.\ (XJTU)} \\
+    \textbf{Model}      & \textbf{Paradigma Inti}                             & \textbf{Param.\ (PHM)} & \textbf{Param.\ (XJTU)} \\
     \midrule
-    Mamba-xLSTM-Net & SSM selektif + mLSTM + \emph{gated fusion} & 898.481 & 811.713 \\
-    N-BEATS-xLSTM-RUL & Basis polinomial + xLSTM \emph{temporal front} & 459.592 & 457.672 \\
-    SparseGate-TCN-RUL & TCN dilated + \emph{sparse gating} & 249.192 & 249.192 \\
+    Mamba-xLSTM-Net     & SSM selektif + mLSTM + \emph{gated fusion}          & 898.481                & 811.713                 \\
+    N-BEATS-xLSTM-RUL   & Basis polinomial + xLSTM \emph{temporal front}      & 459.592                & 457.672                 \\
+    SparseGate-TCN-RUL  & TCN dilated + \emph{sparse gating}                  & 249.192                & 249.192                 \\
     \bottomrule
-  \end{tabular}
+  \end{tabularx}
 \end{table}
 
 % -----------------------------------------------------------------
@@ -138,9 +138,10 @@ ditampilkan pada Tabel~\ref{tab:lampB_sparsegate_arch}.
 % -----------------------------------------------------------------
 
 Semua model Tier-S dilatih dengan konfigurasi identik
-(\texttt{configs/train/cloud\_full\_75.yaml}) untuk memastikan perbandingan
-yang adil. Perbedaan hanya pada hyperparameter spesifik arsitektur yang
-didokumentasikan pada subbab di atas.
+(\texttt{configs/\allowbreak train/\allowbreak cloud\_full\_75.yaml})
+untuk memastikan perbandingan yang adil. Perbedaan hanya pada
+hyperparameter spesifik arsitektur yang didokumentasikan pada subbab
+di atas.
 Konfigurasi pelatihan lengkap yang berlaku untuk semua model ditampilkan
 pada Tabel~\ref{tab:lampB_training}.
 
@@ -148,28 +149,28 @@ pada Tabel~\ref{tab:lampB_training}.
   \centering
   \caption{Konfigurasi pelatihan bersama untuk semua arsitektur Tier-S.}
   \label{tab:lampB_training}
-  \small
-  \begin{tabular}{@{}lll@{}}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}l l X@{}}
     \toprule
-    \textbf{Hyperparameter} & \textbf{Nilai} & \textbf{Keterangan} \\
+    \textbf{Hyperparameter}              & \textbf{Nilai}                            & \textbf{Keterangan} \\
     \midrule
-    \texttt{max\_epochs} & 75 & Jumlah \emph{epoch} pelatihan \\
-    Optimizer & AdamW \citetitb{Loshchilov2019AdamW} & \emph{Decoupled weight decay} \\
-    \texttt{lr} & $8{,}0 \times 10^{-4}$ & \emph{Learning rate} awal \\
-    \texttt{weight\_decay} & $3{,}0 \times 10^{-4}$ & Koefisien \emph{weight decay} \\
-    \texttt{xlstm\_lr\_mult} & 0,75 & LR modul xLSTM = 0,75 $\times$ LR trunk \\
-    \texttt{freeze\_xlstm\_epochs} & 5 & xLSTM dibekukan 5 \emph{epoch} pertama \\
-    \texttt{scheduler} & Cosine Annealing & $T_{\rm max} = 75$ \\
-    \texttt{warmup\_epochs} & 5 & Pemanasan \emph{cosine} di 5 \emph{epoch} awal \\
-    \texttt{monotonicity\_weight} & 0,05 & Bobot penalti monotonisitas RUL \\
-    \texttt{gradient\_clip\_val} & 1,0 & Klip gradien norma maksimum \\
-    \texttt{early\_stopping\_patience} & 9999 & Dinonaktifkan; 75 \emph{epoch} penuh \\
-    \texttt{precision} & \texttt{bf16-mixed} & BF16 campuran (GPU Ampere+) \\
-    Batch size (PHM2012) & 256 (Mamba + NBEATS, paralel) / 512 (SparseGate) & \\
-    Batch size (XJTU-SY) & 256 (Mamba + NBEATS) / 512 (SparseGate) & \\
-    \emph{Seed} acak & 42, 43, 44 & Tiga \emph{seed} untuk estimasi stabilitas \\
+    \texttt{max\_epochs}                 & 75                                        & Jumlah \emph{epoch} pelatihan \\
+    Optimizer                            & AdamW \citetitb{Loshchilov2019AdamW}      & \emph{Decoupled weight decay} \\
+    \texttt{lr}                          & $8{,}0 \times 10^{-4}$                    & \emph{Learning rate} awal \\
+    \texttt{weight\_decay}               & $3{,}0 \times 10^{-4}$                    & Koefisien \emph{weight decay} \\
+    \texttt{xlstm\_lr\_mult}             & 0,75                                      & LR modul xLSTM = 0,75 $\times$ LR trunk \\
+    \texttt{freeze\_xlstm\_epochs}       & 5                                         & xLSTM dibekukan 5 \emph{epoch} pertama \\
+    \texttt{scheduler}                   & Cosine Annealing                          & $T_{\rm max} = 75$ \\
+    \texttt{warmup\_epochs}              & 5                                         & Pemanasan \emph{cosine} di 5 \emph{epoch} awal \\
+    \texttt{monotonicity\_weight}        & 0,05                                      & Bobot penalti monotonisitas RUL \\
+    \texttt{gradient\_clip\_val}         & 1,0                                       & Klip gradien norma maksimum \\
+    \texttt{early\_stopping\_patience}   & 9999                                      & Dinonaktifkan; 75 \emph{epoch} penuh \\
+    \texttt{precision}                   & \texttt{bf16-mixed}                       & BF16 campuran (GPU Ampere+) \\
+    Batch size (PHM2012)                 & 256 / 512                                 & 256 untuk Mamba + N-BEATS (paralel); 512 untuk SparseGate \\
+    Batch size (XJTU-SY)                 & 256 / 512                                 & 256 untuk Mamba + N-BEATS; 512 untuk SparseGate \\
+    \emph{Seed} acak                     & 42, 43, 44                                & Tiga \emph{seed} untuk estimasi stabilitas \\
     \bottomrule
-  \end{tabular}
+  \end{tabularx}
 \end{table}
 
 Infrastruktur pelatihan: GPU NVIDIA A40 (46 GB VRAM), CUDA 12.8,
