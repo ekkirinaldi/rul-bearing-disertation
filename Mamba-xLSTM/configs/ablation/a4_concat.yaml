@@ -1,0 +1,6 @@
+model:
+  name: ablation_a4_concat
+  base: mamba_xlstm_net
+  fusion: concat
+ablation:
+  description: "Concat + Linear fusion instead of GatedFusion"

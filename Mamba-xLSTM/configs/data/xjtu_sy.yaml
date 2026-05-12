@@ -1,0 +1,19 @@
+data:
+  dataset: xjtusy
+  root: ../data-bearing/xtju-sy
+  cache_dir: ../data-bearing/processed/xjtusy
+
+  window_length: 32
+  stride_train: 1
+  stride_eval: 16
+
+  label_scheme: linear
+  smoothing_alpha: 0.1
+  n_bands: 5
+  batch_size: 128
+  num_workers: 0
+
+  # NOTE: condition 3 (40Hz10kN) folder is missing on disk; only conditions 1 and 2 are usable.
+  train_bearings: ["1_1", "1_2", "1_3", "2_1", "2_2"]
+  val_bearings:   ["1_4", "2_3"]
+  test_bearings:  ["1_5"]

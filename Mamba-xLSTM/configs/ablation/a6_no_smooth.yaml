@@ -1,0 +1,4 @@
+data:
+  smoothing_alpha: 0.0          # disable EMA smoothing
+ablation:
+  description: "No HI exponential smoothing (raw min-max only)"

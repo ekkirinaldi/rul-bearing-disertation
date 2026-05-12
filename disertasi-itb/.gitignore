@@ -1,0 +1,92 @@
+# =================================================================
+#  .gitignore untuk Disertasi Doktor ITB
+# =================================================================
+
+# --- Build outputs ---
+build/
+*.aux
+*.log
+*.toc
+*.lof
+*.lot
+*.out
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.run.xml
+*.synctex.gz
+*.synctex(busy)
+*.glg
+*.glo
+*.gls
+*.acn
+*.acr
+*.alg
+*.idx
+*.ilg
+*.ind
+*.ist
+*.xdy
+*.nav
+*.snm
+*.vrb
+*.figlist
+*.makefile
+*.dpth
+*.fls
+
+# --- Final PDF (selalu bisa di-rebuild; commit ke folder releases/ kalau mau versi spesifik) ---
+disertasi.pdf
+
+# --- Editor & IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.\#*
+\#*\#
+*.bak
+*.tmp
+
+# --- LaTeX editor metadata ---
+*.synctex
+*.synctex.gz
+
+# --- OS metadata ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# --- Python tooling (jika ada script di scripts/) ---
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+
+# --- Output sementara dari script analisis (kalau ada) ---
+output/
+results/*.tmp
+*.csv.tmp
+
+# --- Cursor / AI tooling ---
+.cursor-tutor
+.cursorignore
+
+# Tetap commit:
+# - .cursor/rules/*.mdc  (rules untuk Cursor IDE)
+# - figures/             (gambar disertasi)
+# - references.bib       (bibliografi)
+# - chapters/, lampiran/ (konten)
+# - itbdisertasi.cls     (custom class)
+# - disertasi.tex        (master file)
+# - Makefile, .latexmkrc, scripts/  (build system)

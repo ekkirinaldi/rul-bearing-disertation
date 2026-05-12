@@ -1,0 +1,33 @@
+model:
+  name: diffusion_rul
+  model_specific_loss: true
+  # v5: redesign motivated by v1–v4 failure modes.
+  #   v1 (d=96, levels=4, noise=0.35, drop=0.10) -> PHM test 0.257 (prior best)
+  #   v2 (d=96, levels=4, noise=0.45, drop=0.20) -> PHM test 0.290
+  #   v3 (d=96, levels=3, noise=0.30, drop=0.15) -> PHM test 0.301
+  #   v4 (d=72, levels=6, noise=0.25, drop=0.25) -> still val-overfit on XJTU
+  #
+  # v5 targets BOTH datasets by fixing the design, not just hyperparameters:
+  #   - score_head leak into RUL logits removed -> deterministic logits.
+  #   - score_head now trained as a real denoiser via auxiliary loss
+  #     (compute_loss -> requires train.model_specific_loss: true).
+  #   - cosine noise schedule, skipping sigma=0 -> no wasted branches.
+  #   - stochastic eval ensembling (inference_noise_scale > 0) so the
+  #     averaged RUL is a meaningful expectation, not a near-duplicate.
+  #   - FiLM by condition_id (film_num_embeddings=4 covers PHM 3 conds
+  #     + XJTU 3 conds with a shared embedding table, starts at identity).
+  #   - mean+last pooling so end-of-window dynamics are kept.
+  d_model: 96
+  n_heads: 4
+  n_layers: 2
+  n_noise_levels: 4
+  max_noise_std: 0.30
+  dropout: 0.15
+  inference_noise_scale: 0.35
+  n_inference_samples: 4
+  lambda_denoise: 0.10
+  film_num_embeddings: 4
+  pool: mean_last
+
+train:
+  model_specific_loss: true

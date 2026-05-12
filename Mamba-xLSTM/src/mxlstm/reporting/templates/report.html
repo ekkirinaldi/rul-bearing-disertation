@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>{{ title }}</title>
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 18mm 22mm 18mm;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    color: #0f172a;
+    line-height: 1.5;
+    font-size: 10.5pt;
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  @media screen {
+    html, body {
+      overflow-x: auto;
+      padding-left: clamp(8pt, 2.5vw, 18pt);
+      padding-right: clamp(8pt, 2.5vw, 18pt);
+    }
+  }
+  h1, h2, h3, h4 { font-weight: 700; color: #0f172a; page-break-after: avoid; break-after: avoid; max-width: 100%; }
+  h1 { font-size: 24pt; margin: 0 0 6pt 0; letter-spacing: -0.3pt; }
+  h2 {
+    font-size: 16pt;
+    margin: 0 0 12pt 0;
+    padding: 10pt 12pt 8pt 14pt;
+    color: white;
+    background: #1e3a8a;
+    border-radius: 4pt;
+    string-set: running-section content();
+    page-break-before: always;
+    break-before: page;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    hyphens: manual;
+    box-sizing: border-box;
+  }
+  h3 {
+    font-size: 12.5pt;
+    margin: 14pt 0 4pt;
+    color: #1e3a8a;
+    border-left: 3px solid #ea580c;
+    padding-left: 8pt;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+  }
+  h4 { font-size: 11pt; margin: 10pt 0 2pt; color: #475569; }
+  p { margin: 4pt 0 8pt; text-align: justify; hyphens: auto; }
+  ul, ol { margin: 4pt 0 8pt 22pt; padding: 0; }
+  li { margin: 3pt 0; }
+  code {
+    font-family: "JetBrains Mono", "Menlo", "Consolas", monospace;
+    font-size: 9.5pt;
+    background: #fefce8;
+    color: #713f12;
+    border: 1px solid #fde68a;
+    padding: 0 4pt;
+    border-radius: 2pt;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+  }
+  .cover {
+    text-align: center;
+    padding: 70pt 22pt 42pt 22pt;
+    page-break-after: always;
+    break-after: page;
+    background: #eef4fb;
+    border-radius: 6pt;
+  }
+  .cover::before {
+    content: "";
+    display: block;
+    width: 62pt;
+    height: 4pt;
+    background: #ea580c;
+    margin: 0 auto 16pt;
+    border-radius: 2pt;
+  }
+  .cover h1 { color: #1e3a8a; }
+  .subtitle {
+    color: #475569;
+    font-size: 13pt;
+    max-width: 520pt;
+    margin: 12pt auto;
+  }
+  .subtitle.tagline {
+    margin: 12pt auto 6pt;
+  }
+  .algorithm-panel {
+    margin: 4pt auto 0;
+    max-width: 520pt;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #c7d2e8;
+    border-radius: 5pt;
+    padding: 14pt 20pt 16pt 22pt;
+    box-sizing: border-box;
+    box-shadow: 0 1px 3px rgba(30, 58, 138, 0.08);
+  }
+  .algorithm-panel-heading {
+    margin: 0 0 8pt 0;
+    font-weight: bold;
+    font-size: 10pt;
+    color: #475569;
+  }
+  .algorithm-list {
+    margin: 0;
+    padding: 0 0 0 4pt;
+    list-style: none;
+  }
+  .algorithm-list li {
+    margin: 8pt 0;
+    padding: 6pt 4pt 6pt 16pt;
+    border-left: 3px solid #ea580c;
+    color: #0f172a;
+    font-size: 11pt;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .cover .meta {
+    margin-top: 32pt;
+    font-size: 10pt;
+    color: #475569;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4pt;
+    padding: 14pt 22pt;
+    display: inline-block;
+    text-align: left;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+  }
+  .cover .meta strong { color: #1e3a8a; }
+  .summary-box {
+    background: #dbeafe;
+    border-left: 5px solid #1e3a8a;
+    padding: 10pt 14pt;
+    margin: 8pt 0 12pt;
+    border-radius: 0 4pt 4pt 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .callout {
+    background: #fff7ed;
+    border-left: 4px solid #ea580c;
+    padding: 8pt 12pt;
+    margin: 8pt 0 10pt;
+    border-radius: 0 3pt 3pt 0;
+    color: #7c2d12;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .note {
+    background: #ecfdf5;
+    border-left: 4px solid #0d9488;
+    padding: 8pt 12pt;
+    margin: 8pt 0;
+    border-radius: 0 3pt 3pt 0;
+    color: #134e4a;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .metric {
+    display: inline-block;
+    padding: 0 5pt;
+    background: #ffedd5;
+    border: 1px solid #fdba74;
+    border-radius: 3pt;
+    color: #9a3412;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.95em;
+  }
+  .metric-strip { display: flex; flex-wrap: wrap; gap: 8pt; margin: 8pt 0 12pt; }
+  .metric-card {
+    flex: 1 1 24%;
+    min-width: 120pt;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #1e3a8a;
+    border-radius: 4pt;
+    padding: 8pt 10pt;
+    page-break-inside: avoid;
+  }
+  .metric-card:nth-child(2) { border-top-color: #ea580c; }
+  .metric-card:nth-child(3) { border-top-color: #0d9488; }
+  .metric-card:nth-child(4) { border-top-color: #7c3aed; }
+  .metric-card .label {
+    display: block;
+    color: #475569;
+    font-size: 8.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.3pt;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .metric-card .value {
+    display: block;
+    margin-top: 4pt;
+    color: #0f172a;
+    font-size: 15pt;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .meta-table {
+    font-size: 9.5pt;
+    border-collapse: collapse;
+    margin: 8pt 0 14pt 0;
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+  }
+  .meta-table td {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 5pt 8pt;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: none;
+  }
+  .meta-table td:first-child {
+    color: #475569;
+    font-weight: bold;
+    width: 28%;
+    max-width: 30%;
+    word-break: normal;
+    overflow-wrap: normal;
+    white-space: normal;
+  }
+  .meta-table td.meta-value {
+    word-break: break-all;
+    overflow-wrap: anywhere;
+  }
+  .meta-table .path-cell {
+    display: block;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    margin: 0;
+    padding: 2pt 4pt;
+    font-size: 8.5pt;
+    line-height: 1.45;
+    max-width: 100%;
+  }
+  table.metrics {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+    font-size: 9.5pt;
+    margin: 8pt 0 12pt 0;
+    border: 1px solid #e2e8f0;
+  }
+  table.metrics th, table.metrics td {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 7pt 10pt;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: none;
+  }
+  table.metrics th:first-child {
+    width: 22%;
+  }
+  table.metrics.compare-metrics th:nth-child(1) { width: 18%; }
+  table.metrics.compare-metrics th:nth-child(2),
+  table.metrics.compare-metrics th:nth-child(3) { width: 26%; word-break: break-word; overflow-wrap: anywhere; }
+  table.metrics.compare-metrics th:nth-child(4) { width: 12%; }
+
+  table.ablation-scoreboard {
+    font-size: 7.85pt;
+    margin-top: 10pt;
+    border: 1px solid #c7cbd6;
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    max-width: 100%;
+  }
+  table.ablation-scoreboard col.run-col {
+    width: 29%;
+  }
+  table.ablation-scoreboard col.metric-col {
+    width: auto;
+  }
+  table.ablation-scoreboard thead th {
+    vertical-align: bottom;
+    line-height: 1.12;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: none;
+    padding: 4pt 5pt 5pt;
+    font-size: 7.35pt;
+  }
+  table.ablation-scoreboard tbody td {
+    padding: 3pt 5pt;
+    line-height: 1.12;
+    vertical-align: middle;
+  }
+  table.ablation-scoreboard td.run-cell {
+    border-right: 1px solid #e2e8f0;
+    overflow-wrap: break-word;
+    word-break: normal;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.18;
+  }
+  table.ablation-scoreboard td.ablation-metric-cell {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    border-left: 1px solid #f1f5f9;
+    white-space: nowrap;
+  }
+  table.ablation-scoreboard .cell-mean {
+    display: inline;
+    font-weight: 700;
+  }
+
+  table.metrics tr:nth-child(odd) td { background: #f8fafc; }
+  table.metrics tr:nth-child(even) td { background: white; }
+  table.compare-metrics td:nth-child(4) { font-size: 9pt; color: #475569; font-weight: 700; }
+  .winner-left { color: #1e3a8a; }
+  .winner-right { color: #ea580c; }
+  .winner-tie { color: #0d9488; }
+  .figure { margin: 12pt 0 16pt 0; page-break-inside: avoid; break-inside: avoid; text-align: center; }
+  .figure img { max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 3pt; background: white; padding: 4pt; }
+  .figure .caption {
+    font-size: 9.5pt;
+    color: #475569;
+    margin-top: 6pt;
+    padding: 0 8pt;
+    text-align: justify;
+    font-style: italic;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+  }
+  .compare-row { display: flex; flex-wrap: wrap; gap: 10pt; margin: 10pt 0 14pt 0; align-items: flex-start; page-break-inside: avoid; break-inside: avoid; }
+  .compare-cell { flex: 1 1 42%; min-width: 38%; }
+  .compare-cell-hd {
+    font-weight: bold;
+    font-size: 10pt;
+    margin-bottom: 4pt;
+    color: #1e3a8a;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 3pt;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+  }
+  .compare-caption {
+    font-size: 9.5pt;
+    color: #475569;
+    margin: 4pt 0 12pt 0;
+    font-style: italic;
+    width: 100%;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .step {
+    font-size: 9pt;
+    margin: 2pt 0;
+    padding: 4pt 7pt;
+    background: #f8fafc;
+    border-left: 3px solid #3b5bdb;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+  }
+  .step.warn { border-left-color: #ea580c; background: #fff7ed; }
+  .step.error { border-left-color: #be123c; background: #fff1f2; }
+  .step .ts { color: #64748b; margin-right: 8pt; }
+  .badge { display: inline-block; padding: 1pt 6pt; border-radius: 3pt; font-size: 8.5pt; background: #1e3a8a; color: #fff; margin-right: 6pt; }
+  .timing-row { font-family: "Menlo", monospace; font-size: 9pt; overflow-wrap: anywhere; word-break: break-all; }
+  .toc { font-size: 11pt; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10pt 14pt; border-radius: 4pt; margin: 8pt 0 18pt 0; }
+  .toc ol { margin: 0; padding-left: 20pt; }
+  .toc li::marker { color: #ea580c; font-weight: 700; }
+  pre.config {
+    background: #0f172a;
+    color: #e2e8f0;
+    border: 1px solid #1e293b;
+    padding: 10pt 12pt;
+    border-radius: 4pt;
+    font-size: 8.5pt;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .page-break { page-break-before: always; }
+  .compare-config-grid { display: flex; flex-wrap: wrap; gap: 12pt; margin-top: 8pt; }
+  .compare-config-cell { flex: 1 1 45%; min-width: 40%; }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <h1>{{ title }}</h1>
+  {% if subtitle_lines %}
+  <p class="subtitle tagline">{{ subtitle }}</p>
+  <div class="algorithm-panel" aria-labelledby="algo-heading">
+    <p id="algo-heading" class="algorithm-panel-heading">
+      Algorithms in this comparison
+    </p>
+    <ul class="algorithm-list">
+      {% for item in subtitle_lines %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% else %}
+  <p class="subtitle">{{ subtitle }}</p>
+  {% endif %}
+  <div class="meta">
+    <p>
+      Generated <strong>{{ generated_at }}</strong><br>
+      Runs included: <strong>{{ runs|length }}</strong> &middot;
+      Report figures regenerated: <strong>{{ generated_figures }}</strong><br>
+      {% if datasets %}Datasets: <strong>{{ datasets|join(", ") }}</strong>{% endif %}
+    </p>
+  </div>
+</section>
+
+<h2>Executive summary</h2>
+<div class="summary-box">
+  {% if comparison %}
+  <p>This report compares <strong>{{ comparison.left_label }}</strong> against <strong>{{ comparison.right_label }}</strong> using the same reporting pipeline, metric definitions, plots, and merged configuration dump. The goal is to make the model trade-off visible: accuracy, bias, training stability, and runtime are read together rather than as isolated numbers.</p>
+  <ul>
+    <li><strong>Primary accuracy metrics:</strong> lower <span class="metric">RMSE</span>, <span class="metric">MAE</span>, and loss are better; higher <span class="metric">R²</span> is better.</li>
+    <li><strong>PHM score convention:</strong> the project <span class="metric">phm_score</span> is higher-is-better, while Liu / paper-style <span class="metric">phm_score_paper</span> is lower-is-better.</li>
+    <li><strong>Figure reading order:</strong> first inspect aggregate metrics, then training curves, then per-bearing prediction and residual plots to separate general accuracy from systematic bias.</li>
+  </ul>
+  {% else %}
+  <p>This report consolidates <strong>{{ runs|length }}</strong> RUL experiment run(s) into one dissertation-style artefact. It combines aggregate metrics, model-level diagnostics, train/validation dynamics, held-out bearing predictions, residual analysis, execution logs, and full merged configuration for reproducibility.</p>
+  <ul>
+    <li><strong>Rank models by test behavior, not validation alone:</strong> validation RMSE selects checkpoints, but held-out bearing plots show whether that checkpoint generalizes.</li>
+    <li><strong>Use multiple metrics:</strong> RMSE emphasizes large mistakes, MAE shows typical absolute error, R² shows explained variance, and PHM score captures the asymmetric cost profile used in bearing prognostics.</li>
+    <li><strong>Check runtime and parameters:</strong> a lower RMSE is only compelling if its training time and model size are acceptable for the intended research comparison.</li>
+  </ul>
+  {% endif %}
+</div>
+
+<h2>Contents</h2>
+<div class="toc">
+  <ol>
+    {% if ablation_section %}<li>Aggregated metrics (all runs)</li>{% endif %}
+    {% if comparison %}
+    <li>Side-by-side comparison: {{ comparison.left_label }} vs {{ comparison.right_label }}</li>
+    {% else %}
+    {% for run in runs %}<li>Run: {{ run.run_id }}</li>{% endfor %}
+    {% endif %}
+  </ol>
+</div>
+
+{% if ablation_section %}
+<h2>Ablation &amp; configuration comparison</h2>
+<p>The ablation section is the report's high-level scoreboard. Results are aggregated across <strong>{{ ablation_section.n_total_runs }}</strong> run(s) by matching the stable <code>run_id</code> prefix before the seed suffix. That makes repeated seeds comparable without hiding model or dataset identity.</p>
+<div class="note">
+  <strong>How to read this section.</strong> Each metric is plotted on its own axis so scale does not mislead the comparison. Error bars show seed-level standard deviation where repeated runs exist. The best run is highlighted according to the metric direction: lower for loss/RMSE/MAE and Liu paper PHM score, higher for R² and project PHM score.
+</div>
+{% if ablation_section.figures %}
+{% for fig in ablation_section.figures %}
+<div class="figure">
+  <img src="{{ fig.path }}" />
+  <div class="caption">Figure A{{ loop.index }}. <code>{{ fig.key }}</code> across runs (error bars: ±1 std; best run highlighted).</div>
+</div>
+{% endfor %}
+{% endif %}
+{% if ablation_section.table_html %}
+{{ ablation_section.table_html|safe }}
+{% endif %}
+{% endif %}
+
+{% if comparison %}
+<div class="page-break"></div>
+<h2>Comparison: {{ comparison.left_label }} vs {{ comparison.right_label }}</h2>
+{% if comparison.same_dataset %}
+<p>This is a controlled model comparison on the same dataset and training protocol. The important difference is the architecture declared in <code>model.name</code>, so the metric table and paired figures should be read as an architecture-level trade-off.</p>
+{% else %}
+<p>The columns use the same reporting machinery and normally the same training recipe, but the datasets may differ. Treat cross-dataset metric gaps as evidence about generalization difficulty, not as a pure architecture ranking. Figures are aligned by bearing id where both runs share that id.</p>
+{% endif %}
+<div class="callout">
+  <strong>Interpretation rule.</strong> Prefer the model that improves held-out test RMSE/MAE while preserving R² and residual shape. A checkpoint with excellent validation RMSE but poor held-out residuals is usually overfitting the validation bearings.
+</div>
+
+<table class="meta-table">
+  <tr><td>Left run</td><td class="meta-value"><code>{{ comparison.left_run_id }}</code></td></tr>
+  <tr><td>Right run</td><td class="meta-value"><code>{{ comparison.right_run_id }}</code></td></tr>
+  <tr><td>Left path</td><td class="meta-value"><code class="path-cell">{{ comparison.left_run_dir }}</code></td></tr>
+  <tr><td>Right path</td><td class="meta-value"><code class="path-cell">{{ comparison.right_run_dir }}</code></td></tr>
+</table>
+
+<table class="metrics">
+  <tr><th></th><th>{{ comparison.left_label }}</th><th>{{ comparison.right_label }}</th></tr>
+  <tr><td>Seed</td><td>{{ comparison.meta.seed[0] }}</td><td>{{ comparison.meta.seed[1] }}</td></tr>
+  <tr><td>Parameters</td><td>{% if comparison.meta.n_params[0] is not none %}{{ "{:,}".format(comparison.meta.n_params[0]) }}{% else %}—{% endif %}</td><td>{% if comparison.meta.n_params[1] is not none %}{{ "{:,}".format(comparison.meta.n_params[1]) }}{% else %}—{% endif %}</td></tr>
+  <tr><td>Train time</td><td>{% if comparison.meta.fit_seconds[0] %}{{ "%.1f s"|format(comparison.meta.fit_seconds[0]) }}{% else %}—{% endif %}</td><td>{% if comparison.meta.fit_seconds[1] %}{{ "%.1f s"|format(comparison.meta.fit_seconds[1]) }}{% else %}—{% endif %}</td></tr>
+  <tr><td>Dataset</td><td>{{ comparison.meta.dataset[0] or "—" }}</td><td>{{ comparison.meta.dataset[1] or "—" }}</td></tr>
+</table>
+
+<div class="metric-strip">
+  {% for row in comparison.metrics_rows %}
+    {% if row.key in ["test/rmse", "test/mae", "test/r2", "test/phm_score"] %}
+    <div class="metric-card">
+      <span class="label">{{ row.key }}</span>
+      <span class="value">{% if row.winner == 'left' %}{{ row.left_str }}{% elif row.winner == 'right' %}{{ row.right_str }}{% else %}{{ row.left_str }} / {{ row.right_str }}{% endif %}</span>
+      <span class="{% if row.winner == 'left' %}winner-left{% elif row.winner == 'right' %}winner-right{% else %}winner-tie{% endif %}">
+        {% if row.winner == 'left' %}Best: {{ comparison.left_label }}{% elif row.winner == 'right' %}Best: {{ comparison.right_label }}{% elif row.winner == 'tie' %}Tie{% else %}Not ranked{% endif %}
+      </span>
+    </div>
+    {% endif %}
+  {% endfor %}
+</div>
+
+<h3>Test metrics</h3>
+<table class="metrics compare-metrics">
+  <tr><th>Metric</th><th>{{ comparison.left_label }}</th><th>{{ comparison.right_label }}</th><th>Better</th></tr>
+  {% for row in comparison.metrics_rows %}
+  <tr>
+    <td><code>{{ row.key }}</code></td>
+    <td>{{ row.left_str }}</td>
+    <td>{{ row.right_str }}</td>
+    <td class="{% if row.winner == 'left' %}winner-left{% elif row.winner == 'right' %}winner-right{% elif row.winner == 'tie' %}winner-tie{% endif %}">{% if row.winner == 'left' %}{{ comparison.left_label }}{% elif row.winner == 'right' %}{{ comparison.right_label }}{% elif row.winner == 'tie' %}tie{% else %}—{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p class="compare-caption">“Better” uses lower-is-better for RMSE/MAE/loss and Liu <code>phm_score_paper</code>; higher-is-better for R² and project <code>phm_score</code>.</p>
+
+{% if comparison.dataset %}
+<h3>Dataset overview</h3>
+<p>The dataset overview checks whether the comparison is fair before the model numbers are interpreted. Pay attention to the train/validation/test bearing split and the number of usable windows per bearing.</p>
+<div class="compare-row">
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.left_label }}</div>{% if comparison.dataset.left %}<img src="{{ comparison.dataset.left }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.right_label }}</div>{% if comparison.dataset.right %}<img src="{{ comparison.dataset.right }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+</div>
+<p class="compare-caption">Bearings used (train / val / test) and acquisition counts per bearing.</p>
+{% endif %}
+
+{% if comparison.hi_trace %}
+<h3>HI trace (sample training bearing)</h3>
+<p>The health indicator (HI) trace shows whether the engineered feature moves smoothly enough for an RUL model to learn degradation rather than noise. Sudden jumps or flat traces usually explain unstable validation curves.</p>
+<div class="compare-row">
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.left_label }}</div>{% if comparison.hi_trace.left %}<img src="{{ comparison.hi_trace.left }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.right_label }}</div>{% if comparison.hi_trace.right %}<img src="{{ comparison.hi_trace.right }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+</div>
+{% endif %}
+
+{% if comparison.hi_heatmap %}
+<h3>HI heatmap</h3>
+<p>The heatmap exposes which HI channels carry time-varying degradation signal. A useful model should exploit broad temporal structure, not a single noisy feature.</p>
+<div class="compare-row">
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.left_label }}</div>{% if comparison.hi_heatmap.left %}<img src="{{ comparison.hi_heatmap.left }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.right_label }}</div>{% if comparison.hi_heatmap.right %}<img src="{{ comparison.hi_heatmap.right }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+</div>
+{% endif %}
+
+{% if comparison.rul_labels %}
+<h3>RUL labels (per training bearing)</h3>
+<p>These plots document the target construction used by the run. They are included so the reported error can be traced back to the exact label shape, window length, and degradation onset assumptions.</p>
+{% for row in comparison.rul_labels %}
+<div class="compare-row">
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.left_label }} — {{ row.bearing_id }}</div>{% if row.left %}<img src="{{ row.left }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.right_label }} — {{ row.bearing_id }}</div>{% if row.right %}<img src="{{ row.right }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if comparison.training_curves %}
+<h3>Training dynamics</h3>
+<p>Training curves diagnose whether the selected checkpoint is stable. A useful run should reduce training loss without causing validation RMSE to drift upward for many epochs.</p>
+{% for row in comparison.training_curves %}
+<p class="compare-caption"><code>{{ row.key }}</code> over epochs</p>
+<div class="compare-row">
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.left_label }}</div>{% if row.left %}<img src="{{ row.left }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.right_label }}</div>{% if row.right %}<img src="{{ row.right }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if comparison.predictions %}
+<h3>Per-bearing test predictions</h3>
+<p>Prediction plots are the most important qualitative check. Look for the model tracking the monotonic decline of true RUL, especially near end-of-life where maintenance decisions are most sensitive.</p>
+{% for row in comparison.predictions %}
+<p class="compare-caption">Test bearing <code>{{ row.bearing_id }}</code></p>
+<div class="compare-row">
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.left_label }}</div>{% if row.left %}<img src="{{ row.left }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.right_label }}</div>{% if row.right %}<img src="{{ row.right }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if comparison.residuals_per_bearing %}
+<h3>Per-bearing residuals over time</h3>
+<p>Residuals show model bias directly. Positive residuals mean the model predicts too much remaining life; negative residuals mean it is conservative.</p>
+{% for row in comparison.residuals_per_bearing %}
+<p class="compare-caption">Bearing <code>{{ row.bearing_id }}</code></p>
+<div class="compare-row">
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.left_label }}</div>{% if row.left %}<img src="{{ row.left }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.right_label }}</div>{% if row.right %}<img src="{{ row.right }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if comparison.residuals_overall %}
+<h3>Residuals (all test points)</h3>
+<p>The pooled residual plot summarizes systematic optimism or pessimism across all held-out test points.</p>
+<div class="compare-row">
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.left_label }}</div>{% if comparison.residuals_overall.left %}<img src="{{ comparison.residuals_overall.left }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.right_label }}</div>{% if comparison.residuals_overall.right %}<img src="{{ comparison.residuals_overall.right }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+</div>
+{% endif %}
+
+{% if comparison.residuals_histogram %}
+<h3>Residual histogram</h3>
+<p>A narrow residual distribution centered near zero is preferable. Skewed or heavy-tailed residuals indicate a model that fails only on specific lifecycle phases or bearings.</p>
+<div class="compare-row">
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.left_label }}</div>{% if comparison.residuals_histogram.left %}<img src="{{ comparison.residuals_histogram.left }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.right_label }}</div>{% if comparison.residuals_histogram.right %}<img src="{{ comparison.residuals_histogram.right }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+</div>
+{% endif %}
+
+{% if comparison.timings %}
+<h3>Pipeline step timings</h3>
+<p>Runtime is part of the model trade-off. Compare fit time and pipeline timings alongside accuracy before choosing a final architecture for the dissertation experiments.</p>
+<div class="compare-row">
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.left_label }}</div>{% if comparison.timings.left %}<img src="{{ comparison.timings.left }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.right_label }}</div>{% if comparison.timings.right %}<img src="{{ comparison.timings.right }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+</div>
+{% endif %}
+
+{% if comparison.interp_keys %}
+<h3>Interpretability</h3>
+<p>Interpretability artefacts help verify that the model is using plausible degradation features rather than dataset shortcuts.</p>
+{% for kind in comparison.interp_keys %}
+<div class="compare-row">
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.left_label }}</div>{% if comparison.interp_left[kind] %}<img src="{{ comparison.interp_left[kind] }}" alt=""/>{% else %}<p>—</p>{% endif %}<p class="compare-caption">{{ kind }}</p></div>
+  <div class="compare-cell"><div class="compare-cell-hd">{{ comparison.right_label }}</div>{% if comparison.interp_right[kind] %}<img src="{{ comparison.interp_right[kind] }}" alt=""/>{% else %}<p>—</p>{% endif %}</div>
+</div>
+{% endfor %}
+{% endif %}
+
+<h3>Configuration (merged YAML)</h3>
+<p>The merged YAML is the reproducibility record. It captures the data split, windowing, model hyperparameters, optimizer settings, and seed used for each column.</p>
+<div class="compare-config-grid">
+  <div class="compare-config-cell"><strong>{{ comparison.left_label }}</strong><pre class="config">{{ comparison.left_config or "—" }}</pre></div>
+  <div class="compare-config-cell"><strong>{{ comparison.right_label }}</strong><pre class="config">{{ comparison.right_config or "—" }}</pre></div>
+</div>
+
+{% else %}
+
+{% for run in runs %}
+<div class="page-break"></div>
+<h2>Run: {{ run.run_id }}</h2>
+<p>This section is the complete audit trail for one training run: data split, model size, held-out metrics, diagnostics, prediction plots, execution log, and the exact merged configuration.</p>
+
+<table class="meta-table">
+  <tr><td>Run dir</td><td class="meta-value"><code class="path-cell">{{ run.run_dir }}</code></td></tr>
+  {% if run.seed is not none %}<tr><td>Seed</td><td class="meta-value">{{ run.seed }}</td></tr>{% endif %}
+  {% if run.n_params %}<tr><td>Parameters</td><td class="meta-value">{{ "{:,}".format(run.n_params) }}</td></tr>{% endif %}
+  {% if run.fit_seconds %}<tr><td>Train time</td><td class="meta-value">{{ "%.1f s"|format(run.fit_seconds) }}</td></tr>{% endif %}
+  {% if run.dataset %}<tr><td>Dataset</td><td class="meta-value">{{ run.dataset }}</td></tr>{% endif %}
+  {% if run.model_name %}<tr><td>Model</td><td class="meta-value">{{ run.model_name }}</td></tr>{% endif %}
+</table>
+
+{% if run.test_metrics %}
+<h3>Test metrics</h3>
+<div class="metric-strip">
+  {% for key in ["test/rmse", "test/mae", "test/r2", "test/phm_score"] %}
+    {% if run.test_metrics.get(key) is not none %}
+    <div class="metric-card">
+      <span class="label">{{ key }}</span>
+      <span class="value">{{ "%.4f"|format(run.test_metrics.get(key)) if run.test_metrics.get(key) is number else run.test_metrics.get(key) }}</span>
+    </div>
+    {% endif %}
+  {% endfor %}
+</div>
+<div class="note">
+  <strong>Metric direction.</strong> RMSE, MAE, and loss should be lower. R² and project PHM score should be higher. Liu-style <code>test/phm_score_paper</code>, when present, is lower-is-better.
+</div>
+<table class="metrics">
+  <tr><th>Metric</th><th>Value</th></tr>
+  {% for k, v in run.test_metrics.items() %}
+  <tr><td>{{ k }}</td><td>{{ "%.6f"|format(v) if v is number else v }}</td></tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+{% if run.figures.dataset %}
+<h3>Dataset overview</h3>
+<p>The dataset figure verifies which bearings are used for training, validation, and testing. This is the first place to check if a surprising result is caused by a small held-out split or a different condition mix.</p>
+<div class="figure">
+  <img src="{{ run.figures.dataset }}" />
+  <div class="caption">Figure {{ loop.index }}.1. Bearings used for training, validation, and testing (length per run).</div>
+</div>
+{% endif %}
+
+{% if run.figures.hi_trace or run.figures.hi_heatmap %}
+<h3>Health Indicator (HI) features</h3>
+<p>HI figures show the feature representation actually given to the model. Smooth degradation-aligned traces are easier for sequence models to learn; sparse, noisy, or flat traces usually lead to unstable validation metrics.</p>
+{% set run_idx = loop.index %}
+{% if run.figures.hi_trace %}
+<div class="figure">
+  <img src="{{ run.figures.hi_trace }}" />
+  <div class="caption">Figure {{ run_idx }}.2a. Most informative HI feature trace (single feature, after smoothing) for one training bearing.</div>
+</div>
+{% endif %}
+{% if run.figures.hi_heatmap %}
+<div class="figure">
+  <img src="{{ run.figures.hi_heatmap }}" />
+  <div class="caption">Figure {{ run_idx }}.2b. Full HI matrix (features × time) for the same bearing.</div>
+</div>
+{% endif %}
+{% endif %}
+
+{% if run.figures.rul_labels %}
+<h3>RUL labels (one bearing per figure)</h3>
+<p>These labels define the supervised target. They make the label scheme, degradation onset, and end-of-life assumptions visible in the report instead of leaving them buried in configuration.</p>
+{% set run_idx = loop.index %}
+{% for fig in run.figures.rul_labels %}
+<div class="figure">
+  <img src="{{ fig.path }}" />
+  <div class="caption">Figure {{ run_idx }}.3.{{ loop.index }}. RUL target for training bearing <code>{{ fig.bearing_id }}</code> (degradation onset and EOL annotated).</div>
+</div>
+{% endfor %}
+{% if run.figures.rul_labels_omitted %}
+<p class="compare-caption">{{ run.figures.rul_labels_omitted }} additional RUL label figure(s) omitted by the gallery limit.</p>
+{% endif %}
+{% endif %}
+
+{% if run.figures.training_curves %}
+<h3>Training dynamics (one metric per figure)</h3>
+<p>Training dynamics indicate whether the model learned steadily or selected a fragile checkpoint. Watch for a widening train/validation gap, validation RMSE spikes, or early stopping at a very early epoch.</p>
+{% set run_idx = loop.index %}
+{% for fig in run.figures.training_curves %}
+<div class="figure">
+  <img src="{{ fig.path }}" />
+  <div class="caption">Figure {{ run_idx }}.4.{{ loop.index }}. <code>{{ fig.key }}</code> over epochs (best epoch annotated).</div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if run.figures.predictions %}
+<h3>Per-bearing test predictions</h3>
+<p>Held-out prediction trajectories are the clearest qualitative evidence. A good RUL model should follow the broad monotonic decline and avoid optimistic over-prediction near failure.</p>
+{% set run_idx = loop.index %}
+{% for fig in run.figures.predictions %}
+<div class="figure">
+  <img src="{{ fig.path }}" />
+  <div class="caption">Figure {{ run_idx }}.5.{{ loop.index }}. Predicted vs true RUL for <code>{{ fig.bearing_id }}</code> (per-bearing RMSE/MAE annotated).</div>
+</div>
+{% endfor %}
+{% if run.figures.predictions_omitted %}
+<p class="compare-caption">{{ run.figures.predictions_omitted }} additional prediction figure(s) omitted by the gallery limit.</p>
+{% endif %}
+{% endif %}
+
+{% if run.figures.residuals_per_bearing %}
+<h3>Per-bearing residuals over time</h3>
+<p>Residual plots separate random noise from systematic bias. Positive residuals indicate optimistic RUL estimates; negative residuals indicate conservative estimates.</p>
+{% set run_idx = loop.index %}
+{% for fig in run.figures.residuals_per_bearing %}
+<div class="figure">
+  <img src="{{ fig.path }}" />
+  <div class="caption">Figure {{ run_idx }}.6.{{ loop.index }}. Residual (pred − true) over time for <code>{{ fig.bearing_id }}</code>.</div>
+</div>
+{% endfor %}
+{% if run.figures.residuals_omitted %}
+<p class="compare-caption">{{ run.figures.residuals_omitted }} additional residual figure(s) omitted by the gallery limit.</p>
+{% endif %}
+{% endif %}
+
+{% if run.figures.residuals_overall %}
+<h3>Residual summary</h3>
+<div class="figure">
+  <img src="{{ run.figures.residuals_overall }}" />
+  <div class="caption">Residuals scatter across all test bearings (mean bias annotated).</div>
+</div>
+{% endif %}
+
+{% if run.figures.residuals_histogram %}
+<div class="figure">
+  <img src="{{ run.figures.residuals_histogram }}" />
+  <div class="caption">Residual distribution across all test bearings.</div>
+</div>
+{% endif %}
+
+{% if run.figures.interp %}
+<h3>Interpretability and explainability</h3>
+<p>Integrated Gradients, SHAP gradients, latent clustering (when available), plus model-specific artefacts
+(e.g. encoder attention maps, gated fusion timelines, pseudo-band weights, score heads) clarify which inputs
+drive the predicted RUL. Entries prefixed with “[explainability]” come from <code>run_dir/explain/</code>.</p>
+{% for kind, path in run.figures.interp.items() %}
+<div class="figure">
+  <img src="{{ path }}" />
+  <div class="caption">{{ kind }}</div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if run.figures.timings %}
+<h3>Pipeline step timings</h3>
+<p>Timing explains the practical cost of the result. Use this with parameter count and accuracy when deciding whether a model is worth keeping in the final comparison.</p>
+<div class="figure">
+  <img src="{{ run.figures.timings }}" />
+  <div class="caption">Time spent per pipeline step (seconds).</div>
+</div>
+{% endif %}
+
+{% if run.events %}
+<h3>Execution log (selected events)</h3>
+<p>The execution log records the major phases, artefacts, and warnings produced during the run. It is intentionally filtered to keep the report readable while preserving reproducibility signals.</p>
+{% for ev in run.events %}
+  <div class="step {% if ev.level == 'WARNING' %}warn{% elif ev.level == 'ERROR' %}error{% endif %}">
+    <span class="ts">{{ ev.ts_str }}</span>
+    {% if ev.kind in ('phase_start','phase_end') %}<span class="badge">{{ ev.kind }}</span>{% endif %}
+    {% if ev.kind in ('step_start','step_end') %}<span class="badge" style="background:#4c78a8;">{{ ev.kind }}</span>{% endif %}
+    {{ ev.message }}
+    {% if ev.elapsed_s is not none %}<span style="color:#888;"> ({{ "%.2f"|format(ev.elapsed_s) }}s)</span>{% endif %}
+  </div>
+{% endfor %}
+{% endif %}
+
+{% if run.config_text %}
+<h3>Configuration</h3>
+<p>This merged YAML is the exact configuration used for the run: data setup, feature pipeline, model parameters, optimizer schedule, seed, and output paths.</p>
+<pre class="config">{{ run.config_text }}</pre>
+{% endif %}
+
+{% endfor %}
+
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+model:
+  name: ablation_a3_unidir
+  base: mamba_xlstm_net
+  mamba_bidirectional: false
+ablation:
+  description: "Unidirectional Mamba (no reverse scan)"

@@ -1,0 +1,9 @@
+# A5: replace the xLSTM stack with a plain nn.LSTM stack of equivalent
+# depth, isolating the contribution of exponential gating + matrix memory.
+model:
+  name: ablation_a5_lstm
+  base: mamba_xlstm_net
+  use_vanilla_lstm: true
+  xlstm_force_fallback: true   # irrelevant once use_vanilla_lstm=true; kept for reproducibility
+ablation:
+  description: "Replace xLSTM with standard LSTM (drops exponential gating)"

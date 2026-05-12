@@ -1,0 +1,9 @@
+model:
+  name: liquid_wave_rul
+  # 6 pseudo-bands over HI features; 8 band-summary statistics projected into hidden_dim.
+  n_bands: 6
+  n_band_feats: 8
+  hidden_dim: 64
+  attn_heads: 4          # head_dim = 16
+  ltc_unfolds: 3
+  dropout: 0.1

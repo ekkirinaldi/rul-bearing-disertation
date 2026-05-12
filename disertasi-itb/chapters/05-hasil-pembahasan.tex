@@ -1,0 +1,92 @@
+%% chapters/05-hasil-pembahasan.tex
+%% Bab V — Hasil dan Pembahasan
+%% Aturan: lihat .cursor/rules/10-bab5-hasil-pembahasan.mdc
+
+\chapter{Hasil dan Pembahasan}
+\label{bab:hasil}
+
+Bab ini menyajikan hasil eksperimen yang dirancang pada
+Subbab~\ref{subsec:bab4_eksperimen}. Setiap eksperimen dilaporkan
+dalam sub-subbab tersendiri yang dilengkapi dengan tabel atau gambar
+beserta diskusi naratif yang mengaitkan temuan dengan pertanyaan
+penelitian dan hipotesis.
+
+\section{Hasil Eksperimen Utama}
+\label{subsec:bab5_main}
+
+\subsection{Perbandingan dengan SOTA — XJTU-SY}
+\label{subsec:bab5_main_xjtusy}
+
+% Tabel V.1: Perbandingan kinerja Mamba-xLSTM-Net vs baseline pada XJTU-SY.
+% Diskusi: pembacaan tabel, pembanding terkuat, hubungan ke H1.
+\dots
+
+\subsection{Perbandingan dengan SOTA — PHM2012}
+\label{subsec:bab5_main_phm2012}
+\dots
+
+\subsection{Visualisasi Kurva Prediksi RUL}
+\label{subsec:bab5_kurva}
+\dots
+
+\section{Studi Ablasi}
+\label{subsec:bab5_ablasi}
+
+\subsection{Ablasi Komponen Arsitektur}
+\label{subsec:bab5_ablasi_arch}
+% Tabel ablasi: -Mamba, -mLSTM, -sLSTM, -fusi, dst.
+\dots
+
+\subsection{Ablasi Hyperparameter}
+\label{subsec:bab5_ablasi_hp}
+% Plot tren metrik vs hyperparameter (dimensi state, jumlah head, k SAE)
+\dots
+
+\section{Analisis Interpretabilitas}
+\label{subsec:bab5_interp}
+
+\subsection{Atribusi Fitur SHAP dan Integrated Gradients}
+\label{subsec:bab5_shap}
+% Bar plot atribusi global + plot temporal early/mid/late life
+\dots
+
+\subsection{Sparse Autoencoder: Konsep yang Ditemukan}
+\label{subsec:bab5_sae_concepts}
+% Distribusi sparsity, maximum-activating examples, interpretasi 3-5 fitur SAE
+\dots
+
+\subsection{Korespondensi dengan Frekuensi Karakteristik Bantalan}
+\label{subsec:bab5_korespondensi}
+% Spektrum + garis vertikal BPFO/BPFI/BSF teoretis + heatmap aktivasi SAE
+\dots
+
+\section{Generalisasi Lintas Dataset}
+\label{subsec:bab5_generalisasi}
+% Train PHM2012 -> test XJTU-SY, dan sebaliknya
+\dots
+
+\section{Pembahasan Lebih Lanjut}
+\label{subsec:bab5_diskusi}
+
+\subsection{Kekuatan dan Kelemahan Metode Usulan}
+\label{subsec:bab5_pro_kontra}
+\dots
+
+\subsection{Posisi terhadap \emph{State-of-the-Art}}
+\label{subsec:bab5_posisi}
+\dots
+
+\subsection{Implikasi Praktis}
+\label{subsec:bab5_implikasi}
+\dots
+
+\section{Keterbatasan Penelitian}
+\label{subsec:bab5_keterbatasan}
+
+% Daftar jujur keterbatasan yang akan menjadi seed untuk Saran di Bab VI:
+% - Validasi terbatas pada bantalan gelinding deep groove ball;
+% - Asumsi degradasi monoton;
+% - Kondisi operasi laboratorium;
+% - Klaim interpretabilitas berbasis korelasi statistik (bukan kausal);
+% - Komputasi pelatihan masih relatif mahal.
+\dots

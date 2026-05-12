@@ -1,0 +1,252 @@
+---
+description: Aturan format ITB yang wajib dipatuhi setiap saat (margin, font, spasi, penomoran)
+alwaysApply: true
+---
+
+# 01 — Format Wajib ITB (Hard Constraints)
+
+> Sumber otoritas: *Pedoman Penulisan Disertasi Doktor ITB* (SPs ITB, 2016) Bab III, IV, VII, VIII; *Juknis Disertasi Mei 2019*. Setiap aturan di rule ini telah dikutip langsung dari salah satu sumber tersebut. **Jangan menyimpang tanpa persetujuan tertulis pembimbing.**
+
+---
+
+## A. Tata letak halaman
+
+### A.1 Margin (mirror margins, dua-sisi)
+- **Halaman ganjil (recto)**: kiri 4 cm, atas 3 cm, kanan 3 cm, bawah 3 cm.
+- **Halaman genap (verso)**: kiri 3 cm, atas 3 cm, kanan 4 cm, bawah 3 cm.
+- Pengecualian: bila tebal disertasi <1,5 cm (≈ <115 lembar) sebelum hard cover, boleh satu-sisi dengan margin kiri 4 cm dan tepi lain 3 cm.
+- Implementasi LaTeX: `geometry` package + opsi kelas `twoside`. **Sudah dikonfigurasi di `itbdisertasi.cls`.**
+
+### A.2 Kertas
+- Ukuran A4 (210 × 297 mm), 80 gsm minimum, putih.
+- Implementasi: `\geometry{a4paper, ...}`.
+
+### A.3 Penomoran halaman
+- **Bagian persiapan** (Sampul Dalam → Daftar Singkatan): angka **Romawi kecil** (`i, ii, iii, …`), posisi center, 1,5 cm dari tepi bawah, ukuran 12, Times New Roman, regular.
+- **Tubuh utama** (Bab I → akhir Bab Kesimpulan + Daftar Pustaka + Lampiran): angka **Arab** (`1, 2, 3, …`), posisi center, 1,5 cm dari tepi bawah.
+- Halaman **Sampul** dan **Halaman Pengesahan** tidak diberi nomor halaman tercetak (tetapi tetap dihitung).
+- Implementasi: `\pagenumbering{roman}` di awal front-matter, `\pagenumbering{arabic}` di awal Bab I (di-handle oleh class).
+
+---
+
+## B. Font dan spasi
+
+### B.1 Jenis dan ukuran font
+- **Tubuh utama, badan paragraf**: Times New Roman, ukuran **12 pt**, regular, justified.
+- **Judul Bab** (kata "Bab I"+judul): Times New Roman 14 pt, **bold**, centered, di-print 3 cm di bawah tepi atas, tanpa titik di akhir.
+- **Judul Anak Bab** (mis. "I.1 Latar Belakang"): Times New Roman 12 pt, **bold**, posisi justify (rata kiri), tanpa titik di akhir.
+- **Judul Anak pada Anak Bab** (mis. "I.1.1 Konteks Industri"): Times New Roman 12 pt, **bold**, posisi justify.
+- **Sampul depan dan halaman judul**: lihat rule `12-abstrak-front-matter.mdc`.
+- **Catatan kaki, caption, daftar pustaka, isi tabel**: ukuran tetap 12 pt, namun spasi 1.
+
+### B.2 Spasi (line spacing)
+- **Tubuh utama paragraf**: 1,5 spasi (`\linespread{1.5}` global).
+- **Spasi 1 (single)** dipakai untuk:
+  1. Kutipan blok yang menjorok masuk (block quote).
+  2. Catatan kaki (footnote) — meskipun catatan kaki tidak dianjurkan; integrasikan ke teks.
+  3. Caption gambar dan tabel.
+  4. Isi tabel.
+  5. Setiap entri Daftar Pustaka, dan jarak antar-entri.
+  6. Daftar Isi, Daftar Gambar, Daftar Tabel, Daftar Singkatan.
+- Antar-paragraf di tubuh utama: dipisahkan **satu baris kosong** (= satu spasi 1,5 ekstra), bukan indentasi.
+
+### B.3 Paragraf
+- **Tidak ada indentasi paragraf pertama.** Setiap paragraf rata kiri pada batas margin.
+- Paragraf baru dipisahkan oleh **satu baris kosong** dari paragraf sebelumnya.
+- **Hindari paragraf hanya satu kalimat.** Pedoman: *"Paragraf memuat satu pikiran utama/pokok yang tersusun dari beberapa kalimat, oleh sebab itu hindarilah dalam satu paragraf hanya ada satu kalimat."*
+- **Jangan memulai paragraf baru di dasar halaman** kecuali muat ≥2 baris. Sebaliknya, jangan membuang baris terakhir paragraf ke halaman berikutnya — bila perlu, geser seluruh paragraf.
+- Implementasi LaTeX: `\setlength{\parindent}{0pt}` dan `\setlength{\parskip}{1.5\baselineskip}` (sudah di class). Untuk widow/orphan: `\widowpenalty=10000 \clubpenalty=10000`.
+
+### B.4 Tanda baca dan rongak (spasi setelah tanda baca)
+- Setelah `,` `;` `:` `.` selalu ada **satu spasi**, sebelum tanda baca tersebut **tidak ada spasi**.
+- LaTeX otomatis menangani ini; cukup tulis kalimat normal: `kata, kata.` ✓ — bukan `kata , kata .`.
+
+---
+
+## C. Struktur bab dan penomoran
+
+### C.1 Hierarki bab
+| Level | Format | Contoh | Perintah LaTeX |
+|---|---|---|---|
+| Bab | "Bab I", "Bab II", … (Romawi besar) | Bab I Pendahuluan | `\chapter{...}` |
+| Anak Bab | I.1, I.2, … | I.2 Masalah Penelitian | `\section{...}` |
+| Anak pada Anak Bab | I.2.1, I.2.2, … | I.2.1 Pernyataan Masalah | `\subsection{...}` |
+| Anak pada Anak-pada-Anak | I.2.1.1, … (jarang dipakai) | | `\subsubsection{...}` |
+
+Maksimal kedalaman yang **disarankan**: 3 level (sampai `\subsection`). Lebih dari itu menyulitkan pembaca.
+
+### C.2 Aturan penulisan judul bab
+- Setiap **bab dimulai pada halaman baru** (`\chapter` otomatis `\clearpage` di class).
+- Judul bab **diletakkan 3 cm dari tepi atas**, centered, ukuran 14 bold.
+- Kata "Bab" dengan huruf kecil kecuali huruf pertama; nomor bab dengan **angka Romawi**: `Bab I`, `Bab II`, …, `Bab VI`.
+- **Tidak ada titik** di akhir nomor maupun judul bab.
+- Setelah judul bab, `1 spasi` (= 1 baris 1,5-spasi), kemudian **boleh** langsung judul anak-bab.
+
+### C.3 Aturan paragraf antar-judul (sangat sering dilanggar!)
+> *"Tidak diperbolehkan secara berturut-turut menulis judul bab, judul anak bab, dan judul anak pada anak bab tanpa menyisipkan kalimat di antara ketiganya. Sisipkan kalimat minimal 1 (satu) paragraf di antara judul bab dan judul anak bab atau di antara judul anak bab dan judul anak pada anak bab."*
+
+**Contoh BENAR:**
+```
+Bab II Tinjauan Pustaka
+
+Bab tinjauan pustaka berisi uraian tentang state of the art … (paragraf isi).
+
+II.1 Perkembangan Metode Prognostik
+
+Pada subbab ini diulas perkembangan metode prognostik … (paragraf isi).
+
+II.1.1 Era Statistik dan Model Fisik
+…
+```
+
+**Contoh SALAH:**
+```
+Bab II Tinjauan Pustaka
+II.1 Perkembangan Metode Prognostik
+II.1.1 Era Statistik dan Model Fisik
+…
+```
+
+Cursor harus selalu menulis ≥1 paragraf transisi antar-level judul.
+
+### C.4 Tubuh Utama Disertasi (Bab V Pedoman)
+Tubuh utama disertasi terdiri atas:
+1. **Pendahuluan** (Bab I) — wajib pertama.
+2. **Tinjauan Pustaka** — biasanya Bab II, atau disisipkan ke bab isi sesuai disiplin.
+3. **Bab-bab isi utama** — Dasar Teori, Metodologi, Hasil & Pembahasan, dst.
+4. **Kebaruan dan Orisinalitas** — biasanya disertakan di bab Pendahuluan dan/atau Pembahasan, kemudian dirangkum di Kesimpulan.
+5. **Kesimpulan** — bab terakhir dari tubuh utama.
+
+Untuk topik komputasi/ML seperti disertasi ini, struktur 6-bab yang direkomendasikan: I-Pendahuluan, II-Tinjauan Pustaka, III-Dasar Teori, IV-Metodologi (model usulan), V-Hasil dan Pembahasan, VI-Kesimpulan.
+
+---
+
+## D. Penomoran objek (Persamaan, Gambar, Tabel)
+
+Pola universal: `<RomanBab>.<arabUrut>`. **Bukan** subbab — selalu nomor **bab**.
+
+### D.1 Persamaan
+- Format: `(I.1)`, `(I.2)`, …, `(II.1)`, …
+- Letak nomor: pojok **kanan**.
+- Pemotongan persamaan panjang: pada operator aritmetik atau tanda `=`, lanjutan rata kiri (default LaTeX `align`).
+- Tidak setiap persamaan harus diberi nomor; hanya yang **dirujuk** di teks.
+- Implementasi: `\numberwithin{equation}{chapter}` + `\renewcommand{\theequation}{\Roman{chapter}.\arabic{equation}}` (sudah di class).
+- Cara tulis di sumber LaTeX:
+  ```latex
+  \begin{equation}\label{eq:rul-linear}
+    r_t = \frac{T - t}{T}, \quad t = 0, 1, \dots, T-1.
+  \end{equation}
+  ```
+- Cara merujuk: `Persamaan~\ref{eq:rul-linear}` → "Persamaan I.1".
+
+### D.2 Gambar
+- Format caption: `Gambar I.1 Judul gambar yang singkat.`
+- Caption diletakkan **di bawah** gambar, posisi:
+  - **Centered** bila judul satu baris.
+  - **Justified dengan hanging indent** (huruf awal baris-2 sejajar huruf awal judul, bukan kata "Gambar") bila judul ≥2 baris.
+- Spasi caption = 1; ukuran 12; antara gambar dan caption = 1 spasi (kosong).
+- Antara caption dan paragraf berikutnya = 1 spasi.
+- Setiap gambar **harus dirujuk** di teks: "… ditunjukkan pada Gambar~\ref{fig:hi-pipeline}.". Gambar yang tidak dirujuk wajib dipindah ke Lampiran.
+- Implementasi:
+  ```latex
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/hi-pipeline.pdf}
+    \caption{Pipa pemrosesan ekstraksi Health Indicator dari sinyal getaran mentah.}
+    \label{fig:hi-pipeline}
+  \end{figure}
+  ```
+
+### D.3 Tabel
+- Format caption: `Tabel I.1 Judul tabel yang singkat.`
+- Caption diletakkan **di atas** tabel.
+- Header tabel **diulang** bila tabel berlanjut ke halaman berikutnya. Gunakan `longtable` package.
+- Setiap tabel **harus dirujuk** di teks.
+- Sumber data sekunder: tulis sumber di bawah tabel dengan ukuran lebih kecil atau italic, misalnya: `Sumber: Wang dkk. (2020).`
+- Implementasi:
+  ```latex
+  \begin{table}[ht]
+    \centering
+    \caption{Hasil RMSE per kondisi operasi pada XJTU-SY.}
+    \label{tab:rmse-xjtu}
+    \begin{tabular}{lccc}
+      \toprule
+      Kondisi & LSTM & xLSTM-Trf & Mamba-xLSTM \\
+      \midrule
+      C1 & 0,15 & 0,10 & \textbf{0,08} \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+  ```
+
+### D.4 Lampiran
+- Penomoran: `Lampiran A`, `Lampiran B`, … (huruf kapital Latin).
+- Setiap Lampiran didahului satu halaman yang hanya memuat kata "**LAMPIRAN**" (ukuran 14, bold) di tengah.
+- Setiap Lampiran wajib dirujuk di tubuh utama: "lihat Lampiran~\ref{lamp:turunan-rumus}".
+- Implementasi: `\appendix` lalu `\chapter{Judul Lampiran}` — class meng-handle penamaan otomatis menjadi "Lampiran A".
+
+---
+
+## E. Kutipan dan rujukan dalam teks
+
+> Detail lengkap di rule `04-citations-bibliography.mdc`. Ringkasan keras di sini:
+
+- Gunakan **gaya Pedoman ITB** — *bukan* APA, *bukan* IEEE numerik.
+- 1 penulis: `(Hill, 2007)`.
+- 2 penulis: `(Gao dan Zhao, 2009)` — gunakan kata **"dan"**, bukan `&` atau `and`.
+- ≥3 penulis di teks: `Kramer dkk. (2005)` atau `(Kramer dkk., 2005)`. **Wajib `dkk.` bukan `et al.`** karena disertasi berbahasa Indonesia.
+- Dengan halaman: `(Baker dkk., 1998: 23–25)` — koma sebelum titik dua, en-dash untuk rentang halaman.
+- 2 rujukan dalam satu kurung: `(Hill, 2007 dan Kramer dkk., 2005)` — pisahkan dengan **"dan"**.
+- 2 publikasi penulis sama tahun sama: tambah huruf — `(Culver dkk., 2003a dan 2003b)`.
+- Hindari **catatan kaki** untuk rujukan; gabungkan ke teks. Pedoman: *"Sangat tidak dianjurkan… menggunakan catatan kaki untuk menunjukkan rujukan."*
+
+---
+
+## F. Bahasa dan gaya
+
+> Detail di rule `03-bahasa-indonesia-baku.mdc`. Hard rules:
+
+- **Bahasa Indonesia Baku** (PUEBI/EYD), formal akademik.
+- **Dilarang kata ganti orang pertama**: "saya", "kami", "kita". Ubah ke kalimat pasif atau ganti dengan "penulis", "peneliti", atau struktur impersonal.
+- **Istilah asing** yang belum baku: cetak **miring**.
+- **Singkatan** harus didefinisikan saat pertama kali muncul: "Remaining Useful Life (RUL)".
+- Hindari kontraksi dan bahasa lisan ("nggak", "kayak", "udah").
+
+---
+
+## G. Daftar Pustaka
+
+Detail di rule `04-citations-bibliography.mdc`. Hard rules:
+
+- Judul "**DAFTAR PUSTAKA**", huruf kapital ukuran 14 bold, posisi 3 cm dari tepi atas, centered.
+- **Tidak diberi nomor bab** ("Daftar Pustaka bukanlah bab tersendiri").
+- Disusun **alfabetis** berdasarkan nama keluarga penulis pertama, **tanpa nomor urut**.
+- Setiap entri: spasi 1, jarak antar-entri juga 1 spasi.
+- Hanging indent **1,27 cm** (= 7 ketuk) untuk baris ke-2 dan seterusnya.
+- Untuk ≥3 penulis di sitasi (`dkk.`), **semua penulis harus ditulis lengkap** di Daftar Pustaka.
+- Pemisah penulis terakhir: kata **"dan"**, bukan `&` atau `and`.
+- Format jurnal:
+  ```
+  Cotton, F. A. (1998): Kinetics of gasification of brown coal,
+      Journal of American Chemical Society, 54, 38–43.
+  ```
+  - Nama jurnal: italic, title-case (Inggris) atau Sentence-case (Indonesia)
+  - Volume: **bold**
+  - Halaman: rentang dengan en-dash
+
+---
+
+## H. Visual sanity-check sebelum commit
+
+Setiap kali Cursor selesai mengedit `.tex`, pastikan:
+
+- [ ] Tidak ada kata ganti orang pertama (`grep -nE '\b(saya|kami|kita)\b' chapters/*.tex`).
+- [ ] Tidak ada `et al.` di body — harus `dkk.`.
+- [ ] Setiap `\cite{...}` ada padanannya di `references.bib`.
+- [ ] Setiap `\label{...}` ada padanannya `\ref{...}` atau pakai `chktex`.
+- [ ] Tidak ada tabel/gambar yang tidak dirujuk di teks.
+- [ ] Setelah judul bab/anak-bab tidak langsung disusul judul anak-bab tanpa paragraf transisi.
+- [ ] Tidak ada paragraf satu kalimat.
+- [ ] Tidak ada `% TODO` yang tertinggal di seksi yang dianggap final.
+
+Jalankan `make check` (jika ada) untuk otomasi sebagian sanity-check ini.

@@ -1,0 +1,8 @@
+data:
+  window_length: 32
+  stride_train: 1
+  stride_eval: 16
+model:
+  context_length: 32
+ablation:
+  description: "Shorter window (L=32 instead of L=64)"

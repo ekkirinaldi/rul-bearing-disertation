@@ -1,0 +1,29 @@
+# Quick run — 30 epochs, fp32-true (CPU / MPS / CUDA safe).
+#
+# Purpose: local validation that a model trains without errors and gives
+# reasonable loss curves before committing to a full 200-epoch run.
+#
+# Key guarantee: early_stopping_patience = 9999 → always runs all 30 epochs.
+# Previous runs with patience=20 stopped at epochs 7-14 and produced
+# misleading metrics on tiny val sets. Never use a low patience value.
+#
+# Usage:
+#   # via --mode shortcut (recommended):
+#   python scripts/run_algorithm_comparison.py --mode quick --models nbeats_rul
+#
+#   # direct --train override:
+#   python scripts/train.py --train configs/train/quick_run.yaml ...
+
+train:
+  max_epochs: 30
+  lr: 8.0e-4
+  weight_decay: 3.0e-4
+  scheduler: cosine
+  warmup_epochs: 3
+  monotonicity_weight: 0.05
+  gradient_clip_val: 1.0
+  early_stopping_patience: 9999   # always run all 30 epochs — no early stop
+  precision: 32-true
+  seed: 42
+  results_root: results
+  run_id: null

@@ -1,0 +1,18 @@
+model:
+  name: mamba_rul
+  d_model: 96
+  mamba_blocks: 3
+  mamba_d_state: 64
+  mamba_d_conv: 4
+  mamba_expand: 2
+  mamba_headdim: 32
+  mamba_n_groups: 1
+  mamba_rope_fraction: 0.5
+  mamba_is_mimo: false
+  mamba_mimo_rank: 4
+  mamba_chunk_size: 64
+  mamba_is_outproj_norm: false
+  mamba_bidirectional: true
+  mamba_backend: auto
+  head_hidden: 64
+  dropout: 0.1

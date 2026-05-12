@@ -1,0 +1,298 @@
+---
+description: Sitasi dalam teks dan format Daftar Pustaka mengikuti Pedoman ITB
+globs:
+  - "**/*.tex"
+  - "**/*.bib"
+---
+
+# 04 — Sitasi dan Daftar Pustaka (Format ITB)
+
+> Sumber: *Pedoman Penulisan Disertasi Doktor ITB* §VI (Daftar Pustaka), Lampiran O. Aturan ini **menggantikan** semua gaya APA/IEEE/Chicago default yang mungkin disarankan tooling.
+
+---
+
+## A. Prinsip dasar
+
+1. **Setiap pustaka di Daftar Pustaka harus dirujuk di teks**, dan sebaliknya. Tidak ada *bibliography stuffing*.
+2. **Hindari catatan kaki** (footnote) untuk rujukan; integrasikan ke teks.
+3. **Sitasi gaya Pedoman ITB** = author-year, tetapi dengan format **khas Indonesia** (`dkk.` bukan `et al.`, `dan` bukan `&`/`and`).
+4. **Tidak ada nomor urut** di Daftar Pustaka. Pengurutan **alfabetis** berdasarkan nama keluarga penulis pertama.
+
+---
+
+## B. Sitasi dalam teks
+
+### B.1 Pola standar
+| # penulis | Sitasi parentik | Sitasi naratif |
+|---|---|---|
+| 1 | `(Hill, 2007)` | `Hill (2007)` |
+| 2 | `(Gao dan Zhao, 2009)` | `Gao dan Zhao (2009)` |
+| ≥3 | `(Kramer dkk., 2005)` | `Kramer dkk. (2005)` |
+
+### B.2 Dengan halaman atau bab
+- `(Baker dkk., 1998: 23–25)` — koma sebelum titik dua, en-dash untuk rentang.
+- `(Hill, 1997: bab 4)` jika merujuk bab/seksi non-numerik.
+
+### B.3 Beberapa rujukan sekaligus
+- `(Hill, 2007 dan Kramer dkk., 2005)` — pisah dengan **"dan"**, bukan koma atau titik koma.
+- Untuk lebih dari dua: `(Hill, 2007; Kramer dkk., 2005; Stark, 1998)` — Pedoman tidak eksplisit, gunakan titik koma. Atau pecah: "Hal ini telah dilaporkan oleh Hill (2007), Kramer dkk. (2005), dan Stark (1998)."
+
+### B.4 Penulis sama, tahun sama
+- Tambah huruf di belakang tahun: `(Culver dkk., 2003a dan 2003b)`.
+- Pastikan tahun-huruf konsisten antara teks dan Daftar Pustaka.
+
+### B.5 Penulis tanpa nama keluarga (umum di Indonesia)
+- Pedoman §VI.2: nama orang Indonesia tanpa nama keluarga ditulis **sesuai keinginan penulis aslinya**. Bila tidak diketahui, gunakan **nama yang biasa dipakai di publikasi**.
+- Contoh: peneliti bernama "Agus" — di sitasi: `Agus (2010)`; di Daftar Pustaka: `Agus (2010): Judul…`
+- Bila rancu (nama populer "Budi"), pakai nama lengkap: `Budi Santoso (2018)`.
+
+### B.6 Sumber tanpa penulis (organisasi)
+- `(BMKG, 2020)`, `(WHO, 2018)`, `(BPS, 2022)`.
+
+### B.7 Mengutip langsung
+- Kutipan **kurang dari 4 baris**: dalam tanda kutip dalam teks. *"Frasa yang dikutip"* (Penulis, Tahun: hal).
+- Kutipan **≥4 baris**: blok terpisah, indent kanan-kiri 1,27 cm, ukuran 12, **spasi 1**, tanpa tanda kutip.
+- Dianjurkan **paraphrasing**, bukan kutipan langsung. Kutipan langsung hanya untuk definisi penting atau frasa kunci yang tidak dapat diparafrasekan tanpa kehilangan makna.
+
+---
+
+## C. Implementasi LaTeX
+
+### C.1 Engine bibliografi
+- Gunakan **biblatex** + **biber**, **bukan** BibTeX legacy. Biblatex jauh lebih fleksibel untuk gaya non-default seperti ITB.
+- Konfigurasi di `itbdisertasi.cls`:
+  ```latex
+  \usepackage[
+    backend=biber,
+    style=authoryear,
+    citestyle=authoryear,
+    bibstyle=authoryear,
+    dashed=false,
+    sorting=nyt,            % name-year-title alphabetical
+    maxcitenames=2,         % 2 first, then "dkk."
+    mincitenames=1,
+    maxbibnames=99,         % di Daftar Pustaka: tampilkan SEMUA penulis
+    giveninits=true,        % nama depan jadi inisial
+    uniquename=init,
+    uniquelist=false,
+    isbn=false, doi=true, url=true
+  ]{biblatex}
+  ```
+- Lokalisasi Indonesia (override default "et al." → "dkk.", "and" → "dan"):
+  ```latex
+  \DefineBibliographyStrings{english}{
+    andothers       = {dkk\adddot},
+    and             = {dan},
+    in              = {dalam},
+    editor          = {ed\adddot},
+    editors         = {ed\adddot},
+    edition         = {edisi},
+    volume          = {jilid},
+    page            = {hal\adddot},
+    pages           = {hal\adddot},
+    bibliography    = {Daftar Pustaka},
+  }
+  ```
+
+### C.2 Makro sitasi yang dipakai
+
+| Makro | Fungsi | Output |
+|---|---|---|
+| `\citetitb{key}` | sitasi parentik | `(Hill, 2007)` |
+| `\citenameitb{key}` | sitasi naratif | `Hill (2007)` |
+| `\citetitbpage{key}{23-25}` | dengan halaman | `(Hill, 2007: 23–25)` |
+
+Definisi (di class):
+```latex
+\newcommand{\citetitb}[1]{\parencite{#1}}
+\newcommand{\citenameitb}[1]{\textcite{#1}}
+\newcommand{\citetitbpage}[2]{\parencite[#2]{#1}}
+```
+
+### C.3 Format `references.bib`
+
+Field minimum yang harus ada:
+- `@article` (jurnal): `author`, `title`, `journal`, `year`, `volume`, `pages`. Optional: `number`, `doi`.
+- `@inproceedings` (prosiding): `author`, `title`, `booktitle`, `year`, `pages`. Optional: `editor`, `address`, `publisher`.
+- `@book`: `author`, `title`, `publisher`, `year`, `address`.
+- `@incollection` (bab dalam buku): `author`, `title`, `booktitle`, `editor`, `publisher`, `year`, `pages`, `address`.
+- `@phdthesis`: `author`, `title`, `school`, `year`. (Sekolah = "Institut Teknologi Bandung" untuk disertasi ITB.)
+- `@misc` untuk situs internet — `url`, `urldate`, `year` jika diketahui.
+
+**Aturan keying:**
+- Format key: `surname<TahunAngka><judul-pendek-tanpa-spasi>`. Contoh:
+  - `beck2024xlstm`
+  - `gu2023mamba`
+  - `wang2020xjtusy`
+  - `lei2018machinery`
+- Konsistensi key memudahkan grep dan auto-complete.
+
+**Contoh entri benar:**
+```bibtex
+@article{beck2024xlstm,
+  author    = {Beck, Maximilian and P{\"o}ppel, Korbinian and Spanring, Markus and Auer, Andreas and Prudnikova, Oleksandra and Kopp, Michael and Klambauer, G{\"u}nter and Brandstetter, Johannes and Hochreiter, Sepp},
+  title     = {{xLSTM}: Extended Long Short-Term Memory},
+  journal   = {Advances in Neural Information Processing Systems},
+  year      = {2024},
+  volume    = {37},
+  pages     = {1--32},
+}
+
+@article{gu2023mamba,
+  author    = {Gu, Albert and Dao, Tri},
+  title     = {Mamba: Linear-Time Sequence Modeling with Selective State Spaces},
+  journal   = {arXiv preprint arXiv:2312.00752},
+  year      = {2023},
+}
+
+@article{wang2020xjtusy,
+  author    = {Wang, Biao and Lei, Yaguo and Li, Naipeng and Li, Ningbo},
+  title     = {A hybrid prognostics approach for estimating remaining useful life of rolling element bearings},
+  journal   = {IEEE Transactions on Reliability},
+  year      = {2020},
+  volume    = {69},
+  number    = {1},
+  pages     = {401--412},
+}
+
+@article{lei2018machinery,
+  author    = {Lei, Yaguo and Li, Naipeng and Guo, Liang and Li, Ningbo and Yan, Tao and Lin, Jing},
+  title     = {Machinery health prognostics: {A} systematic review from data acquisition to {RUL} prediction},
+  journal   = {Mechanical Systems and Signal Processing},
+  year      = {2018},
+  volume    = {104},
+  pages     = {799--834},
+}
+```
+
+**Catatan pengeditan BibTeX:**
+- Pakai **double-brace** `{{...}}` di sekitar kata yang harus tetap kapital: `{{ITB}}`, `{{xLSTM}}`, `{{RUL}}`. BibTeX akan men-lowercase secara default.
+- En-dash di rentang halaman: ketik `--` (BibTeX akan render `–`).
+- Karakter aksen non-ASCII pakai escape: `\"u` untuk ü, `\'e` untuk é. Atau di biblatex+biber, UTF-8 langsung juga OK.
+
+---
+
+## D. Format Daftar Pustaka (output yang diharapkan)
+
+### D.1 Layout halaman
+- Judul: **DAFTAR PUSTAKA**, ukuran 14 bold, **3 cm dari tepi atas**, centered.
+- Tidak diberi nomor bab.
+- Setiap entri: **spasi 1**, hanging indent **1,27 cm**.
+- Antar-entri: **1 spasi kosong** (= 1 baris 1-spasi).
+
+### D.2 Format sumber publikasi ilmiah (jurnal/prosiding/buku)
+
+Pola:
+```
+NamaKel1, I1., NamaKel2, I2., dan NamaKelN, IN. (Tahun): Judul artikel atau bab,
+    Nama Sumber Italic, Vol-Bold, Halaman-Awal–Halaman-Akhir.
+```
+
+**Contoh nyata** (ambil dari Lampiran O Pedoman):
+```
+Baker, A. A., Sosro, K., dan Suditomo, B. (1998): Pembakaran hutan di
+    Kalimantan, Majalah Kehutanan, 5, 23–25.
+
+Cotton, F. A. (1998): Kinetics of gasification of brown coal,
+    Journal of American Chemical Society, 54, 38–43.
+
+Hill, R. (1997): The mathematical theory of plasticity, Oxford Press,
+    Oxford, 545–547.
+
+Kramer, A., Djubiantono, T., Aziz, F., Bogard, J. S., Weeks, R. A.,
+    Weinand, D. C., Hames, W. E., Elam, J. M., Durband, A. C., dan
+    Agus (2005): The first hominid fossil recovered from West Java,
+    Indonesia, Journal of Human Evolution, 48, 661–667.
+
+Wijaya, R. (1996): Diagnosis penyakit tipus dengan metode PCR,
+    Disertasi Program Doktor, Institut Teknologi Bandung, 25–29.
+```
+
+Perhatikan:
+- Setelah tahun: **":"** (titik dua) — bukan "." (titik), bukan "," (koma).
+- Judul: huruf **kecil** kecuali huruf pertama dan nama-diri.
+- Nama jurnal/buku: **italic**.
+- Volume (jilid): **bold**, koma sesudahnya.
+- Halaman: rentang dengan **en-dash** (`–`).
+- Akhir entri: **titik**.
+- Nama penulis terakhir: didahului kata **"dan"**, bukan `&` atau `and`.
+
+### D.3 Sumber Surat Kabar
+> Diizinkan **hanya** jika menjadi objek/substansi penelitian (misal disertasi sosiologi-media). Untuk topik teknik biasanya **tidak digunakan**.
+
+```
+Pengelolaan diusulkan satu lembaga. (16 Oktober 2015). Kompas, hal. 14.
+Saidi, A. I. (16 Oktober 2015). Semiotika laut. Kompas, hal. 6.
+```
+
+### D.4 Sumber Film/Televisi
+> Sama: hanya jika menjadi objek penelitian.
+```
+Sagantoro, A. (Produser). (2011). The Raid [Gambar Hidup]. PT. Merantau Films
+    dan XYZ Films: Jakarta.
+```
+
+### D.5 Sumber Internet
+- Disusun **alfabetis** di bagian terpisah (subjudul "Daftar Pustaka dari Situs Internet").
+- Sertakan **tanggal akses** (URL bisa berubah).
+- Pola:
+  ```
+  Nama Penulis (Tahun): Judul halaman, URL, diakses Tanggal.
+  ```
+  atau bila tanpa penulis:
+  ```
+  Judul Halaman (Tahun): Nama Situs, URL, diakses Tanggal.
+  ```
+
+---
+
+## E. Pengelompokan dalam Daftar Pustaka
+
+Bila disertasi memakai sumber gabungan, kelompokkan dengan sub-judul kecil (Pedoman Lampiran O):
+1. Daftar pustaka dari buku ilmiah, makalah ilmiah dalam jurnal, prosiding, dll. (bagian utama, tanpa subjudul khusus).
+2. Daftar Pustaka dari Surat Kabar (subjudul).
+3. Daftar Pustaka dari Film atau Televisi (subjudul).
+4. Daftar Pustaka dari Situs Internet (subjudul).
+
+Untuk disertasi teknik (seperti ini), biasanya **hanya kategori 1 dan 4** yang muncul.
+
+---
+
+## F. Sumber yang **tidak boleh** dipakai
+
+> Pedoman §VI.1: *"Sumber referensi yang berasal dari Televisi, Film, Koran, dan Majalah Populer **tidak boleh** digunakan apabila hanya sebagai sumber informasi atau berita saja, atau bukan sebagai bagian dari substansi atau materi penelitian disertasi."*
+
+Termasuk:
+- Wikipedia → cari sumber primernya, sitasi sumber primer.
+- Blog teknis populer (Medium, Towards Data Science) → kecuali tulisan penulis paper besar (mis. blog post Andrej Karpathy yang mendahului paper).
+- Forum (StackOverflow, Reddit) → tidak boleh.
+- Pre-print arXiv → **boleh**, tapi tandai sebagai pre-print bila belum peer-reviewed; cek apakah sudah diterbitkan di venue resmi dan sitasi versi resmi.
+
+Dianjurkan **>70%** rujukan berasal dari **5–10 tahun terakhir** untuk topik yang berkembang cepat (deep learning, ML, prognostik). Buku referensi klasik boleh lebih lama (mis. teori statistik dasar).
+
+---
+
+## G. Sitasi karya sendiri (self-citation)
+
+- Boleh dan dianjurkan bila sudah ada publikasi pendahulu dari kandidat (mis. paper jurnal yang merupakan bagian Bab IV).
+- Format sama seperti rujukan biasa.
+- Sertakan keterangan singkat di bab terkait: *"Bagian dari Bab IV ini telah dipublikasikan oleh penulis di [Sitasi]."*
+
+---
+
+## H. Pemeriksaan otomatis
+
+```
+# Pustaka tidak terpakai
+biber --validate-datamodel disertasi
+# atau pakai paket biblatex --listbib
+
+# Sitasi tanpa entri (undefined references)
+grep -nE 'LaTeX Warning: Citation .* on page' disertasi.log
+
+# Tahun > 2026 (typo)
+grep -nE '\b20[3-9][0-9]\b' references.bib
+
+# DOI hilang untuk paper jurnal (best practice)
+grep -L 'doi' references.bib | grep '@article'   # heuristik
+```

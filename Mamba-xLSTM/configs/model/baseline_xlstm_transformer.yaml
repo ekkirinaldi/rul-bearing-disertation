@@ -1,0 +1,28 @@
+# Baseline xLSTM-Transformer — paper-faithful architecture.
+#
+# Reference: Liu et al., "RUL Prediction Based on xLSTM-Transformer Neural
+# Network for Rolling Element Bearings Under Different Working Conditions",
+# Sensors 2026, 26, 1578 (sensors-26-01578.pdf).
+#
+# Architecture decisions (paper §2.4 + §3.3 + Table 3):
+#   * encoder/decoder structure with xLSTM REPLACING the position-wise FFN
+#     inside each Transformer layer.
+#   * decoder shares the same input embedding as the encoder; output is
+#     "flattened and fed into a linear layer to produce the predicted RUL".
+#   * "additional normalization layer" appended to each decoder layer.
+#   * hidden layer dimensions in [16, 32]; we pick 32 to match
+#     trainable-parameter parity with the proposed Mamba-xLSTM-Net.
+#   * xLSTM sub-stack = 1 mLSTM (pos 0) + 1 sLSTM (pos 1).
+model:
+  name: xlstm_transformer
+  d_model: 32
+  n_heads: 4              # head_dim = 8
+  encoder_layers: 1       # paper figures show one encoder layer
+  decoder_layers: 1       # paper figures show one decoder layer
+  xlstm_blocks: 2         # 1 mLSTM + 1 sLSTM per layer
+  slstm_positions: [1]
+  head_hidden: 32
+  head_pool: flatten      # paper §2.4: "decoder results are flattened ... linear layer"
+  dropout: 0.1
+  ff_dim: 64              # retained for backward-compat; unused (xLSTM replaces FFN)
+  xlstm_force_fallback: false

@@ -1,0 +1,13 @@
+# Overlay for CUDA servers: heavier DataLoader parallel load.
+#
+# Do **not** set ``data.batch_size`` here — it overrides merged configs that appear
+# *before* this file (e.g. ``--data-batch-size`` snapshots) and caps GPU work per step.
+# Set batch size via ``configs/data/*.yaml`` or ``run_algorithm_comparison.py --data-batch-size``.
+#
+# Usage:
+#   python scripts/train.py --data configs/data/phm2012.yaml \\
+#       --model ... --train ... \\
+#       --ablation configs/ablation/gpu_throughput.yaml
+
+data:
+  num_workers: 8

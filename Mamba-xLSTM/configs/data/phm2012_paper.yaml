@@ -1,0 +1,33 @@
+# PHM2012 — Liu et al. (Sensors 2026, 26, 1578) **fair comparison** track for baseline vs Mamba.
+#
+# Use the SAME file for both models; only swap ``--model``. Pair with
+# ``configs/train/paper_liu2026.yaml`` (Table 3: 50 epochs, lr=1e-3, MSE;
+# checkpoint_monitor=train/loss because the paper has no val split).
+#
+# Table 2 split: train 1_1,1_2,2_1,2_2,3_1,3_2 | test 1_3,2_3,3_3
+# §3.1.2: horizontal only. §3.2: 34 features → T_o → ISOMAP → 1-D HI; piecewise RUL.
+#
+# For the older dissertation split + default 36-D HI + linear labels (window/batch only),
+# use ``phm2012_window_only.yaml`` instead.
+data:
+  dataset: phm2012
+  root: ../data-bearing/ieee-phm-2012
+  cache_dir: ../data-bearing/processed/phm2012
+
+  hi_pipeline: liu2026_phm
+  phm_horizontal_only: true
+  label_scheme: piecewise_liu2026
+  allow_train_val_overlap: true
+
+  train_bearings: ["1_1", "1_2", "2_1", "2_2", "3_1", "3_2"]
+  val_bearings: ["1_2"]
+  test_bearings: ["1_3", "2_3", "3_3"]
+
+  window_length: 10
+  stride_train: 1
+  stride_eval: 1
+
+  smoothing_alpha: 0.1
+  n_bands: 5
+  batch_size: 32
+  num_workers: 0

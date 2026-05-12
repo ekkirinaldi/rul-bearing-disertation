@@ -1,0 +1,26 @@
+# PHM2012 — explicit filename for Liu et al. (2026) strict PHM track.
+# Data keys are identical to ``phm2012_paper.yaml``; pick either path in CLI.
+#
+# Pair with ``configs/train/paper_liu2026.yaml``.
+data:
+  dataset: phm2012
+  root: ../data-bearing/ieee-phm-2012
+  cache_dir: ../data-bearing/processed/phm2012
+
+  hi_pipeline: liu2026_phm
+  phm_horizontal_only: true
+  label_scheme: piecewise_liu2026
+  allow_train_val_overlap: true
+
+  train_bearings: ["1_1", "1_2", "2_1", "2_2", "3_1", "3_2"]
+  val_bearings: ["1_2"]
+  test_bearings: ["1_3", "2_3", "3_3"]
+
+  window_length: 10
+  stride_train: 1
+  stride_eval: 1
+
+  smoothing_alpha: 0.1
+  n_bands: 5
+  batch_size: 32
+  num_workers: 0

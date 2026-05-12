@@ -1,0 +1,54 @@
+%% chapters/00-abstract-en.tex
+%% Abstract Bahasa Inggris — content equivalen dengan abstrak ID
+%% Aturan: lihat .cursor/rules/12-abstrak-front-matter.mdc
+
+\begin{abstract*}
+
+Remaining Useful Life (RUL) prediction for rolling element bearings
+underpins modern predictive maintenance strategies. State-of-the-art
+methods based on Long Short-Term Memory (LSTM) networks and
+Transformers face a trade-off between long-sequence accuracy,
+computational cost, and the interpretability of model decisions with
+respect to the underlying physical degradation phenomena of bearings.
+This dissertation proposes \emph{Mamba-xLSTM-Net}, a hybrid
+architecture that integrates a selective state-space model (Mamba) for
+long-range dynamics with an xLSTM module equipped with matrix memory
+for precise recurrent state tracking. The architecture is augmented by
+a post-hoc interpretability module based on a Top-$k$ Sparse
+Autoencoder (SAE) whose latent features are mapped empirically to the
+characteristic bearing frequencies (Ball Pass Frequency Outer race,
+Ball Pass Frequency Inner race, Ball Spin Frequency, and Fundamental
+Train Frequency).
+
+Experiments were conducted on two public datasets, PHM2012 and
+XJTU-SY, with baselines including LSTM, Transformer, Informer, vanilla
+Mamba, and vanilla xLSTM. Each configuration was trained with five
+random seeds and evaluated using Root Mean Square Error (RMSE), Mean
+Absolute Error (MAE), and the PHM2012 scoring function. The proposed
+method achieved an average RMSE reduction of XX\% and an MAE reduction
+of XX\% relative to the strongest baseline, with the largest gains
+under high-load operating conditions. Ablation studies confirmed that
+the Mamba and xLSTM components contribute additively: removing either
+module led to a statistically significant performance drop. The
+interpretability analysis revealed that the SAE latent features most
+frequently activated during late-life regimes correspond strongly with
+spectral components near the theoretical BPFO, BPFI, and BSF,
+providing empirical evidence that the model learns representations
+consistent with classical bearing vibration diagnostics.
+
+The main contributions of this dissertation are: (i) the
+Mamba-xLSTM-Net hybrid architecture that combines the strengths of
+selective state-space models and matrix-memory recurrent networks;
+(ii) an interpretability methodology that links SAE latent features to
+the physical concept of bearing characteristic frequencies; and (iii)
+empirical evidence of significant performance improvement on two
+widely used benchmarks. The results pave the way for deep
+learning-based prognostic systems that are simultaneously more
+accurate and more trustworthy for maintenance engineers in industry.
+
+\vspace{0.5cm}
+\noindent
+\textbf{Keywords:} remaining useful life, rolling bearing, Mamba,
+xLSTM, sparse autoencoder, interpretability, predictive maintenance
+
+\end{abstract*}

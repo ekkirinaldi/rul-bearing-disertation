@@ -1,0 +1,31 @@
+# Training budget for scripts/run_algorithm_comparison.py
+#
+# STANDARD MODES (use --mode flag in run_algorithm_comparison.py):
+#   --mode quick   →  configs/train/quick_run.yaml    (30 ep,  fp32, any machine)
+#   --mode full    →  configs/train/full_run.yaml     (200 ep, fp32, any machine)
+#   --mode cloud   →  configs/train/cloud_full_75.yaml (75 ep, bf16, GPU/RunPod)
+#
+# This file is kept as a --train override fallback with the same 30-epoch
+# budget as quick_run.yaml, so existing scripts that pass
+# --train configs/train/algorithm_comparison.yaml continue to work.
+#
+# Comparison history (PHM2012 test RMSE / R², seed 42):
+#   v1 (WD=1e-4, patience=20, warmup=5, mono=0.01): Diff 0.257/+0.16 | N-BEATS 0.192/+0.53
+#   v2 (WD=5e-4, patience=10, warmup=5, mono=0.01): Diff 0.290/-0.08 | N-BEATS 0.199/+0.50
+#   v3 (WD=2e-4, patience=15, warmup=3, mono=0.02): Diff 0.301/-0.16 | N-BEATS 0.186/+0.56
+#   v4 diagnosis: patience=20 stopped runs at ep 7-14 → misleading metrics.
+#      Fix: patience=9999 (always run full budget). Adopted in quick_run / full_run.
+
+train:
+  max_epochs: 30
+  lr: 8.0e-4
+  weight_decay: 3.0e-4
+  scheduler: cosine
+  warmup_epochs: 3
+  monotonicity_weight: 0.05
+  gradient_clip_val: 1.0
+  early_stopping_patience: 9999   # always run all 30 epochs — no early stop
+  precision: 32-true
+  seed: 42
+  results_root: results
+  run_id: null

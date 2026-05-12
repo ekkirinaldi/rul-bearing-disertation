@@ -1,0 +1,7 @@
+model:
+  name: ablation_a2_no_xlstm
+  base: mamba_xlstm_net
+  xlstm_blocks: 0
+  fusion: concat
+ablation:
+  description: "Mamba only (xLSTM branch removed)"

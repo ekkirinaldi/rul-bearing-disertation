@@ -1,0 +1,247 @@
+---
+description: Aturan kebaruan (novelty) dan kualitas disertasi sesuai Pedoman ITB §V.1
+alwaysApply: true
+---
+
+# Kebaruan (Novelty) dan Kualitas Disertasi ITB
+
+Disertasi Doktor ITB **wajib** memuat unsur kebaruan (novelty). Tanpa novelty
+yang dapat dipertanggungjawabkan, disertasi tidak akan lulus sidang — sebaik
+apapun rapinya tulisan. Aturan ini wajib dirujuk setiap kali Cursor membantu
+menulis subbab I.8 (Kebaruan), VI.1.2 (Kontribusi), dan saat me-review klaim
+di Abstrak.
+
+> Pedoman ITB §V.1 (Buku Pedoman Penulisan Disertasi Doktor ITB):
+> Kebaruan dapat berupa kebaruan **konsep-objek**, **teknologi-metodologi**,
+> dan/atau **keluaran (output)**. Setiap disertasi minimal harus memenuhi salah
+> satu kategori secara substantif.
+
+---
+
+## A. Tiga kategori novelty yang diakui ITB
+
+### A.1 Konsep-Objek (Concept / Object)
+
+Kebaruan pada **objek studi** atau **konsep teoretis** yang ditelaah:
+
+- Objek baru yang belum pernah diteliti — entitas fisik, fenomena, sistem
+  baru.
+- Konsep / framework teoretis baru — formalisasi yang sebelumnya belum ada.
+- Reformulasi konsep lama dengan sudut pandang yang substantif berbeda.
+
+Contoh untuk disertasi ini:
+- **Diterima** sebagai novelty konsep-objek: memodelkan bantalan gelinding
+  sebagai sistem dengan **konsep laten yang dapat di-decode menjadi
+  frekuensi karakteristik fisik via SAE**.
+- **Tidak diterima** sebagai novelty konsep-objek: "meneliti bantalan
+  gelinding pada PHM2012" (objek dan dataset sudah lama dikenal).
+
+### A.2 Teknologi-Metodologi (Technology / Methodology)
+
+Kebaruan pada **cara mencapai tujuan** — algoritma, arsitektur, prosedur,
+instrumen, atau pendekatan metodologis:
+
+- Algoritma / arsitektur baru, BUKAN sekadar penyetelan hyperparameter.
+- Kombinasi dua metode yang **menghasilkan sifat baru** (bukan sekadar
+  ensemble dangkal).
+- Prosedur eksperimental atau analitis yang sebelumnya tidak ada.
+- Adaptasi metode dari domain lain dengan **insight non-trivial** untuk
+  domain target.
+
+Contoh untuk disertasi ini:
+- **Diterima**: arsitektur Mamba-xLSTM-Net sebagai **kombinasi baru** SSM
+  selektif dan matrix-memory recurrent dengan mekanisme fusi yang
+  diturunkan dari sifat sinyal getaran.
+- **Diterima**: skema interpretabilitas Top-$k$ SAE yang dipasangkan dengan
+  pemetaan ke frekuensi karakteristik bantalan — adaptasi metode SAE dari
+  literatur NLP/vision ke prognostik mekanik.
+
+### A.3 Keluaran / Output (Output)
+
+Kebaruan pada **temuan / hasil**:
+
+- Temuan empiris / fenomena yang belum pernah dilaporkan.
+- Pemodelan kuantitatif yang menjelaskan fenomena yang sebelumnya hanya
+  dideskripsikan kualitatif.
+- Pencapaian kinerja yang menjadi tonggak baru (state-of-the-art).
+- Kerangka interpretasi yang menyingkap struktur tersembunyi dalam data.
+
+Contoh untuk disertasi ini:
+- **Diterima**: bukti empiris korespondensi antara fitur SAE dan frekuensi
+  karakteristik bantalan — temuan yang menghubungkan _learned representation_
+  dengan teori klasik diagnosis getaran.
+- **Diterima**: peningkatan SOTA pada benchmark publik dengan margin
+  signifikan dan stabil lintas seed.
+
+---
+
+## B. Yang BUKAN novelty (red flags)
+
+Pedoman ITB secara eksplisit dan implisit menolak hal-hal berikut sebagai
+"kebaruan":
+
+| Bukan novelty | Penjelasan |
+|---|---|
+| Penyajian ulang data yang sudah ada | Visualisasi / dashboard tanpa metode baru. |
+| Optimasi dengan teknologi mapan | Mengganti optimizer SGD ke AdamW pada model yang sudah ada. |
+| Pengulangan pekerjaan orang lain | Replikasi paper tanpa kontribusi tambahan. |
+| Survei dengan metodologi baku | Literature review mendalam — penting, tapi bukan novelty disertasi. |
+| Database baru dengan metodologi mapan | Mengumpulkan dataset baru lalu menerapkan ResNet — yang baru hanya datanya. |
+| Tuning hyperparameter | Mencari LR / batch size optimal pada arsitektur eksisting. |
+| Aplikasi langsung tanpa adaptasi | "Menerapkan Transformer pada data X" tanpa modifikasi/insight domain. |
+| Engineering effort tanpa thesis | Membangun pipeline / sistem tanpa hipotesis ilmiah yang diuji. |
+| Klaim novelty hanya berdasar tidak ditemukan di Google | _Absence of evidence_ ≠ kebaruan. |
+
+**Pengingat keras:** kalau klaim kebaruan disertasi ini bisa diringkas
+menjadi "saya pakai X yang sudah ada pada data Y yang sudah ada", maka
+**itu belum cukup**. Klaim harus mengandung minimal satu item dari kategori A.
+
+---
+
+## C. Cara menulis subbab I.8 Kebaruan
+
+Format yang direkomendasikan: **daftar bernomor dengan label kategori**.
+Setiap item ≤ 3 kalimat: *apa* yang baru → *kategori* → *kenapa relevan*.
+
+```latex
+\section{Kebaruan Penelitian}
+\label{subsec:bab1_kebaruan}
+
+Disertasi ini menyumbangkan tiga kebaruan utama:
+
+\begin{enumerate}
+    \item \textbf{(Teknologi-Metodologi)} Arsitektur hibrida
+          \emph{Mamba-xLSTM-Net} yang mengintegrasikan
+          \emph{state-space model} selektif dengan matrix-memory
+          \emph{xLSTM} untuk prediksi RUL bantalan; mekanisme fusi
+          dirancang berdasarkan sifat non-stationer sinyal getaran
+          dan mengkapitalisasi keunggulan masing-masing modul pada
+          rentang temporal yang berbeda.
+    \item \textbf{(Teknologi-Metodologi)} Skema interpretabilitas
+          \emph{Top-$k$ Sparse Autoencoder} yang bekerja secara
+          post-hoc terhadap representasi laten model RUL, dengan
+          prosedur kuantitatif untuk memetakan fitur SAE ke
+          frekuensi karakteristik fisik bantalan
+          (BPFO, BPFI, BSF, FTF).
+    \item \textbf{(Output)} Bukti empiris bahwa model deep learning
+          yang dilatih untuk RUL mempelajari representasi laten yang
+          berkorespondensi dengan teori klasik diagnosis getaran,
+          dengan perbaikan kinerja SOTA sebesar
+          $\geq 10\%$ RMSE pada dua dataset publik (PHM2012 dan
+          XJTU-SY).
+\end{enumerate}
+
+Ketiga kebaruan tersebut akan dipertanggungjawabkan secara teknis pada
+Bab~\ref{bab:metodologi}, divalidasi secara empiris pada
+Bab~\ref{bab:hasil}, dan dirangkum sebagai kontribusi pada
+Bab~\ref{bab:kesimpulan}.
+```
+
+---
+
+## D. Self-test: apakah klaim novelty bisa dipertahankan?
+
+Sebelum mengirim draf I.8 ke promotor, jawab tiap pertanyaan ini secara
+jujur:
+
+1. **Kalau reviewer skeptis bertanya: "Apa yang berbeda dengan paper X
+   tahun lalu?"** — apakah ada jawaban konkret di luar "skala lebih
+   besar" / "akurasi lebih tinggi"?
+
+2. **Kalau reviewer menulis: "Ini sudah dilakukan oleh [grup A] di
+   [tahun B]"** — apakah tahu paper itu dan punya argumen pembeda?
+
+3. **Apakah klaim novelty cocok dengan struktur eksperimen?** — kalau
+   klaim "arsitektur baru", apakah ablasi membuktikan bahwa elemen
+   baru memang berkontribusi?
+
+4. **Apakah klaim novelty cocok dengan judul disertasi?** — judul,
+   abstrak, I.8, dan VI.1.2 harus saling konsisten.
+
+5. **Apakah ada minimal 2 kategori novelty (kombinasi)?** — disertasi
+   yang kuat biasanya kombinasi Teknologi+Output atau
+   Konsep+Teknologi+Output. Hanya satu kategori boleh-boleh saja, tapi
+   itemnya harus _meaty_.
+
+---
+
+## E. Kualitas tulisan dan metodologis
+
+Selain novelty, ITB menilai disertasi pada beberapa dimensi lain:
+
+### E.1 Kedalaman teoretis
+
+- Bab III (Dasar Teori) mendalam, bukan sekadar copy-paste textbook.
+- Persamaan diturunkan / dijelaskan, bukan dikutip mentah.
+- Notasi konsisten lintas bab.
+
+### E.2 Rigor eksperimental
+
+- Multiple seeds (≥3, idealnya ≥5).
+- Statistical significance tests untuk klaim "lebih baik".
+- Ablasi yang komprehensif.
+- Reproducible: seed, hyperparameter, environment dilaporkan.
+
+### E.3 Daya tahan terhadap kritik
+
+- Keterbatasan diakui jujur (Bab V).
+- Saran future work konkret, bukan pengulangan keterbatasan.
+- Tidak overclaim.
+
+### E.4 Kualitas penulisan
+
+- Bahasa Indonesia baku tanpa first-person pronouns.
+- Diagram dan tabel high quality.
+- Sitasi konsisten gaya ITB (lihat rule `04-citations-bibliography.mdc`).
+- Tidak ada inkonsistensi notasi/istilah.
+
+---
+
+## F. Sinkronisasi novelty di seluruh disertasi
+
+Klaim novelty muncul di beberapa tempat. Pastikan **konsisten**:
+
+| Tempat | Bentuk |
+|---|---|
+| Judul | Mencerminkan gist novelty (mis. "Hibrida Mamba-xLSTM" + "Interpretabilitas SAE") |
+| Abstrak ID/EN | 1 kalimat eksplisit "this dissertation proposes..." / "disertasi ini mengusulkan..." |
+| I.1 Latar Belakang | Gap → solusi → preview novelty |
+| I.8 Kebaruan | Daftar bernomor formal dengan label kategori |
+| Bab IV | Penjabaran teknis tiap item novelty |
+| Bab V | Bukti empiris untuk tiap klaim |
+| VI.1.2 Kontribusi | Recap, bahasa elaboratif |
+
+Jangan sampai di Abstrak disebut 4 kontribusi tetapi di I.8 hanya 3, atau
+di VI.1.2 muncul kontribusi yang tidak pernah disinggung sebelumnya. Cursor
+harus melakukan cross-check ini setiap kali subbab terkait di-edit.
+
+---
+
+## G. Anti-pattern dalam menulis novelty
+
+- ❌ "Sepanjang pengetahuan penulis, ini adalah yang pertama..." sebagai
+  satu-satunya basis novelty. Itu klaim lemah; lengkapi dengan _what_
+  yang konkret dibedakan.
+- ❌ Klaim novelty yang tidak diuji secara langsung di Bab V
+  (mis. "menghemat energi" tetapi tidak ada eksperimen energi).
+- ❌ Mencampur pernyataan kontribusi (apa yang dilakukan) dengan
+  pernyataan novelty (apa yang baru dibanding pekerjaan lain).
+- ❌ Daftar novelty terlalu panjang (>5 item) — biasanya tanda klaim
+  belum diseleksi; reviewer akan minta dipersempit.
+- ❌ Menulis novelty hanya dengan kata sifat ("lebih cepat", "lebih
+  akurat") tanpa angka / klausa pembeda yang spesifik.
+
+---
+
+## H. Checklist novelty & kualitas
+
+- [ ] Klaim novelty mencakup minimal 1 kategori (Konsep / Teknologi / Output);
+      idealnya 2-3 kombinasi.
+- [ ] Tiap item novelty memiliki bab/subbab pendukung yang membuktikannya.
+- [ ] Klaim novelty konsisten di Judul, Abstrak, I.8, VI.1.2.
+- [ ] Skala klaim terkalibrasi (tidak overclaim, tidak underclaim).
+- [ ] Tidak masuk kategori "bukan novelty" (Tabel B).
+- [ ] Eksperimen menggunakan multiple seeds dan uji signifikansi.
+- [ ] Limitasi diakui di Bab V; saran future work konkret di Bab VI.
+- [ ] Tidak ada plagiarisme; semua sitasi terlacak; semua paraphrase
+      benar-benar ditulis ulang.

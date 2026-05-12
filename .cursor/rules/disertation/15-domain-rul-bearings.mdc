@@ -1,0 +1,368 @@
+---
+description: Konteks domain — prognostik bantalan gelinding, dataset publik (PHM2012, XJTU-SY), frekuensi karakteristik, dan terminologi spesifik
+alwaysApply: true
+---
+
+# Domain Context — Bearing RUL Prognostics
+
+Aturan ini memberikan **knowledge base domain** yang harus selalu dirujuk
+saat menulis konten teknis tentang bantalan gelinding, dataset RUL, dan
+fitur sinyal getaran. Tanpa konteks ini, mudah membuat klaim yang salah
+secara teknis (misalnya menulis "BPFI di sekitar 87 Hz" padahal frekuensinya
+spesifik per geometri bantalan).
+
+---
+
+## A. Bantalan gelinding — taksonomi singkat
+
+Jenis bantalan gelinding (rolling element bearings) yang relevan di
+literatur RUL:
+
+| Jenis | Nama Indonesia | Aplikasi tipikal |
+|---|---|---|
+| Deep groove ball | bantalan bola alur dalam | motor listrik, pompa kecil |
+| Angular contact ball | bantalan bola kontak sudut | spindel mesin, motor presisi |
+| Cylindrical roller | bantalan rol silindris | gearbox industri, generator |
+| Tapered roller | bantalan rol tirus | as roda, transmisi otomotif |
+| Spherical roller | bantalan rol bola | mesin berat, mill, conveyor |
+| Needle roller | bantalan rol jarum | mesin kompak, cam follower |
+
+Komponen anatomi (urut dari luar ke dalam):
+
+1. **Outer race / cincin luar** (stationer pada housing).
+2. **Inner race / cincin dalam** (berputar bersama poros).
+3. **Rolling elements** — bola atau rol (n elemen).
+4. **Cage / sangkar** — menjaga jarak antar rolling element.
+
+Mode kegagalan utama:
+
+- **Spalling / pitting** pada outer race, inner race, atau rolling element.
+- **Wear** (keausan permukaan).
+- **Lubricant degradation**.
+- **Contamination** (partikel asing).
+- **Cage defect** (jarang, tapi katastrofik bila terjadi).
+
+---
+
+## B. Frekuensi karakteristik bantalan
+
+Saat terjadi spalling pada salah satu komponen, gesekan berulang
+menghasilkan **impuls periodik** dengan frekuensi yang dapat diprediksi
+dari **geometri bantalan** dan **kecepatan putar poros**. Empat frekuensi
+karakteristik utama:
+
+### B.1 Formula
+
+Misal:
+
+- $f_r$ = frekuensi rotasi poros (Hz) = rpm / 60
+- $n$ = jumlah rolling element
+- $d$ = diameter rolling element (mm)
+- $D$ = pitch diameter (mm), yaitu diameter lingkaran pusat rolling elements
+- $\theta$ = sudut kontak (rad)
+
+Maka:
+
+$$
+\text{BPFO} = \frac{n}{2} f_r \left(1 - \frac{d}{D}\cos\theta\right)
+$$
+
+$$
+\text{BPFI} = \frac{n}{2} f_r \left(1 + \frac{d}{D}\cos\theta\right)
+$$
+
+$$
+\text{BSF}  = \frac{D}{2d} f_r \left(1 - \left(\frac{d}{D}\cos\theta\right)^{2}\right)
+$$
+
+$$
+\text{FTF}  = \frac{1}{2} f_r \left(1 - \frac{d}{D}\cos\theta\right)
+$$
+
+| Singkatan | Kepanjangan | Indikasi cacat |
+|---|---|---|
+| BPFO | Ball Pass Frequency Outer race | Cacat di outer race |
+| BPFI | Ball Pass Frequency Inner race | Cacat di inner race |
+| BSF  | Ball Spin Frequency | Cacat di rolling element (impuls 2× per rotasi elemen) |
+| FTF  | Fundamental Train Frequency (atau Cage Frequency) | Cacat di sangkar |
+
+### B.2 Pemakaian dalam disertasi
+
+- Persamaan di atas WAJIB muncul di **Bab III §III.7 (atau bab dasar
+  teori bearing)** dengan pemberian nomor persamaan.
+- Saat klaim "fitur SAE berkorespondensi dengan BPFO" di Bab V, **WAJIB**
+  menampilkan: nilai BPFO yang dihitung dari geometri bantalan benchmark
+  (mis. SKF 6203 / XJTU bearing) + spektrum aktivasi SAE + overlay garis
+  vertikal di BPFO teoretis.
+- Jangan tulis nilai numerik BPFO/BPFI tanpa menyebut bantalan dan
+  $f_r$ yang dipakai.
+
+### B.3 Tabel referensi geometri bantalan benchmark
+
+```latex
+\begin{table}[ht]
+\centering
+\caption{Geometri bantalan benchmark dan frekuensi karakteristik teoretis
+(asumsi $\theta = 0$ untuk deep groove ball bearing).}
+\label{tab:bab3_geometri_bearing}
+\small
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Bantalan & Aplikasi & $n$ & $d$ (mm) & $D$ (mm) & $f_r$ (Hz) & BPFO (Hz) \\
+\midrule
+LDK UER204 (XJTU-SY) & PRONOSTIA-like & 8 & 7{,}92 & 34{,}55 & 35{,}0 & 107{,}9 \\
+NSK 6804 (PHM2012)   & PRONOSTIA      & 13 & 3{,}50 & 25{,}50 & 30{,}0 & 168{,}3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+```
+
+Catatan: angka BPFO di atas adalah ilustratif — verifikasi ulang dengan
+datasheet aktual saat menulis.
+
+---
+
+## C. Dataset publik untuk RUL bearing
+
+### C.1 PHM2012 / FEMTO-PRONOSTIA
+
+| Atribut | Nilai |
+|---|---|
+| Pemilik | FEMTO-ST Institute, Université de Franche-Comté |
+| Test rig | PRONOSTIA |
+| Bantalan uji | NSK 6804 (deep groove ball) |
+| Jumlah bantalan | 17 (6 train + 11 test) |
+| Kondisi operasi | 3 (1800 rpm/4000 N, 1650 rpm/4200 N, 1500 rpm/5000 N) |
+| Sensor | 2 akselerometer (horizontal + vertikal), 1 termokopel |
+| Frekuensi sampling | 25{,}6 kHz |
+| Durasi rekaman | 0{,}1 detik per rekaman |
+| Interval perekaman | 10 detik |
+| Total sampel per rekaman | 2.560 |
+| Label RUL | Run-to-failure (no specific fault tag) |
+| Lisensi | Akademik |
+| Sitasi | Nectoux dkk. (2012) |
+
+Kompetisi PHM2012 menggunakan **scoring function asimetris** (lihat
+`09-bab4-metodologi.mdc` §I) di mana prediksi terlambat (pesimistik tentang
+RUL) dihukum lebih ringan daripada prediksi terlalu cepat.
+
+### C.2 XJTU-SY
+
+| Atribut | Nilai |
+|---|---|
+| Pemilik | Xi'an Jiaotong University & Sumyoung Technology |
+| Test rig | XJTU-SY rolling element bearing accelerated life test |
+| Bantalan uji | LDK UER204 (deep groove ball) |
+| Jumlah bantalan | 15 (3 kondisi × 5 bantalan) |
+| Kondisi operasi | 3 (2100 rpm/12 kN, 2250 rpm/11 kN, 2400 rpm/10 kN) |
+| Sensor | 2 akselerometer (horizontal + vertikal) |
+| Frekuensi sampling | 25{,}6 kHz |
+| Durasi rekaman | 1{,}28 detik per rekaman |
+| Interval perekaman | 1 menit |
+| Total sampel per rekaman | 32.768 |
+| Label kegagalan | Tersedia (outer race, inner race, cage, dll.) |
+| Lisensi | Public, akademik |
+| Sitasi | Wang dkk. (2020) |
+
+Keunggulan XJTU-SY untuk research interpretabilitas: **label mode kegagalan
+tersedia**, sehingga bisa diuji apakah fitur SAE yang menyala konsisten
+dengan jenis cacat di bantalan tersebut.
+
+### C.3 Dataset lain (untuk konteks)
+
+- **CWRU Bearing** (Case Western Reserve University) — populer untuk
+  diagnosis (klasifikasi fault), TIDAK untuk RUL (data run-to-failure
+  tidak tersedia).
+- **IMS Bearing** — salah satu run-to-failure tertua (4 bantalan, 3
+  test).
+- **Paderborn Bearing** — diagnosis fault, kondisi induced + natural.
+- **MFPT Bearing** — diagnosis, beberapa baseline.
+
+Untuk klaim "metode bekerja pada multiple datasets", PHM2012 + XJTU-SY
+adalah **kombinasi standar** karena keduanya run-to-failure. CWRU/Paderborn
+TIDAK valid sebagai dataset RUL.
+
+---
+
+## D. Health Indicator (HI) dan ekstraksi fitur
+
+### D.1 Fitur time-domain (statistik) — 9 fitur baku
+
+| # | Nama Indonesia | Nama Inggris | Formula |
+|---|---|---|---|
+| 1 | Rerata (mean) | Mean | $\mu = \frac{1}{N}\sum x_i$ |
+| 2 | Akar rerata kuadrat | RMS | $\sqrt{\frac{1}{N}\sum x_i^2}$ |
+| 3 | Standar deviasi | Std deviation | $\sigma = \sqrt{\frac{1}{N}\sum(x_i-\mu)^2}$ |
+| 4 | Variansi | Variance | $\sigma^2$ |
+| 5 | Faktor puncak | Peak factor / Crest factor | $\max\|x\|/\text{RMS}$ |
+| 6 | Faktor impuls | Impulse factor | $\max\|x\|/\text{mean}\|x\|$ |
+| 7 | Faktor bentuk | Shape factor | $\text{RMS}/\text{mean}\|x\|$ |
+| 8 | Skewness | Skewness | $E[(x-\mu)^3]/\sigma^3$ |
+| 9 | Kurtosis | Kurtosis | $E[(x-\mu)^4]/\sigma^4$ |
+
+### D.2 Fitur frequency-domain — 7 fitur baku
+
+| # | Nama | Formula / deskripsi |
+|---|---|---|
+| 1 | Frekuensi puncak | Frekuensi dengan amplitudo maksimum di FFT |
+| 2 | Mean frequency | $\sum f_k S(f_k) / \sum S(f_k)$ |
+| 3 | Frequency center (FC) | Pusat massa spektrum |
+| 4 | RMS frequency (RMSF) | $\sqrt{\sum f_k^2 S(f_k) / \sum S(f_k)}$ |
+| 5 | Standard deviation frequency | Spread spektrum |
+| 6 | Spectral kurtosis | Kurtosis dari amplitudo spektral |
+| 7 | Spectral entropy | $-\sum p_k \log p_k$ pada spektrum ternormalisasi |
+
+### D.3 Fitur time-frequency
+
+- Wavelet packet decomposition energy.
+- Hilbert envelope spectrum (sangat penting untuk diagnosis bearing
+  fault — envelope analysis mengangkat impuls periodik dari high-frequency
+  resonance).
+- Empirical Mode Decomposition (EMD), Variational Mode Decomposition
+  (VMD).
+
+### D.4 Konvensi penulisan fitur di disertasi
+
+- Rumus tiap fitur **WAJIB** muncul di Bab III atau Lampiran, bukan di
+  Bab IV. Bab IV cukup mencantumkan tabel "16 fitur ini dipakai" dengan
+  rujukan ke persamaan / Lampiran.
+- Konsisten urutan fitur di seluruh tabel hasil (Bab V).
+- Plot atribusi (SHAP, IG) — pertahankan urutan dan label fitur sama
+  dengan tabel di Bab IV.
+
+---
+
+## E. Terminologi standar — Indonesia ↔ Inggris
+
+Tabel terminologi yang **wajib konsisten** di seluruh disertasi (saling
+silang dengan rule `03-bahasa-indonesia-baku.mdc`):
+
+| Indonesia (preferred di body) | Inggris (preferred di abstract EN) | Catatan |
+|---|---|---|
+| bantalan gelinding | rolling bearing / rolling element bearing | "bantalan" saja terlalu generik |
+| sisa umur pakai | remaining useful life (RUL) | RUL sebagai singkatan dipakai langsung |
+| pemeliharaan prediktif | predictive maintenance (PdM) | — |
+| prognostik | prognostics | — |
+| diagnostik | diagnostics | — |
+| sinyal getaran | vibration signal | — |
+| akselerometer | accelerometer | — |
+| frekuensi sampling | sampling frequency / sampling rate | — |
+| kondisi sehat | healthy state | — |
+| permulaan degradasi (FPT) | first prediction time / failure prediction time | — |
+| kegagalan akhir / end-of-life | end of life (EOL) | — |
+| indeks kesehatan | health indicator (HI) | "HI" sebagai singkatan |
+| indeks degradasi | degradation index | — |
+| spalling / pitting | spalling, pitting | istilah teknis tetap |
+| ring luar / cincin luar | outer race | "outer race" boleh dipakai langsung dengan italic kalau di body Indonesia |
+| ring dalam / cincin dalam | inner race | sama |
+| sangkar | cage | — |
+| elemen gelinding | rolling element | — |
+| pelumas | lubricant | — |
+| fitur ekstraksi | feature extraction | — |
+| pelatihan / latih | training | hindari "training" di body Indonesia |
+| pengujian / uji | testing | — |
+| data leakage | (sama, atau "kebocoran data") | sebut definisinya saat pertama kali |
+| transfer pembelajaran | transfer learning | — |
+
+Aturan ringkas:
+
+- Saat istilah Inggris **lebih baku dan tidak ada padanan Indonesia yang
+  diterima luas** (mis. SHAP, attention, gating), tetap pakai bahasa
+  Inggris dalam *italic*.
+- Saat ada padanan baku KBBI (akselerometer, bantalan, getaran), pakai
+  Indonesia.
+- Hindari _code-switching_ dalam satu kalimat ("bearing bola alur dalam"
+  — pilih: "bantalan bola alur dalam" atau "deep groove ball bearing").
+
+---
+
+## F. Pitfalls teknis yang sering ditemui
+
+### F.1 Salah kaprah RUL labeling
+
+- **Asumsi monoton**: RUL tidak selalu turun monoton di data dunia nyata
+  (ada plateau). Disertasi harus eksplisit asumsi ini di Bab IV.
+- **Definisi EOL**: kapan tepatnya bantalan dianggap "gagal"? Threshold
+  amplitudo getaran (mis. 20 g pada PHM2012)? Ini **harus disebut
+  eksplisit**.
+- **First Prediction Time (FPT)**: kapan model mulai memprediksi RUL?
+  Selalu dari awal, atau hanya setelah deteksi anomali? Ini berdampak
+  besar pada metrik.
+
+### F.2 Data leakage
+
+- **Bearing-wise vs sample-wise split**: WAJIB bearing-wise. Sample-wise
+  membuat data dari bantalan yang sama bocor ke train dan test.
+- **Normalization fit**: statistik normalisasi (mean, std) WAJIB difit
+  hanya pada training set, lalu diterapkan ke val/test. Bukan global.
+- **Window overlap di test set**: sebaiknya non-overlapping di test untuk
+  evaluasi yang konservatif.
+
+### F.3 Metric pitfalls
+
+- **Score PHM2012**: definisi $e_i$ (positif = predict terlambat atau
+  terlalu cepat?) sering dibalik di literatur. Cek konsisten dengan
+  paper benchmark.
+- **MAPE pada RUL kecil**: MAPE eksplodir saat RUL ground truth mendekati
+  0 (akhir hidup). Hindari MAPE atau gunakan dengan caveat.
+- **Average vs per-bearing**: laporkan rerata + per-bearing breakdown,
+  jangan hanya rerata.
+
+---
+
+## G. Hyperparameter benchmark dari literatur
+
+Untuk implementasi baseline yang adil, gunakan hyperparameter dari paper
+asli kalau ada. Kalau tidak ada, dokumentasikan pilihan dan justifikasinya.
+
+Referensi cepat (verifikasi sebelum dipakai):
+
+| Baseline | Sumber hyperparameter | Catatan |
+|---|---|---|
+| LSTM | Hochreiter & Schmidhuber (1997); konfigurasi RUL Hsu dkk. (2020) | 1-2 lapis, 64-128 unit |
+| Transformer | Vaswani dkk. (2017) | 4-8 head, $d_{\text{model}}$ 128-512 |
+| Informer | Zhou dkk. (2021) | ProbSparse attention, distilling |
+| PatchTST | Nie dkk. (2023) | patch length 16, stride 8 (untuk panjang 96-512) |
+| Mamba | Gu & Dao (2023) | $d_{\text{state}}=16$, expand=2 |
+| xLSTM | Beck dkk. (2024) | mLSTM head 4, $d_{\text{head}}=32$-64 |
+
+---
+
+## H. Kebiasaan baik di domain prognostik
+
+- **Sebut versi paper** yang dirujuk (preprint vs journal). Nilai bisa
+  berbeda.
+- **Cek tanggal release** paper ML — Mamba/xLSTM masih cepat berkembang;
+  klaim "pertama menerapkan X pada Y" perlu hati-hati saat ada preprint
+  paralel.
+- **Sertakan tabel reproducibility** di Lampiran: untuk tiap baseline,
+  catat sumber implementasi (paper / GitHub / sendiri), versi, hyperparameter
+  yang dipakai, deviasi dari setting asli (kalau ada).
+
+---
+
+## I. Anti-pattern domain
+
+- ❌ Klaim "BPFO sekitar 100 Hz" tanpa menyebut bantalan dan rpm.
+- ❌ Memperlakukan PHM2012 dan XJTU-SY seakan-akan setara persis (kondisi
+  operasi, sampling rate, durasi rekaman berbeda).
+- ❌ "Kami membandingkan dengan SOTA" tetapi SOTA-nya paper 2018 sementara
+  ada paper 2024 yang lebih dekat.
+- ❌ Plot envelope spectrum tanpa anotasi BPFO/BPFI di sumbu frekuensi.
+- ❌ Tidak menjelaskan bagaimana label RUL dibuat (linier? piecewise?
+  exponential dari FPT?).
+- ❌ "Akurasi 99\%" — RUL adalah regresi, bukan klasifikasi. Pakai RMSE/MAE.
+
+---
+
+## J. Checklist domain sebelum tutup tiap bab teknis
+
+- [ ] Setiap nilai numerik frekuensi karakteristik disertai bantalan + rpm.
+- [ ] Skema label RUL eksplisit (linear / piecewise / exponential).
+- [ ] FPT, EOL, threshold kegagalan didefinisikan eksplisit.
+- [ ] Train/val/test split bearing-wise, dilaporkan bantalan mana di set apa.
+- [ ] Normalisasi fitur fit pada train set saja.
+- [ ] Sitasi paper benchmark up-to-date (cek apakah ada paper 2024-2026 yang
+      lebih relevan).
+- [ ] Istilah Indonesia vs Inggris konsisten (lihat Tabel E).
+- [ ] Tidak ada klaim akurasi pada konteks regresi.

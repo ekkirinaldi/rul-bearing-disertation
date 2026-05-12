@@ -1,0 +1,11 @@
+model:
+  name: vanilla_xlstm_rul
+  # Plain xLSTM stack (no Transformer). Defaults sized similarly to the
+  # xLSTM–Transformer baseline depth; tune for fair comparison.
+  d_model: 64
+  num_blocks: 3
+  slstm_positions: [1]
+  n_heads: 4
+  head_hidden: 64
+  dropout: 0.1
+  xlstm_force_fallback: false

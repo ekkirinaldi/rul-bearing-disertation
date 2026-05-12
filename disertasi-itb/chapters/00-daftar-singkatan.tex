@@ -1,0 +1,69 @@
+%% chapters/00-daftar-singkatan.tex
+%% Daftar Singkatan dan Lambang
+%% Wajib alfabetis. Untuk lambang matematis, kelompokkan terpisah.
+
+\chapter*{DAFTAR SINGKATAN DAN LAMBANG}
+\addcontentsline{toc}{chapter}{DAFTAR SINGKATAN DAN LAMBANG}
+
+\section*{Singkatan}
+\begin{singlespace}
+\begin{tabular}{p{3cm}p{11cm}}
+\textbf{Singkatan} & \textbf{Kepanjangan} \\[2pt]
+\hline\\[-6pt]
+BPFI  & \emph{Ball Pass Frequency Inner race} \\
+BPFO  & \emph{Ball Pass Frequency Outer race} \\
+BSF   & \emph{Ball Spin Frequency} \\
+CNN   & \emph{Convolutional Neural Network} \\
+EOL   & \emph{End of Life} \\
+FPT   & \emph{First Prediction Time} \\
+FTF   & \emph{Fundamental Train Frequency} \\
+GRU   & \emph{Gated Recurrent Unit} \\
+HI    & \emph{Health Indicator} \\
+IG    & \emph{Integrated Gradients} \\
+LSTM  & \emph{Long Short-Term Memory} \\
+MAE   & \emph{Mean Absolute Error} \\
+MAPE  & \emph{Mean Absolute Percentage Error} \\
+mLSTM & \emph{matrix LSTM} (komponen xLSTM) \\
+MLP   & \emph{Multi-Layer Perceptron} \\
+PdM   & \emph{Predictive Maintenance} \\
+PHM   & \emph{Prognostics and Health Management} \\
+RMSE  & \emph{Root Mean Square Error} \\
+RNN   & \emph{Recurrent Neural Network} \\
+RUL   & \emph{Remaining Useful Life} (Sisa Umur Pakai) \\
+SAE   & \emph{Sparse Autoencoder} \\
+SHAP  & \emph{SHapley Additive exPlanations} \\
+sLSTM & \emph{scalar LSTM} (komponen xLSTM) \\
+SOTA  & \emph{State-of-the-Art} \\
+SSM   & \emph{State-Space Model} \\
+xLSTM & \emph{Extended LSTM} \\
+\end{tabular}
+\end{singlespace}
+
+\vspace{1cm}
+\section*{Lambang}
+\begin{singlespace}
+\begin{tabular}{p{3cm}p{11cm}}
+\textbf{Lambang} & \textbf{Arti} \\[2pt]
+\hline\\[-6pt]
+$\mathbf{x}_t$ & Vektor sinyal getaran pada waktu $t$ \\
+$\mathbf{h}_t$ & Vektor laten / \emph{hidden state} pada waktu $t$ \\
+$\mathbf{C}_t$ & Matriks memori mLSTM pada waktu $t$ \\
+$\mathbf{A}, \mathbf{B}, \mathbf{C}$ & Parameter SSM kontinu \\
+$\bar{\mathbf{A}}, \bar{\mathbf{B}}$ & Parameter SSM terdiskretisasi \\
+$\Delta$       & \emph{Step size} diskretisasi SSM \\
+$y_i$          & Nilai RUL aktual untuk sampel ke-$i$ \\
+$\hat{y}_i$    & Nilai RUL prediksi untuk sampel ke-$i$ \\
+$f_r$          & Frekuensi rotasi poros (Hz) \\
+$n$            & Jumlah \emph{rolling element} pada bantalan \\
+$d$            & Diameter \emph{rolling element} (mm) \\
+$D$            & \emph{Pitch diameter} bantalan (mm) \\
+$\theta$       & Sudut kontak bantalan (rad) \\
+$\lambda$      & Bobot regularisasi sparsity SAE \\
+$k$            & Jumlah aktivasi yang dipertahankan pada Top-$k$ SAE \\
+$\sigma(\cdot)$ & Fungsi aktivasi sigmoid \\
+$\odot$        & Perkalian elemen demi elemen (Hadamard) \\
+$\mathcal{L}$  & Fungsi kerugian (\emph{loss}) \\
+\end{tabular}
+\end{singlespace}
+
+\cleardoublepage

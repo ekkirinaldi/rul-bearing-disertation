@@ -1,0 +1,19 @@
+# Training overlay when using:
+#   * ``phm2012_paper.yaml`` / ``phm2012_liu2026_strict.yaml`` (Liu PHM2012 Table 2), or
+#   * ``xjtu_sy_paper.yaml`` / ``xjtu_sy_liu2026_strict.yaml`` (Liu XJTU-SY Table 1).
+# No paper validation split — monitor ``train/loss`` only.
+# Checkpoints / early stopping follow ``train/loss`` because val RMSE is not protocol-faithful.
+train:
+  max_epochs: 50
+  lr: 1.0e-3
+  weight_decay: 0.0
+  scheduler: none
+  warmup_epochs: 0
+  monotonicity_weight: 0.0
+  gradient_clip_val: 1.0
+  early_stopping_patience: 9999
+  checkpoint_monitor: train/loss
+  precision: 32-true
+  seed: 42
+  results_root: results
+  run_id: null

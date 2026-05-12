@@ -1,0 +1,459 @@
+---
+description: Build workflow, Makefile targets, dan automated quality checks untuk disertasi ITB
+globs: Makefile, *.tex, *.cls
+alwaysApply: false
+---
+
+# Build Workflow & Quality Checks
+
+Aturan ini mengatur **bagaimana disertasi di-compile, divalidasi, dan
+diversifikasi** sebelum diserahkan ke promotor / sidang.
+
+Cursor harus mengingatkan user untuk menjalankan target-target ini secara
+berkala selama proses penulisan, bukan hanya di akhir.
+
+---
+
+## A. Toolchain wajib
+
+| Tool | Fungsi | Versi minimum |
+|---|---|---|
+| `latexmk` | Kompilasi otomatis multi-pass | 4.79 |
+| `lualatex` (preferred) | Engine LaTeX dengan UTF-8 native + system fonts | TeX Live 2022+ |
+| `pdflatex` (fallback) | Engine LaTeX standar | TeX Live 2022+ |
+| `biber` | Backend bibliografi untuk biblatex | 2.19+ |
+| `chktex` | Linter LaTeX | 1.7+ |
+| `lacheck` | Linter LaTeX (lebih strict) | opsional |
+| `aspell` / `hunspell` | Spell checker | dengan dictionary `id_ID` |
+| `texcount` | Word counter | bawaan TeX Live |
+| `qpdf` / `pdftk` | Manipulasi PDF (optional) | — |
+
+Cek instalasi:
+
+```bash
+which latexmk lualatex biber chktex texcount
+```
+
+---
+
+## B. Konfigurasi `latexmk` (`.latexmkrc`)
+
+File `.latexmkrc` di root project mengatur engine dan flag default:
+
+```perl
+# .latexmkrc
+$pdf_mode = 4;                  # 4 = lualatex; ganti ke 1 untuk pdflatex
+$lualatex = 'lualatex -synctex=1 -interaction=nonstopmode -file-line-error %O %S';
+$pdflatex = 'pdflatex -synctex=1 -interaction=nonstopmode -file-line-error %O %S';
+$biber    = 'biber --validate-datamodel %O %S';
+$bibtex_use = 2;                # gunakan biber/bibtex bila ada \bibliography
+$max_repeat = 5;
+$clean_ext = 'synctex.gz acn acr alg aux bbl bcf blg fdb_latexmk fls glg glo gls idx ilg ind ist lof log lot out run.xml toc xdy';
+@default_files = ('disertasi.tex');
+```
+
+User dapat override engine dengan flag CLI:
+
+```bash
+latexmk -lualatex disertasi.tex     # paksa lualatex
+latexmk -pdf disertasi.tex          # paksa pdflatex
+```
+
+---
+
+## C. Makefile — target standar
+
+Buat file `Makefile` di root project. Target wajib:
+
+```make
+# ============================================================
+#  Disertasi Doktor ITB — Makefile
+# ============================================================
+
+MAIN      := disertasi
+TEX       := $(MAIN).tex
+PDF       := $(MAIN).pdf
+BUILDDIR  := build
+LATEXMK   := latexmk
+LATEXMK_FLAGS := -outdir=$(BUILDDIR) -interaction=nonstopmode -halt-on-error -file-line-error
+
+CHAPTERS  := $(wildcard chapters/*.tex)
+ALL_TEX   := $(TEX) $(CHAPTERS)
+
+.PHONY: all build watch clean distclean wordcount check spell lint pre-submit help
+
+all: build
+
+build:    ## Compile sekali (lualatex + biber + lualatex x2)
+	@mkdir -p $(BUILDDIR)
+	$(LATEXMK) $(LATEXMK_FLAGS) $(TEX)
+	@cp $(BUILDDIR)/$(PDF) ./$(PDF)
+
+watch:    ## Compile otomatis saat file berubah (latexmk -pvc)
+	@mkdir -p $(BUILDDIR)
+	$(LATEXMK) $(LATEXMK_FLAGS) -pvc $(TEX)
+
+clean:    ## Hapus file build menengah, simpan PDF
+	$(LATEXMK) -outdir=$(BUILDDIR) -c $(TEX)
+
+distclean:## Hapus seluruh direktori build dan PDF
+	$(LATEXMK) -outdir=$(BUILDDIR) -C $(TEX)
+	rm -rf $(BUILDDIR)
+	rm -f $(PDF)
+
+wordcount:## Hitung jumlah kata per bab
+	@echo "=== Word count per chapter ==="
+	@for f in $(CHAPTERS); do \
+		echo "--- $$f ---"; \
+		texcount -inc -1 -sum "$$f" || true; \
+	done
+	@echo "=== Total (estimasi) ==="
+	@texcount -inc -1 -sum -merge $(TEX) || true
+
+check:    ## Jalankan semua quality check (lint + regex + spell)
+	@echo "=== chktex ==="
+	@chktex -q -n8 -n24 $(ALL_TEX) || true
+	@$(MAKE) lint
+	@echo "=== Done. Lihat output di atas. ==="
+
+lint:     ## Regex check: forbidden phrases, format issues
+	@bash scripts/lint-itb.sh
+
+spell:    ## Spell check (Indonesian + inggris untuk Bab Abstract)
+	@hunspell -d id_ID -t -l $(filter-out chapters/00-abstract-en.tex,$(CHAPTERS)) | sort -u | head -50
+	@echo "(snippet 50 first errors; jalankan 'hunspell -d id_ID -t' interaktif untuk fix)"
+
+pre-submit: clean build wordcount check spell ## Jalankan sebelum kirim ke promotor
+	@echo "=== Pre-submit checks selesai. Periksa output di atas sebelum submit. ==="
+
+help:     ## Tampilkan daftar target ini
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
+```
+
+Cara pakai paling sering:
+
+```bash
+make watch       # selama menulis aktif — auto-compile setiap save
+make pre-submit  # sebelum kirim draft ke promotor
+make wordcount   # cek panjang per bab
+```
+
+---
+
+## D. Lint script (`scripts/lint-itb.sh`)
+
+Script bash yang memeriksa pelanggaran format ITB yang sering luput:
+
+```bash
+#!/usr/bin/env bash
+# scripts/lint-itb.sh
+# Pemeriksaan otomatis kepatuhan format ITB.
+# Exit code != 0 jika ada pelanggaran fatal.
+
+set -uo pipefail
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+NC='\033[0m'
+
+CHAPTERS="chapters/*.tex"
+FATAL=0
+
+ok()    { echo -e "${GREEN}[OK]${NC}    $1"; }
+warn()  { echo -e "${YELLOW}[WARN]${NC}  $1"; }
+fatal() { echo -e "${RED}[FATAL]${NC} $1"; FATAL=1; }
+
+# 1. First-person pronouns (DILARANG)
+echo "--- First-person pronouns ---"
+hits=$(grep -inE '\b(saya|kami|kita)\b' $CHAPTERS | grep -vE '^[^:]+:[0-9]+:%' || true)
+if [ -n "$hits" ]; then
+  fatal "Ditemukan kata ganti orang pertama:"
+  echo "$hits"
+else
+  ok "Tidak ada kata ganti orang pertama."
+fi
+
+# 2. "et al." (harus "dkk.")
+echo "--- 'et al.' usage ---"
+hits=$(grep -inE '\bet\s*al\.?' $CHAPTERS | grep -vE '\.bib:' || true)
+if [ -n "$hits" ]; then
+  fatal "Ditemukan 'et al.' di body (gunakan 'dkk.' di sitasi Indonesia):"
+  echo "$hits"
+else
+  ok "Tidak ada 'et al.' di body."
+fi
+
+# 3. Ampersand "&" sebagai pengganti "dan"
+echo "--- '&' as conjunction ---"
+hits=$(grep -inE '\w\s*&\s*\w' $CHAPTERS | grep -vE 'tabular|align|matrix|cases|begin\{|\\&' || true)
+if [ -n "$hits" ]; then
+  warn "Ditemukan '&' di luar konteks tabular/math (cek apakah seharusnya 'dan'):"
+  echo "$hits"
+fi
+
+# 4. Spelling baku
+echo "--- Spelling baku ---"
+declare -A WRONG_RIGHT=(
+  ["obyek"]="objek"
+  ["analisa"]="analisis"
+  ["sintesa"]="sintesis"
+  ["aktifitas"]="aktivitas"
+  ["praktek"]="praktik"
+  ["nasehat"]="nasihat"
+  ["resiko"]="risiko"
+  ["atlit"]="atlet"
+  ["frekwensi"]="frekuensi"
+)
+for wrong in "${!WRONG_RIGHT[@]}"; do
+  hits=$(grep -inE "\\b${wrong}\\b" $CHAPTERS || true)
+  if [ -n "$hits" ]; then
+    warn "Ejaan tidak baku '${wrong}' (gunakan '${WRONG_RIGHT[$wrong]}'):"
+    echo "$hits"
+  fi
+done
+
+# 5. Decimal point (English) di body Indonesian — should be comma
+echo "--- Decimal separator ---"
+hits=$(grep -inE '[0-9]+\.[0-9]+' $CHAPTERS \
+  | grep -vE 'I+\.[0-9]+|V+\.[0-9]+|X+\.[0-9]+|chapter|section|figure|table|eq|fig|tab|sec|ref|cite|label|input|include' \
+  | grep -vE '\.bib:' || true)
+# Heuristik: angka.angka di body Indonesian biasanya salah; tapi banyak false positive
+if [ -n "$hits" ]; then
+  count=$(echo "$hits" | wc -l)
+  if [ "$count" -gt 5 ]; then
+    warn "Mungkin ada angka desimal dengan titik (Indonesian: gunakan koma). Verifikasi $count kasus:"
+    echo "$hits" | head -10
+  fi
+fi
+
+# 6. Floating figures/tables yang tidak dirujuk
+echo "--- Floats yatim (figure/table tanpa \\ref) ---"
+for f in chapters/*.tex; do
+  labels=$(grep -oE '\\label\{(fig|tab):[^}]+\}' "$f" | sed -E 's/\\label\{(.*)\}/\1/' || true)
+  for lbl in $labels; do
+    if ! grep -qE "\\\\(ref|autoref|cref)\{$lbl\}" chapters/*.tex disertasi.tex 2>/dev/null; then
+      warn "Float yatim (tidak ada \\ref): $lbl di $f"
+    fi
+  done
+done
+
+# 7. Gambar tanpa caption
+echo "--- Figures without \\caption ---"
+hits=$(grep -B2 -A8 '\\begin{figure}' $CHAPTERS | grep -L '\\caption' 2>/dev/null || true)
+# (Heuristik kasar; lebih reliable: cek tiap figure environment punya caption)
+
+# 8. Sitasi yang belum ada di .bib
+echo "--- Citation keys not in .bib ---"
+if [ -f references.bib ]; then
+  cited=$(grep -ohE '\\(cite|citetitb|citenameitb|parencite|textcite)\{[^}]+\}' chapters/*.tex disertasi.tex 2>/dev/null \
+    | sed -E 's/.*\{([^}]+)\}/\1/' | tr ',' '\n' | tr -d ' ' | sort -u)
+  defined=$(grep -E '^@[a-zA-Z]+\{' references.bib | sed -E 's/^@[a-zA-Z]+\{([^,]+),.*/\1/' | sort -u)
+  missing=$(comm -23 <(echo "$cited") <(echo "$defined"))
+  if [ -n "$missing" ]; then
+    fatal "Sitasi merujuk key yang tidak ada di references.bib:"
+    echo "$missing"
+  else
+    ok "Semua sitasi terdefinisi di references.bib."
+  fi
+fi
+
+# Summary
+echo
+if [ "$FATAL" -eq 0 ]; then
+  echo -e "${GREEN}=== Lint passed (no fatal) ===${NC}"
+  exit 0
+else
+  echo -e "${RED}=== Lint FAILED — perbaiki [FATAL] di atas ===${NC}"
+  exit 1
+fi
+```
+
+Beri permission eksekusi: `chmod +x scripts/lint-itb.sh`.
+
+---
+
+## E. Pre-commit hook (opsional tapi sangat dianjurkan)
+
+Buat `.git/hooks/pre-commit`:
+
+```bash
+#!/usr/bin/env bash
+# Mencegah commit jika ada pelanggaran fatal.
+make lint
+```
+
+Atau pakai `pre-commit` framework dengan `.pre-commit-config.yaml`:
+
+```yaml
+repos:
+  - repo: local
+    hooks:
+      - id: itb-lint
+        name: ITB format lint
+        entry: bash scripts/lint-itb.sh
+        language: system
+        files: ^(chapters/.*\.tex|disertasi\.tex)$
+      - id: chktex
+        name: chktex
+        entry: chktex -q -n8 -n24
+        language: system
+        files: \.tex$
+```
+
+---
+
+## F. Word count dan target panjang
+
+Pedoman ITB **tidak mengatur jumlah kata absolut**, tetapi prodi sering
+mengarahkan rentang berikut sebagai pedoman pragmatik:
+
+| Bagian | Target halaman (1.5 spasi, font 12pt) | Estimasi kata |
+|---|---|---|
+| Bab I Pendahuluan | 10–15 | 3.000–4.500 |
+| Bab II Tinjauan Pustaka | 25–40 | 7.500–12.000 |
+| Bab III Dasar Teori | 20–35 | 6.000–10.500 |
+| Bab IV Metodologi | 20–30 | 6.000–9.000 |
+| Bab V Hasil & Pembahasan | 30–50 | 9.000–15.000 |
+| Bab VI Kesimpulan | 5–10 | 1.500–3.000 |
+| **Total body** | **110–180** | **33.000–54.000** |
+
+`make wordcount` memberi snapshot per bab. Kalau Bab II < 5.000 kata atau
+Bab V < 7.000 kata, kemungkinan bab tersebut **kurang dalam** dan perlu
+ekspansi.
+
+---
+
+## G. Verifikasi visual PDF
+
+Setelah `make build`, lakukan **inspeksi manual**:
+
+1. **Margin:** buka PDF, ukur margin kiri pada halaman ganjil (harus 4cm)
+   dan halaman genap (harus 3cm). Banyak viewer menampilkan ruler.
+2. **Penomoran halaman:** verifikasi i, ii, ... untuk pra-bab dan 1, 2, ...
+   untuk Bab I dst.
+3. **Mirror layout:** cetak 4 halaman dwimuka (test print) dan periksa
+   binding edge.
+4. **Header chapter:** pastikan judul bab pakai "BAB I", "BAB II", dst.
+   bukan "Chapter 1".
+5. **Daftar isi/gambar/tabel:** pastikan ter-generate dan halaman benar.
+6. **Bibliografi:** pastikan hanging indent, alfabetis, "dkk." muncul
+   bukan "et al.".
+7. **Cover:** warna biru dongker tepat (CMYK ITB resmi) dan logo emas
+   pada hard cover.
+
+---
+
+## H. Versioning dan kolaborasi
+
+- **Git wajib.** Branch `main` untuk versi yang dikirim ke promotor.
+  Branch `draft/<topik>` untuk eksperimen.
+- **Commit message:** `feat(bab4): tambah subbab IV.4.3 mekanisme fusi`.
+  Gunakan prefix `feat`, `fix`, `style`, `refactor`, `docs`.
+- **Tag versi pengiriman:** `v0.1-promotor-2026-05-15`,
+  `v1.0-sidang-tertutup`.
+- **Backup PDF tiap milestone** ke cloud (Drive/OneDrive ITB).
+- **Jangan commit:** `*.aux`, `*.log`, `*.bbl`, direktori `build/`, file
+  PDF intermediate. Pakai `.gitignore`:
+
+```gitignore
+# Build outputs
+build/
+*.aux
+*.log
+*.toc
+*.lof
+*.lot
+*.out
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.run.xml
+*.synctex.gz
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Final PDF outside project root
+disertasi.pdf
+```
+
+(Note: `disertasi.pdf` di-ignore karena selalu bisa di-rebuild; kalau ingin
+versi PDF spesifik di repo, commit ke folder `releases/`.)
+
+---
+
+## I. Reproducibility eksperimen ML
+
+Disertasi ini berbasis eksperimen ML — reproducibility **wajib**:
+
+- Repo terpisah untuk kode eksperimen (link di Lampiran).
+- File `requirements.txt` / `environment.yml` lengkap dengan versi pin.
+- Random seed disimpan di config; hasil tabel dapat di-reproduksi dari
+  seed + checkpoint yang sama.
+- Hasil di Bab V harus dapat ditelusuri ke commit hash kode eksperimen.
+- Sertakan README di repo kode dengan cara menjalankan tiap eksperimen
+  utama (E1, E2, ...) yang disebut di Bab IV.
+
+---
+
+## J. Pre-submit checklist (urutan eksekusi)
+
+Sebelum mengirim ke promotor / sidang:
+
+```bash
+make distclean        # bersihkan total
+make build            # compile fresh
+make wordcount        # cek panjang per bab
+make check            # lint + chktex
+make spell            # spell check Indonesia
+make pre-submit       # gabungan semua di atas
+```
+
+Lalu inspeksi manual:
+
+- [ ] Lint script keluar exit code 0 (no fatal).
+- [ ] Word count per bab dalam rentang target.
+- [ ] PDF visual: margin, header, footer, cover.
+- [ ] Daftar isi/gambar/tabel akurat.
+- [ ] Bibliografi: alfabetis, hanging indent, "dkk." muncul.
+- [ ] Tidak ada `??` (broken cross-reference) di PDF.
+- [ ] Tidak ada warning "underfull/overfull \hbox" yang terlihat di PDF.
+- [ ] File PDF berukuran wajar (< 30 MB; kalau lebih, kompres gambar).
+- [ ] Tagged PDF (untuk accessibility) — opsional tetapi makin disyaratkan.
+- [ ] Metadata PDF benar (judul, penulis) — set via `\hypersetup`.
+
+```latex
+\hypersetup{
+  pdftitle={Prediksi Sisa Umur Pakai Bantalan Gelinding ...},
+  pdfauthor={Nama Lengkap},
+  pdfsubject={Disertasi Doktor ITB},
+  pdfkeywords={RUL, bantalan, Mamba, xLSTM, SAE, interpretabilitas},
+  bookmarksnumbered=true,
+  pdfdisplaydoctitle=true
+}
+```
+
+---
+
+## K. Anti-pattern di workflow
+
+- ❌ Compile manual berkali-kali tanpa `latexmk` — error tertelan.
+- ❌ Tidak pakai version control sampai akhir.
+- ❌ Mengganti hyperparameter di kode eksperimen tetapi lupa update Tabel
+  IV.x.
+- ❌ "Compile sekali sebelum sidang" — banyak masalah baru kelihatan saat
+  kompilasi penuh (cross-reference, glossary, indeks).
+- ❌ Menjalankan `make build` di laptop pinjaman tanpa TeX Live lengkap
+  → kekurangan paket.
+- ❌ Menyimpan plot raster dengan resolusi rendah (< 200 dpi). Pakai
+  vektor (PDF/SVG) atau PNG ≥ 300 dpi.

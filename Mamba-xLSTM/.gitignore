@@ -1,0 +1,30 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Lightning / experiment artefacts
+results/checkpoints/
+results/runs/
+lightning_logs/
+*.ckpt
+*.pt
+mlruns/
+wandb/
+
+# Cache and tmp
+.cache/
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store
+*.log
+*.tmp
+
+# Data caches local to the package
+data_cache/
+hi_cache/

@@ -1,0 +1,12 @@
+# A1: drop the Mamba branch (xLSTM only).
+# Implemented by reusing MambaXLSTMNet with mamba_blocks=0 (Mamba stack
+# becomes a no-op pass-through) and fusion=concat so the output is a
+# learned linear over [xLSTM(x), proj(x)] instead of a gated mix.
+model:
+  name: ablation_a1_no_mamba
+  base: mamba_xlstm_net
+  mamba_blocks: 0
+  mamba_bidirectional: false
+  fusion: concat
+ablation:
+  description: "xLSTM only (Mamba branch disabled)"

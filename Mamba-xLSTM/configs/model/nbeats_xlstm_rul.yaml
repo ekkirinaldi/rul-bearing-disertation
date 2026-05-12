@@ -1,0 +1,27 @@
+model:
+  name: nbeats_xlstm_rul
+  # v3 (post long bf16 cloud v2): vanilla N-BEATS still wins on PHM2012. Cloud v2 overscaled
+  # the trunk + froze the mLSTM front too long → worse val/test generalization than
+  # v1 xLSTM. This revision: match ``configs/model/nbeats_rul.yaml`` stack width/depth,
+  # drop hybrid learned shock (extra parameters, weak PHM signal), auto encoder kernel
+  # (5 PHM / 7 XJTU), shorter xLSTM stack with dropout between blocks, monotone trend.
+  model_specific_loss: true
+  film_num_embeddings: 4
+  kurt_index: 8
+  lambda_wear_sparse: 0.0001
+  hidden_dim: 96
+  trend_blocks: 2
+  wear_blocks: 2
+  shock_blocks: 2
+  poly_degree: 4
+  n_shock_basis: 14
+  dropout: 0.15
+  monotone_trend: true
+  hybrid_learned_shock: false
+  xlstm_d_model: 96
+  xlstm_heads: 4
+  xlstm_num_blocks: 2
+  xlstm_inter_dropout: 0.15
+
+train:
+  model_specific_loss: true

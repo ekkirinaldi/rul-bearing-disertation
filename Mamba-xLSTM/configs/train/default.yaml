@@ -1,0 +1,13 @@
+train:
+  max_epochs: 200
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  scheduler: cosine
+  warmup_epochs: 5
+  monotonicity_weight: 0.01
+  gradient_clip_val: 1.0
+  early_stopping_patience: 20
+  precision: 32-true            # auto-promoted to bf16-mixed on A100+
+  seed: 42
+  results_root: results
+  run_id: null                  # set by scripts/train.py

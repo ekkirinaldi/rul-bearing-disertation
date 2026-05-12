@@ -1,0 +1,44 @@
+# XJTU-SY — Liu et al. (Sensors 2026, 26, 1578) strict track (explicit filename, same keys as ``xjtu_sy_paper.yaml``).
+#
+# Pair with ``configs/train/paper_liu2026.yaml`` (Table 3: 50 epochs, lr=1e-3, MSE;
+# checkpoint_monitor=train/loss — paper Table 1 has no validation split).
+#
+# Table 1 split (train per condition, test = center bearing 1_3 / 2_3 / 3_3).
+# §3.1.1 horizontal only; §3.2 34 features → T_o → ISOMAP; §3.3.1 adds normalized time index;
+# piecewise RUL from Liu ISOMAP onset (same 3σ rule as PHM track).
+#
+# Condition 3 (40Hz10kN) must exist under ``root``/40Hz10kN for the full 12-train / 3-test split.
+data:
+  dataset: xjtusy
+  root: ../data-bearing/xtju-sy
+  cache_dir: ../data-bearing/processed/xjtusy
+
+  hi_pipeline: liu2026_xjtu
+  phm_horizontal_only: true
+  label_scheme: piecewise_liu2026
+  allow_train_val_overlap: true
+
+  train_bearings:
+    - "1_1"
+    - "1_2"
+    - "1_4"
+    - "1_5"
+    - "2_1"
+    - "2_2"
+    - "2_4"
+    - "2_5"
+    - "3_1"
+    - "3_2"
+    - "3_4"
+    - "3_5"
+  val_bearings: ["1_1"]
+  test_bearings: ["1_3", "2_3", "3_3"]
+
+  window_length: 10
+  stride_train: 1
+  stride_eval: 1
+
+  smoothing_alpha: 0.1
+  n_bands: 5
+  batch_size: 32
+  num_workers: 0

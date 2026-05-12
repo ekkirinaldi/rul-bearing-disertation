@@ -1,0 +1,310 @@
+---
+description: Aturan penulisan Bab V Hasil dan Pembahasan — penyajian hasil, ablasi, analisis interpretabilitas, dan diskusi
+globs: chapters/05-*.tex
+alwaysApply: false
+---
+
+# Bab V — Hasil dan Pembahasan
+
+Bab V adalah tempat **bukti** disajikan. Setiap klaim novelty di Bab I harus
+ter-back-up oleh data eksperimen di sini. Pembaca yang skeptis harus
+keluar dari bab ini dengan keyakinan bahwa metode usulan **berhasil** dan
+**memberi insight baru**.
+
+> Pedoman ITB §V.3.5: "Hasil dan pembahasan menyajikan temuan penelitian
+> beserta analisis dan interpretasinya, dikaitkan dengan teori, hipotesis,
+> dan penelitian terdahulu."
+
+---
+
+## A. Prinsip emas Bab V
+
+1. **Satu eksperimen → satu sub-subbab.** Jangan campur ablasi arsitektur
+   dengan ablasi hyperparameter dalam satu paragraf yang sama.
+2. **Selalu pasangkan tabel/gambar dengan diskusi.** Tabel tanpa interpretasi
+   adalah _data dump_, bukan pembahasan.
+3. **Tulis hasil dengan jujur.** Jika baseline mengalahkan metode usulan pada
+   satu kasus, jangan disembunyikan — jelaskan kenapa, dan apa yang dipelajari.
+4. **Kaitkan kembali ke RQ dan hipotesis.** Tutup tiap sub-subbab dengan satu
+   kalimat jenis: "Hasil ini mendukung/menolak Hipotesis Hx."
+5. **Jangan menyimpan kesimpulan untuk Bab VI saja.** Bab V harus punya
+   _findings_ yang tegas — Bab VI hanya merangkum dan generalisasi.
+
+---
+
+## B. Struktur subbab yang direkomendasikan
+
+```
+V.1  Hasil Eksperimen Utama (Main Results)
+     V.1.1 Perbandingan dengan SOTA — XJTU-SY
+     V.1.2 Perbandingan dengan SOTA — PHM2012
+     V.1.3 Visualisasi Kurva Prediksi
+V.2  Studi Ablasi
+     V.2.1 Ablasi Komponen Arsitektur
+     V.2.2 Ablasi Hyperparameter
+V.3  Analisis Interpretabilitas
+     V.3.1 Atribusi Fitur (SHAP, Integrated Gradients)
+     V.3.2 Sparse Autoencoder: Konsep yang Ditemukan
+     V.3.3 Korespondensi dengan Frekuensi Karakteristik Bantalan
+V.4  Generalisasi Lintas Dataset
+V.5  Pembahasan Lebih Lanjut
+     V.5.1 Kekuatan dan Kelemahan Metode Usulan
+     V.5.2 Posisi terhadap State-of-the-art
+     V.5.3 Implikasi Praktis
+V.6  Keterbatasan Penelitian
+```
+
+---
+
+## C. Aturan untuk subbab V.1 — Hasil Utama
+
+### C.1 Tabel perbandingan
+
+Format **wajib** untuk tabel perbandingan SOTA:
+
+- Nilai terbaik **bold**, runner-up dengan _underline_.
+- Sertakan rerata $\pm$ standar deviasi (dari minimal 5 seed).
+- Baris terbawah: metode usulan.
+- Tambahkan kolom "Param (M)" atau "FLOPs" kalau klaim efisiensi relevan.
+
+```latex
+\begin{table}[ht]
+\centering
+\caption{Perbandingan kinerja prediksi RUL pada dataset XJTU-SY (Kondisi 1).
+Hasil terbaik di-\textbf{bold}, runner-up di-\underline{garis bawah}.}
+\label{tab:bab5_xjtusy_main}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Metode & Param (M) & RMSE $\downarrow$ & MAE $\downarrow$ & Score $\uparrow$ \\
+\midrule
+LSTM \citetitb{Hochreiter1997LSTM}      & 0{,}5  & 0{,}142 $\pm$ 0{,}008 & 0{,}108 $\pm$ 0{,}006 & 0{,}412 \\
+Transformer \citetitb{Vaswani2017}      & 1{,}8  & 0{,}128 $\pm$ 0{,}007 & 0{,}094 $\pm$ 0{,}005 & 0{,}471 \\
+Informer \citetitb{Zhou2021Informer}    & 2{,}1  & 0{,}119 $\pm$ 0{,}006 & 0{,}087 $\pm$ 0{,}005 & 0{,}503 \\
+Mamba \citetitb{Gu2023Mamba}            & 1{,}3  & \underline{0{,}108} $\pm$ 0{,}005 & \underline{0{,}079} $\pm$ 0{,}004 & \underline{0{,}548} \\
+xLSTM \citetitb{Beck2024xLSTM}          & 1{,}5  & 0{,}112 $\pm$ 0{,}006 & 0{,}082 $\pm$ 0{,}004 & 0{,}531 \\
+\midrule
+\textbf{Mamba-xLSTM-Net (usulan)} & 1{,}7 & \textbf{0{,}094} $\pm$ 0{,}004 & \textbf{0{,}068} $\pm$ 0{,}003 & \textbf{0{,}612} \\
+\bottomrule
+\end{tabular}
+\end{table}
+```
+
+### C.2 Diskusi pasca-tabel
+
+Setelah tabel, paragraf diskusi minimal mencakup:
+
+1. **Pembacaan langsung**: angka mana yang menonjol dan kenapa.
+2. **Pembanding terkuat**: bandingkan dengan runner-up secara naratif.
+3. **Statistical significance** (kalau dilakukan paired-test): sebut p-value
+   atau confidence interval.
+4. **Hubungan ke hipotesis**: "Hasil ini mendukung Hipotesis H1 ..."
+
+Contoh bahasa:
+
+> Tabel~\ref{tab:bab5_xjtusy_main} menunjukkan bahwa Mamba-xLSTM-Net
+> mengungguli seluruh baseline pada ketiga metrik dengan margin yang
+> konsisten. Penurunan RMSE sebesar 13~\% relatif terhadap Mamba murni
+> (runner-up) menunjukkan bahwa kombinasi state-space dengan recurrent
+> matrix memori memberikan keunggulan nyata, bukan sekadar artefak
+> hyperparameter — sebagaimana akan ditegaskan oleh studi ablasi pada
+> Subbab~\ref{subsec:bab5_ablasi}. Hasil ini mendukung
+> Hipotesis~H1 yang dirumuskan di Subbab~\ref{subsec:bab1_hipotesis}.
+
+### C.3 Kurva prediksi RUL
+
+Untuk visualisasi kurva (Gambar V.x):
+
+- Plot prediksi vs ground truth pada satu bantalan test, sumbu-x = waktu /
+  cycle, sumbu-y = RUL ternormalisasi.
+- Sertakan band ketidakpastian (mean $\pm$ std dari 5 seed) jika memungkinkan.
+- Gunakan minimal 2 baseline pembanding pada plot yang sama untuk efek
+  visual jelas.
+- Caption harus mengidentifikasi bantalan ($Bearing 1\_3$ misalnya).
+
+---
+
+## D. Aturan untuk subbab V.2 — Ablasi
+
+### D.1 Ablasi arsitektur
+
+Tabel ablasi standar — buang satu komponen pada satu waktu:
+
+```latex
+\begin{table}[ht]
+\centering
+\caption{Studi ablasi komponen arsitektur Mamba-xLSTM-Net (XJTU-SY Kondisi 1).}
+\label{tab:bab5_ablasi_arch}
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Konfigurasi & RMSE $\downarrow$ & MAE $\downarrow$ \\
+\midrule
+Mamba-xLSTM-Net (lengkap)                        & \textbf{0{,}094} & \textbf{0{,}068} \\
+\quad tanpa modul Mamba                          & 0{,}118 & 0{,}086 \\
+\quad tanpa mLSTM                                & 0{,}107 & 0{,}079 \\
+\quad tanpa sLSTM                                & 0{,}102 & 0{,}075 \\
+\quad fusi diganti penjumlahan sederhana         & 0{,}099 & 0{,}072 \\
+\quad tanpa SAE (post-hoc)                       & 0{,}094 & 0{,}068 \\
+\bottomrule
+\end{tabular}
+\end{table}
+```
+
+Catatan: SAE _post-hoc_ tidak mempengaruhi prediksi RUL — angkanya identik.
+Ini **fitur, bukan bug** — wajib ditegaskan di paragraf diskusi.
+
+### D.2 Ablasi hyperparameter
+
+Untuk hyperparameter kontinu (dimensi state, jumlah head), gunakan **plot**
+bukan tabel — lebih mudah membaca tren. Format:
+
+- Sumbu-x = nilai hyperparameter, sumbu-y = metrik.
+- Tandai konfigurasi default dengan marker khusus.
+- Tambahkan keterangan trade-off (akurasi vs param/latensi) bila relevan.
+
+---
+
+## E. Aturan untuk subbab V.3 — Interpretabilitas
+
+Ini bagian yang membedakan disertasi ini dari paper RUL biasa. Wajib teliti.
+
+### E.1 SHAP / IG
+
+- Tampilkan **bar plot atribusi global** per fitur, urut dari terbesar ke
+  terkecil (Gambar V.x).
+- Lengkapi dengan **plot temporal** untuk satu bantalan: bagaimana atribusi
+  berubah seiring degradasi (early/mid/late life).
+- Diskusi harus menjawab: fitur mana yang dominan? Apakah konsisten dengan
+  literatur diagnosis bantalan? Apakah bergeser saat degradasi memburuk?
+
+### E.2 Sparse Autoencoder
+
+Bagian ini paling rentan menjadi _hand-wavy_. Aturan ketat:
+
+1. Tampilkan **distribusi sparsity** aktivasi SAE (histogram jumlah neuron
+   aktif per sampel) untuk membuktikan SAE memang sparse.
+2. Pilih **3–5 fitur SAE yang paling sering aktif**, dan demonstrasikan
+   _maximum-activating examples_ — sampel mana yang membuat fitur itu
+   menyala paling kuat. Lampirkan plot vibration di sampel-sampel itu.
+3. Untuk setiap fitur SAE yang dibahas, beri **interpretasi fisis** dengan
+   merujuk ke spektrum frekuensi: misal "Fitur SAE #142 berkorelasi tinggi
+   dengan komponen spektral di sekitar BPFO bantalan, mengindikasikan
+   model belajar mendeteksi cacat outer race."
+
+```latex
+\begin{table}[ht]
+\centering
+\caption{Interpretasi fisis tiga fitur SAE paling sering aktif di fase late-life
+bantalan Bearing~1\_3 (XJTU-SY).}
+\label{tab:bab5_sae_concepts}
+\small
+\begin{tabular}{@{}clp{6.5cm}@{}}
+\toprule
+Fitur SAE & Korelasi dominan & Interpretasi \\
+\midrule
+\#142 & Spektrum 87 Hz (BPFO)        & Cacat outer race \\
+\#073 & RMS \& Crest factor naik     & Kerusakan progresif amplitudo \\
+\#218 & Kurtosis \& Impulse factor   & Impuls transien (pitting) \\
+\bottomrule
+\end{tabular}
+\end{table}
+```
+
+### E.3 Korespondensi konsep–frekuensi karakteristik
+
+Subbab ini sangat memperkuat klaim novelty. Kalau berhasil menunjukkan
+fitur SAE menyala bertepatan dengan BPFO/BPFI/BSF teoretis, **itu yang
+membuat reviewer percaya** bahwa SAE benar-benar menemukan struktur fisis,
+bukan menghafal noise.
+
+Tampilkan: spektrum frekuensi sampel + garis vertikal di frekuensi
+karakteristik teoretis + heatmap aktivasi SAE.
+
+---
+
+## F. Aturan untuk subbab V.4 — Generalisasi Lintas Dataset
+
+Tabel sederhana: train pada A, test pada B, dan sebaliknya.
+Diskusi fokus pada apakah model **transfer**, dan kalau tidak, kenapa
+(perbedaan kondisi operasi, sampling rate, jenis bantalan).
+
+---
+
+## G. Aturan untuk subbab V.5 — Pembahasan Lanjutan
+
+Di sini tulisan menjadi lebih reflektif, kurang numerik. Tetap akademis,
+tidak boleh spekulatif tanpa basis.
+
+Kerangka tiga-paragraf:
+
+1. **Kekuatan**: di mana metode usulan unggul dan kenapa secara teoretis.
+2. **Kelemahan**: di kasus apa metode gagal/tertinggal, dan apa
+   penjelasannya. Jangan menutupi.
+3. **Posisi terhadap SOTA**: bandingkan secara konseptual, bukan hanya
+   angka. Apa yang Mamba-xLSTM-Net tawarkan yang tidak ditawarkan
+   Informer/PatchTST/dll.
+
+---
+
+## H. Aturan untuk subbab V.6 — Keterbatasan
+
+Bab keterbatasan yang **jujur** justru menambah kredibilitas. Daftar
+calon keterbatasan untuk disertasi ini:
+
+- Validasi terbatas pada bantalan gelinding — belum diuji pada bantalan
+  jenis lain (luncur, magnetik).
+- Asumsi degradasi monoton; pada kasus dunia nyata bisa ada periode
+  recovery atau plateau.
+- Kondisi operasi dataset relatif terkendali (laboratorium); dunia
+  industri lebih bising.
+- Klaim interpretabilitas didasarkan pada korelasi statistik, bukan
+  intervensi kausal.
+- Komputasi pelatihan masih relatif mahal untuk on-edge deployment.
+
+Tulis dengan jujur tetapi konstruktif — keterbatasan menjadi seed untuk
+"Saran Pekerjaan Lanjut" di Bab VI.
+
+---
+
+## I. Aturan format dan tipografi spesifik Bab V
+
+- **Angka pada tabel**: gunakan koma desimal (Indonesian), 3 desimal untuk
+  metrik akurasi, 1 desimal untuk persentase.
+- **Konsistensi metrik**: jangan campur "RMSE" dengan "Root Mean Square
+  Error" dalam bab yang sama. Tetapkan satu, pakai konsisten.
+- **Caption gambar**: kalau menampilkan multi-panel, sebutkan label
+  panel di caption ("(a) ... (b) ... (c) ...").
+- **Plot defaults**: ukuran font legible saat di-print (font label minimum
+  9pt), warna tetap dibedakan saat dicetak grayscale (gunakan `linestyle`
+  selain warna), legend diletakkan di luar area plot kalau crowded.
+
+---
+
+## J. Anti-pattern di Bab V
+
+- ❌ Tabel angka tanpa paragraf diskusi setelahnya.
+- ❌ Klaim "metode usulan signifikan lebih baik" tanpa uji statistik.
+- ❌ Membuang hasil yang tidak menguntungkan ("cherry-picking").
+- ❌ Plot dengan font terlalu kecil sampai tak terbaca di hard copy.
+- ❌ Diskusi yang hanya mengulang angka yang ada di tabel.
+- ❌ Mencampur _result_ dan _conclusion_ — kesimpulan akhir disimpan
+  untuk Bab VI.
+- ❌ Klaim interpretabilitas tanpa contoh konkret dan tanpa korespondensi
+  fisis.
+
+---
+
+## K. Checklist sebelum menutup Bab V
+
+- [ ] Setiap RQ di Bab I terjawab oleh minimal satu sub-subbab di Bab V.
+- [ ] Setiap hipotesis (H1, H2, ...) secara eksplisit dinyatakan
+      didukung/ditolak.
+- [ ] Tabel perbandingan SOTA lengkap dengan rerata $\pm$ std.
+- [ ] Studi ablasi mencakup minimal: arsitektur + hyperparameter kritis.
+- [ ] Bagian interpretabilitas memuat: atribusi global, atribusi temporal,
+      analisis SAE dengan contoh konkret, dan korespondensi fisis.
+- [ ] Bagian keterbatasan ditulis jujur dan akan dijawab di Bab VI sebagai
+      future work.
+- [ ] Tidak ada klaim baru di Bab V yang belum dipersiapkan oleh Bab I-IV.
+- [ ] Semua gambar/tabel disebut di teks (tidak ada float yatim).

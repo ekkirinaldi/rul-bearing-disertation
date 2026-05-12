@@ -1,0 +1,29 @@
+model:
+  name: mamba_xlstm_net
+  d_model: 128
+
+  xlstm_blocks: 3
+  slstm_positions: [1]
+  xlstm_heads: 4
+  xlstm_force_fallback: false
+
+  mamba_blocks: 2
+  mamba_d_state: 128          # Mamba-3 state size N (paper default; pairs of state channels)
+  mamba_d_conv: 4             # legacy field, ignored by Mamba-3 (no short causal conv)
+  mamba_expand: 2             # d_inner = expand * d_model
+  mamba_headdim: 64           # per-head channel width; n_heads = d_inner // headdim
+  mamba_n_groups: 1           # B/C shared within each group; forwarded as ngroups
+  mamba_rope_fraction: 0.5    # partial RoPE on first 50% of state channels (official default)
+  mamba_is_mimo: false        # SISO scan; set true on CUDA + mamba_ssm to enable MIMO Mamba-3
+  mamba_mimo_rank: 4          # MIMO rank (only used when is_mimo: true)
+  mamba_chunk_size: 64        # SSD chunk size; use 64/mimo_rank when is_mimo: true
+  mamba_is_outproj_norm: false  # default: y * SiLU(z); set true for hybrid models (gated RMSNorm)
+  mamba_bidirectional: true
+  mamba_backend: auto         # auto | mamba_ssm | mambapy | vanilla
+                              #   mamba_ssm = state-spaces/mamba `Mamba3` (CUDA + Triton, build from source)
+                              #   mambapy   = no Mamba-3 implementation; auto-falls back to vanilla
+                              #   vanilla   = pure-PyTorch SISO Mamba-3 reference (CPU/MPS/CUDA)
+
+  fusion: gated               # gated | cross_attention | concat
+  head_hidden: 64
+  dropout: 0.1

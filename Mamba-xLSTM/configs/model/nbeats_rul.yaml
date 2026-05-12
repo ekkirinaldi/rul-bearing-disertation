@@ -1,0 +1,15 @@
+model:
+  name: nbeats_rul
+  # v4: v3 was the best N-BEATS run so far (PHM2012 test RMSE 0.186, R² 0.556).
+  # Only one surgical change: bump the polynomial trend degree 3→4. Bearing RUL
+  # decays ~cubic/quartic on the unit interval, and N-BEATS' trend block is
+  # currently the most capacity-starved of the three stacks. Everything else
+  # that v3 won with stays put.
+  hidden_dim: 96
+  trend_blocks: 2
+  wear_blocks: 2
+  shock_blocks: 2
+  poly_degree: 4
+  n_harmonics: 5
+  n_shock_basis: 14
+  dropout: 0.15

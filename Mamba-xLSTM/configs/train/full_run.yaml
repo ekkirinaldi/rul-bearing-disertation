@@ -1,0 +1,32 @@
+# Full run — 200 epochs, fp32-true (CPU / MPS / CUDA safe).
+#
+# Purpose: standard dissertation training budget for any algorithm on any
+# machine. Slower than cloud_full_75.yaml (bf16 GPU) but reproducible
+# everywhere including Apple Silicon MPS and plain CPU.
+#
+# Key guarantee: early_stopping_patience = 9999 → always runs all 200 epochs.
+# This is the only way to get comparable, fair results across algorithms —
+# runs that stop early at different epoch counts are NOT comparable.
+#
+# Usage:
+#   # via --mode shortcut (recommended):
+#   python scripts/run_algorithm_comparison.py --mode full --models nbeats_rul diffusion_rul
+#
+#   # direct --train override:
+#   python scripts/train.py --train configs/train/full_run.yaml ...
+#
+# For GPU/RunPod with bf16 acceleration, use cloud_full_75.yaml (default cloud preset).
+
+train:
+  max_epochs: 200
+  lr: 8.0e-4
+  weight_decay: 3.0e-4
+  scheduler: cosine
+  warmup_epochs: 10
+  monotonicity_weight: 0.05
+  gradient_clip_val: 1.0
+  early_stopping_patience: 9999   # always run all 200 epochs — no early stop
+  precision: 32-true
+  seed: 42
+  results_root: results
+  run_id: null

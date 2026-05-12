@@ -1,0 +1,44 @@
+# XJTU-SY — Liu et al. (Sensors 2026, 26, 1578) **paper-fidelity** data track (Table 1 + §3.2 + §3.3.1 + Table 3).
+#
+# Use the SAME file for baseline vs Mamba; only swap ``--model``. Pair with
+# ``configs/train/paper_liu2026.yaml`` (Table 3 hyperparameters; train/loss
+# monitoring because Table 1 defines no validation split).
+#
+# For the legacy dissertation XJTU split (default HI, linear labels, L=32), use ``xjtu_sy.yaml``.
+#
+# Table 1 split | §3.1.1 horizontal | §3.2 ISOMAP HI | §3.3.1 + time_idx column | piecewise_liu2026 labels.
+# Alias / duplicate keys: ``configs/data/xjtu_sy_liu2026_strict.yaml``.
+data:
+  dataset: xjtusy
+  root: ../data-bearing/xtju-sy
+  cache_dir: ../data-bearing/processed/xjtusy
+
+  hi_pipeline: liu2026_xjtu
+  phm_horizontal_only: true
+  label_scheme: piecewise_liu2026
+  allow_train_val_overlap: true
+
+  train_bearings:
+    - "1_1"
+    - "1_2"
+    - "1_4"
+    - "1_5"
+    - "2_1"
+    - "2_2"
+    - "2_4"
+    - "2_5"
+    - "3_1"
+    - "3_2"
+    - "3_4"
+    - "3_5"
+  val_bearings: ["1_1"]
+  test_bearings: ["1_3", "2_3", "3_3"]
+
+  window_length: 10
+  stride_train: 1
+  stride_eval: 1
+
+  smoothing_alpha: 0.1
+  n_bands: 5
+  batch_size: 32
+  num_workers: 0

@@ -1,0 +1,20 @@
+model:
+  name: phase_moe_xlstm_rul
+  model_specific_loss: true
+  d_model: 128
+  n_phases: 3
+  dropout: 0.1
+  hi_index: 0
+  kurt_index: 2
+  healthy_window: 8
+  lambda_mono: 0.1
+  lambda_paris: 0.05
+  lambda_phase: 0.1
+  healthy_threshold: 0.7
+  prefailure_threshold: 0.3
+
+train:
+  model_specific_loss: true
+  # Physics-informed loss already penalizes non-monotone ``rul_per_step``; keep scalar
+  # monotonicity off to avoid double-counting with ``RULLitModule``.
+  monotonicity_weight: 0.0

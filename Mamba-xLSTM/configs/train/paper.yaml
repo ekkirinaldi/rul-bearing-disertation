@@ -1,0 +1,27 @@
+# Paper-fidelity training overlay for the xLSTM-Transformer baseline.
+#
+# Mirrors Liu et al. (Sensors 2026, 26, 1578) §3.3 / Table 3:
+#   * 50 epochs
+#   * Adam optimizer, lr = 1e-3, no explicit LR schedule
+#   * Pure MSE loss (no monotonicity regularizer)
+#   * dropout 0.1 (set on the model side)
+#
+# We keep early-stopping disabled so the baseline runs the full 50 epochs
+# regardless of overfitting noise (matches the paper's reported curves).
+#
+# PHM2012 / XJTU Liu strict data (``phm2012_paper.yaml`` / ``xjtu_sy_paper.yaml`` with
+# ``hi_pipeline: liu2026_*``): use ``paper_liu2026.yaml`` instead so checkpoints follow
+# ``train/loss`` (no real val split).
+train:
+  max_epochs: 50
+  lr: 1.0e-3
+  weight_decay: 0.0           # paper uses plain Adam (no weight decay)
+  scheduler: none             # disable cosine
+  warmup_epochs: 0
+  monotonicity_weight: 0.0    # paper trains with MSE only
+  gradient_clip_val: 1.0
+  early_stopping_patience: 9999  # effectively off; full 50 epochs
+  precision: 32-true
+  seed: 42
+  results_root: results
+  run_id: null

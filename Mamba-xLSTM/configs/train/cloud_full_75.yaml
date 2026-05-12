@@ -1,0 +1,24 @@
+# 75-epoch cloud / RunPod GPU training preset (default ``--mode cloud`` budget).
+#
+# bf16-mixed, cosine schedule with ``T_max = max_epochs``, no early stopping
+# (``early_stopping_patience: 9999``). Override length with ``train.py
+# --max-epochs N`` only if ``N`` matches the intended cosine horizon.
+#
+# Use with scripts/run_algorithm_comparison.py or scripts/train.py on CUDA.
+
+train:
+  max_epochs: 75
+  lr: 8.0e-4
+  weight_decay: 3.0e-4
+  xlstm_lr_mult: 0.75
+  freeze_xlstm_epochs: 5
+  scheduler: cosine
+  warmup_epochs: 5
+  monotonicity_weight: 0.05
+  gradient_clip_val: 1.0
+  # Full budget (no early stop); same pattern as algorithm_comparison / paper.yaml.
+  early_stopping_patience: 9999
+  precision: bf16-mixed
+  seed: 42
+  results_root: results
+  run_id: null

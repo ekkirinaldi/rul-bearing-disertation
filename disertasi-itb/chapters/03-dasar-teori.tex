@@ -1,0 +1,178 @@
+%% chapters/03-dasar-teori.tex
+%% Bab III — Dasar Teori
+%% Aturan: lihat .cursor/rules/08-bab3-dasar-teori.mdc
+%% Berisi formulasi matematis lengkap; Bab IV merujuk persamaan-persamaan di sini.
+
+\chapter{Dasar Teori}
+\label{bab:dasar-teori}
+
+Bab ini memuat fondasi teoretis yang menjadi dasar metodologi pada
+Bab~\ref{bab:metodologi}. Disajikan formulasi matematis dari prediksi
+RUL, varian arsitektur LSTM (sLSTM, mLSTM), \emph{state-space model}
+dan Mamba, \emph{attention}, \emph{Sparse Autoencoder}, metode
+atribusi, serta metrik evaluasi.
+
+\section{Formulasi Prediksi RUL}
+\label{subsec:bab3_rul}
+
+\subsection{Definisi RUL}
+\label{subsec:bab3_def_rul}
+
+Diberikan deret waktu sinyal getaran $\{\mathbf{x}_t\}_{t=1}^{T}$
+dengan $\mathbf{x}_t \in \mathbb{R}^{d_{\text{in}}}$, RUL pada waktu
+$t$ didefinisikan sebagai
+\begin{equation}
+y_t = T_{\text{EOL}} - t,
+\label{eq:bab3_rul_def}
+\end{equation}
+dengan $T_{\text{EOL}}$ adalah waktu \emph{end-of-life} bantalan.
+Dalam praktik, RUL dinormalisasi ke selang $[0,1]$.
+
+\subsection{Skema Pelabelan}
+\label{subsec:bab3_label}
+
+% Linear, piecewise (constant healthy phase + linear degrading phase),
+% exponential. Disertasi ini akan menggunakan pendekatan piecewise
+% (lihat Bab IV).
+\dots
+
+\section{Long Short-Term Memory dan Variannya}
+\label{subsec:bab3_lstm}
+
+\subsection{LSTM Klasik}
+\label{subsec:bab3_lstm_classic}
+
+% Persamaan gating LSTM original (Hochreiter & Schmidhuber, 1997).
+\begin{align}
+\mathbf{f}_t &= \sigma(\mathbf{W}_f \mathbf{x}_t + \mathbf{U}_f \mathbf{h}_{t-1} + \mathbf{b}_f) \label{eq:bab3_lstm_f} \\
+\mathbf{i}_t &= \sigma(\mathbf{W}_i \mathbf{x}_t + \mathbf{U}_i \mathbf{h}_{t-1} + \mathbf{b}_i) \\
+\mathbf{o}_t &= \sigma(\mathbf{W}_o \mathbf{x}_t + \mathbf{U}_o \mathbf{h}_{t-1} + \mathbf{b}_o) \\
+\tilde{\mathbf{c}}_t &= \tanh(\mathbf{W}_c \mathbf{x}_t + \mathbf{U}_c \mathbf{h}_{t-1} + \mathbf{b}_c) \\
+\mathbf{c}_t &= \mathbf{f}_t \odot \mathbf{c}_{t-1} + \mathbf{i}_t \odot \tilde{\mathbf{c}}_t \\
+\mathbf{h}_t &= \mathbf{o}_t \odot \tanh(\mathbf{c}_t)
+\end{align}
+
+\subsection{sLSTM (\emph{scalar} LSTM)}
+\label{subsec:bab3_slstm}
+
+% Pekerjaan Beck dkk. (2024). Stabilizer + exponential gates.
+\dots
+
+\subsection{mLSTM (\emph{matrix} LSTM)}
+\label{subsec:bab3_mlstm}
+
+% Persamaan mLSTM dengan matrix memory.
+\begin{equation}
+\mathbf{C}_t = \mathbf{f}_t \mathbf{C}_{t-1} + \mathbf{i}_t \mathbf{v}_t \mathbf{k}_t^{\top}
+\label{eq:bab3_mlstm_C}
+\end{equation}
+\dots
+
+\section{\emph{State-Space Models} dan Mamba}
+\label{subsec:bab3_ssm}
+
+\subsection{SSM Kontinu}
+\label{subsec:bab3_ssm_kontinu}
+
+\begin{align}
+\dot{\mathbf{h}}(t) &= \mathbf{A} \mathbf{h}(t) + \mathbf{B} x(t) \\
+y(t) &= \mathbf{C} \mathbf{h}(t)
+\label{eq:bab3_ssm_kontinu}
+\end{align}
+
+\subsection{Diskretisasi Zero-Order Hold}
+\label{subsec:bab3_ssm_diskret}
+
+\begin{align}
+\bar{\mathbf{A}} &= \exp(\Delta \mathbf{A}) \\
+\bar{\mathbf{B}} &= (\Delta \mathbf{A})^{-1}(\exp(\Delta \mathbf{A}) - \mathbf{I}) \cdot \Delta \mathbf{B}
+\label{eq:bab3_zoh}
+\end{align}
+
+\subsection{Mamba: Selektivitas dan \emph{Selective Scan}}
+\label{subsec:bab3_mamba}
+
+% Inovasi Mamba: $\mathbf{B}, \mathbf{C}, \Delta$ tergantung input,
+% sehingga selektif. Selective scan algorithm.
+\dots
+
+\section{Mekanisme \emph{Attention}}
+\label{subsec:bab3_attn}
+
+\begin{equation}
+\text{Attn}(\mathbf{Q},\mathbf{K},\mathbf{V}) = \mathrm{softmax}\!\left(\frac{\mathbf{Q}\mathbf{K}^{\top}}{\sqrt{d_k}}\right)\mathbf{V}
+\label{eq:bab3_attn}
+\end{equation}
+
+\section{\emph{Sparse Autoencoder}}
+\label{subsec:bab3_sae}
+
+\subsection{Formulasi Dasar}
+\label{subsec:bab3_sae_basic}
+
+\begin{align}
+\mathbf{z}_t &= \text{ReLU}(\mathbf{W}_e \mathbf{h}_t + \mathbf{b}_e) \\
+\hat{\mathbf{h}}_t &= \mathbf{W}_d \mathbf{z}_t + \mathbf{b}_d \\
+\mathcal{L}_{\text{SAE}} &= \|\mathbf{h}_t - \hat{\mathbf{h}}_t\|_2^2 + \lambda \cdot \Omega(\mathbf{z}_t)
+\label{eq:bab3_sae_loss}
+\end{align}
+
+\subsection{Top-$k$ Sparsity}
+\label{subsec:bab3_topk}
+
+\begin{equation}
+\mathbf{z}_t^{(k)} = \mathrm{TopK}_k(\mathbf{z}_t)
+\label{eq:bab3_topk}
+\end{equation}
+
+\section{Metode Atribusi: SHAP dan \emph{Integrated Gradients}}
+\label{subsec:bab3_attribution}
+
+\subsection{SHAP}
+\label{subsec:bab3_shap}
+\dots
+
+\subsection{Integrated Gradients}
+\label{subsec:bab3_ig}
+
+\begin{equation}
+\mathrm{IG}_i(\mathbf{x}) = (x_i - x'_i) \int_0^1 \frac{\partial f(\mathbf{x}' + \alpha(\mathbf{x}-\mathbf{x}'))}{\partial x_i}\, d\alpha
+\label{eq:bab3_ig}
+\end{equation}
+
+\section{Frekuensi Karakteristik Bantalan}
+\label{subsec:bab3_freq_char}
+
+% Persamaan BPFO, BPFI, BSF, FTF. Lihat .cursor/rules/15-domain-rul-bearings.mdc.
+\dots
+
+\section{Metrik Evaluasi}
+\label{subsec:bab3_metrik}
+
+\begin{align}
+\text{RMSE} &= \sqrt{\frac{1}{N}\sum_{i=1}^{N}(y_i - \hat{y}_i)^2} \label{eq:bab3_rmse} \\
+\text{MAE}  &= \frac{1}{N}\sum_{i=1}^{N}|y_i - \hat{y}_i| \label{eq:bab3_mae}
+\end{align}
+
+\section{Notasi yang Digunakan}
+\label{subsec:bab3_notasi}
+
+% Tabel notasi terpadu — wajib ada untuk konsistensi lintas bab.
+\begin{table}[ht]
+\centering
+\caption{Notasi terpadu yang digunakan dalam disertasi.}
+\label{tab:bab3_notasi}
+\small
+\begin{tabular}{@{}p{2.5cm}p{11cm}@{}}
+\toprule
+Notasi & Arti \\
+\midrule
+$\mathbf{x}_t$ & Vektor input pada waktu $t$, $\mathbf{x}_t \in \mathbb{R}^{d_{\text{in}}}$ \\
+$\mathbf{h}_t$ & Vektor laten / hidden state, $\mathbf{h}_t \in \mathbb{R}^{d_{\text{model}}}$ \\
+$\mathbf{C}_t$ & Matriks memori mLSTM, $\mathbf{C}_t \in \mathbb{R}^{d \times d}$ \\
+$\Delta$       & Step size diskretisasi SSM \\
+$\mathbf{z}_t$ & Aktivasi laten SAE \\
+$\lambda, k$   & Parameter regularisasi dan Top-$k$ SAE \\
+\bottomrule
+\end{tabular}
+\end{table}

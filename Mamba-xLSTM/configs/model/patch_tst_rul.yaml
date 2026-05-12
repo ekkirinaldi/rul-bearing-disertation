@@ -1,0 +1,9 @@
+model:
+  name: patch_tst_rul
+  d_model: 96
+  n_heads: 4
+  n_encoder_layers: 2
+  patch_len: 16
+  stride: 8
+  dropout: 0.1
+  ffn_dim: 384

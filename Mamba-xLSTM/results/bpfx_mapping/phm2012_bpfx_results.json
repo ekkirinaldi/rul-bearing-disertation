@@ -1,0 +1,115 @@
+{
+  "dataset": "phm2012",
+  "bearing_geometry": {
+    "n": 13,
+    "d": 3.5,
+    "D": 25.5,
+    "theta_deg": 0.0
+  },
+  "fr_hz": 30.0,
+  "characteristic_frequencies_hz": {
+    "BPFO": 168.23529411764707,
+    "BPFI": 221.76470588235293,
+    "BSF": 107.22689075630251,
+    "FTF": 12.941176470588236
+  },
+  "n_recordings": 300,
+  "d_latent": 1024,
+  "corr_threshold": 0.3,
+  "hit_rate": {
+    "BPFO": 0.01953125,
+    "BPFI": 0.0234375,
+    "BSF": 0.0,
+    "FTF": 0.0
+  },
+  "top5_features": {
+    "BPFO": [
+      {
+        "feature_idx": 655,
+        "r": 0.4080739915370941
+      },
+      {
+        "feature_idx": 474,
+        "r": 0.3966474235057831
+      },
+      {
+        "feature_idx": 750,
+        "r": 0.38785073161125183
+      },
+      {
+        "feature_idx": 376,
+        "r": 0.38553982973098755
+      },
+      {
+        "feature_idx": 193,
+        "r": 0.38515645265579224
+      }
+    ],
+    "BPFI": [
+      {
+        "feature_idx": 474,
+        "r": 0.506982684135437
+      },
+      {
+        "feature_idx": 750,
+        "r": 0.47876471281051636
+      },
+      {
+        "feature_idx": 539,
+        "r": 0.4486898183822632
+      },
+      {
+        "feature_idx": 517,
+        "r": 0.4278707206249237
+      },
+      {
+        "feature_idx": 655,
+        "r": 0.42685720324516296
+      }
+    ],
+    "BSF": [
+      {
+        "feature_idx": 0,
+        "r": 0.0
+      },
+      {
+        "feature_idx": 674,
+        "r": 0.0
+      },
+      {
+        "feature_idx": 675,
+        "r": 0.0
+      },
+      {
+        "feature_idx": 676,
+        "r": 0.0
+      },
+      {
+        "feature_idx": 677,
+        "r": 0.0
+      }
+    ],
+    "FTF": [
+      {
+        "feature_idx": 0,
+        "r": 0.0
+      },
+      {
+        "feature_idx": 674,
+        "r": 0.0
+      },
+      {
+        "feature_idx": 675,
+        "r": 0.0
+      },
+      {
+        "feature_idx": 676,
+        "r": 0.0
+      },
+      {
+        "feature_idx": 677,
+        "r": 0.0
+      }
+    ]
+  }
+}

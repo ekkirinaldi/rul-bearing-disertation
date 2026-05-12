@@ -1,0 +1,21 @@
+model:
+  name: physics_nbeats_rul
+  # v3 (post long bf16 cloud v2): same rationale as ``nbeats_xlstm_rul.yaml`` — align trunk
+  # with winning vanilla N-BEATS, avoid overscaled wear/shock + wide fixed kernel,
+  # keep monotone Bernstein trend (RUL prior). Encoder kernel null → 5 (PHM) / 7 (XJTU).
+  model_specific_loss: true
+  film_num_embeddings: 4
+  kurt_index: 8
+  lambda_wear_sparse: 0.0001
+  hidden_dim: 96
+  trend_blocks: 2
+  wear_blocks: 2
+  shock_blocks: 2
+  poly_degree: 4
+  n_shock_basis: 14
+  dropout: 0.15
+  monotone_trend: true
+  hybrid_learned_shock: false
+
+train:
+  model_specific_loss: true

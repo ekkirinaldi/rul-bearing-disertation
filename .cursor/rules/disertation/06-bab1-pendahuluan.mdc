@@ -1,0 +1,237 @@
+---
+description: Aturan dan template Bab I Pendahuluan
+globs:
+  - "**/chapters/01-pendahuluan*.tex"
+  - "**/chapters/01-*.tex"
+---
+
+# 06 — Bab I Pendahuluan
+
+> Pedoman ITB §V.1: Bab Pendahuluan **sedikitnya** memuat — dapat dirinci dalam anak bab — komponen-komponen di bawah.
+
+---
+
+## A. Komponen wajib
+
+Pedoman ITB mensyaratkan Bab Pendahuluan memuat:
+
+1. **Deskripsi topik penelitian dan latar belakang**
+   - Mengapa topik ini penting *sekarang*? (industri, sains, sosial)
+   - Apa konteks yang lebih luas?
+   - Riset terdahulu apa yang sudah dilakukan dan **kekurangannya**?
+
+2. **Masalah penelitian** (statement of the problem)
+   - Pernyataan masalah yang **tegas dan terbatas**.
+   - Pertanyaan penelitian (research questions, RQ) — biasanya 2–4 RQ.
+
+3. **Tujuan penelitian**
+   - Disusun **selaras** dengan masalah penelitian.
+   - Operasional dan dapat diukur — **bukan** "membuat sistem yang lebih baik" yang vague.
+   - Biasanya 3–5 tujuan, satu per RQ.
+
+4. **Lingkup dan batasan penelitian**
+   - Apa yang **termasuk** dan apa yang **tidak termasuk**.
+   - Datasets, kondisi operasi, jenis kegagalan, hardware.
+
+5. **Asumsi**
+   - Anggapan dasar yang dipakai — diakui eksplisit, sehingga validitas hasil dapat dievaluasi.
+
+6. **Hipotesis**
+   - Jawaban sementara terhadap research question.
+   - Singkat, padat, **dapat diuji**.
+   - Biasanya satu hipotesis per RQ.
+
+7. **Cara pendekatan dan metodologi** (gambaran umum)
+   - **Bukan** detail metodologi — itu untuk Bab IV.
+   - Diagram alir penelitian (recommended).
+
+8. **Pelaksanaan penelitian secara garis besar**
+   - Tahapan, timeline tinggi-tingkat.
+
+9. **Kebaruan dan orisinalitas (Novelty and Originality)**
+   - Klaim eksplisit kebaruan disertasi.
+   - Lihat rule `13-novelty-and-quality.mdc`.
+
+10. **Sistematika penulisan (outline)**
+    - Ringkasan apa yang dibahas di setiap bab.
+
+---
+
+## B. Struktur subbab yang direkomendasikan
+
+```
+Bab I  Pendahuluan
+├── (paragraf orientasi pendek)
+├── I.1  Latar Belakang
+│       ├── konteks industri (1-2 paragraf)
+│       ├── konteks ilmiah / state-of-the-art ringkas (1-2 paragraf)
+│       └── motivasi penelitian (1 paragraf — bridge ke I.2)
+├── I.2  Masalah Penelitian
+│       ├── pernyataan masalah
+│       └── pertanyaan penelitian (RQ1, RQ2, RQ3)
+├── I.3  Tujuan Penelitian
+├── I.4  Lingkup dan Batasan Penelitian
+├── I.5  Asumsi
+├── I.6  Hipotesis Penelitian
+├── I.7  Pendekatan dan Metodologi (gambaran umum + diagram alir)
+├── I.8  Kebaruan dan Orisinalitas
+└── I.9  Sistematika Penulisan
+```
+
+Catatan: bobot Bab I biasanya **8–15 halaman** untuk disertasi teknik.
+
+---
+
+## C. Template starter (LaTeX)
+
+```latex
+\chapter{Pendahuluan}\label{bab:pendahuluan}
+
+Bab ini memaparkan latar belakang penelitian, masalah dan pertanyaan penelitian,
+tujuan, lingkup dan batasan, asumsi, hipotesis, pendekatan metodologi secara
+garis besar, klaim kebaruan dan orisinalitas, serta sistematika penulisan
+disertasi secara keseluruhan.
+
+\section{Latar Belakang}\label{sec:latar-belakang}
+
+%% Paragraf 1: konteks industri yang lebih luas.
+%% Paragraf 2: konteks ilmiah / kemajuan terkini.
+%% Paragraf 3: gap penelitian / motivasi.
+
+Bantalan gelinding (\emph{rolling element bearings}) merupakan komponen
+mekanik fundamental pada hampir seluruh permesinan rotasi industri,
+mulai dari turbin angin, pompa, kompresor, hingga lini manufaktur otomasi
+\citetitb{lei2018machinery}.
+% ... lanjutkan
+
+\section{Masalah Penelitian}\label{sec:masalah-penelitian}
+
+Berdasarkan latar belakang yang telah dipaparkan, dirumuskan masalah utama
+penelitian disertasi ini sebagai berikut: \textit{bagaimana merancang
+arsitektur peramalan RUL bantalan yang akurat dan dapat ditafsirkan secara
+mekanistik di bawah berbagai kondisi operasi?}
+
+Untuk menjawab masalah utama tersebut, disusun tiga pertanyaan penelitian:
+\begin{enumerate}[label=RQ\arabic*., leftmargin=2.4em]
+  \item Apakah penggabungan blok Mamba dengan xLSTM dapat meningkatkan
+        akurasi peramalan RUL dibandingkan baseline xLSTM-Transformer pada
+        dataset XJTU-SY dan PHM2012?
+  \item Sejauh mana fitur laten yang dipelajari oleh \emph{Sparse Autoencoder}
+        pada hidden states model dapat ditafsirkan sebagai motif degradasi
+        fisis yang bermakna?
+  \item Bagaimana karakteristik generalisasi model usulan terhadap
+        pergeseran kondisi operasi (\emph{domain shift}) antar bantalan?
+\end{enumerate}
+
+\section{Tujuan Penelitian}\label{sec:tujuan-penelitian}
+
+Sejalan dengan ketiga pertanyaan penelitian di atas, ditetapkan tujuan
+penelitian sebagai berikut:
+\begin{enumerate}[leftmargin=2em]
+  \item Merancang arsitektur hibrida \emph{Mamba-xLSTM-Net} untuk peramalan
+        RUL bantalan gelinding.
+  \item Mengembangkan kerangka interpretasi berbasis SHAP, \emph{Sparse
+        Autoencoder}, dan \emph{Integrated Gradients} terhadap model usulan.
+  \item Mengevaluasi generalisasi lintas-kondisi operasi pada XJTU-SY dan
+        PHM2012, termasuk skenario \emph{cross-condition}.
+\end{enumerate}
+
+\section{Lingkup dan Batasan Penelitian}\label{sec:lingkup}
+
+%% Lingkup
+%% - Dataset: XJTU-SY (15 bantalan, 3 kondisi) dan PHM2012/PRONOSTIA (17 bantalan).
+%% - Sinyal: vibrasi (akselerometer horisontal & vertikal, fs = 25,6 kHz).
+%% - Output: RUL ternormalisasi [0, 1].
+%% - Hardware target: GPU NVIDIA dengan VRAM ≥ 12 GB.
+%%
+%% Batasan
+%% - Tidak mempertimbangkan jenis kegagalan non-mekanik (mis. korosi kimiawi).
+%% - Tidak mengklaim deployment real-time pada edge device.
+%% - Tidak menggunakan data sensor non-vibrasi (suhu, akustik) di pipeline utama.
+
+\section{Asumsi Penelitian}\label{sec:asumsi}
+
+%% - Sinyal vibrasi sudah disampling pada laju yang cukup untuk merepresentasikan
+%%   frekuensi karakteristik bantalan (BPFO, BPFI, BSF, FTF) hingga harmonik ke-5.
+%% - Label RUL berbasis aturan piecewise-linear pada onset degradasi cukup
+%%   merepresentasikan ground-truth untuk ketiga dataset.
+%% - Distribusi data train, val, test berasal dari proses generatif yang sama
+%%   per kondisi operasi.
+
+\section{Hipotesis Penelitian}\label{sec:hipotesis}
+
+%% H1 (terkait RQ1): Mamba-xLSTM-Net mencapai RMSE < 0,09 dan R² > 0,90 pada
+%%                   uji RUL XJTU-SY, mengungguli baseline xLSTM-Transformer.
+%% H2 (terkait RQ2): Top-k Sparse Autoencoder pada hidden states model
+%%                   menghasilkan ≥5 latent yang masing-masing teraktivasi
+%%                   secara konsisten oleh motif degradasi spesifik
+%%                   (mis. kenaikan kurtosis, plateau pra-kegagalan).
+%% H3 (terkait RQ3): Penurunan kinerja cross-condition (delta-RMSE) Mamba-xLSTM
+%%                   lebih kecil daripada xLSTM-Transformer pada minimal 2 dari
+%%                   3 pasangan kondisi.
+
+\section{Pendekatan dan Metodologi (Gambaran Umum)}\label{sec:pendekatan-umum}
+
+%% Diagram alir penelitian — 1 figure dengan kotak-kotak: Studi Pustaka →
+%% Replikasi Baseline → Desain Mamba-xLSTM-Net → Eksperimen → Interpretasi → Validasi.
+
+\begin{figure}[ht]
+  \centering
+  % \includegraphics[width=0.85\textwidth]{figures/01-diagram-alir-penelitian.pdf}
+  \caption{Diagram alir tahapan penelitian disertasi.}
+  \label{fig:diagram-alir-penelitian}
+\end{figure}
+
+% paragraf yang merujuk ke gambar di atas (jangan dua judul tanpa narasi di antaranya!)
+
+\section{Kebaruan dan Orisinalitas}\label{sec:kebaruan}
+
+%% Klaim kebaruan eksplisit. Cek rule 13-novelty-and-quality.mdc untuk
+%% kategori novelty yang dianggap sah oleh ITB.
+
+Disertasi ini menyumbang tiga klaim kebaruan dan orisinalitas yang masing-masing
+memenuhi kategori dalam Pedoman SPs-ITB \citenameitb{itb2016pedoman}:
+\begin{enumerate}[leftmargin=2em]
+  \item Arsitektur \emph{Mamba-xLSTM-Net} merupakan kombinasi pertama yang
+        dilaporkan antara blok Mamba dan xLSTM untuk peramalan RUL bantalan
+        \emph{(Teknologi-Metodologi: modifikasi baru dari teknologi lama)}.
+  \item Penerapan \emph{Top-k Sparse Autoencoder} pada hidden states model
+        prognostik untuk mengekstrak motif degradasi yang dapat ditafsirkan
+        \emph{(Konsep-Objek: menggunakan ide dari penelitian lain dengan
+        interpretasi berbeda)}.
+  \item Studi sistematik perilaku model di bawah \emph{cross-condition shift},
+        memperkenalkan metrik delta-RMSE sebagai indikator robustness
+        \emph{(Keluaran: informasi baru dalam bentuk tulisan untuk pertama kali)}.
+\end{enumerate}
+
+\section{Sistematika Penulisan}\label{sec:sistematika}
+
+%% Ringkas Bab II–VI dalam 1 paragraf masing-masing.
+\textbf{Bab~\ref{bab:pendahuluan}} memaparkan latar belakang, masalah, tujuan, dan kebaruan penelitian.
+\textbf{Bab~\ref{bab:tinjauan-pustaka}} menyajikan tinjauan pustaka terstruktur tentang perkembangan metode prognostik dan posisi penelitian disertasi ini di antaranya.
+\textbf{Bab~\ref{bab:dasar-teori}} menguraikan dasar teori xLSTM, Mamba SSM, dan kerangka interpretasi yang akan digunakan.
+\textbf{Bab~\ref{bab:metodologi}} menjabarkan rancangan arsitektur Mamba-xLSTM-Net dan metodologi eksperimen.
+\textbf{Bab~\ref{bab:hasil-pembahasan}} menyajikan dan membahas hasil eksperimen, termasuk ablasi, interpretasi, dan analisis cross-condition.
+\textbf{Bab~\ref{bab:kesimpulan}} menutup dengan kesimpulan, kontribusi, keterbatasan, dan saran penelitian lanjutan.
+```
+
+---
+
+## D. Aturan kualitas spesifik Bab I
+
+- **Latar belakang harus konkret**, bukan retorika kosong. Sertakan **angka**: berapa kerugian akibat kegagalan bantalan industri tahunan? Berapa downtime rata-rata? **Sitasi** angka-angka tersebut.
+- **Hindari kalimat klise** seperti *"Di era globalisasi yang serba cepat ini..."* — langsung ke substansi.
+- **RQ harus jelas dapat-dijawab** oleh metode yang akan dipaparkan di Bab IV. Jika tidak, RQ kebesaran.
+- **Hipotesis ≠ tujuan**. Hipotesis adalah klaim falsifiable; tujuan adalah aktivitas.
+- **Kebaruan harus sah** menurut ITB — periksa kategori di rule `13-novelty-and-quality.mdc`. Tidak boleh sekedar "membuat database baru" atau "optimasi dengan teknologi yang sudah baku" — itu **bukan** kebaruan menurut Pedoman.
+- **Bab I bukan tempat menulis hasil**. Hasil di Bab V. Bab I hanya menjanjikan.
+
+---
+
+## E. Anti-pattern khas Bab I
+
+- ❌ Latar belakang yang berisi banyak **kutipan langsung** dari paper lain. Paraphrase, jangan kopi.
+- ❌ Menulis "tujuan penelitian adalah untuk **mempelajari**…" — terlalu lemah. Pakai kata kerja konkret: "merancang", "mengevaluasi", "membandingkan", "memvalidasi".
+- ❌ Hipotesis yang terlalu vague: ~~"Model usulan akan lebih baik."~~ → Lebih baik di metrik apa, threshold berapa, pada dataset mana.
+- ❌ Sistematika penulisan satu kalimat per bab tanpa substansi. Berikan **isi inti** masing-masing.
+- ❌ Menyitir angka tanpa sumber.

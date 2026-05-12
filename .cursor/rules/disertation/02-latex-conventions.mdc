@@ -1,0 +1,210 @@
+---
+description: Konvensi penulisan LaTeX (struktur file, label, makro, sumber kode)
+globs:
+  - "**/*.tex"
+  - "**/*.cls"
+  - "**/*.sty"
+---
+
+# 02 — Konvensi LaTeX
+
+## A. Struktur source
+
+### A.1 File master vs file bab
+- `disertasi.tex` adalah **master file**, hanya berisi `\documentclass`, preamble, dan urutan `\input{chapters/...}`. **Jangan menulis konten bab di master.**
+- Setiap bab disimpan terpisah di `chapters/0X-nama-bab.tex`.
+- File bab **tidak menulis** `\documentclass`, `\begin{document}`, atau `\end{document}`. Cukup mulai dengan `\chapter{...}`.
+- Lampiran di folder `lampiran/`.
+- Gambar di folder `figures/`. Format yang disukai: **PDF** (vector) > PNG (raster ≥300 dpi). **Jangan** gunakan JPEG untuk diagram/plot — gunakan untuk foto saja.
+
+### A.2 Encoding dan packages
+- Semua file `.tex` adalah **UTF-8 tanpa BOM**.
+- Engine: **LuaLaTeX** (preferred, native UTF-8 + system fonts) atau **pdfLaTeX** (fallback).
+- Jangan menambah `\usepackage{...}` ad-hoc di file bab. Semua package didaftarkan di `itbdisertasi.cls` atau `disertasi.tex` preamble.
+
+### A.3 Pembagian baris (line wrapping) di source
+- **Satu kalimat per baris** dalam source `.tex`. Memudahkan diff Git dan review.
+- Contoh:
+  ```latex
+  Paragraf ini menjelaskan perkembangan metode prognostik untuk bantalan gelinding.
+  Periode awal didominasi oleh model fisik berbasis persamaan keausan.
+  Setelah era pembelajaran mendalam, pendekatan data-driven menjadi dominan~\citep{lei2018machinery}.
+  ```
+- **Jangan** menulis paragraf sebagai satu baris super-panjang.
+
+---
+
+## B. Konvensi label dan key
+
+Skema label seragam — lihat tabel di bawah. **Selalu** beri label pada chapter, section, figure, table, dan equation yang akan dirujuk.
+
+| Objek | Prefix | Contoh |
+|---|---|---|
+| Bab | `bab:` | `\label{bab:metodologi}` |
+| Sub-bab | `sec:` | `\label{sec:arsitektur-mamba}` |
+| Sub-sub-bab | `subsec:` | `\label{subsec:fusion-layer}` |
+| Gambar | `fig:` | `\label{fig:hi-pipeline}` |
+| Tabel | `tab:` | `\label{tab:rmse-xjtu}` |
+| Persamaan | `eq:` | `\label{eq:mlstm-update}` |
+| Lampiran | `lamp:` | `\label{lamp:turunan-mamba}` |
+| Algoritma | `alg:` | `\label{alg:topk-sae}` |
+| Definisi/Teorema | `def:`, `thm:` | `\label{def:rul-norm}` |
+
+Aturan tambahan:
+- Key memakai `kebab-case`, lowercase, **bahasa Inggris** (mempermudah autokomplet dan menghindari typo karakter Indonesia).
+- Selalu tulis `\label{}` **segera setelah** `\caption{}` (untuk float) atau di awal `\begin{equation}` (untuk persamaan) — placement yang salah membuat nomor referensi keliru.
+
+### B.1 Cara merujuk
+- Default: `\autoref{fig:hi-pipeline}` → "Gambar I.1" (autoref tahu konteks).
+- Bila autoref tidak menghasilkan kata yang diinginkan, fallback eksplisit: `Gambar~\ref{fig:hi-pipeline}`. **Catatan tilde `~`**: pencegah line-break antara "Gambar" dan nomor.
+- Persamaan dengan kurung: `Persamaan~\eqref{eq:mlstm-update}` → "Persamaan (I.2)".
+- Bab: `Bab~\ref{bab:metodologi}` → "Bab IV".
+
+---
+
+## C. Makro yang disediakan oleh `itbdisertasi.cls`
+
+`itbdisertasi.cls` mendefinisikan beberapa makro spesifik ITB. **Gunakan ini, bukan macro mentah LaTeX yang non-standard ITB.**
+
+| Makro | Tujuan |
+|---|---|
+| `\judulDisertasi{...}` | Set judul Indonesia di sampul |
+| `\judulInggris{...}` | Set judul Inggris untuk halaman ABSTRACT |
+| `\penulis{...}` | Nama penulis |
+| `\nim{...}` | NIM mahasiswa |
+| `\programStudi{...}` | Program studi (Indonesia) |
+| `\programStudiInggris{...}` | Program studi (Inggris) |
+| `\pembimbingSatu{...}` | Nama Ketua Pembimbing |
+| `\pembimbingDua{...}` | Anggota |
+| `\pembimbingTiga{...}` | Anggota (opsional) |
+| `\bulanLulus{...}` | Bulan lulus |
+| `\tahunLulus{...}` | Tahun lulus |
+| `\maketitleSampul` | Cetak halaman sampul |
+| `\makepengesahan` | Cetak halaman pengesahan |
+| `\makepedomanpenggunaan` | Cetak halaman pedoman penggunaan |
+| `\maketitleabstract[id]{...}` | Cetak Abstrak Indonesia (lihat 12-abstrak-front-matter.mdc) |
+| `\maketitleabstract[en]{...}` | Cetak Abstract Inggris |
+| `\bagianpersiapan` | Switch ke pagination Romawi & format persiapan |
+| `\tubuhutama` | Switch ke pagination Arab & format utama |
+| `\daftarpustakaitb{references.bib}` | Cetak Daftar Pustaka format ITB |
+
+### C.1 Sitasi
+Cursor **harus** memakai makro berikut, bukan `\cite` mentah:
+
+| Makro | Output | Kapan dipakai |
+|---|---|---|
+| `\citetitb{key}` | `(Surname, Tahun)` | Sitasi parentik standar |
+| `\citetitb[hal]{key}{23-25}` | `(Surname, Tahun: 23-25)` | Dengan rentang halaman |
+| `\citenameitb{key}` | `Surname (Tahun)` | Sitasi naratif (subjek kalimat) |
+| `\citenameitb*{key}` | `Surname dkk. (Tahun)` | Untuk ≥3 penulis (alias) |
+| `\citetitbmulti{key1,key2}` | `(Surname1, Tahun1 dan Surname2, Tahun2)` | 2+ rujukan dalam satu kurung |
+
+---
+
+## D. Matematika
+
+### D.1 Inline vs display
+- Inline: `$x_t$` untuk variabel pendek. Boleh `\(...\)` (alternatif modern).
+- Display tanpa nomor: `\[ ... \]` atau `equation*`.
+- Display dengan nomor: `equation` (1 baris) atau `align` (multi-baris dengan alignment).
+- **Hindari** `eqnarray` (deprecated, jarak janggal).
+
+### D.2 Operator dan simbol
+- Operator multi-huruf: `\operatorname{softmax}`, `\operatorname{ReLU}`, `\operatorname{TopK}`. Jangan tulis `softmax` mentah (akan jadi *s·o·f·t·m·a·x*).
+- Vektor/matriks: pilih satu konvensi dan konsisten:
+  - **Bold tegak** untuk vektor (`\mathbf{x}`) dan matriks (`\mathbf{W}`) — gaya teknik.
+  - Atau bold italic (`\boldsymbol{x}`) — gaya matematika murni.
+  - **Pilih di awal Bab III, jangan campur.**
+- Set: `\mathbb{R}`, `\mathbb{N}`.
+- Probabilitas/ekspektasi: `\mathbb{P}`, `\mathbb{E}`.
+- Tanda kali: **jangan** pakai `\cdot` sebagai operator perkalian default; gunakan `\times` atau spasi implisit. Pedoman ITB §VIII.5: *"hindarilah pemakaian titik sebagai lambang operator perkalian."* (Konteks: dalam substitusi numerik.)
+
+### D.3 Penamaan variabel
+- Tetap konsisten antar-bab. Daftarkan di **Daftar Singkatan dan Lambang** (bagian persiapan).
+- Contoh konsisten di disertasi ini:
+  - `T` = panjang seri waktu total satu bantalan
+  - `t` = indeks waktu
+  - `r_t` = RUL ternormalisasi pada waktu `t`
+  - `H_t` = nilai HI pada waktu `t`
+  - `\mathbf{h}_t` = hidden state pada waktu `t`
+  - `d_{\text{model}}` = dimensi model
+
+### D.4 Pemecahan persamaan panjang
+Pedoman: pecah pada operator `+`, `-`, `=`. Operator diulang di awal baris berikutnya:
+```latex
+\begin{align}
+  \frac{1}{c}\frac{\partial L(r,\hat{s},t)}{\partial t}
+    &+ \hat{s} \cdot \nabla L(r,\hat{s},t) + (\mu_a + \mu_s) L(r,\hat{s},t) \nonumber \\
+    &= \mu_s \oint_{\hat{S}^{n-1}} L(r,\hat{s}',t) f(\hat{s},\hat{s}')\, d\hat{s}' + Q(r,\hat{s},t).
+  \label{eq:rte}
+\end{align}
+```
+
+---
+
+## E. Tabel — best practices
+
+- **Selalu** gunakan `booktabs` (`\toprule`, `\midrule`, `\bottomrule`); **dilarang** garis vertikal kecuali benar-benar dibutuhkan.
+- Tabel panjang: `longtable` (otomatis page-break + repeat header).
+- Tabel lebar: gunakan `tabularx` atau `tabular*` dengan `\textwidth`.
+- Angka desimal: gunakan `siunitx` dan `S` column-type untuk alignment koma desimal.
+  ```latex
+  \usepackage{siunitx}
+  \sisetup{output-decimal-marker={,}}  % koma desimal khas Indonesia
+  \begin{tabular}{l S[table-format=1.3] S[table-format=1.3]}
+    \toprule
+    Model & {RMSE} & {MAE} \\
+    \midrule
+    LSTM        & 0,150 & 0,110 \\
+    xLSTM-Trf   & 0,100 & 0,075 \\
+    \bottomrule
+  \end{tabular}
+  ```
+- **Decimal separator: koma** (Indonesian convention). Gunakan `output-decimal-marker={,}` di siunitx.
+- Format angka besar: gunakan **titik** sebagai pemisah ribuan (`1.000.000`), khas Indonesia.
+
+---
+
+## F. Algoritma
+
+Gunakan `algorithm` + `algpseudocode` packages. Caption `Algoritma I.1` (sesuaikan format dengan figure/table). **Setiap algoritma yang dirujuk** harus diberi `\label{alg:...}`.
+
+```latex
+\begin{algorithm}[ht]
+  \caption{Top-k Sparse Autoencoder, satu langkah maju.}
+  \label{alg:topk-sae}
+  \begin{algorithmic}[1]
+    \Require Input $\mathbf{x} \in \mathbb{R}^{d}$, parameter $k$
+    \State $\mathbf{x}' \gets \mathbf{x} - \mathbf{b}_{\text{pre}}$
+    \State $\mathbf{z} \gets \mathbf{W}_{\text{enc}} \mathbf{x}'$
+    \State $\mathcal{T} \gets \operatorname{TopK\text{-}index}(\mathbf{z}, k)$
+    \State $\mathbf{z}_{\text{sparse}} \gets \mathbf{0};\;\; \mathbf{z}_{\text{sparse}}[\mathcal{T}] \gets \operatorname{ReLU}(\mathbf{z}[\mathcal{T}])$
+    \State $\hat{\mathbf{x}} \gets \mathbf{W}_{\text{dec}} \mathbf{z}_{\text{sparse}} + \mathbf{b}_{\text{pre}}$
+    \State \Return $\hat{\mathbf{x}}, \mathbf{z}_{\text{sparse}}$
+  \end{algorithmic}
+\end{algorithm}
+```
+
+---
+
+## G. Komentar dan TODO
+
+- Komentar source: gunakan `%`. **Jangan** komentar di tengah baris matematika kecuali sangat perlu.
+- TODO yang harus diingat penulis: gunakan tag eksplisit:
+  - `% TODO(verify-with-pembimbing): apakah notasi r_t atau RUL_t?`
+  - `% TODO(rerun-experiment): hasil dengan seed=43`
+  - `% FIXME: tabel ini perlu diperbarui setelah eksperimen Phase 7`
+- `make check` akan menampilkan semua TODO/FIXME yang tertinggal.
+
+---
+
+## H. Anti-pattern (jangan dilakukan)
+
+- ❌ `\textbf{...}` untuk **judul** subbab — pakai struktur `\section{}`. Bold dilakukan oleh `titlesec` config di class.
+- ❌ `\\` di tengah paragraf untuk paksa line-break (kecuali poetry/alamat). Pakai paragraf baru.
+- ❌ Menulis nomor manual ("Tabel 4.5"). Selalu pakai `\ref{}`.
+- ❌ Menulis tabel HTML-style dengan banyak `\hline`. Pakai `booktabs`.
+- ❌ Mengubah margin di tengah dokumen dengan `\newgeometry`. Margin ITB final dan tetap.
+- ❌ `\usepackage{times}` (deprecated). Pakai `newtxtext, newtxmath` di class.
+- ❌ Menggunakan `et al.` di teks Bahasa Indonesia. Wajib `dkk.`.
+- ❌ Catatan kaki untuk rujukan. Integrasikan ke teks.

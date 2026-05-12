@@ -1,0 +1,263 @@
+---
+description: Aturan dan template Bab III Dasar Teori
+globs:
+  - "**/chapters/03-dasar-teori*.tex"
+  - "**/chapters/03-*.tex"
+---
+
+# 08 — Bab III Dasar Teori
+
+> Bab III adalah tempat untuk **memaparkan dasar-dasar teoretis dan mekanisme** yang akan dipakai dalam metodologi (Bab IV). Pedoman ITB membedakan ini secara tegas dari Bab II Tinjauan Pustaka.
+
+---
+
+## A. Tujuan dan ruang lingkup
+
+Bab III memaparkan:
+1. **Formalisme matematis** yang dipakai (ruang fungsi, model statistik, dll.).
+2. **Mekanisme algoritma** yang menjadi blok bangunan metodologi (LSTM, Transformer, Mamba SSM, mLSTM, sLSTM, Sparse Autoencoder).
+3. **Kerangka evaluasi** (metrik, prosedur cross-validation, statistical test).
+
+Bab III **bukan** untuk:
+- Mengulang state-of-the-art (itu Bab II).
+- Memperkenalkan arsitektur baru (itu Bab IV).
+- Menjelaskan setting eksperimen spesifik (itu Bab IV).
+
+---
+
+## B. Struktur yang disarankan
+
+```
+Bab III  Dasar Teori
+├── (paragraf orientasi)
+├── III.1  Formulasi Masalah Peramalan RUL
+│       ├── III.1.1  Definisi formal RUL
+│       ├── III.1.2  Health Indicator dan ekstraksi fitur
+│       └── III.1.3  Konvensi label: linear vs piecewise-linear
+├── III.2  Model Recurrent: dari LSTM ke xLSTM
+│       ├── III.2.1  LSTM klasik dan keterbatasannya
+│       ├── III.2.2  sLSTM: scalar memory dengan exponential gating
+│       └── III.2.3  mLSTM: matrix memory dan parallel scan
+├── III.3  State Space Model: Mamba
+│       ├── III.3.1  Sistem ruang keadaan kontinu dan diskretisasi
+│       ├── III.3.2  Selective scan: parametrisasi dependen-input
+│       └── III.3.3  Kompleksitas dan efisiensi
+├── III.4  Mekanisme Atensi (Multi-Head Attention)
+├── III.5  Sparse Autoencoder dan Top-k Activation
+├── III.6  Metode Atribusi: SHAP dan Integrated Gradients
+└── III.7  Metrik Evaluasi Peramalan RUL
+        ├── III.7.1  RMSE, MAE, R²
+        └── III.7.2  PHM Score
+```
+
+Ukuran tipikal: **15–25 halaman**.
+
+---
+
+## C. Aturan kualitas
+
+### C.1 Setiap formula yang ditulis harus
+- Memiliki **definisi simbol lengkap** (di list, di paragraf setelah, atau merujuk ke Daftar Singkatan dan Lambang).
+- Memiliki **sumber pustaka** kecuali rumus elementer (mis. RMSE, MAE).
+- Memiliki **konteks**: dari mana, untuk apa, asumsi apa.
+
+### C.2 Konsistensi notasi
+- Notasi **tidak boleh berubah** antara Bab III dan Bab IV–VI.
+- **Buat tabel notasi** sebagai Tabel III.1 di awal bab, lalu konsisten.
+
+### C.3 Kedalaman matematika
+- Untuk konsep **fundamental tetapi pra-syarat** (LSTM): paparkan persamaan kunci, **jangan** ulang derivasi penuh — beri rujukan ke buku teks.
+- Untuk konsep **inti yang akan dimodifikasi** (xLSTM, Mamba): paparkan **detail penuh** — pembaca pemeriksa mungkin tidak familiar.
+- Hindari **dump matematika** tanpa narasi. Setiap blok persamaan harus didahului paragraf intuisi.
+
+---
+
+## D. Template starter (LaTeX)
+
+```latex
+\chapter{Dasar Teori}\label{bab:dasar-teori}
+
+Bab ini memaparkan formalisme matematis dan mekanisme algoritma yang menjadi
+fondasi metodologi pada Bab~\ref{bab:metodologi}. Pemaparan dimulai dari
+formulasi masalah peramalan RUL, dilanjutkan dengan blok-blok jaringan saraf
+yang akan disusun ulang sebagai bagian dari arsitektur usulan, dan ditutup
+dengan kerangka evaluasi.
+
+\section{Formulasi Masalah Peramalan RUL}\label{sec:formulasi-rul}
+
+Diberikan sebuah bantalan dengan rekaman sinyal vibrasi pada waktu diskret
+$t = 1, 2, \dots, T$, didefinisikan ruang fitur Indikator Kesehatan
+$\mathbf{H}_t \in \mathbb{R}^{F}$ sebagai vektor fitur yang diekstrak dari
+sinyal mentah pada waktu $t$. Tujuan peramalan RUL adalah mempelajari
+fungsi $f_\theta: \mathbb{R}^{L \times F} \to [0, 1]$ yang memetakan jendela
+fitur $L$-langkah ke estimasi RUL ternormalisasi:
+\begin{equation}
+  \hat{r}_t = f_\theta\!\left(\mathbf{H}_{t-L+1}, \dots, \mathbf{H}_{t}\right),
+  \label{eq:rul-mapping}
+\end{equation}
+dengan $\theta$ adalah himpunan parameter pelatihan dan $\hat{r}_t \in [0, 1]$
+merupakan prediksi RUL pada waktu $t$ relatif terhadap rentang umur penuh.
+
+\subsection{Konvensi Label RUL}\label{subsec:label-rul}
+
+Dua konvensi label umum digunakan dalam literatur. \textbf{Linear} mengasumsi
+degradasi terjadi sejak awal:
+\begin{equation}
+  r_t^{\text{linear}} = \frac{T - t}{T},\quad t = 0, 1, \dots, T.
+  \label{eq:rul-linear}
+\end{equation}
+\textbf{Piecewise-linear} mengasumsi sebuah \emph{onset} degradasi pada
+$t = T_{\text{deg}}$:
+\begin{equation}
+  r_t^{\text{pwl}} =
+  \begin{cases}
+    1, & t < T_{\text{deg}}, \\
+    \dfrac{T - t}{T - T_{\text{deg}}}, & t \geq T_{\text{deg}}.
+  \end{cases}
+  \label{eq:rul-pwl}
+\end{equation}
+Onset $T_{\text{deg}}$ pada Persamaan~\eqref{eq:rul-pwl} dideteksi melalui
+ambang RMS sebagaimana diusulkan oleh \citenameitb{jiang2023onset}.
+
+\section{Dari LSTM ke xLSTM}\label{sec:lstm-xlstm}
+
+\subsection{LSTM Klasik}\label{subsec:lstm-klasik}
+
+LSTM \citetitb{hochreiter1997lstm} memperkenalkan \emph{cell state}
+$\mathbf{c}_t$ dan tiga gerbang:
+\begin{align}
+  \mathbf{f}_t &= \sigma(\mathbf{W}_f [\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_f), \label{eq:lstm-f} \\
+  \mathbf{i}_t &= \sigma(\mathbf{W}_i [\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_i), \label{eq:lstm-i} \\
+  \mathbf{o}_t &= \sigma(\mathbf{W}_o [\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_o), \label{eq:lstm-o} \\
+  \tilde{\mathbf{c}}_t &= \tanh(\mathbf{W}_c [\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_c), \\
+  \mathbf{c}_t &= \mathbf{f}_t \odot \mathbf{c}_{t-1} + \mathbf{i}_t \odot \tilde{\mathbf{c}}_t, \label{eq:lstm-c} \\
+  \mathbf{h}_t &= \mathbf{o}_t \odot \tanh(\mathbf{c}_t).
+\end{align}
+Sigmoid sebagai gerbang menghasilkan \emph{saturasi} pada nilai input besar:
+turunan $\sigma'(z)$ menuju nol, memunculkan masalah gradien yang menghilang
+pada fase degradasi lanjut bantalan ketika perubahan fitur menjadi besar.
+
+\subsection{sLSTM: Memori Skalar dengan Gerbang Eksponensial}\label{subsec:slstm}
+
+\citenameitb{beck2024xlstm} mengusulkan penggantian sigmoid pada gerbang input
+dan forget oleh fungsi eksponensial dengan normalisasi:
+\begin{equation}
+  i_t = \exp(\tilde{i}_t), \quad
+  f_t = \exp(\tilde{f}_t),
+  \label{eq:slstm-gates}
+\end{equation}
+dengan $\tilde{i}_t, \tilde{f}_t$ adalah pre-aktivasi linear. Stabilisasi
+dilakukan melalui \emph{state} normalisasi $\mathbf{n}_t$:
+\begin{equation}
+  n_t = f_t n_{t-1} + i_t,\qquad
+  \tilde{c}_t = f_t c_{t-1} + i_t v_t,\qquad
+  h_t = \frac{\tilde{c}_t}{n_t} \cdot o_t,
+  \label{eq:slstm-norm}
+\end{equation}
+yang setara dengan implementasi numerically-stable melalui pengurangan
+$m_t = \max(\log f_t + m_{t-1}, \log i_t)$ dari pre-aktivasi
+\citetitb{beck2024xlstm}.
+
+\subsection{mLSTM: Memori Matriks dan \emph{Parallel Scan}}\label{subsec:mlstm}
+
+mLSTM mengganti $c_t \in \mathbb{R}$ dengan $\mathbf{C}_t \in \mathbb{R}^{d_k \times d_v}$
+dan memformalkan update sebagai outer product key-value:
+\begin{equation}
+  \mathbf{C}_t = f_t\, \mathbf{C}_{t-1} + i_t\, \mathbf{v}_t \mathbf{k}_t^\top,\qquad
+  \mathbf{h}_t = \mathbf{o}_t \odot \frac{\mathbf{C}_t \mathbf{q}_t}{\max(|\mathbf{n}_t^\top \mathbf{q}_t|, 1)},
+  \label{eq:mlstm-update}
+\end{equation}
+dengan $\mathbf{q}_t, \mathbf{k}_t, \mathbf{v}_t$ adalah proyeksi linear masukan.
+Karena update Persamaan~\eqref{eq:mlstm-update} bersifat linear pada $\mathbf{C}_{t-1}$,
+forward pass mLSTM dapat \emph{diparalelkan} sepanjang sumbu waktu menggunakan
+prefix-scan, memberikan kompleksitas $\mathcal{O}(L \log L)$ pada perangkat
+keras paralel — kontras dengan LSTM klasik yang inheren sekuensial.
+
+\section{Mamba: \textit{Selective State Space Model}}\label{sec:mamba}
+
+\subsection{Sistem Ruang Keadaan Kontinu}\label{subsec:ssm-kontinu}
+
+Sebuah sistem ruang keadaan linear waktu-kontinu ditulis:
+\begin{equation}
+  \dot{\mathbf{h}}(t) = \mathbf{A}\, \mathbf{h}(t) + \mathbf{B}\, x(t),\qquad
+  y(t) = \mathbf{C}\, \mathbf{h}(t) + \mathbf{D}\, x(t),
+  \label{eq:ssm-kontinu}
+\end{equation}
+dengan $\mathbf{A} \in \mathbb{R}^{N \times N}$ matriks transisi keadaan,
+$\mathbf{B}, \mathbf{C}^\top \in \mathbb{R}^{N}$ proyeksi input/output, dan
+$\mathbf{h}(t) \in \mathbb{R}^{N}$ keadaan tersembunyi.
+
+\subsection{Diskretisasi dan Selective Scan}\label{subsec:selective-scan}
+
+%% Mamba memparametrisasi A, B, C bergantung input — itulah "selective".
+
+Diskretisasi zero-order-hold pada langkah $\Delta_t$ menghasilkan:
+\begin{equation}
+  \bar{\mathbf{A}}_t = \exp(\Delta_t \mathbf{A}),\qquad
+  \bar{\mathbf{B}}_t = (\Delta_t \mathbf{A})^{-1}(\exp(\Delta_t \mathbf{A}) - \mathbf{I})\, \Delta_t \mathbf{B},
+  \label{eq:zoh}
+\end{equation}
+sehingga rekursi diskret
+\begin{equation}
+  \mathbf{h}_t = \bar{\mathbf{A}}_t \mathbf{h}_{t-1} + \bar{\mathbf{B}}_t x_t,\qquad
+  y_t = \mathbf{C}_t \mathbf{h}_t.
+  \label{eq:mamba-rec}
+\end{equation}
+Pada Mamba \citetitb{gu2023mamba}, $\Delta_t, \mathbf{B}_t, \mathbf{C}_t$
+dijadikan \emph{fungsi dari input} $\mathbf{x}_t$:
+\begin{equation}
+  \Delta_t = \tau_\Delta(\mathbf{W}_\Delta \mathbf{x}_t),\quad
+  \mathbf{B}_t = \mathbf{W}_B \mathbf{x}_t,\quad
+  \mathbf{C}_t = \mathbf{W}_C \mathbf{x}_t,
+  \label{eq:mamba-selective}
+\end{equation}
+sehingga model dapat \emph{secara selektif} mengingat atau melupakan informasi
+sesuai konteks lokal — properti yang krusial untuk peramalan RUL ketika
+karakter sinyal berubah drastis pada onset degradasi.
+
+\section{Sparse Autoencoder}\label{sec:sae}
+
+%% Definisi formal SAE, top-k activation, kondisi sparsity.
+
+\section{Metode Atribusi: SHAP dan Integrated Gradients}\label{sec:atribusi}
+
+%% Definisi SHAP value, axiom; IG path integral.
+
+\section{Metrik Evaluasi}\label{sec:metrik}
+
+%% RMSE, MAE, R^2, PHM score (asymmetric scoring favoring early prediction)
+```
+
+---
+
+## E. Notasi konsisten — Tabel III.1 (wajib)
+
+Buat di akhir Subbab III.1 (atau awal Bab III) **tabel daftar simbol**:
+
+```latex
+\begin{table}[ht]
+  \centering
+  \caption{Daftar simbol matematika utama yang digunakan pada disertasi.}
+  \label{tab:simbol-utama}
+  \begin{tabular}{l p{0.55\textwidth} l}
+    \toprule
+    Simbol & Arti & Dimensi \\
+    \midrule
+    $T$              & Panjang seri waktu satu bantalan       & $\mathbb{N}$ \\
+    $L$              & Panjang jendela input ke model         & $\mathbb{N}$ \\
+    $F$              & Banyaknya fitur HI                     & $\mathbb{N}$ \\
+    $\mathbf{H}_t$   & Vektor HI pada waktu $t$               & $\mathbb{R}^{F}$ \\
+    $r_t$            & RUL ternormalisasi pada waktu $t$       & $[0, 1]$ \\
+    $\hat{r}_t$      & Estimasi RUL                            & $[0, 1]$ \\
+    $\mathbf{h}_t$   & Hidden state                            & $\mathbb{R}^{d_{\text{model}}}$ \\
+    $\mathbf{C}_t$   & Memori matriks mLSTM                    & $\mathbb{R}^{d_k \times d_v}$ \\
+    $\mathbf{A}, \mathbf{B}, \mathbf{C}$ & Matriks SSM Mamba       & lihat Persamaan~\eqref{eq:ssm-kontinu} \\
+    $\Delta_t$       & Langkah diskretisasi adaptif Mamba      & $\mathbb{R}_{>0}$ \\
+    $k$              & Jumlah aktivasi top-$k$ pada SAE        & $\mathbb{N}$ \\
+    $d_{\text{lat}}$ & Dimensi laten SAE                       & $\mathbb{N}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+```
+
+Salin daftar ini juga ke **Daftar Singkatan dan Lambang** di bagian persiapan.

@@ -1,0 +1,32 @@
+# XJTU-SY — all bearings available locally (conditions 1 and 2 only).
+# Condition 3 (40Hz10kN) is not present under ../data-bearing/xtju-sy.
+#
+# Previous split exposed only ONE training bearing under condition‑2 (`2_1`), while test
+# is dominated by a longlife C2 bearing (`2_3`) → unstable micro‑RMSE + weak C2 supervision.
+#
+# **Rebalanced split (dissertation tweak):**
+# - Train: three C1 + **two C2** (`2_1`, `2_2`) → models see more degradation under the speed/load
+#   regime that dominates the test micro‑average.
+# - Val: single C1 bearing `1_4` (checkpoint / early‑stop probe; disjoint from test).
+# - Test: unchanged **two-bearing** eval `1_5` | `2_3` — micro vs macro‑RMSE still distinct.
+#
+# stride_eval: 1 → dense validation/test windows.
+
+data:
+  dataset: xjtusy
+  root: ../data-bearing/xtju-sy
+  cache_dir: ../data-bearing/processed/xjtusy
+
+  window_length: 32
+  stride_train: 1
+  stride_eval: 1
+
+  label_scheme: linear
+  smoothing_alpha: 0.1
+  n_bands: 5
+  batch_size: 128
+  num_workers: 0
+
+  train_bearings: ["1_1", "1_2", "1_3", "2_1", "2_2"]
+  val_bearings:   ["1_4"]
+  test_bearings:  ["1_5", "2_3"]
