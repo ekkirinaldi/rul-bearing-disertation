@@ -1,0 +1,425 @@
+%% chapters/01-pendahuluan.tex
+%% Bab I — Pendahuluan
+%% Aturan: .cursor/rules/disertation/06-bab1-pendahuluan.mdc
+
+\chapter{Pendahuluan}
+\label{bab:pendahuluan}
+
+Bab ini memaparkan latar belakang penelitian, rumusan masalah dan
+pertanyaan penelitian, tujuan, lingkup dan batasan, asumsi, hipotesis,
+pendekatan metodologi secara garis besar, kebaruan dan orisinalitas, serta
+sistematika penulisan disertasi secara keseluruhan.
+
+\section{Latar Belakang}
+\label{sec:bab1_latar}
+
+Indonesia telah memasuki era revolusi industri keempat yang ditandai oleh
+digitalisasi sistem produksi secara menyeluruh \citetitb{WEF2018Industry4}.
+Pemerintah melalui peta jalan \emph{Making Indonesia 4.0} mendorong
+transformasi sektor manufaktur nasional agar mampu bersaing di pasar global
+dengan memanfaatkan teknologi analisis \emph{big data}, kecerdasan buatan
+(\emph{artificial intelligence}, AI), dan \emph{Internet of Things}
+\citetitb{Kemenperin2018Making4}.
+Salah satu sasaran utama transformasi ini adalah peningkatan efisiensi
+operasional pabrik melalui penerapan strategi \emph{perawatan prediktif}
+(\emph{predictive maintenance}, PdM) yang menggantikan jadwal
+perawatan berbasis waktu yang boros dengan intervensi tepat waktu
+berdasarkan kondisi aktual mesin.
+
+Perawatan prediktif bertumpu pada kemampuan memantau kondisi mesin secara
+\emph{real time} dan memprediksi kapan suatu komponen akan mencapai batas
+kegagalannya.
+Data kondisi mesin yang dikumpulkan dari berbagai sensor — getaran,
+temperatur, tekanan, arus listrik — mengandung informasi degradasi yang
+berharga namun memerlukan metode analisis canggih untuk diinterpretasikan.
+Kegagalan komponen yang tidak terprediksi menyebabkan \emph{downtime}
+tidak terencana yang merugikan secara finansial, mengganggu rantai pasok,
+dan pada kasus ekstrem menimbulkan risiko keselamatan kerja
+\citetitb{Mobley2002PlantMaintenance}.
+
+Bantalan gelinding (\emph{rolling element bearings}) merupakan komponen
+mekanis yang paling kritis sekaligus paling rentan terhadap kegagalan dalam
+hampir seluruh mesin rotasi industri, mulai dari motor listrik, pompa,
+kompresor, hingga lini otomasi manufaktur \citetitb{Lei2018Machinery}.
+Studi empiris menunjukkan bahwa kegagalan bantalan menyumbang sekitar
+40--50\,\% dari total kegagalan mesin rotasi \citetitb{Nectoux2012PRONOSTIA}.
+Kemampuan memprediksi \emph{sisa umur pakai} (\emph{remaining useful life},
+RUL) bantalan secara akurat menjadi inti dari strategi perawatan prediktif
+berbasis kondisi yang efektif.
+
+Pendekatan prediksi RUL telah berkembang dari model fisika berbasis
+persamaan keausan Hertzian menuju metode berbasis data yang memanfaatkan
+rekaman degradasi berskala besar \citetitb{Lei2018Machinery}.
+Dalam dekade terakhir, arsitektur \emph{deep learning} --- khususnya
+\emph{Long Short-Term Memory} (LSTM) dan Transformer --- mendominasi
+literatur prediksi RUL karena kemampuannya memodelkan dependensi temporal
+jangka panjang dalam sinyal getaran bantalan
+\citetitb{Hochreiter1997LSTM,Vaswani2017Attention}.
+Namun, keduanya masih menghadapi keterbatasan mendasar: LSTM terbebani oleh
+kompleksitas rekuren $O(T)$ yang sulit diskalakan pada sekuens sangat
+panjang; Transformer memiliki kompleksitas perhatian $O(T^{2})$ yang mahal
+secara komputasi; dan keduanya menghasilkan representasi laten yang tidak
+transparan terhadap pemahaman fisika degradasi bantalan.
+
+Dua arsitektur urutan baru yang muncul baru-baru ini membuka peluang untuk
+mengatasi keterbatasan tersebut.
+Mamba \citetitb{Gu2023Mamba} memperkenalkan \emph{selective state-space
+model} (SSM) yang mencapai kompleksitas linear dalam panjang sekuens
+dengan mekanisme seleksi berbasis konten (\emph{input-dependent
+parameterization}).
+xLSTM \citetitb{Beck2024xLSTM} memperluas LSTM klasik dengan
+\emph{matrix-memory} (\emph{mLSTM}) dan \emph{scalar-memory} (\emph{sLSTM})
+yang memberikan kapasitas memori asosiatif jauh lebih tinggi.
+Menggabungkan kekuatan keduanya dalam satu arsitektur hibrida
+--- dengan Mamba menangani konteks panjang dan mLSTM mempertahankan presisi
+rekuren pada perubahan degradasi tajam --- berpotensi menghasilkan model
+prediksi RUL yang lebih akurat dan efisien.
+
+Di sisi lain, salah satu hambatan terbesar adopsi \emph{deep learning}
+pada sistem perawatan prediktif industri adalah kurangnya
+keterjelasan (\emph{interpretability}) keputusan model.
+Insinyur perawatan memerlukan bukti bahwa model tidak sekadar menghafal
+pola statistik, melainkan benar-benar menangkap fenomena fisika degradasi
+yang dapat diverifikasi dengan teori diagnosis getaran klasik
+--- seperti \emph{Ball Pass Frequency Outer race} (BPFO), \emph{Ball Pass
+Frequency Inner race} (BPFI), dan \emph{Ball Spin Frequency} (BSF).
+\emph{Sparse Autoencoder} (SAE) \citetitb{Bricken2023Monosemanticity}
+telah terbukti efektif dalam mengekstrak fitur laten yang
+\emph{monosemantik} dari model \emph{deep learning} di domain bahasa alami,
+dan penerapannya secara \emph{post-hoc} pada model prognostik bantalan
+berpotensi menjembatani jurang antara pendekatan berbasis data dan
+teori fisika.
+
+Berdasarkan konteks di atas, penelitian ini mengusulkan arsitektur
+\emph{Mamba-xLSTM-Net} --- hibrida SSM selektif dan \emph{matrix-memory
+xLSTM} --- untuk prediksi RUL bantalan gelinding, dilengkapi modul
+interpretabilitas berbasis \emph{Top-$k$ Sparse Autoencoder} dengan
+prosedur pemetaan ke frekuensi karakteristik fisik bantalan.
+Validasi empiris dilakukan pada dua dataset publik \emph{run-to-failure}
+standar industri, yaitu PHM2012 (FEMTO-PRONOSTIA) \citetitb{Nectoux2012PRONOSTIA}
+dan XJTU-SY \citetitb{Wang2020XJTU}, dengan tiga \emph{seed} berbeda untuk
+menjamin rigor statistik.
+
+Gambar~\ref{fig:bab1_pipeline_pdm} mengilustrasikan alur sistem perawatan
+prediktif berbasis kondisi yang menjadi landasan penelitian ini, mulai dari
+akuisisi sinyal sensor hingga keputusan intervensi perawatan. Alur tersebut
+mencakup dua pilar penelitian secara bersamaan: prediksi RUL oleh model
+\emph{Mamba-xLSTM-Net} (Pilar~1) dan interpretasi representasi laten melalui
+SAE untuk pemetaan BPFx (Pilar~2).
+
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[
+      node distance = 1.0cm and 1.4cm,
+      box/.style  = {rectangle, rounded corners=3pt, draw, thick,
+                     fill=white, align=center, minimum height=0.9cm,
+                     minimum width=2.4cm, font=\small},
+      iobox/.style = {box, fill=gray!15},
+      pilar1/.style = {box, fill=blue!10, dashed},
+      pilar2/.style = {box, fill=green!10, dashed},
+      arr/.style  = {-{Stealth[length=5pt]}, thick},
+    ]
+    % Input chain
+    \node[iobox]  (sensor)  {Sensor Akselerometer};
+    \node[box,   right=of sensor]  (hi)     {Ekstraksi Fitur HI};
+    \node[pilar1, right=of hi]     (rul)    {Mamba-xLSTM-Net\\{\small Prediksi RUL}};
+    \node[iobox,  right=of rul]    (dec)    {Keputusan Perawatan};
+
+    % Interpretability branch
+    \node[pilar2, below=1.2cm of rul] (sae) {Top-$k$ SAE\\{\small Interpretabilitas}};
+    \node[iobox,  right=of sae]  (bpfx) {Peta BPFx\\{\small BPFO, BPFI, BSF}};
+
+    % Arrows main
+    \draw[arr] (sensor) -- (hi);
+    \draw[arr] (hi)     -- (rul);
+    \draw[arr] (rul)    -- (dec);
+
+    % Branch
+    \draw[arr, dashed] (rul.south) -- (sae.north) node[midway, right, font=\scriptsize] {laten};
+    \draw[arr] (sae)   -- (bpfx);
+
+    % Labels
+    \node[font=\scriptsize, above=0.2cm of rul, text=blue!60!black]
+          {Pilar 1};
+    \node[font=\scriptsize, above=0.2cm of sae, text=green!50!black]
+          {Pilar 2};
+  \end{tikzpicture}
+  \caption{Alur sistem perawatan prediktif berbasis kondisi yang menjadi konteks
+           penelitian ini: sinyal akselerometer diproses menjadi fitur \emph{health
+           indicator} (HI), diprediksi oleh Mamba-xLSTM-Net (Pilar~1), kemudian
+           representasi latennya diinterpretasi melalui Top-$k$ SAE untuk pemetaan
+           frekuensi karakteristik bantalan (Pilar~2).}
+  \label{fig:bab1_pipeline_pdm}
+\end{figure}
+
+\section{Masalah Penelitian}
+\label{sec:bab1_masalah}
+
+Berdasarkan latar belakang yang telah dipaparkan, dirumuskan masalah utama
+penelitian disertasi ini sebagai berikut:
+\textit{Bagaimana merancang sistem prediksi sisa umur pakai bantalan gelinding
+berbasis arsitektur hibrida \emph{deep learning} yang akurat, stabil lintas
+kondisi operasi, dan menghasilkan representasi laten yang dapat diinterpretasi
+secara fisis melalui frekuensi karakteristik bantalan?}
+
+Untuk menjawab masalah utama tersebut, dirumuskan tiga pertanyaan penelitian:
+
+\begin{description}
+  \item[RQ1.] Apakah arsitektur hibrida \emph{Mamba-xLSTM-Net} yang
+        menggabungkan \emph{selective state-space model} (Mamba-3)
+        dengan \emph{matrix-memory recurrent} (mLSTM) mampu menghasilkan
+        prediksi RUL bantalan yang kompetitif terhadap arsitektur kontemporer
+        pada dataset \emph{run-to-failure} PHM2012 dan XJTU-SY?
+  \item[RQ2.] Apakah representasi laten yang dipelajari model RUL berbasis
+        \emph{deep learning} dapat dipetakan, melalui \emph{Top-$k$ Sparse
+        Autoencoder} secara \emph{post-hoc}, ke frekuensi karakteristik
+        fisik bantalan (BPFO, BPFI, BSF, FTF)?
+  \item[RQ3.] Sejauh mana metodologi yang diusulkan menunjukkan
+        konsistensi hasil lintas dataset dengan kondisi operasi, geometri
+        bantalan, dan protokol eksperimen yang berbeda?
+\end{description}
+
+\section{Tujuan Penelitian}
+\label{sec:bab1_tujuan}
+
+Sejalan dengan ketiga pertanyaan penelitian, ditetapkan tujuan penelitian
+sebagai berikut:
+
+\begin{enumerate}
+  \item Mengembangkan arsitektur hibrida \emph{Mamba-xLSTM-Net} yang
+        mengintegrasikan \emph{state-space model} selektif dengan
+        \emph{matrix-memory xLSTM} untuk prediksi sisa umur pakai
+        bantalan gelinding, disertai justifikasi desain berbasis sifat
+        non-stasioner sinyal getaran.
+  \item Merancang dan memvalidasi modul interpretabilitas berbasis
+        \emph{Top-$k$ Sparse Autoencoder} yang dapat dipetakan secara
+        kuantitatif ke frekuensi karakteristik fisik bantalan
+        (BPFO, BPFI, BSF, FTF) melalui korelasi Pearson terhadap
+        \emph{Hilbert envelope spectrum}.
+  \item Memvalidasi metodologi yang diusulkan secara empiris pada
+        dataset publik PHM2012 (FEMTO-PRONOSTIA) dan XJTU-SY dengan
+        protokol multi-\emph{seed} (seed 42, 43, 44), evaluasi empat
+        metrik sekaligus (RMSE, MAE, R\textsuperscript{2}, PHM Score),
+        dan perbandingan dengan model-model kontemporer.
+\end{enumerate}
+
+\section{Lingkup dan Batasan Penelitian}
+\label{sec:bab1_lingkup}
+
+Penelitian ini dibatasi pada hal-hal berikut:
+
+\begin{itemize}
+  \item \textbf{Jenis komponen:} Bantalan gelinding jenis
+        \emph{deep groove ball bearing} (NSK~6804 dan LDK~UER204)
+        pada rezim degradasi alami (\emph{natural run-to-failure}).
+  \item \textbf{Sinyal sensor:} Sinyal getaran akselerometer horizontal
+        dan vertikal dengan frekuensi sampling \SI{25,6}{\kilo\hertz}.
+  \item \textbf{Dataset:} PHM2012 / FEMTO-PRONOSTIA (17 bantalan,
+        3 kondisi operasi) dan XJTU-SY (10 bantalan kondisi~1 dan~2;
+        kondisi~3 tidak tersedia).
+  \item \textbf{Output model:} Prediksi RUL skalar ternormalisasi
+        $[0{,}1]$ (regresi tunggal); tidak mencakup klasifikasi mode
+        kegagalan.
+  \item \textbf{Interpretabilitas:} Analisis \emph{post-hoc} berbasis
+        SAE, SHAP, dan \emph{Integrated Gradients} pada level fitur
+        laten; tidak mencakup interpretabilitas kausal berbasis
+        intervensi atau metode saliency visual.
+  \item \textbf{Infrastruktur:} Pelatihan pada GPU NVIDIA~A40 (46~GB
+        VRAM) dengan framework PyTorch Lightning 2.x; tidak mengklaim
+        \emph{deployment real-time} pada perangkat \emph{edge}.
+\end{itemize}
+
+\section{Asumsi Penelitian}
+\label{sec:bab1_asumsi}
+
+Penelitian ini menggunakan asumsi-asumsi berikut:
+
+\begin{enumerate}
+  \item Proses degradasi bantalan diasumsikan memiliki tren menurun
+        secara umum dari kondisi sehat menuju kegagalan, dengan toleransi
+        terhadap fluktuasi lokal yang tidak mengubah pola jangka panjang.
+  \item Label RUL dihitung secara linier menurun dari titik rekaman pertama
+        (nilai~1{,}0) hingga rekaman terakhir sebelum kegagalan (nilai~0{,}0)
+        berdasarkan panjang hidup aktual tiap bantalan.
+        Skema \emph{piecewise} berbasis \emph{First Prediction Time}
+        (FPT) merupakan alternatif yang diakui sebagai pekerjaan
+        lanjutan (lihat \autoref{sec:bab5_keterbatasan}).
+  \item Pembagian data dilakukan secara berbasis bantalan
+        (\emph{bearing-wise split}) untuk mencegah kebocoran data
+        (\emph{data leakage}); karakteristik tiap bantalan dianggap
+        cukup berbeda sehingga pembagian ini bermakna secara statistik.
+  \item Statistik normalisasi fitur (\emph{mean}, deviasi standar)
+        dihitung hanya pada \emph{training set} dan diterapkan ke
+        \emph{validation} dan \emph{test set} tanpa modifikasi lebih lanjut.
+\end{enumerate}
+
+\section{Hipotesis Penelitian}
+\label{sec:bab1_hipotesis}
+
+Berdasarkan tinjauan literatur dan desain arsitektur, diajukan hipotesis
+berikut:
+
+\begin{description}
+  \item[H1 (terkait RQ1).] Arsitektur hibrida \emph{Mamba-xLSTM-Net}
+        mencapai RMSE rata-rata lebih rendah dibanding model yang hanya
+        menggunakan satu paradigma (SSM saja atau LSTM saja) pada kedua
+        dataset PHM2012 dan XJTU-SY, dengan stabilitas lintas
+        \emph{seed} (deviasi standar RMSE) yang kompetitif.
+  \item[H2 (terkait RQ2).] \emph{Top-$k$ Sparse Autoencoder} yang
+        diterapkan secara \emph{post-hoc} pada representasi laten
+        \emph{Mamba-xLSTM-Net} menghasilkan fitur yang berkorelasi
+        secara moderat ($|r| \geq 0{,}30$) dengan amplitudo
+        \emph{Hilbert envelope spectrum} di sekitar frekuensi
+        karakteristik bantalan (BPFO dan/atau BPFI) pada kedua dataset.
+  \item[H3 (terkait RQ3).] Metode yang diusulkan menunjukkan pola
+        peringkat konsisten (RMSE relatif terhadap model pembanding)
+        lintas PHM2012 dan XJTU-SY meskipun terdapat perbedaan geometri
+        bantalan, kondisi operasi, dan ukuran \emph{test set}.
+\end{description}
+
+\section{Pendekatan dan Metodologi (Gambaran Umum)}
+\label{sec:bab1_pendekatan}
+
+Penelitian ini menggunakan pendekatan eksperimental kuantitatif yang
+dirancang dengan dua pilar penelitian yang saling melengkapi.
+
+\textbf{Pilar 1 --- Kinerja Prediksi RUL:}
+Sinyal getaran dari dataset PHM2012 dan XJTU-SY diproses melalui
+\emph{pipeline} ekstraksi fitur berbasis dekomposisi energi pita frekuensi
+(\emph{band-energy decomposition}), kemudian dimasukkan ke \emph{Mamba-xLSTM-Net}
+untuk menghasilkan prediksi RUL ternormalisasi.
+Kinerja dievaluasi dengan empat metrik (RMSE, MAE, R\textsuperscript{2},
+PHM Score asimetris) menggunakan tiga \emph{seed} berbeda untuk menjamin
+rigor statistik.
+
+\textbf{Pilar 2 --- Interpretabilitas Berbasis Fisika:}
+Representasi laten dari \emph{checkpoint} terbaik \emph{Mamba-xLSTM-Net}
+dianalisis menggunakan \emph{Top-$k$ Sparse Autoencoder} untuk menghasilkan
+ruang fitur laten yang \emph{sparse} dan lebih dapat diinterpretasi.
+Fitur SAE kemudian dipetakan ke frekuensi karakteristik fisik bantalan
+melalui korelasi Pearson terhadap amplitudo \emph{Hilbert envelope spectrum}
+dari sinyal mentah.
+Analisis atribusi tambahan menggunakan SHAP dan \emph{Integrated Gradients}
+memperkuat pemahaman tentang fitur input yang paling informatif.
+
+Diagram alir penelitian secara lengkap dapat dilihat pada
+Bab~\ref{bab:metodologi} (Gambar~\ref{fig:bab4_kerangka}).
+
+\section{Kebaruan dan Orisinalitas}
+\label{sec:bab1_kebaruan}
+
+Disertasi ini menyumbangkan tiga kebaruan utama yang memenuhi kategori
+kebaruan dalam Pedoman Penulisan Disertasi Doktor ITB:
+
+\begin{enumerate}
+  \item \textbf{(Teknologi-Metodologi)} Arsitektur hibrida
+        \emph{Mamba-xLSTM-Net} yang mengintegrasikan
+        \emph{state-space model} selektif (Mamba-3) dengan
+        \emph{matrix-memory xLSTM} (mLSTM) untuk prediksi sisa umur
+        pakai bantalan gelinding.
+        Mekanisme fusi dirancang berdasarkan sifat non-stasioner sinyal
+        getaran bantalan, di mana Mamba menangkap konteks degradasi
+        jangka panjang dan mLSTM mempertahankan presisi rekuren pada
+        perubahan cepat menjelang kegagalan.
+        Bukti empiris: stabilitas tertinggi lintas \emph{seed} pada
+        PHM2012 ($\sigma_{\text{RMSE}} = 0{,}020$) dan PHM Score
+        tertinggi pada XJTU-SY (0{,}907).
+  \item \textbf{(Teknologi-Metodologi)} Skema interpretabilitas
+        \emph{Top-$k$ Sparse Autoencoder} yang bekerja secara
+        \emph{post-hoc} terhadap representasi laten model RUL,
+        dilengkapi prosedur kuantitatif untuk memetakan fitur SAE ke
+        frekuensi karakteristik fisik bantalan (BPFO, BPFI, BSF, FTF)
+        melalui korelasi Pearson terhadap amplitudo \emph{Hilbert
+        envelope spectrum} sinyal getaran.
+  \item \textbf{(Output)} Bukti empiris bahwa model \emph{deep learning}
+        yang dilatih untuk prediksi RUL mempelajari representasi laten
+        yang berkorespondensi dengan teori klasik diagnosis getaran
+        bantalan.
+        Korelasi moderat tertinggi $r = 0{,}507$ (fitur SAE f474
+        $\leftrightarrow$ BPFI pada PHM2012) dan $r = 0{,}501$
+        (fitur f959 $\leftrightarrow$ BPFO pada XJTU-SY) signifikan
+        secara statistik ($n = 300$, $p \ll 0{,}05$).
+        BPFO dan BPFI menjadi satu-satunya frekuensi karakteristik
+        dengan \emph{hit-rate} $> 0$, konsisten dengan mode kegagalan
+        \emph{outer race} dan \emph{inner race} yang didokumentasikan
+        pada kedua dataset.
+\end{enumerate}
+
+Ketiga kebaruan ini akan dipertanggungjawabkan secara teknis pada
+Bab~\ref{bab:metodologi}, divalidasi secara empiris pada
+Bab~\ref{bab:hasil-pembahasan}, dan dirangkum sebagai kontribusi pada
+Bab~\ref{bab:kesimpulan}.
+
+Gambar~\ref{fig:bab1_kontribusi} menyajikan peta hubungan antar ketiga
+kontribusi penelitian secara visual. Kontribusi pertama dan kedua bersifat
+metodologis-teknologis dan saling bergantung: arsitektur Mamba-xLSTM-Net
+menghasilkan representasi laten yang kemudian diinterpretasi oleh SAE.
+Kontribusi ketiga merupakan temuan empiris yang mengonfirmasi bahwa
+kedua inovasi metodologis tersebut bersama-sama menghasilkan
+\emph{physically grounded representation}.
+
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[
+      node distance = 1.0cm and 1.6cm,
+      contrib/.style = {rectangle, rounded corners=4pt, draw, thick, fill=white,
+                        text width=4.0cm, text centered, minimum height=1.4cm,
+                        font=\small},
+      output/.style  = {contrib, fill=yellow!15},
+      arr/.style = {-{Stealth[length=5pt]}, thick},
+    ]
+    \node[contrib] (arch) {(1) Arsitektur Hibrida\\Mamba-xLSTM-Net\\{\scriptsize SSM + mLSTM + gated fusion}};
+    \node[contrib, right=of arch] (sae) {(2) Interpretabilitas SAE\\Top-$k$ Sparse AE\\{\scriptsize pemetaan BPFx post-hoc}};
+    \coordinate (arch_sae_mid) at ($(arch)!0.5!(sae)$);
+    \node[output,  below=1.2cm of arch_sae_mid] (out)
+         {(3) Temuan Empiris\\Korespondensi laten $\leftrightarrow$ BPFO/BPFI\\{\scriptsize $r_{\max}=0{,}507$; $p \ll 0{,}05$}};
+
+    \draw[arr] (arch.east) -- (sae.west) node[midway, above, font=\scriptsize] {laten};
+    \draw[arr] (arch.south) -- (out.north west);
+    \draw[arr] (sae.south)  -- (out.north east);
+  \end{tikzpicture}
+  \caption{Peta ketiga kontribusi penelitian dan keterkaitan antar-kontribusi.
+           Kontribusi (1) dan (2) bersifat metodologis-teknologis dan saling
+           bergantung; kontribusi (3) merupakan temuan empiris yang dikonfirmasi
+           oleh keduanya.}
+  \label{fig:bab1_kontribusi}
+\end{figure}
+
+\section{Sistematika Penulisan}
+\label{sec:bab1_sistematika}
+
+Disertasi ini disusun ke dalam enam bab.
+
+\textbf{Bab~\ref{bab:pendahuluan}} (Pendahuluan) memuat latar belakang
+yang menjelaskan urgensi perawatan prediktif berbasis kecerdasan buatan
+dalam konteks transformasi industri nasional, perumusan masalah,
+tujuan penelitian, lingkup dan batasan, asumsi, hipotesis, gambaran
+umum pendekatan metodologi, klaim kebaruan, dan sistematika penulisan.
+
+\textbf{Bab~\ref{bab:tinjauan-pustaka}} (Tinjauan Pustaka) memetakan
+\emph{state-of-the-art} prediksi RUL bantalan, perkembangan arsitektur
+\emph{deep learning} untuk data deret waktu, dan identifikasi
+kesenjangan penelitian (\emph{research gap}) yang dimotivasi oleh
+keterbatasan metode terkini.
+
+\textbf{Bab~\ref{bab:dasar-teori}} (Dasar Teori) menguraikan
+fondasi teoretis yang digunakan: formulasi RUL dan \emph{Health
+Indicator}, teori bantalan gelinding dan frekuensi karakteristik,
+arsitektur LSTM, xLSTM (sLSTM dan mLSTM), \emph{State-Space Model}
+dan Mamba, serta \emph{Sparse Autoencoder} dan metode atribusi.
+
+\textbf{Bab~\ref{bab:metodologi}} (Metodologi Penelitian) menjabarkan
+secara teknis dan \emph{reproducible}: dataset, \emph{pipeline}
+praproses, arsitektur \emph{Mamba-xLSTM-Net} yang diusulkan, modul
+interpretabilitas SAE, protokol pelatihan \emph{multi-seed}, rancangan
+eksperimen terstruktur, dan metrik evaluasi.
+
+\textbf{Bab~\ref{bab:hasil-pembahasan}} (Hasil dan Pembahasan)
+menyajikan dan membahas hasil evaluasi kuantitatif kinerja prediksi RUL
+(Pilar~1) dan hasil analisis interpretabilitas SAE + pemetaan BPFO/BPFI
+(Pilar~2), disertai diskusi keterbatasan dan saran penelitian lanjutan.
+
+\textbf{Bab~\ref{bab:kesimpulan}} (Kesimpulan dan Saran) menutup
+disertasi dengan rangkuman pencapaian terhadap setiap tujuan penelitian,
+kontribusi terhadap keilmuan dan praktik industri, keterbatasan penelitian,
+serta arah pekerjaan lanjutan yang direkomendasikan.

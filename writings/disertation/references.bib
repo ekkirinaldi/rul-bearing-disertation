@@ -1,0 +1,532 @@
+% references.bib
+% Daftar Pustaka untuk Disertasi
+%
+% Format: BibLaTeX dengan biber backend.
+% Aturan: lihat .cursor/rules/04-citations-bibliography.mdc
+%
+% Konvensi key: NamaBelakangPertama + Tahun + KataKunci
+% Contoh: Hochreiter1997LSTM, Vaswani2017Attention, Gu2023Mamba
+
+% =====================================================================
+% Foundation papers — RNN / LSTM
+% =====================================================================
+
+@article{Hochreiter1997LSTM,
+  author    = {Hochreiter, Sepp and Schmidhuber, J{\"u}rgen},
+  title     = {Long Short-Term Memory},
+  journal   = {Neural Computation},
+  volume    = {9},
+  number    = {8},
+  pages     = {1735--1780},
+  year      = {1997},
+  doi       = {10.1162/neco.1997.9.8.1735}
+}
+
+% =====================================================================
+% Transformer family
+% =====================================================================
+
+@inproceedings{Vaswani2017Attention,
+  author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and
+               Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and
+               Kaiser, {\L}ukasz and Polosukhin, Illia},
+  title     = {Attention is All You Need},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume    = {30},
+  year      = {2017}
+}
+
+@inproceedings{Zhou2021Informer,
+  author    = {Zhou, Haoyi and Zhang, Shanghang and Peng, Jieqi and
+               Zhang, Shuai and Li, Jianxin and Xiong, Hui and Zhang, Wancai},
+  title     = {Informer: Beyond Efficient Transformer for Long Sequence
+               Time-Series Forecasting},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume    = {35},
+  number    = {12},
+  pages     = {11106--11115},
+  year      = {2021}
+}
+
+% =====================================================================
+% Modern sequence models — Mamba, xLSTM
+% =====================================================================
+
+@misc{Gu2023Mamba,
+  author    = {Gu, Albert and Dao, Tri},
+  title     = {Mamba: Linear-Time Sequence Modeling with Selective
+               State Spaces},
+  year      = {2023},
+  eprint    = {2312.00752},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}
+
+@misc{Beck2024xLSTM,
+  author    = {Beck, Maximilian and P{\"o}ppel, Korbinian and Spanring, Markus and
+               Auer, Andreas and Prudnikova, Oleksandra and Kopp, Michael and
+               Klambauer, G{\"u}nter and Brandstetter, Johannes and Hochreiter, Sepp},
+  title     = {xLSTM: Extended Long Short-Term Memory},
+  year      = {2024},
+  eprint    = {2405.04517},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}
+
+% =====================================================================
+% Bearing prognostic datasets
+% =====================================================================
+
+@inproceedings{Nectoux2012PRONOSTIA,
+  author    = {Nectoux, Patrick and Gouriveau, Rafael and Medjaher, Kamal and
+               Ramasso, Emmanuel and Chebel-Morello, Brigitte and Zerhouni, Noureddine and
+               Varnier, Christophe},
+  title     = {{PRONOSTIA}: An Experimental Platform for Bearings
+               Accelerated Degradation Tests},
+  booktitle = {IEEE International Conference on Prognostics and Health
+               Management (PHM)},
+  pages     = {1--8},
+  year      = {2012}
+}
+
+@article{Wang2020XJTU,
+  author    = {Wang, Biao and Lei, Yaguo and Li, Naipeng and Li, Ningbo},
+  title     = {A Hybrid Prognostics Approach for Estimating Remaining
+               Useful Life of Rolling Element Bearings},
+  journal   = {IEEE Transactions on Reliability},
+  volume    = {69},
+  number    = {1},
+  pages     = {401--412},
+  year      = {2020},
+  doi       = {10.1109/TR.2018.2882682}
+}
+
+% =====================================================================
+% Interpretability
+% =====================================================================
+
+@inproceedings{Lundberg2017SHAP,
+  author    = {Lundberg, Scott M. and Lee, Su-In},
+  title     = {A Unified Approach to Interpreting Model Predictions},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume    = {30},
+  year      = {2017}
+}
+
+@inproceedings{Sundararajan2017IG,
+  author    = {Sundararajan, Mukund and Taly, Ankur and Yan, Qiqi},
+  title     = {Axiomatic Attribution for Deep Networks},
+  booktitle = {Proceedings of the 34th International Conference on
+               Machine Learning (ICML)},
+  volume    = {70},
+  pages     = {3319--3328},
+  year      = {2017}
+}
+
+@misc{Bricken2023Monosemanticity,
+  author    = {Bricken, Trenton and Templeton, Adly and Batson, Joshua and
+               Chen, Brian and Jermyn, Adam and Conerly, Tom and Turner, Nick and
+               Anil, Cem and Denison, Carson and Askell, Amanda and others},
+  title     = {Towards Monosemanticity: Decomposing Language Models with
+               Dictionary Learning},
+  howpublished = {Anthropic Transformer Circuits Thread},
+  year      = {2023}
+}
+
+% =====================================================================
+% Optimization
+% =====================================================================
+
+@inproceedings{Loshchilov2019AdamW,
+  author    = {Loshchilov, Ilya and Hutter, Frank},
+  title     = {Decoupled Weight Decay Regularization},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2019}
+}
+
+% =====================================================================
+% Bearing diagnostics and prognostics — domain references
+% =====================================================================
+
+@book{Lei2018Machinery,
+  author    = {Lei, Yaguo},
+  title     = {Intelligent Fault Diagnosis and Remaining Useful Life
+               Prediction of Rotating Machinery},
+  publisher = {Butterworth-Heinemann / Elsevier},
+  year      = {2018},
+  isbn      = {978-0-12-811534-3}
+}
+
+@book{Mobley2002PlantMaintenance,
+  author    = {Mobley, R. Keith},
+  title     = {An Introduction to Predictive Maintenance},
+  edition   = {2nd},
+  publisher = {Butterworth-Heinemann},
+  year      = {2002},
+  isbn      = {978-0-7506-7531-4}
+}
+
+% =====================================================================
+% Modern sequence models — PatchTST
+% =====================================================================
+
+@inproceedings{Nie2023PatchTST,
+  author    = {Nie, Yuqi and Nguyen, Nam H. and Sinthong, Phanwadee and
+               Kalagnanam, Jayant},
+  title     = {A Time Series is Worth 64 Words: Long-Term Forecasting
+               with Transformers},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2023}
+}
+
+% =====================================================================
+% RUL prediction references
+% =====================================================================
+
+@article{Hsu2020,
+  author    = {Hsu, Tzu-Wei and Tsai, Wei-An and Hsueh, Yung-Chuan and
+               Liu, Chih-Wen},
+  title     = {Multi-Head Attention Mechanism for Bearing Remaining Useful
+               Life Prediction},
+  journal   = {Applied Sciences},
+  volume    = {10},
+  number    = {18},
+  pages     = {6564},
+  year      = {2020},
+  doi       = {10.3390/app10186564}
+}
+
+% =====================================================================
+% Industry 4.0 — Indonesia policy references
+% =====================================================================
+
+@techreport{WEF2018Industry4,
+  author      = {{World Economic Forum}},
+  title       = {Readiness for the Future of Production Report 2018},
+  institution = {World Economic Forum},
+  year        = {2018},
+  address     = {Geneva}
+}
+
+@techreport{Kemenperin2018Making4,
+  author      = {{Kementerian Perindustrian Republik Indonesia}},
+  title       = {Making Indonesia 4.0: Strategi Indonesia di Era Revolusi
+                 Industri Keempat},
+  institution = {Kementerian Perindustrian Republik Indonesia},
+  year        = {2018},
+  address     = {Jakarta},
+  langid      = {indonesian}
+}
+
+% =====================================================================
+% Classical prognostics & statistics
+% =====================================================================
+
+@inproceedings{Saxena2008Damage,
+  author    = {Saxena, Abhinav and Goebel, Kai and Simon, Don and
+               Eklund, Neil},
+  title     = {Damage Propagation Modeling for Aircraft Engine
+               Run-to-Failure Simulation},
+  booktitle = {2008 International Conference on Prognostics and Health
+               Management (PHM)},
+  pages     = {1--9},
+  year      = {2008},
+  doi       = {10.1109/PHM.2008.4711414}
+}
+
+@article{An2013ParticleFilter,
+  author    = {An, Dawn and Choi, Joo-Ho and Kim, Nam Ho},
+  title     = {Prognostics 101: A Tutorial for Particle Filter-Based
+               Prognostics Algorithm Using Matlab},
+  journal   = {Reliability Engineering \& System Safety},
+  volume    = {115},
+  pages     = {161--169},
+  year      = {2013},
+  doi       = {10.1016/j.ress.2013.02.019}
+}
+
+@book{Box1976ARIMA,
+  author    = {Box, George E. P. and Jenkins, Gwilym M.},
+  title     = {Time Series Analysis: Forecasting and Control},
+  edition   = {revised},
+  publisher = {Holden-Day},
+  year      = {1976},
+  address   = {San Francisco}
+}
+
+@article{Cox1972Hazards,
+  author    = {Cox, David R.},
+  title     = {Regression Models and Life-Tables},
+  journal   = {Journal of the Royal Statistical Society, Series {B}},
+  volume    = {34},
+  number    = {2},
+  pages     = {187--220},
+  year      = {1972},
+  doi       = {10.1111/j.2517-6161.1972.tb00899.x}
+}
+
+@article{Tipping2001RVM,
+  author    = {Tipping, Michael E.},
+  title     = {Sparse {Bayesian} Learning and the Relevance Vector
+               Machine},
+  journal   = {Journal of Machine Learning Research},
+  volume    = {1},
+  pages     = {211--244},
+  year      = {2001}
+}
+
+@article{Smola2004SVR,
+  author    = {Smola, Alex J. and Sch{\"o}lkopf, Bernhard},
+  title     = {A Tutorial on Support Vector Regression},
+  journal   = {Statistics and Computing},
+  volume    = {14},
+  number    = {3},
+  pages     = {199--222},
+  year      = {2004},
+  doi       = {10.1023/B:STCO.0000035301.49549.88}
+}
+
+% =====================================================================
+% Vanishing gradient — foundational
+% =====================================================================
+
+@article{Bengio1994Vanishing,
+  author    = {Bengio, Yoshua and Simard, Patrice and Frasconi, Paolo},
+  title     = {Learning Long-Term Dependencies with Gradient Descent is
+               Difficult},
+  journal   = {IEEE Transactions on Neural Networks},
+  volume    = {5},
+  number    = {2},
+  pages     = {157--166},
+  year      = {1994},
+  doi       = {10.1109/72.279181}
+}
+
+% =====================================================================
+% TCN — empirical evaluation
+% =====================================================================
+
+@misc{Bai2018TCN,
+  author    = {Bai, Shaojie and Kolter, J. Zico and Koltun, Vladlen},
+  title     = {An Empirical Evaluation of Generic Convolutional and
+               Recurrent Networks for Sequence Modeling},
+  year      = {2018},
+  eprint    = {1803.01271},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}
+
+% =====================================================================
+% Long Range Arena — Transformer benchmarking
+% =====================================================================
+
+@inproceedings{Tay2022LRA,
+  author    = {Tay, Yi and Dehghani, Mostafa and Abnar, Samira and
+               Shen, Yikang and Bahri, Dara and Pham, Philip and
+               Rao, Jinfeng and Yang, Liu and Ruder, Sebastian and
+               Metzler, Donald},
+  title     = {Long Range Arena: {A} Benchmark for Efficient
+               Transformers},
+  booktitle = {International Conference on Learning Representations
+               (ICLR)},
+  year      = {2021},
+  eprint    = {2011.04006},
+  archivePrefix = {arXiv}
+}
+
+% =====================================================================
+% Attention is not Explanation
+% =====================================================================
+
+@inproceedings{Jain2019Attention,
+  author    = {Jain, Sarthak and Wallace, Byron C.},
+  title     = {Attention is not {Explanation}},
+  booktitle = {Proceedings of the 2019 Conference of the North American
+               Chapter of the Association for Computational Linguistics
+               (NAACL-HLT)},
+  pages     = {3543--3556},
+  year      = {2019},
+  doi       = {10.18653/v1/N19-1357}
+}
+
+% =====================================================================
+% HiPPO — recurrent memory foundation for SSM
+% =====================================================================
+
+@inproceedings{Gu2020HiPPO,
+  author    = {Gu, Albert and Dao, Tri and Ermon, Stefano and
+               Rudra, Atri and R{\'e}, Christopher},
+  title     = {{HiPPO}: Recurrent Memory with Optimal Polynomial
+               Projections},
+  booktitle = {Advances in Neural Information Processing Systems
+               (NeurIPS)},
+  volume    = {33},
+  pages     = {1474--1487},
+  year      = {2020},
+  eprint    = {2008.07669},
+  archivePrefix = {arXiv}
+}
+
+% =====================================================================
+% BERT — bidirectional Transformer reference
+% =====================================================================
+
+@inproceedings{Devlin2019BERT,
+  author    = {Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and
+               Toutanova, Kristina},
+  title     = {{BERT}: Pre-training of Deep Bidirectional Transformers for
+               Language Understanding},
+  booktitle = {Proceedings of the 2019 Conference of the North American
+               Chapter of the Association for Computational Linguistics
+               (NAACL-HLT)},
+  pages     = {4171--4186},
+  year      = {2019},
+  doi       = {10.18653/v1/N19-1423}
+}
+
+% =====================================================================
+% SSM / Mamba evolution
+% =====================================================================
+
+@inproceedings{Gu2022S4,
+  author    = {Gu, Albert and Goel, Karan and R{\'e}, Christopher},
+  title     = {Efficiently Modeling Long Sequences with Structured
+               State Spaces},
+  booktitle = {International Conference on Learning Representations
+               (ICLR)},
+  year      = {2022},
+  eprint    = {2111.00396},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}
+
+@inproceedings{Dao2024Mamba2,
+  author    = {Dao, Tri and Gu, Albert},
+  title     = {Transformers are {SSM}s: Generalized Models and Efficient
+               Algorithms Through Structured State Space Duality},
+  booktitle = {Proceedings of the 41st International Conference on
+               Machine Learning (ICML)},
+  year      = {2024},
+  eprint    = {2405.21060},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}
+
+% =====================================================================
+% GRU — foundational
+% =====================================================================
+
+@inproceedings{Cho2014GRU,
+  author    = {Cho, Kyunghyun and van Merri{\"{e}}nboer, Bart and
+               Gulcehre, Caglar and Bahdanau, Dzmitry and
+               Bougares, Fethi and Schwenk, Holger and Bengio, Yoshua},
+  title     = {Learning Phrase Representations using {RNN}
+               Encoder--Decoder for Statistical Machine Translation},
+  booktitle = {Proceedings of the 2014 Conference on Empirical Methods
+               in Natural Language Processing (EMNLP)},
+  pages     = {1724--1734},
+  year      = {2014},
+  eprint    = {1406.1078},
+  archivePrefix = {arXiv}
+}
+
+% =====================================================================
+% Adam optimizer
+% =====================================================================
+
+@inproceedings{Kingma2015Adam,
+  author    = {Kingma, Diederik P. and Ba, Jimmy},
+  title     = {Adam: {A} Method for Stochastic Optimization},
+  booktitle = {International Conference on Learning Representations
+               (ICLR)},
+  year      = {2015},
+  eprint    = {1412.6980},
+  archivePrefix = {arXiv}
+}
+
+% =====================================================================
+% Bearing RUL — deep learning methods
+% =====================================================================
+
+@article{Rui2026xLSTMTransformer,
+  author    = {Rui, Jiaolong and Liu, Zexin and Liu, Hao and
+               Mo, Weizhong and Huang, Wanxiu and Xie, Mingfeng},
+  title     = {{RUL} Prediction Based on {xLSTM}--Transformer Neural
+               Network for Rolling Element Bearings Under Different
+               Working Conditions},
+  journal   = {Sensors},
+  volume    = {26},
+  number    = {5},
+  pages     = {1578},
+  year      = {2026},
+  doi       = {10.3390/s26051578}
+}
+
+@article{Li2021SpatialGraph,
+  author    = {Li, Jiaxiao and Xu, Guanghua and Li, Weiguo and
+               Gao, Chaowei and Li, Xin and Sun, Qiang},
+  title     = {Remaining Useful Life Prognostics of Bearings Based
+               on a Novel Spatial Graph-Temporal Convolution Network},
+  journal   = {Sensors},
+  volume    = {21},
+  number    = {12},
+  pages     = {4217},
+  year      = {2021},
+  doi       = {10.3390/s21124217}
+}
+
+@article{Chen2022BiLSTMAttention,
+  author    = {Chen, Junzhe and Pan, Haifeng and Yang, Ting and Peng, Fei},
+  title     = {Convolutional Neural Network Based on Attention Mechanism
+               and {Bi-LSTM} for Bearing Remaining Life Prediction},
+  journal   = {Applied Intelligence},
+  volume    = {52},
+  number    = {2},
+  pages     = {1076--1091},
+  year      = {2022},
+  doi       = {10.1007/s10489-021-02503-2}
+}
+
+@article{Khorram2021DiagnosisCNN,
+  author    = {Khorram, Alireza and Khalooei, Mohammad and
+               Rezghi, Mansoor},
+  title     = {End-to-End {CNN} + {LSTM} Deep Learning Approach for
+               Bearing Fault Diagnosis},
+  journal   = {Applied Intelligence},
+  volume    = {51},
+  number    = {2},
+  pages     = {736--751},
+  year      = {2021},
+  doi       = {10.1007/s10489-020-01859-1}
+}
+
+% =====================================================================
+% Interpretability — Sparse Autoencoder (Anthropic 2024 follow-up)
+% =====================================================================
+
+@misc{Templeton2024Scaling,
+  author    = {Templeton, Adly and Conerly, Tom and Marcus, Jonathan and
+               Lindsey, Jack and Bricken, Trenton and Chen, Brian and
+               Pearce, Adam and Citro, Craig and Ameisen, Emmanuel and
+               Jones, Andy and others},
+  title     = {Scaling Monosemanticity: Extracting Interpretable Features
+               from {Claude} 3 {Sonnet}},
+  howpublished = {Anthropic Transformer Circuits Thread},
+  year      = {2024},
+  url       = {https://transformer-circuits.pub/2024/scaling-monosemanticity/}
+}
+
+% =====================================================================
+% Indonesian-language references (contoh format ITB)
+% =====================================================================
+
+@article{Penulis2023ContohID,
+  author    = {Penulis, Nama and Rekan, Nama and Pengarang, Tiga},
+  title     = {Contoh Sitasi Berbahasa Indonesia untuk Disertasi ITB},
+  journal   = {Jurnal Teknik Mesin Indonesia},
+  volume    = {15},
+  number    = {2},
+  pages     = {123--140},
+  year      = {2023},
+  langid    = {indonesian}
+}

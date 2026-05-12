@@ -1,0 +1,668 @@
+% =====================================================================
+% Bab II — Tinjauan Pustaka
+% =====================================================================
+\chapter{Tinjauan Pustaka}
+\label{bab:tinjauan-pustaka}
+
+Bab ini menyajikan tinjauan terhadap perkembangan penelitian terkini dalam
+bidang prediksi \emph{remaining useful life} (RUL) bantalan gelinding, dengan
+fokus pada identifikasi \emph{state of the art}, kelemahan masing-masing
+pendekatan yang tercitasi dalam literatur, serta konsolidasi \emph{research
+gap} yang menjustifikasi penelitian ini. Tinjauan diorganisir dalam lima
+kelompok tematik: (1) pendekatan berbasis fisika dan statistik klasik,
+(2) metode \emph{deep learning} generasi awal hingga terkini, (3) arsitektur
+\emph{sequence modeling} generasi terbaru (Mamba dan xLSTM), (4) metode
+interpretabilitas model, dan (5) sintesis kritis yang membangun justifikasi
+arsitektur hibrida Mamba-xLSTM-Net. \emph{Research gap} dan posisi penelitian
+disajikan pada subbab~\ref{subsec:bab2_research_gap}.
+
+% -----------------------------------------------------------------
+\section{Pendekatan Berbasis Fisika dan Statistik}
+\label{sec:bab2_fisika_statistik}
+% -----------------------------------------------------------------
+
+Sebelum kebangkitan \emph{deep learning}, prediksi RUL bertumpu pada dua
+keluarga utama: model yang menyematkan pengetahuan fisika degradasi secara
+eksplisit, dan model yang mempelajari distribusi statistik umur komponen dari
+data historis. Pemahaman mendalam terhadap keterbatasan kedua keluarga ini
+penting untuk memahami dorongan transisi menuju pendekatan berbasis data.
+
+\subsection{Model Fisika dan Hibrida Statistik-Fisika}
+\label{subsec:bab2_fisika}
+
+Model berbasis fisika menggambarkan mekanisme kerusakan melalui persamaan
+diferensial yang parameternya diidentifikasi dari data kondisi. Hukum Paris
+untuk perambatan retak (\emph{crack propagation}) memodelkan laju pertambahan
+ukuran retak $da/dN$ sebagai fungsi pangkat dari rentang faktor intensitas
+tegangan, dan merupakan fondasi dari sebagian besar model degradasi komponen
+berputar \citetitb{Saxena2008Damage}. Varian hibrida menggabungkan model
+fisika dengan \emph{filter} statistik, di antaranya \emph{Extended Kalman
+Filter} (EKF) dan \emph{particle filter}, untuk mengestimasi parameter model
+secara \emph{online} dari pengukuran kondisi yang bersifat \emph{noisy}
+\citetitb{An2013ParticleFilter}.
+
+\textbf{Kelemahan tercitasi.} Meskipun interpretabilitasnya tinggi, model
+fisika memiliki dua keterbatasan fundamental. Pertama, model memerlukan
+pengetahuan mekanisme fisika yang akurat dan spesifik per jenis komponen ---
+parameterisasi yang valid untuk satu jenis bantalan tidak dapat serta-merta
+ditransfer ke bantalan dengan geometri berbeda tanpa rekalibrasi
+\citetitb{Lei2018Machinery}. Kedua, \emph{particle filter} dan EKF berbasis
+model fisika mengasumsikan bahwa model degradasi benar secara struktural;
+jika mekanisme kegagalan aktual menyimpang dari asumsi model (misalnya
+karena kondisi beban berubah atau ada kontaminasi yang tidak dimodelkan),
+kesalahan estimasi dapat bertumbuh secara kumulatif tanpa ada mekanisme
+koreksi otomatis \citetitb{An2013ParticleFilter}. Keterbatasan ini menjadi
+sangat nyata pada dataset benchmark modern seperti PHM2012 dan XJTU-SY yang
+mencakup tiga kondisi operasi berbeda dengan kecepatan dan beban yang bervariasi.
+
+\subsection{Model Statistik Klasik}
+\label{subsec:bab2_statistik_klasik}
+
+Model statistik murni memodelkan distribusi probabilitas waktu kegagalan atau
+deret waktu kondisi tanpa memerlukan model fisika eksplisit.
+
+Model \emph{AutoRegressive Integrated Moving Average} (ARIMA)
+\citetitb{Box1976ARIMA} membangun model linier dari deret waktu berdasarkan
+autokorelasi. Model \emph{proportional hazards} Cox \citetitb{Cox1972Hazards}
+memodelkan \emph{hazard rate} sebagai produk dari \emph{baseline hazard} dan
+fungsi eksponensial kovariat, sehingga memungkinkan estimasi distribusi umur
+dari data historis. Distribusi Weibull, yang parameternya diestimasi dari
+data kegagalan, banyak dipakai untuk pemodelan \emph{time-to-failure} pada
+komponen mekanik.
+
+Metode \emph{kernel} seperti \emph{Support Vector Regression} (SVR)
+\citetitb{Smola2004SVR} dan \emph{Relevance Vector Machine} (RVM)
+\citetitb{Tipping2001RVM} memberikan alternatif non-parametrik dengan
+kemampuan regresi non-linier, dan sempat populer untuk prediksi RUL sebelum
+era \emph{deep learning}.
+
+\textbf{Kelemahan tercitasi.} ARIMA mengasumsikan stasioneritas deret waktu
+setelah differencing, sedangkan sinyal degradasi bantalan yang mencakup fase
+sehat panjang diikuti degradasi eksponensial inheren bersifat non-stasioner
+secara struktural \citetitb{Box1976ARIMA}. Model Cox mengasumsikan bahwa
+rasio \emph{hazard} antar kelompok bersifat proporsional dan konstan sepanjang
+waktu, yang tidak sesuai dengan karakteristik degradasi bantalan yang
+menunjukkan akselerasi tiba-tiba menjelang kegagalan \citetitb{Cox1972Hazards}.
+SVR dan RVM terikat pada pilihan \emph{kernel} yang ditentukan secara manual
+dan tidak skalabel terhadap fitur berdimensi tinggi yang diperlukan untuk
+pemodelan sinyal getaran multi-kanal \citetitb{Smola2004SVR}. Yang paling
+kritis: tidak satupun dari model-model ini mampu melakukan prediksi multi-langkah
+(\emph{multi-step ahead}) secara langsung, dan semuanya sepenuhnya bersifat
+\emph{black-box} dari perspektif mekanisme fisika getaran.
+
+% -----------------------------------------------------------------
+\section{Metode \emph{Deep Learning} untuk Prediksi RUL}
+\label{sec:bab2_deep_learning}
+% -----------------------------------------------------------------
+
+Pendekatan \emph{deep learning} menggeser paradigma dari pemodelan eksplisit
+ke pembelajaran peta dari fitur kondisi ke RUL secara langsung dari data.
+Kemampuannya mempelajari representasi hirarkis dari data mentah menjadikannya
+pilihan utama dalam penelitian prognostik modern. Namun setiap keluarga
+arsitektur membawa keterbatasan yang berbeda, yang secara kumulatif
+memotivasi pengembangan arsitektur hibrida pada penelitian ini.
+
+\subsection{LSTM, BiLSTM, dan GRU}
+\label{subsec:bab2_lstm_bilstm_gru}
+
+\emph{Long Short-Term Memory} \citetitb{Hochreiter1997LSTM} merupakan
+arsitektur \emph{recurrent} paling dominan dalam prognostik bantalan karena
+mekanisme \emph{gating}-nya secara eksplisit dirancang untuk mempertahankan
+dependensi jangka panjang dalam sekuens. Varian \emph{bidirectional} LSTM
+(BiLSTM) memproses sekuens dalam dua arah untuk memperkaya representasi,
+dan \emph{Gated Recurrent Unit} (GRU) \citetitb{Cho2014GRU} menyederhanakan
+arsitektur LSTM dengan menggabungkan \emph{cell state} dan \emph{hidden state}
+ke dalam satu vektor, mengurangi jumlah parameter sambil mempertahankan
+kemampuan tangkap dependensi.
+
+\citetitb{Hsu2020} mengintegrasikan mekanisme \emph{multi-head attention} ke
+dalam LSTM untuk prediksi RUL pada PHM2012, menunjukkan bahwa penambahan
+\emph{attention} meningkatkan akurasi pada fase degradasi akhir. Hasil
+ini sekaligus mengindikasikan bahwa LSTM murni memiliki keterbatasan
+dalam memprioritaskan \emph{time steps} yang paling informatif.
+\citetitb{Chen2022BiLSTMAttention} mengusulkan BiLSTM dengan \emph{attention}
+untuk prediksi umur bantalan pada XJTU-SY, mengkonfirmasi manfaat
+representasi temporal dua arah.
+
+\textbf{Kelemahan tercitasi.} Masalah \emph{vanishing gradient} pada
+\emph{recurrent network} dalam mendapatkan dependensi temporal yang sangat
+panjang telah diidentifikasi secara teoritis oleh \citetitb{Bengio1994Vanishing}:
+gradien yang dipropagasikan mundur melalui banyak \emph{time step} cenderung
+menghilang secara eksponensial, menyebabkan model kesulitan belajar dari
+kejadian yang jauh di masa lalu. Meskipun LSTM mengurangi masalah ini
+melalui \emph{gating}, \emph{gating} berbasis fungsi sigmoid (rentang
+$[0, 1]$) membatasi kemampuan model untuk merevisi memori sel secara
+agresif ketika terjadi lonjakan amplitudo getaran yang dramatis menjelang
+kegagalan akhir bantalan \citetitb{Beck2024xLSTM}. Dengan kata lain, sigmoid
+\emph{saturation} memaksa perubahan memori yang lambat dan halus, persis
+ketika sinyal degradasi menuntut respons yang cepat dan besar.
+
+Selain itu, LSTM dan variannya sepenuhnya merupakan arsitektur
+\emph{black-box} dari perspektif interpretabilitas mekanistik: meskipun
+\emph{attention weights} dapat divisualisasikan, penelitian oleh
+\citetitb{Jain2019Attention} membuktikan secara empiris bahwa
+\emph{attention weights} yang tinggi tidak secara kausal menyebabkan prediksi
+tertentu --- mereka hanya berkorelasi, bukan menjelaskan. Atribusi berbasis
+\emph{attention} oleh karena itu tidak dapat digunakan sebagai bukti
+interpretabilitas yang andal dalam domain kritis seperti prognostik industri.
+
+\subsection{CNN-LSTM dan Hibrida Konvolusi-Rekurens}
+\label{subsec:bab2_cnn_lstm}
+
+Pendekatan hibrida CNN-LSTM mengkombinasikan \emph{convolutional layers}
+untuk ekstraksi fitur lokal dari sinyal mentah dengan \emph{recurrent layers}
+untuk pemodelan temporal. \citetitb{Khorram2021DiagnosisCNN} mengusulkan
+CRNN (\emph{Convolutional Recurrent Neural Network}) yang memproses sinyal
+akselerometer mentah tanpa pra-pemrosesan ekstraksi fitur manual. Ekstensi
+dengan mekanisme perhatian seperti CBAM (Convolutional Block Attention
+Module) menambah kemampuan seleksi fitur spasial dan kanal secara adaptif.
+
+\textbf{Kelemahan tercitasi.} \emph{Receptive field} lapisan konvolusi
+dibatasi secara fundamental oleh ukuran kernel dan kedalaman jaringan. Untuk
+menangkap korelasi antara rekaman pertama dan rekaman ke-2000 dalam siklus
+hidup bantalan PHM2012, diperlukan jaringan yang sangat dalam dengan
+semakin banyak \emph{pooling} yang berisiko menghilangkan detail temporal
+\citetitb{Bai2018TCN}. Fitur konvolusi yang dihasilkan juga sulit dipetakan
+kembali ke konsep fisika yang bermakna --- \emph{feature map} dari CNN
+merupakan representasi abstrak yang tidak secara langsung berkorespondensi
+dengan frekuensi karakteristik bantalan (BPFO, BPFI). Keterbatasan
+interpretabilitas ini relevan secara langsung: rekayasawan perawatan
+tidak dapat menggunakan representasi CNN untuk mendiagnosis jenis cacat
+yang sedang berkembang.
+
+\subsection{Temporal Convolutional Networks (TCN)}
+\label{subsec:bab2_tcn}
+
+\emph{Temporal Convolutional Networks} (TCN) \citetitb{Bai2018TCN} menggunakan
+konvolusi kausal berlapis dengan faktor dilatasi yang tumbuh secara eksponensial
+($1, 2, 4, 8, \ldots$) untuk menangkap dependensi jangka panjang dengan
+efisiensi komputasi yang lebih baik daripada LSTM. Evaluasi empiris pada
+berbagai \emph{benchmark} sekuens \citetitb{Bai2018TCN} menunjukkan bahwa
+TCN secara konsisten melampaui LSTM vanilla dalam akurasi dan kecepatan
+pelatihan.
+
+Dalam konteks prediksi RUL, TCN yang diperlengkapi dengan \emph{sparse gating}
+(SparseGate) memberikan interpretabilitas \emph{ante-hoc} dengan memaksa hanya
+sebagian kecil \emph{channel} aktif per sampel. \citetitb{Li2021SpatialGraph}
+mengombinasikan TCN dengan \emph{graph convolutional networks} untuk
+menangkap hubungan spasial antar sensor.
+
+\textbf{Kelemahan tercitasi.} Meskipun TCN unggul dalam efisiensi, ukuran
+\emph{receptive field} (konteks temporal maksimum yang dapat diakses) secara
+langsung proporsional terhadap kedalaman jaringan dan faktor dilatasi terbesar.
+Untuk sekuens degradasi PHM2012 yang dapat mencapai lebih dari 2.800 rekaman,
+\emph{receptive field} yang diperlukan mengharuskan jaringan TCN yang sangat
+dalam, yang membawa risiko \emph{vanishing gradient} dan overfitting
+\citetitb{Bai2018TCN}. Selain itu, \emph{sparse gating} yang ditambahkan
+secara \emph{ad hoc} pada TCN tidak menjamin \emph{monosemanticity} --- setiap
+neuron aktif tidak harus merespons satu konsep fisika tunggal yang dapat
+diidentifikasi. Hal ini berbeda dengan SAE \emph{post-hoc} yang secara
+eksplisit mengoptimalkan dekomposisi menjadi komponen-komponen monosemantik.
+
+\subsection{Transformer, Informer, dan PatchTST}
+\label{subsec:bab2_transformer}
+
+Arsitektur Transformer \citetitb{Vaswani2017Attention} merevolusi pemodelan
+sekuens dengan mekanisme \emph{self-attention} yang mampu menangkap dependensi
+antara pasangan \emph{time step} manapun dalam satu langkah komputasi. Hal
+ini memberikan fleksibilitas yang tidak dimiliki oleh \emph{recurrent networks}
+dalam menangkap hubungan jangka panjang.
+
+Informer \citetitb{Zhou2021Informer} mengurangi kompleksitas Transformer dari
+$\mathcal{O}(L^2)$ ke $\mathcal{O}(L \log L)$ melalui \emph{ProbSparse
+attention}. PatchTST \citetitb{Nie2023PatchTST} lebih lanjut mengurangi
+jumlah token dengan segmentasi sekuens waktu menjadi \emph{patch}, meningkatkan
+efisiensi komputasi dan kemampuan tangkap pola lokal.
+
+\textbf{Kelemahan tercitasi.} Kompleksitas kuadratik $\mathcal{O}(L^2 d)$
+dari \emph{full self-attention} merupakan hambatan fundamental untuk
+sekuens degradasi yang panjang \citetitb{Tay2022LRA}: benchmark Long Range
+Arena menunjukkan bahwa Transformer standar mulai mengalami degradasi akurasi
+dan overflow memori pada sekuens di atas 4.096 \emph{token}. Bagi dataset
+PHM2012 dengan rekaman per detik selama ratusan jam operasi, ini merupakan
+kendala nyata.
+
+Yang lebih penting untuk domain prognostik, \emph{attention weights} dari
+Transformer tidak dapat diinterpretasi sebagai atribusi fitur yang andal.
+\citetitb{Jain2019Attention} menunjukkan melalui eksperimen \emph{permutation
+test} dan \emph{adversarial attention} bahwa distribusi \emph{attention}
+yang sangat berbeda dapat menghasilkan prediksi yang identik --- dengan kata
+lain, \emph{attention is not explanation}. Teknisi perawatan yang mencoba
+memahami mengapa model memprediksi kegagalan dalam $x$ langkah waktu tidak
+dapat mengandalkan visualisasi \emph{attention} sebagai penjelasan yang
+dapat dipercaya. Selain itu, Transformer bersifat \emph{data-hungry} dan
+rentan terhadap \emph{overfitting} pada dataset bearing yang relatif kecil
+(PHM2012 hanya 6 bantalan pelatihan, XJTU-SY 10 bantalan).
+
+\subsection{Hibrida Bertingkat 2024-2026}
+\label{subsec:bab2_hibrida_terbaru}
+
+Kesadaran akan keterbatasan masing-masing arsitektur mendorong pengembangan
+hibrida yang mengkombinasikan kekuatan beberapa paradigma. \citetitb{Chen2022BiLSTMAttention}
+memadukan CNN dengan BiLSTM dan \emph{attention}. Pendekatan berbasis CBAM
+menambahkan perhatian kanal dan spasial. Arsitektur yang paling relevan
+dengan penelitian ini adalah xLSTM-Transformer \citetitb{Rui2026xLSTMTransformer},
+yang mengintegrasikan xLSTM untuk pemodelan temporal lokal dengan Transformer
+untuk konteks global pada prediksi RUL bantalan, divalidasi pada PHM2012 dan
+XJTU-SY.
+
+\textbf{Kelemahan tercitasi.} Meskipun xLSTM-Transformer menunjukkan
+peningkatan yang signifikan dibandingkan LSTM dan Transformer murni, dua
+keterbatasan mendasar tetap ada. Pertama, komponen Transformer dalam
+arsitektur ini mempertahankan kompleksitas kuadratik $\mathcal{O}(L^2)$
+yang membatasi skalabilitas untuk sekuens sangat panjang, sebagaimana
+telah dikritisi oleh \citetitb{Tay2022LRA}. Kedua, xLSTM-Transformer tidak
+dilengkapi dengan mekanisme interpretabilitas \emph{post-hoc} pada tingkat
+representasi tersembunyi: analisis interpretabilitas pada paper tersebut
+hanya berupa visualisasi kurva prediksi, tanpa upaya untuk memetakan fitur
+laten ke konsep fisika bantalan yang dapat diverifikasi oleh rekayasawan
+\citetitb{Rui2026xLSTMTransformer}. Keterbatasan ini membuka celah langsung
+yang dijawab oleh penelitian ini melalui kombinasi Mamba (menggantikan
+Transformer untuk kompleksitas linear) dan SAE \emph{post-hoc} untuk
+interpretabilitas mekanistik.
+
+% -----------------------------------------------------------------
+\section{Arsitektur \emph{Sequence Modeling} Generasi Terbaru: Mamba dan xLSTM}
+\label{sec:bab2_mamba_xlstm}
+% -----------------------------------------------------------------
+
+Periode 2020-2024 menyaksikan dua lini pengembangan paralel yang masing-masing
+mengatasi keterbatasan Transformer dari sudut yang berbeda: \emph{State Space
+Models} (SSM) yang mengembangkan efisiensi linear melalui kerangka matematika
+sistem kontrol, dan xLSTM yang merevitalisasi LSTM dengan peningkatan mekanistik
+fundamental.
+
+\subsection{Evolusi \emph{State Space Models}: HiPPO hingga Mamba-2}
+\label{subsec:bab2_s4_mamba}
+
+Fondasi teoritis SSM modern diletakkan oleh HiPPO (\emph{High-order Polynomial
+Projection Operator}) \citetitb{Gu2020HiPPO}, yang membuktikan bahwa SSM
+dapat didesain untuk mengompresi riwayat input secara optimal dengan
+memproyeksikannya ke basis polinomial ortogonal. Teori ini memberikan landasan
+formal untuk mengapa SSM dapat menangkap dependensi jangka panjang tanpa
+\emph{vanishing gradient}.
+
+S4 (\emph{Structured State Space Model}) \citetitb{Gu2022S4} mewujudkan
+teori HiPPO ke dalam arsitektur yang efisien secara komputasi dengan
+memparameterisasi ulang matriks $\mathbf{A}$ melalui dekomposisi \emph{low-rank},
+memungkinkan komputasi sebagai konvolusi global dalam domain frekuensi.
+S4 mencapai kinerja \emph{state of the art} pada Long Range Arena --- termasuk
+menyelesaikan tugas Path-X (panjang 16.384) yang gagal ditangani oleh semua
+varian Transformer --- dengan kompleksitas $\mathcal{O}(L \log L)$.
+
+Mamba \citetitb{Gu2023Mamba} memperkenalkan \emph{selectivity}: parameter
+$\Delta$, $\mathbf{B}$, dan $\mathbf{C}$ dari SSM dibuat bergantung pada
+input (\emph{input-dependent}), memungkinkan model memfilter informasi secara
+adaptif. Dengan algoritma \emph{parallel scan} yang memanfaatkan GPU secara
+efisien, Mamba mencapai kompleksitas $\mathcal{O}(L)$ sambil mengungguli
+Transformer dalam pemodelan bahasa pada skala parameter yang setara.
+
+Mamba-2 \citetitb{Dao2024Mamba2} membuktikan kesetaraan struktural antara
+SSM selektif dan \emph{linear attention} melalui kerangka \emph{Structured
+State Space Duality} (SSD), membuka jalan untuk optimasi perangkat keras
+yang sebelumnya eksklusif untuk Transformer dan menghasilkan implementasi
+2--8$\times$ lebih cepat dari Mamba-1.
+
+Tabel~\ref{tab:bab2_evolusi_ssm} merangkum tonggak evolusi keluarga SSM dari
+HiPPO (2020) hingga xLSTM-Transformer (2026). Perspektif kronologis ini
+penting untuk memahami mengapa BiMamba (konfigurasi bidireksional Mamba yang
+dipilih dalam arsitektur usulan) merupakan iterasi yang matang secara teknis
+dan terjustifikasi secara empiris.
+
+\begin{table}[ht]
+  \centering
+  \caption{Tonggak evolusi keluarga \emph{State Space Model} (SSM) dari 2020
+           hingga 2026. Kolom Kompleksitas merujuk pada kompleksitas
+           komputasi terhadap panjang sekuens $L$.}
+  \label{tab:bab2_evolusi_ssm}
+  \small
+  \begin{tabular}{@{}lccll@{}}
+    \toprule
+    \textbf{Model} & \textbf{Tahun} & \textbf{Kompleksitas}
+      & \textbf{Inovasi kunci} & \textbf{Kelemahan tercitasi} \\
+    \midrule
+    HiPPO            & 2020 & $\mathcal{O}(N^2 L)$ & Fondasi teori SSM berbasis projeksi polinomial & Hanya teori; tidak efisien secara komputasi \\
+    S4               & 2022 & $\mathcal{O}(L\log L)$ & Dekomposisi \emph{low-rank} $\mathbf{A}$; konvolusi global & Parameter tetap (tidak \emph{content-aware}) \\
+    S4D / DSS        & 2023 & $\mathcal{O}(L\log L)$ & Diagonal $\mathbf{A}$; training lebih stabil & Kurang ekspresif untuk sinyal non-stasioner \\
+    Mamba            & 2023 & $\mathcal{O}(L)$ & $\Delta,\mathbf{B},\mathbf{C}$ bergantung input; \emph{parallel scan} & Unidireksional; tidak dapat merevisi konteks \\
+    Mamba-2 / SSD    & 2024 & $\mathcal{O}(L)$ & Kesetaraan SSM–\emph{linear attention}; lebih cepat & Masih unidireksional dalam implementasi dasar \\
+    xLSTM            & 2024 & $\mathcal{O}(L d^2)$ & \emph{Exponential gating}; memori matriks mLSTM & Kuadratik terhadap dimensi; biaya tinggi untuk $L$ panjang \\
+    xLSTM-Transformer & 2026 & $\mathcal{O}(L^2)$ & Hybrid xLSTM + Transformer; SOTA RUL & Kompleksitas Transformer; skala data besar diperlukan \\
+    \bottomrule
+  \end{tabular}
+  \medskip\\
+  \footnotesize Sumber: \citenameitb{Gu2020HiPPO}, \citenameitb{Gu2022S4},
+  \citenameitb{Gu2023Mamba}, \citenameitb{Dao2024Mamba2},
+  \citenameitb{Beck2024xLSTM}, \citenameitb{Rui2026xLSTMTransformer}.
+\end{table}
+
+\textbf{Kelemahan Mamba tercitasi.} Meskipun unggul dalam efisiensi dan
+pemodelan global, Mamba dalam konfigurasi standar bersifat unidireksional:
+setiap \emph{state} $\mathbf{h}_t$ hanya dapat mengakses konteks sebelumnya
+$\mathbf{x}_{1:t}$, tidak dapat menggunakan informasi masa depan. Untuk
+aplikasi pemodelan bahasa, ini adalah properti yang diinginkan (kausalitas).
+Namun untuk sinyal degradasi bearing di mana evaluasi dilakukan pada
+\emph{window} tetap, kemampuan akses konteks dua arah dapat meningkatkan
+representasi secara signifikan. Selain itu, arsitektur Mamba yang murni
+berbasis scan linier memiliki ekspresivitas yang lebih terbatas untuk
+menangkap perubahan dinamika lokal yang tajam dibandingkan mekanisme
+\emph{gating} eksponensial xLSTM, seperti yang diobservasi pada fase
+akhir degradasi bantalan \citetitb{Rui2026xLSTMTransformer}.
+
+\subsection{xLSTM: Revitalisasi LSTM dengan \emph{Exponential Gating}}
+\label{subsec:bab2_xlstm}
+
+xLSTM \citetitb{Beck2024xLSTM} mengidentifikasi dua keterbatasan mekanistik
+LSTM yang membatasinya: (1) \emph{sigmoid gating} yang membatasi nilai gate
+pada rentang $[0, 1]$ sehingga tidak mampu merevisi memori secara agresif,
+dan (2) kapasitas memori vektor yang terbatas pada $\mathbf{c}_t \in
+\mathbb{R}^d$ sehingga tidak mampu menyimpan banyak asosiasi secara
+bersamaan. xLSTM memperkenalkan dua komponen untuk mengatasi keduanya.
+
+sLSTM mengganti \emph{sigmoid gating} dengan \emph{exponential gating}
+(gate bernilai $\exp(\cdot)$ yang tidak terbatas), dilengkapi dengan
+\emph{normalizer state} untuk stabilisasi numerik. Perubahan ini memungkinkan
+model merespons lonjakan amplitudo akhir umur dengan revisi memori yang
+dramatis dan cepat --- persis apa yang tidak bisa dilakukan LSTM klasik.
+mLSTM memperluas memori dari vektor ke matriks $\mathbf{C}_t \in
+\mathbb{R}^{d \times d}$, terinspirasi dari memori asosiatif, memungkinkan
+penyimpanan banyak asosiasi kunci-nilai secara bersamaan.
+
+\textbf{Kelemahan xLSTM tercitasi.} Memori matriks mLSTM berukuran
+$d \times d$ membuat biaya komputasi dan memori untuk konteks panjang
+tumbuh secara kuadratik dengan dimensi model. Pada sekuens degradasi
+dengan ribuan \emph{time step}, ini menjadi hambatan yang signifikan jika
+xLSTM digunakan sebagai satu-satunya komponen pemodelan. Beck dkk.
+\citetitb{Beck2024xLSTM} mengakui bahwa xLSTM dioptimalkan untuk pemodelan
+bahasa di mana konteks \emph{window} relatif pendek; penerapannya pada
+sekuens sangat panjang seperti sinyal degradasi memerlukan adaptasi
+arsitektural lebih lanjut. Selain itu, pada saat penulisan ini, belum ada
+studi yang secara khusus mengevaluasi xLSTM murni pada dataset prediksi
+RUL bantalan multi-kondisi dengan protokol evaluasi yang ketat.
+
+\subsection{xLSTM-Transformer untuk RUL Bantalan}
+\label{subsec:bab2_xlstm_transformer_rul}
+
+\citetitb{Rui2026xLSTMTransformer} adalah penelitian paling terkait langsung
+dengan penelitian ini: mengusulkan hibrida xLSTM-Transformer berbasis
+arsitektur \emph{encoder-decoder} untuk prediksi RUL, divalidasi pada PHM2012
+dan XJTU-SY. Kontribusi utamanya adalah menunjukkan bahwa \emph{exponential
+gating} xLSTM secara khusus efektif mengatasi masalah saturasi prediksi pada
+fase akhir degradasi yang merupakan kelemahan kronik LSTM klasik dan Transformer.
+
+Analisis kelemahan (lihat subbab~\ref{subsec:bab2_hibrida_terbaru})
+menempatkan penelitian ini sebagai langkah lanjut: mengganti komponen
+Transformer dengan Mamba untuk mengeliminasi kompleksitas kuadratik, dan
+menambahkan skema interpretabilitas SAE berbasis BPFx yang tidak ada dalam
+\citetitb{Rui2026xLSTMTransformer}.
+
+% -----------------------------------------------------------------
+\section{Interpretabilitas Model \emph{Deep Learning}}
+\label{sec:bab2_interpretabilitas}
+% -----------------------------------------------------------------
+
+Interpretabilitas merupakan prasyarat untuk adopsi \emph{deep learning} di
+lingkungan industri kritis. Tanpa kemampuan menjelaskan mengapa model
+memberikan prediksi tertentu, rekayasawan perawatan tidak dapat memvalidasi
+hasil model terhadap pengetahuan domain yang dimilikinya.
+
+\subsection{Metode Atribusi Berbasis Gradien}
+\label{subsec:bab2_gradien_atribusi}
+
+\emph{Saliency maps} dan Grad-CAM menggunakan gradien model terhadap input
+untuk mengidentifikasi fitur yang paling berpengaruh. Keduanya mudah
+diimplementasikan namun diketahui sensitif terhadap \emph{noise} input dan
+tidak stabil antar prediksi yang serupa \citetitb{Sundararajan2017IG}.
+
+\emph{Integrated Gradients} (IG) \citetitb{Sundararajan2017IG} mengatasi
+ketidakstabilan ini dengan mengintegrasikan gradien sepanjang jalur linier
+dari \emph{baseline} ke input aktual, memenuhi dua aksiom fundamental:
+\emph{sensitivity} (jika model bergantung pada fitur $i$, atribusinya tidak
+nol) dan \emph{implementation invariance} (arsitektur yang secara fungsional
+setara menghasilkan atribusi yang sama).
+
+\subsection{SHAP: Nilai Shapley untuk Interpretabilitas Terpadu}
+\label{subsec:bab2_shap}
+
+SHAP \citetitb{Lundberg2017SHAP} memberikan kerangka interpretabilitas yang
+berlandaskan teori permainan kooperatif (nilai Shapley), memenuhi sifat-sifat
+aksiomatik yang diinginkan termasuk \emph{local accuracy} dan \emph{consistency}.
+Varian \emph{GradientExplainer} memungkinkan komputasi efisien untuk model
+berbasis gradien seperti jaringan saraf.
+
+\subsection{\emph{Sparse Autoencoder} dan Interpretabilitas Mekanistik}
+\label{subsec:bab2_sae}
+
+Interpretabilitas mekanistik bertujuan memahami internal komputasi model
+pada tingkat representasi tersembunyi. \emph{Sparse Autoencoder} (SAE)
+\citetitb{Bricken2023Monosemanticity} melatih \emph{encoder} yang mendekonstruksi
+representasi laten menjadi komponen-komponen \emph{sparse} yang hampir
+monosemantik. \citetitb{Templeton2024Scaling} memvalidasi pendekatan ini
+pada model produksi skala besar, menunjukkan bahwa SAE mampu mengekstraksi
+jutaan fitur yang dapat diinterpretasi dari model yang sebelumnya dianggap
+\emph{black-box}.
+
+\subsection{Kritik \emph{Post-hoc} versus \emph{Ante-hoc}}
+\label{subsec:bab2_posthoc_antehoc}
+
+Perdebatan di antara peneliti interpretabilitas berpusat pada apakah
+interpretabilitas harus dibangun \emph{di dalam} arsitektur (\emph{ante-hoc}
+atau \emph{self-explanatory}) atau diterapkan \emph{setelah} pelatihan
+(\emph{post-hoc}). Metode \emph{ante-hoc} seperti \emph{sparse gating}
+pada SparseGate-TCN-RUL memiliki daya tarik konseptual --- interpretasi
+tersedia tanpa biaya komputasi tambahan. Namun ada masalah fundamental:
+\emph{sparse gating} yang dioptimalkan bersamaan dengan tujuan prediksi
+tidak menjamin bahwa aktivasi yang \emph{sparse} berkorespondensi dengan
+konsep fisika yang dapat diidentifikasi. Seperti halnya dengan
+\emph{attention weights} \citetitb{Jain2019Attention}, sparsitas yang
+dipelajari bisa jadi merupakan artefak optimasi, bukan refleksi dari
+struktur fisika domain.
+
+Metode \emph{post-hoc} seperti SHAP dan IG bekerja di tingkat input fitur
+(\emph{input-level attribution}): menghasilkan nilai kepentingan untuk fitur
+$x_t^{(i)}$ di setiap \emph{time step}. Untuk domain bantalan, ini
+mengidentifikasi \emph{fitur mana} yang paling berpengaruh. Namun pertanyaan
+yang lebih dalam --- \emph{konsep fisika apa} yang direpresentasikan model
+di lapisan tersembunyinya --- tidak dapat dijawab oleh SHAP atau IG karena
+keduanya tidak beroperasi pada ruang representasi tersembunyi. SAE
+\emph{post-hoc} mengisi celah ini: beroperasi langsung pada \emph{hidden
+state} model yang sudah terlatih, SAE mendekonstruksi representasi laten
+menjadi komponen-komponen yang dapat dipetakan ke frekuensi karakteristik
+bantalan seperti BPFO dan BPFI --- menghubungkan \emph{learned representation}
+dengan teori fisika klasik diagnosis getaran.
+
+% -----------------------------------------------------------------
+\section{Sintesis Kritis dan Justifikasi Arsitektur Hibrida}
+\label{sec:bab2_sintesis}
+% -----------------------------------------------------------------
+
+Tinjauan terhadap kelima kelompok pendekatan di atas menghasilkan peta
+kelemahan yang terstruktur. Setiap keluarga arsitektur memiliki setidaknya
+satu keterbatasan fundamental yang tidak dapat diatasi dari dalam arsitektur
+itu sendiri.
+
+Tabel~\ref{tab:bab2_keluarga_dl_rul} menyajikan ringkasan kuantitatif enam
+keluarga metode \emph{deep learning} untuk prediksi RUL bantalan, mencakup
+karya representatif, dataset uji, dan limitasi utama yang tercitasi.
+Tabel ini berfungsi sebagai peta orientasi sebelum sintesis kelemahan
+yang lebih terperinci disajikan pada Tabel~\ref{tab:bab2_sintesis_kritis}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Ringkasan kuantitatif enam keluarga \emph{deep learning} untuk
+           prediksi RUL bantalan gelinding.}
+  \label{tab:bab2_keluarga_dl_rul}
+  \small
+  \begin{tabular}{@{}p{2.8cm}p{3.2cm}p{2.5cm}p{4.0cm}@{}}
+    \toprule
+    \textbf{Keluarga} & \textbf{Karya representatif} & \textbf{Dataset uji}
+      & \textbf{Limitasi utama} \\
+    \midrule
+    LSTM / BiLSTM / GRU
+      & \citenameitb{Hochreiter1997LSTM}; \citenameitb{Lei2018Machinery}
+      & PHM2012, XJTU-SY
+      & \emph{Vanishing gradient}; \emph{sigmoid saturation} di akhir umur \\
+    CNN-LSTM
+      & \citenameitb{Lei2018Machinery}
+      & PHM2012
+      & \emph{Receptive field} lokal; representasi tidak dapat dipetakan ke fisika \\
+    TCN
+      & \citenameitb{Bai2018TCN}
+      & CWRU (bukan RUL \emph{run-to-failure})
+      & \emph{Receptive field} $\propto$ kedalaman; tidak tersedia benchmark RUL standar \\
+    Transformer / Informer / PatchTST
+      & \citenameitb{Vaswani2017Attention,Zhou2021Informer}
+      & PHM2012, XJTU-SY
+      & $\mathcal{O}(L^2)$ kompleksitas; \emph{overfitting} pada dataset kecil \\
+    xLSTM-Transformer
+      & \citenameitb{Rui2026xLSTMTransformer}
+      & XJTU-SY, PHM2012
+      & Mewarisi $\mathcal{O}(L^2)$ Transformer; tidak ada interpretabilitas BPFx \\
+    Mamba-xLSTM-Net \textbf{(usulan)}
+      & Disertasi ini
+      & PHM2012, XJTU-SY
+      & --- (divalidasi dalam Bab~\ref{bab:hasil-pembahasan}) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Tabel~\ref{tab:bab2_sintesis_kritis} memperdalam analisis di atas dengan
+memetakan setiap kelemahan tercitasi terhadap mitigasi spesifik yang
+diimplementasikan dalam Mamba-xLSTM-Net.
+
+\begin{table}[ht]
+  \centering
+  \caption{Pemetaan kelemahan tercitasi per keluarga arsitektur terhadap
+           solusi yang diimplementasikan dalam Mamba-xLSTM-Net.}
+  \label{tab:bab2_sintesis_kritis}
+  \small
+  \begin{tabular}{@{}p{3.2cm}p{4.8cm}p{4.8cm}@{}}
+    \toprule
+    \textbf{Keluarga} & \textbf{Kelemahan utama (sumber)} & \textbf{Mitigasi dalam Mamba-xLSTM-Net} \\
+    \midrule
+    Fisika/statistik klasik
+      & Tidak skalabel ke multi-kondisi; membutuhkan model fisika akurat
+        \citetitb{Lei2018Machinery,An2013ParticleFilter}
+      & Data-driven sepenuhnya; dapat belajar dari 3 kondisi operasi sekaligus \\[4pt]
+    LSTM / GRU
+      & Vanishing gradient \citetitb{Bengio1994Vanishing};
+        sigmoid saturation pada akhir umur \citetitb{Beck2024xLSTM};
+        attention bukan atribusi \citetitb{Jain2019Attention}
+      & xLSTM \emph{exponential gating} menggantikan sigmoid;
+        SAE \emph{post-hoc} untuk atribusi yang dapat dipercaya \\[4pt]
+    CNN-LSTM
+      & \emph{Receptive field} lokal terbatas;
+        representasi tidak dapat dipetakan ke fisika bantalan
+        \citetitb{Bai2018TCN}
+      & BiMamba \emph{selective scan} tanpa batas \emph{receptive field};
+        SAE→BPFx mapping eksplisit \\[4pt]
+    TCN
+      & \emph{Receptive field} $\propto$ kedalaman;
+        \emph{sparse gating} tidak menjamin monosemantisitas
+        \citetitb{Bai2018TCN,Jain2019Attention}
+      & BiMamba dengan konteks tak terbatas;
+        SAE dioptimalkan secara eksplisit untuk dekomposisi monosemantik \\[4pt]
+    Transformer
+      & $\mathcal{O}(L^2)$ untuk sekuens panjang \citetitb{Tay2022LRA};
+        \emph{attention} bukan penjelasan \citetitb{Jain2019Attention};
+        overfitting pada dataset kecil
+      & Mamba $\mathcal{O}(L)$ menggantikan \emph{self-attention};
+        tidak memerlukan \emph{attention} untuk interpretasi \\[4pt]
+    Mamba-only
+      & Unidireksional secara \emph{native};
+        ekspresivitas lokal terbatas untuk dinamika tajam \citetitb{Gu2023Mamba}
+      & Dikonfigurasikan sebagai BiMamba (dua arah);
+        digabungkan dengan xLSTM untuk dinamika lokal \\[4pt]
+    xLSTM-only
+      & Biaya mLSTM tumbuh $\mathcal{O}(d^2)$ untuk konteks panjang
+        \citetitb{Beck2024xLSTM}
+      & BiMamba menangani konteks panjang dengan $\mathcal{O}(L \cdot d)$;
+        xLSTM fokus pada dinamika lokal pendek \\[4pt]
+    xLSTM-Transformer (Rui 2026)
+      & Transformer tetap $\mathcal{O}(L^2)$
+        \citetitb{Tay2022LRA,Rui2026xLSTMTransformer};
+        tidak ada interpretabilitas mekanistik \emph{post-hoc}
+      & Mamba menggantikan Transformer untuk kompleksitas linear;
+        SAE $\to$ BPFx untuk interpretabilitas tersembunyi \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Tabel~\ref{tab:bab2_sintesis_kritis} menunjukkan bahwa tidak ada satu pun
+keluarga arsitektur yang secara tunggal mengatasi semua kelemahan yang
+relevan. Arsitektur hibrida yang mengkombinasikan Mamba (kompleksitas linear
++ konteks global + bidireksional) dan xLSTM (\emph{exponential gating} +
+memori matriks + dinamika lokal) melalui mekanisme \emph{gated fusion}
+merupakan respons yang terstruktur dan dapat dijustifikasi terhadap peta
+kelemahan ini. Justifikasi teknis yang lebih detail --- termasuk derivasi
+mekanistik mengapa \emph{exponential gating} mengatasi saturasi sigmoid ---
+disajikan pada Bab~\ref{bab:dasar-teori}, dan implementasi arsitektur penuh
+pada Bab~\ref{bab:metodologi}.
+
+% -----------------------------------------------------------------
+\section{\emph{Research Gap} dan Posisi Penelitian}
+\label{subsec:bab2_research_gap}
+% -----------------------------------------------------------------
+
+Berdasarkan sintesis kritis pada subbab~\ref{sec:bab2_sintesis}, tiga
+\emph{research gap} yang spesifik dan dapat dijustifikasi diidentifikasi
+sebagai berikut.
+
+\textbf{Gap 1 (Teknologi-Metodologi)}: Belum ada arsitektur yang secara
+eksplisit mengintegrasikan Mamba bidireksional dan xLSTM (sLSTM + mLSTM)
+melalui mekanisme \emph{gated fusion} yang didesain khusus untuk sinyal
+degradasi bantalan. Arsitektur yang ada memadukan xLSTM dengan Transformer
+(tetap $\mathcal{O}(L^2)$) \citetitb{Rui2026xLSTMTransformer} atau Mamba
+tanpa komponen memori matriks; belum ada yang menggabungkan keduanya dengan
+mekanisme fusi adaptif.
+
+\textbf{Gap 2 (Teknologi-Metodologi)}: Belum ada prosedur kuantitatif yang
+memetakan fitur SAE dari representasi tersembunyi model RUL ke frekuensi
+karakteristik fisik bantalan (BPFO, BPFI, BSF, FTF). Metode interpretabilitas
+yang ada beroperasi di tingkat fitur input \citetitb{Lundberg2017SHAP,
+Sundararajan2017IG} dan tidak menjembatani \emph{learned representation}
+dengan teori fisika klasik diagnosis getaran.
+
+\textbf{Gap 3 (Output/Temuan Empiris)}: Belum ada bukti empiris yang
+diterbitkan bahwa model \emph{deep learning} yang dilatih untuk prediksi RUL
+bantalan mempelajari representasi laten yang berkorespondensi secara kuantitatif
+dengan frekuensi karakteristik fisik bantalan. Pertanyaan ini memiliki
+implikasi teoritis penting: apakah \emph{deep learning} menemukan kembali
+pengetahuan domain fisika secara implisit?
+
+Tabel~\ref{tab:bab2_posisi_penelitian} menyajikan posisi penelitian ini
+relatif terhadap karya-karya terkait berdasarkan keempat dimensi yang
+menutup ketiga gap di atas.
+
+\begin{table}[ht]
+  \centering
+  \caption{Posisi penelitian ini relatif terhadap karya terkait pada
+           empat dimensi kunci.}
+  \label{tab:bab2_posisi_penelitian}
+  \small
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    \textbf{Karya} & \textbf{Mamba} & \textbf{xLSTM} & \textbf{SAE} & \textbf{Peta BPFx} \\
+    \midrule
+    LSTM / GRU (standar) & $\times$ & $\times$ & $\times$ & $\times$ \\
+    CNN-LSTM \citetitb{Khorram2021DiagnosisCNN}
+      & $\times$ & $\times$ & $\times$ & $\times$ \\
+    TCN \citetitb{Bai2018TCN} & $\times$ & $\times$ & $\times$ & $\times$ \\
+    Transformer \citetitb{Vaswani2017Attention} & $\times$ & $\times$ & $\times$ & $\times$ \\
+    TCN + graf \citetitb{Li2021SpatialGraph} & $\times$ & $\times$ & $\times$ & $\times$ \\
+    BiLSTM + Attention \citetitb{Chen2022BiLSTMAttention}
+      & $\times$ & $\times$ & $\times$ & $\times$ \\
+    Attention LSTM \citetitb{Hsu2020} & $\times$ & $\times$ & $\times$ & $\times$ \\
+    xLSTM-Transformer \citetitb{Rui2026xLSTMTransformer}
+      & $\times$ & \checkmark & $\times$ & $\times$ \\
+    Scaling Monosemanticity \citetitb{Templeton2024Scaling}
+      & --- & --- & \checkmark & $\times$ \\
+    \textbf{Penelitian ini} & \checkmark & \checkmark & \checkmark & \checkmark \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Seperti ditunjukkan pada Tabel~\ref{tab:bab2_posisi_penelitian}, kombinasi
+keempat elemen sekaligus --- Mamba + xLSTM + SAE + pemetaan BPFx --- belum
+ada presedennya dalam literatur yang ditinjau. Rincian teknis arsitektur
+Mamba-xLSTM-Net dan prosedur SAE-BPFx disajikan pada Bab~\ref{bab:metodologi}.

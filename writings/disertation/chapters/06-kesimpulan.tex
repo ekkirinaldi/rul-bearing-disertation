@@ -1,0 +1,234 @@
+% =====================================================================
+% Bab VI — Kesimpulan
+% =====================================================================
+\chapter{Kesimpulan}
+\label{bab:kesimpulan}
+
+Bab ini merangkum temuan utama penelitian, mengelaborasi kontribusi
+keilmuan dan praktis yang dihasilkan, serta mengidentifikasi arah
+pengembangan lanjutan yang bermakna. Struktur bab mengikuti tiga tujuan
+penelitian yang ditetapkan pada Bab~\ref{bab:pendahuluan}: (1) merancang
+dan mengevaluasi arsitektur hibrida Mamba-xLSTM-Net untuk prediksi RUL
+bantalan, (2) membangun skema interpretabilitas berbasis SAE dengan pemetaan
+ke frekuensi karakteristik fisik bantalan, dan (3) menganalisis konsistensi
+kinerja lintas dataset dan lintas kondisi operasi.
+
+% -----------------------------------------------------------------
+\section{Kesimpulan}
+\label{sec:bab6_kesimpulan}
+% -----------------------------------------------------------------
+
+Penelitian ini berhasil menjawab ketiga tujuan yang ditetapkan melalui
+serangkaian eksperimen komparatif pada dua dataset \emph{run-to-failure}
+publik (PHM2012 dan XJTU-SY) dengan protokol evaluasi yang ketat (tiga seed
+acak, pemisahan \emph{bearing-wise}, normalisasi hanya pada data latih).
+
+\subsection{Tujuan 1: Arsitektur Mamba-xLSTM-Net untuk Prediksi RUL}
+\label{subsec:bab6_kesimpulan_t1}
+
+Arsitektur hibrida Mamba-xLSTM-Net yang mengintegrasikan \emph{selective
+state space model} (Mamba bidireksional) dan \emph{extended LSTM} (xLSTM
+dengan \emph{exponential gating} dan memori matriks) melalui mekanisme
+\emph{gated fusion} terbukti memberikan profil kinerja yang unggul dalam
+aspek stabilitas prediksi.
+
+Pada dataset PHM2012, Mamba-xLSTM-Net mencatat RMSE rata-rata 0,242 dengan
+deviasi standar lintas \emph{seed} terendah ($\pm$0,020), menunjukkan
+konsistensi prediksi tertinggi di antara ketiga arsitektur yang diuji. Pada
+dataset XJTU-SY, Mamba-xLSTM-Net memperoleh PHM Score tertinggi (0,907) ---
+metrik yang paling relevan dengan praktik pemeliharaan prediktif karena
+memperhitungkan asimetri konsekuensi prediksi terlambat versus terlalu dini.
+Hasil ini konsisten dengan hipotesis bahwa paduan kemampuan pemodelan global
+jangka panjang (Mamba) dan penangkapan dinamika lokal akhir degradasi
+(\emph{exponential gating} xLSTM) memberikan manfaat komplementer yang
+saling memperkuat pada sinyal getaran bantalan yang bersifat non-stasioner.
+
+Kurva pelatihan Mamba-xLSTM-Net yang terus membaik hingga \emph{epoch}
+terakhir (71--75 dari 75) mengindikasikan bahwa arsitektur belum mencapai
+kapasitas penuh pada anggaran pelatihan yang ditetapkan, sehingga terdapat
+potensi peningkatan kinerja lebih lanjut dengan anggaran komputasi yang
+lebih besar.
+
+\subsection{Tujuan 2: Interpretabilitas SAE dan Pemetaan BPFx}
+\label{subsec:bab6_kesimpulan_t2}
+
+\emph{Sparse Autoencoder} (SAE) dengan konfigurasi \emph{Top-}$k$ ($k = 51$,
+$\approx$5\% \emph{sparsity}) berhasil merekonstruksi representasi laten
+Mamba-xLSTM-Net dengan \emph{loss} rekonstruksi yang sangat kecil
+($5{,}12 \times 10^{-4}$ pada PHM2012; $1{,}02 \times 10^{-4}$ pada XJTU-SY),
+mengkonfirmasi bahwa representasi laten model memiliki struktur yang sangat
+jarang (\emph{sparse}) secara inheren.
+
+Analisis korelasi antara aktivasi fitur SAE dan amplitudo spektrum
+\emph{envelope} Hilbert pada pita frekuensi karakteristik bantalan
+menghasilkan temuan yang signifikan. Pada PHM2012, \emph{hit-rate} fitur
+SAE tertinggi diperoleh pada BPFI (2,3\%, atau 24 dari 1024 fitur) dengan
+korelasi maksimum $r = 0{,}507$, diikuti BPFO (2,0\%). Pada XJTU-SY,
+BPFO mencatat \emph{hit-rate} tertinggi (2,2\%, 23 fitur) dengan korelasi
+maksimum $r = 0{,}501$. Kedua dataset menunjukkan korespondensi yang
+konsisten antara fitur SAE dan frekuensi karakteristik cincin dalam
+(BPFI) dan cincin luar (BPFO), yang secara fisik merupakan lokasi spalling
+yang paling umum pada bantalan gelinding.
+
+Temuan ini merupakan bukti empiris pertama bahwa model \emph{deep learning}
+yang dilatih untuk prediksi RUL mempelajari representasi laten yang
+berkorespondensi dengan konsep fisika klasik diagnosis getaran bantalan,
+tanpa supervisi eksplisit tentang frekuensi karakteristik tersebut. Implikasi
+teoritis dari temuan ini dibahas lebih lanjut pada
+subbab~\ref{subsec:bab6_kontribusi_keilmuan}.
+
+\subsection{Tujuan 3: Konsistensi Kinerja Lintas Dataset dan Kondisi}
+\label{subsec:bab6_kesimpulan_t3}
+
+Perbandingan ketiga arsitektur pada dua dataset dengan karakteristik berbeda
+(PHM2012: \emph{test set} delapan bantalan, tiga kondisi operasi;
+XJTU-SY: \emph{test set} dua bantalan, dua kondisi operasi) menunjukkan
+beberapa pola konsistensi yang bermakna.
+
+Pertama, peringkat kinerja antar model berfluktuasi antar dataset karena
+karakteristik distribusi data yang berbeda (rekaman per bantalan, variasi
+kondisi operasi, dominansi noise), namun Mamba-xLSTM-Net secara konsisten
+mempertahankan \emph{trade-off} terbaik antara akurasi titik (RMSE) dan
+stabilitas (deviasi standar lintas \emph{seed}) di PHM2012, serta PHM Score
+terbaik di XJTU-SY.
+
+Kedua, N-BEATS-xLSTM-RUL memberikan stabilitas \emph{seed} tertinggi
+($\sigma_{\text{RMSE}} = \pm$0,003 pada XJTU-SY; $\pm$0,007 pada PHM2012),
+mengindikasikan bahwa \emph{prior} struktural berbasis basis polinomial
+secara efektif mengurangi sensitivitas terhadap inisialisasi acak. Sifat
+ini relevan untuk \emph{deployment} produksi.
+
+Ketiga, SparseGate-TCN-RUL menunjukkan kinerja kompetitif pada PHM2012
+(RMSE 0,226, terendah) tetapi dengan variabilitas yang tinggi, mengindikasikan
+bahwa pendekatan berbasis konvolusi temporal dengan \emph{sparse gating}
+sensitif terhadap anggaran pelatihan yang diberikan.
+
+% -----------------------------------------------------------------
+\section{Kontribusi Penelitian}
+\label{sec:bab6_kontribusi}
+% -----------------------------------------------------------------
+
+Penelitian ini menghasilkan kontribusi pada dua ranah: keilmuan teknik mesin
+dan penerapan praktis dalam konteks industri Indonesia.
+
+\subsection{Kontribusi Keilmuan}
+\label{subsec:bab6_kontribusi_keilmuan}
+
+\textbf{Kontribusi 1 (Teknologi-Metodologi)}: Arsitektur hibrida Mamba-xLSTM-Net
+merupakan kombinasi pertama yang secara eksplisit memadukan \emph{selective
+state space model} (Mamba bidireksional) dan \emph{extended LSTM} (xLSTM
+dengan sLSTM dan mLSTM) melalui mekanisme \emph{gated fusion} yang
+didesain khusus untuk karakteristik sinyal degradasi bantalan gelinding.
+Penelitian yang ada (\citeauthor{Rui2026xLSTMTransformer}, \citeyear{Rui2026xLSTMTransformer})
+menggabungkan xLSTM dengan Transformer (yang memiliki kompleksitas kuadratik),
+sementara penelitian ini mengganti komponen Transformer dengan Mamba
+(kompleksitas linear) dan memperkenalkan mekanisme fusi berbasis \emph{gate}
+adaptif. Kontribusi ini relevan untuk komunitas penelitian prognostik yang
+mencari arsitektur yang skalabel untuk sekuens degradasi panjang.
+
+\textbf{Kontribusi 2 (Teknologi-Metodologi)}: Prosedur kuantitatif pemetaan
+fitur SAE ke frekuensi karakteristik fisik bantalan (BPFO, BPFI, BSF, FTF)
+dikembangkan dan divalidasi pada dua dataset publik. Prosedur ini terdiri
+dari: (a) pelatihan SAE \emph{post-hoc} pada representasi laten model RUL,
+(b) perhitungan korelasi antara aktivasi fitur SAE dan amplitudo spektrum
+\emph{envelope} Hilbert pada pita BPFx, dan (c) identifikasi fitur dengan
+\emph{hit-rate} dan korelasi tertinggi sebagai fitur yang berkaitan secara
+fisik. Prosedur ini dapat diadopsi untuk model dan dataset lain dalam domain
+prognostik mekanik.
+
+\textbf{Kontribusi 3 (Output --- Temuan Empiris)}: Bukti empiris pertama
+bahwa model \emph{deep learning} yang dilatih untuk prediksi RUL bantalan
+mempelajari representasi laten yang berkorespondensi dengan frekuensi
+karakteristik fisik bantalan (BPFI pada PHM2012, $r = 0{,}507$; BPFO pada
+XJTU-SY, $r = 0{,}501$) tanpa supervisi eksplisit. Temuan ini mendukung
+hipotesis \emph{superposition} di domain prognostik mekanik: model
+mengkodekan konsep fisika domain secara implisit dalam representasi
+tersembunyi yang dapat didekomposisi melalui SAE. Implikasi praktis dari
+temuan ini adalah peningkatan kepercayaan rekayasawan terhadap model
+\emph{deep learning} dalam sistem perawatan prediktif.
+
+\subsection{Kontribusi untuk Industri Indonesia}
+\label{subsec:bab6_kontribusi_industri}
+
+Program Making Indonesia 4.0 \citetitb{Kemenperin2018Making4} mengidentifikasi
+manufaktur otomotif dan elektronik sebagai sektor prioritas transformasi
+digital, dengan penerapan kecerdasan buatan dalam operasi pabrik sebagai
+salah satu pilar utama. Perawatan prediktif berbasis kondisi (\emph{condition-based
+maintenance}) merupakan salah satu aplikasi AI yang paling langsung dapat
+diterapkan untuk meningkatkan produktivitas dan mengurangi \emph{downtime}
+tidak terencana \citetitb{Mobley2002PlantMaintenance}.
+
+Arsitektur Mamba-xLSTM-Net yang dikembangkan dalam penelitian ini dapat
+diterapkan langsung pada sistem akuisisi data vibrasi yang sudah ada di
+fasilitas produksi Indonesia, dengan beberapa catatan penting:
+
+Pertama, kebutuhan komputasi pada saat inferensi relatif rendah ---
+arsitektur dapat dijalankan pada CPU standar setelah pelatihan selesai,
+menggunakan rekurens SSM tanpa kebutuhan GPU. Hal ini memudahkan
+\emph{deployment} di lingkungan industri dengan infrastruktur komputasi
+yang terbatas.
+
+Kedua, skema interpretabilitas SAE memberikan hasil yang dapat dikomunikasikan
+kepada teknisi perawatan dalam bahasa domain fisika yang akrab (frekuensi
+BPFO/BPFI), bukan hanya angka prediksi abstrak. Hal ini meningkatkan
+kepercayaan dan penerimaan teknologi oleh pengguna akhir.
+
+Ketiga, arsitektur yang divalidasi pada dua dataset publik dengan kondisi
+operasi yang beragam memberikan dasar yang kuat untuk adaptasi ke mesin
+produksi Indonesia melalui \emph{fine-tuning} atau \emph{transfer learning}
+dengan data lokal yang lebih terbatas.
+
+% -----------------------------------------------------------------
+\section{Saran Pengembangan Lanjutan}
+\label{sec:bab6_saran}
+% -----------------------------------------------------------------
+
+Berdasarkan temuan dan keterbatasan yang diidentifikasi pada
+Bab~\ref{bab:hasil-pembahasan}, berikut ini enam arah pengembangan yang
+diprioritaskan untuk penelitian lanjutan.
+
+\textbf{Saran 1 --- Validasi dengan Anggaran Pelatihan yang Lebih Panjang}.
+Kurva pelatihan Mamba-xLSTM-Net yang belum konvergen pada 75~\emph{epoch}
+mengindikasikan bahwa kinerja dapat ditingkatkan lebih lanjut. Eksperimen
+dengan 150--200~\emph{epoch} pada GPU dengan VRAM besar (misalnya NVIDIA
+A100) diprioritaskan untuk mengkonfirmasi batas kinerja arsitektur ini.
+
+\textbf{Saran 2 --- Uji Signifikansi Statistik Formal}.
+Perbandingan kinerja antar model pada penelitian ini dilaporkan sebagai
+mean~$\pm$~std atas tiga \emph{seed}. Uji signifikansi formal menggunakan
+\emph{Wilcoxon signed-rank test} pada RMSE per-\emph{bearing} (yang
+memerlukan minimal 5--10 \emph{run} per model) akan memperkuat klaim
+keunggulan kinerja secara statistik.
+
+\textbf{Saran 3 --- Validasi Nilai Korelasi SAE-BPFx yang Eksak}.
+Nilai \emph{hit-rate} dan korelasi SAE-BPFx yang dilaporkan pada
+Tabel~\ref{tab:bab5_hitrate} perlu divalidasi lebih lanjut dengan
+perhitungan korelasi pada set data yang lebih besar dan menggunakan
+metode bootstrapping untuk mendapatkan interval kepercayaan yang andal.
+Validasi kualitatif melalui visualisasi respons fitur SAE terhadap sinyal
+getaran dengan fault buatan juga direkomendasikan.
+
+\textbf{Saran 4 --- Transfer Learning ke Mesin Produksi Indonesia}.
+Adaptasi model Mamba-xLSTM-Net ke data vibrasi mesin produksi nyata (misalnya
+mesin \emph{grinding} di PT SKF Indonesia) melalui \emph{fine-tuning} dengan
+data lokal merupakan validasi terpenting dari nilai praktis penelitian ini.
+Strategi \emph{domain adaptation} yang mempertimbangkan perbedaan frekuensi
+sampling, jenis sensor, dan kondisi beban antara dataset publik dan data
+industri perlu dikembangkan secara sistematis.
+
+\textbf{Saran 5 --- Deployment Edge dan Inferensi Real-Time}.
+Kuantisasi model (INT8/FP16) dan kompresi melalui \emph{pruning} terstruktur
+untuk \emph{deployment} pada perangkat \emph{edge} (misalnya NVIDIA Jetson
+Nano) perlu dieksplorasi. Mamba, dengan kompleksitas inferensi linear dan
+kebutuhan memori yang lebih kecil dari Transformer, merupakan kandidat yang
+menjanjikan untuk \emph{deployment} pada perangkat komputasi terbatas di
+lingkungan industri.
+
+\textbf{Saran 6 --- Integrasi SAE End-to-End dalam Pelatihan Model}.
+Pada penelitian ini, SAE dilatih secara \emph{post-hoc} setelah model RUL
+selesai dilatih. Eksplorasi integrasi SAE sebagai komponen regulasi dalam
+pelatihan model (penalti \emph{sparsity} pada representasi laten) dapat
+menghasilkan model yang secara inheren lebih interpretatif tanpa biaya
+akurasi yang signifikan. Pendekatan ini juga dapat dieksplorasi untuk
+mendorong korespondensi langsung antara fitur laten dan frekuensi
+karakteristik bantalan melalui supervisi fisik parsial.

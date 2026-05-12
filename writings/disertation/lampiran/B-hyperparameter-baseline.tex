@@ -1,0 +1,261 @@
+%% lampiran/B-hyperparameter-baseline.tex
+%% Lampiran B — Hyperparameter Lengkap untuk Reproducibility
+
+\chapter{Hyperparameter Lengkap dan Konfigurasi Pelatihan}
+\label{lamp:hparam}
+
+Lampiran ini memuat hyperparameter arsitektur dan konfigurasi pelatihan
+lengkap untuk seluruh model yang dievaluasi pada Bab~\ref{bab:hasil-pembahasan},
+demi memastikan reproducibility hasil eksperimen. Tabel~\ref{tab:lampB_tier_s}
+merangkum tiga arsitektur Tier-S yang dipilih untuk evaluasi multi-\emph{seed}
+penuh. Bagian~\ref{lamp:hparam_lstm}--\ref{lamp:hparam_informer} mendokumentasikan
+arsitektur yang dikaji pada studi pendahuluan namun tidak diaktifkan sebagai
+\emph{baseline} utama karena termasih dalam Tier-B atau Tier-C berdasarkan hasil
+seleksi awal.
+
+\begin{table}[ht]
+  \centering
+  \caption{Ringkasan tiga arsitektur Tier-S yang dievaluasi.}
+  \label{tab:lampB_tier_s}
+  \small
+  \begin{tabular}{@{}llrr@{}}
+    \toprule
+    \textbf{Model} & \textbf{Paradigma Inti} & \textbf{Param.\ (PHM)} & \textbf{Param.\ (XJTU)} \\
+    \midrule
+    Mamba-xLSTM-Net & SSM selektif + mLSTM + \emph{gated fusion} & 898.481 & 811.713 \\
+    N-BEATS-xLSTM-RUL & Basis polinomial + xLSTM \emph{temporal front} & 459.592 & 457.672 \\
+    SparseGate-TCN-RUL & TCN dilated + \emph{sparse gating} & 249.192 & 249.192 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% -----------------------------------------------------------------
+\section{Mamba-xLSTM-Net (Arsitektur Usulan)}
+\label{lamp:hparam_proposed}
+% -----------------------------------------------------------------
+
+Mamba-xLSTM-Net merupakan arsitektur fokus penelitian ini. Hyperparameter
+berikut berlaku untuk konfigurasi eksperimen utama (Bab~\ref{bab:hasil-pembahasan}).
+
+\begin{table}[ht]
+  \centering
+  \caption{Hyperparameter arsitektur Mamba-xLSTM-Net.}
+  \label{tab:lampB_mamba_xlstm_arch}
+  \small
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Nilai} & \textbf{Keterangan} \\
+    \midrule
+    \texttt{d\_model} & 128 & Dimensi representasi model \\
+    \texttt{mamba\_d\_state} & 128 & Dimensi SSM \emph{state} Mamba \\
+    \texttt{mamba\_expand} & 2 & \emph{Inner dim} = $2 \times$ \texttt{d\_model} \\
+    \texttt{num\_mamba\_blocks} & 4 & Jumlah blok Mamba bidireksional \\
+    \texttt{num\_mlstm\_heads} & 4 & Jumlah kepala mLSTM \\
+    Input \emph{window} $L$ & 64 (PHM) / 32 (XJTU) & Panjang sekuens input \\
+    Fitur input $F$ & 5 & Jumlah fitur \emph{band-energy} \\
+    \texttt{dropout} & 0,1 & Dropout pada \emph{regression head} \\
+    \texttt{head\_hidden} & 64 & Dimensi tersembunyi \emph{regression head} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Arsitektur penuh terdiri dari: (1) proyeksi input $F \to$ \texttt{d\_model},
+(2) $N_{\rm mamba}$ blok BiMamba (\texttt{d\_state = 128}, \texttt{expand = 2}),
+(3) $N_{\rm xlstm}$ blok xLSTM (2 mLSTM + 1 sLSTM, konfigurasi \texttt{slstm\_positions = [1]}),
+(4) \emph{gated fusion} antara output BiMamba dan xLSTM, dan
+(5) \emph{regression head} (LayerNorm $\to$ Linear $\to$ GELU $\to$ Dropout $\to$ Linear $\to$ Sigmoid).
+Rincian mekanisme \emph{gated fusion} dan \emph{bidirectional scan} disajikan
+pada Bab~\ref{bab:dasar-teori} dan Bab~\ref{bab:metodologi}.
+
+% -----------------------------------------------------------------
+\section{N-BEATS-xLSTM-RUL}
+\label{lamp:hparam_nbeats_xlstm}
+% -----------------------------------------------------------------
+
+N-BEATS-xLSTM-RUL merupakan arsitektur berbasis dekomposisi basis fisik
+(\emph{trend}, \emph{wear}, \emph{shock}) yang digabungkan dengan modul
+xLSTM sebagai \emph{temporal front-end}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Hyperparameter arsitektur N-BEATS-xLSTM-RUL.}
+  \label{tab:lampB_nbeats_xlstm_arch}
+  \small
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Nilai} & \textbf{Keterangan} \\
+    \midrule
+    \texttt{hidden\_dim} & 96 & Dimensi tersembunyi setiap \emph{block} \\
+    \texttt{trend\_blocks} & 2 & Jumlah blok basis polinomial tren \\
+    \texttt{wear\_blocks} & 2 & Jumlah blok basis keausan (eksponensial) \\
+    \texttt{shock\_blocks} & 2 & Jumlah blok impulsif \\
+    \texttt{poly\_degree} & 4 & Derajat basis polinomial (\emph{trend blocks}) \\
+    \texttt{model\_specific\_loss} & True & Aktifkan penalti monotonik per-komponen \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Setiap \emph{block} memproduksi estimasi komponen RUL yang terpisah
+(\emph{trend}, \emph{wear}, atau \emph{shock}); hasil akhir adalah jumlah
+ketiga komponen. Sifat dekomposisi ini memberikan interpretabilitas bawaan
+(\emph{built-in interpretability}) per komponen degradasi tanpa memerlukan
+analisis \emph{post-hoc}.
+
+% -----------------------------------------------------------------
+\section{SparseGate-TCN-RUL}
+\label{lamp:hparam_sparsegate}
+% -----------------------------------------------------------------
+
+SparseGate-TCN-RUL adalah arsitektur TCN dilasi yang ditambahi mekanisme
+\emph{sparse gating} untuk mendorong aktivasi \emph{channel} yang jarang
+sehingga secara inheren lebih mudah diinterpretasi. Hyperparameter lengkapnya
+ditampilkan pada Tabel~\ref{tab:lampB_sparsegate_arch}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Hyperparameter arsitektur SparseGate-TCN-RUL.}
+  \label{tab:lampB_sparsegate_arch}
+  \small
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Nilai} & \textbf{Keterangan} \\
+    \midrule
+    \texttt{tcn\_channels} & [64, 64, 128, 128] & Lebar tiap lapisan TCN dilasi \\
+    \texttt{tcn\_kernel} & 3 & Ukuran kernel konvolusi kausal \\
+    \texttt{gate\_hidden} & 32 & Dimensi tersembunyi \emph{sparse gate} \\
+    \texttt{attn\_d\_model} & 32 & Dimensi \emph{attention} ringan \\
+    \texttt{attn\_heads} & 4 & Jumlah kepala \emph{multi-head attention} \\
+    \texttt{dropout} & 0,1 & Dropout \\
+    $\lambda_{\rm sparse}$ & 0,001 & Penalti \emph{L1} untuk sparsitas gate \\
+    $\lambda_{\rm entropy}$ & 0,001 & Penalti entropi untuk diversitas gate \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% -----------------------------------------------------------------
+\section{Konfigurasi Pelatihan Bersama (Semua Model)}
+\label{lamp:hparam_training}
+% -----------------------------------------------------------------
+
+Semua model Tier-S dilatih dengan konfigurasi identik
+(\texttt{configs/train/cloud\_full\_75.yaml}) untuk memastikan perbandingan
+yang adil. Perbedaan hanya pada hyperparameter spesifik arsitektur yang
+didokumentasikan pada subbab di atas.
+Konfigurasi pelatihan lengkap yang berlaku untuk semua model ditampilkan
+pada Tabel~\ref{tab:lampB_training}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Konfigurasi pelatihan bersama untuk semua arsitektur Tier-S.}
+  \label{tab:lampB_training}
+  \small
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Nilai} & \textbf{Keterangan} \\
+    \midrule
+    \texttt{max\_epochs} & 75 & Jumlah \emph{epoch} pelatihan \\
+    Optimizer & AdamW \citetitb{Loshchilov2019AdamW} & \emph{Decoupled weight decay} \\
+    \texttt{lr} & $8{,}0 \times 10^{-4}$ & \emph{Learning rate} awal \\
+    \texttt{weight\_decay} & $3{,}0 \times 10^{-4}$ & Koefisien \emph{weight decay} \\
+    \texttt{xlstm\_lr\_mult} & 0,75 & LR modul xLSTM = 0,75 $\times$ LR trunk \\
+    \texttt{freeze\_xlstm\_epochs} & 5 & xLSTM dibekukan 5 \emph{epoch} pertama \\
+    \texttt{scheduler} & Cosine Annealing & $T_{\rm max} = 75$ \\
+    \texttt{warmup\_epochs} & 5 & Pemanasan \emph{cosine} di 5 \emph{epoch} awal \\
+    \texttt{monotonicity\_weight} & 0,05 & Bobot penalti monotonisitas RUL \\
+    \texttt{gradient\_clip\_val} & 1,0 & Klip gradien norma maksimum \\
+    \texttt{early\_stopping\_patience} & 9999 & Dinonaktifkan; 75 \emph{epoch} penuh \\
+    \texttt{precision} & \texttt{bf16-mixed} & BF16 campuran (GPU Ampere+) \\
+    Batch size (PHM2012) & 256 (Mamba + NBEATS, paralel) / 512 (SparseGate) & \\
+    Batch size (XJTU-SY) & 256 (Mamba + NBEATS) / 512 (SparseGate) & \\
+    \emph{Seed} acak & 42, 43, 44 & Tiga \emph{seed} untuk estimasi stabilitas \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Infrastruktur pelatihan: GPU NVIDIA A40 (46 GB VRAM), CUDA 12.8,
+PyTorch 2.1 + PyTorch Lightning 2.1, framework manajemen konfigurasi Hydra 1.3,
+pustaka \texttt{xlstm} 1.0 (NX-AI), \texttt{mamba-ssm} 2.2,
+dan \texttt{causal-conv1d} 1.2.
+
+% -----------------------------------------------------------------
+\section{LSTM --- Studi Pendahuluan (Tidak Dilatih di Eksperimen Utama)}
+\label{lamp:hparam_lstm}
+% -----------------------------------------------------------------
+
+Model LSTM berikut dikaji sebagai bagian dari studi pendahuluan seleksi
+arsitektur (\emph{30-epoch screening}) namun tidak dilatih pada protokol
+multi-\emph{seed} penuh karena berada di luar Tier-S berdasarkan hasil
+seleksi. Hyperparameter ini dicantumkan untuk reproducibility studi
+pendahuluan dan dapat dilihat pada Tabel~\ref{tab:lampB_lstm_arch}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Hyperparameter LSTM studi pendahuluan.}
+  \label{tab:lampB_lstm_arch}
+  \small
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Nilai} & \textbf{Keterangan} \\
+    \midrule
+    \texttt{hidden\_dim} & 128 & Ukuran \emph{hidden state} LSTM \\
+    \texttt{num\_layers} & 2 & Kedalaman lapisan LSTM \\
+    \texttt{dropout} & 0,1 & Dropout antar lapisan \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% -----------------------------------------------------------------
+\section{Transformer --- Studi Pendahuluan (Tidak Dilatih di Eksperimen Utama)}
+\label{lamp:hparam_transformer}
+% -----------------------------------------------------------------
+
+Konfigurasi Transformer yang digunakan pada studi pendahuluan seleksi arsitektur
+dirinci pada Tabel~\ref{tab:lampB_transformer_arch}. Arsitektur ini berada pada
+Tier-B berdasarkan hasil \emph{screening} 30-\emph{epoch}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Hyperparameter Transformer studi pendahuluan.}
+  \label{tab:lampB_transformer_arch}
+  \small
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Nilai} & \textbf{Keterangan} \\
+    \midrule
+    \texttt{d\_model} & 64 & Dimensi model \\
+    \texttt{nhead} & 4 & Jumlah kepala \emph{attention} \\
+    \texttt{num\_encoder\_layers} & 2 & Jumlah lapisan encoder \\
+    \texttt{dim\_feedforward} & 256 & Dimensi FFN \\
+    \texttt{dropout} & 0,1 & Dropout \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% -----------------------------------------------------------------
+\section{Informer --- Studi Pendahuluan (Tidak Dilatih di Eksperimen Utama)}
+\label{lamp:hparam_informer}
+% -----------------------------------------------------------------
+
+Konfigurasi Informer dengan \emph{ProbSparse attention} yang dikaji pada studi
+pendahuluan dirinci pada Tabel~\ref{tab:lampB_informer_arch}. Informer
+diklasifikasikan pada Tier-C berdasarkan \emph{screening} awal karena biaya
+komputasi yang tinggi relatif terhadap kinerjanya pada dataset yang kecil.
+
+\begin{table}[ht]
+  \centering
+  \caption{Hyperparameter Informer studi pendahuluan.}
+  \label{tab:lampB_informer_arch}
+  \small
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Nilai} & \textbf{Keterangan} \\
+    \midrule
+    \texttt{d\_model} & 64 & Dimensi model \\
+    \texttt{n\_heads} & 4 & Jumlah kepala \emph{ProbSparse attention} \\
+    \texttt{e\_layers} & 2 & Jumlah lapisan encoder \\
+    \texttt{d\_ff} & 256 & Dimensi FFN \\
+    \texttt{dropout} & 0,1 & Dropout \\
+    \texttt{factor} & 5 & Faktor \emph{ProbSparse sampling} \\
+    \bottomrule
+  \end{tabular}
+\end{table}

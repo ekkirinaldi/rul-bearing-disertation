@@ -1,0 +1,107 @@
+%% disertasi.tex
+%% Master file untuk Disertasi Doktor ITB
+%%
+%% Build:
+%%   make watch        # auto-recompile saat menulis
+%%   make build        # compile sekali
+%%   make pre-submit   # cek lengkap sebelum kirim ke promotor
+%%
+%% Engine: LuaLaTeX (preferred) atau pdfLaTeX
+%% Backend bibliografi: biber
+
+\documentclass[final,lualatex]{itbdisertasi}
+
+% =====================================================================
+% Metadata Disertasi
+% =====================================================================
+\title{Perawatan Prediktif untuk Sistem Produksi dengan Pendekatan
+       Analisis Big Data dan Kecerdasan Buatan Menggunakan Data
+       Kondisi Mesin dan Informasi Kualitas yang Real Time}
+\author{Toto Suharto}
+\nim{33420002}
+\prodi{Teknik dan Manajemen Industri}
+\kodeprodi{36101}% TODO(verify-with-pembimbing): kode prodi resmi Doktor TMI ITB
+\fakultas{Fakultas Teknologi Industri}
+\bulan{Mei}
+\tahun{2026}
+\promotor{Prof. Dr. Ir. Kadarsah Suryadi, DEA}
+\nipPromotor{195701011986011001}% TODO(verify): NIP Promotor
+\anggotasatu{Prof. Ir. Bermawi Priyatna Iskandar, M.Sc., Ph.D.}
+\nipAnggotaSatu{196001011986011001}% TODO(verify): NIP Anggota 1
+\anggotadua{Prof. Dr. Ir. Bambang Riyanto Trilaksono}
+\nipAnggotaDua{196201011987011001}% TODO(verify): NIP Anggota 2
+
+% PDF metadata
+\hypersetup{
+  pdftitle={Perawatan Prediktif untuk Sistem Produksi dengan Pendekatan Analisis Big Data dan Kecerdasan Buatan Menggunakan Data Kondisi Mesin dan Informasi Kualitas yang Real Time},
+  pdfauthor={Toto Suharto},
+  pdfsubject={Disertasi Doktor ITB - Teknik dan Manajemen Industri},
+  pdfkeywords={perawatan prediktif, bantalan gelinding, Mamba, xLSTM, sparse autoencoder, interpretabilitas, sisa umur pakai}
+}
+
+% Bibliografi
+\addbibresource{references.bib}
+
+% Direktori gambar
+\graphicspath{{figures/}{figures/bab1/}{figures/bab2/}{figures/bab3/}{figures/bab4/}{figures/bab5/}{figures/bab6/}}
+
+% =====================================================================
+\begin{document}
+
+% ---------------------------------------------------------------------
+% Bagian Persiapan (Front Matter)
+% ---------------------------------------------------------------------
+\sampul
+
+\itbfrontmatter
+
+\halamanpengesahan
+\pedomanpenggunaan
+
+\input{chapters/00-abstrak-id.tex}
+\input{chapters/00-abstract-en.tex}
+\input{chapters/00-kata-pengantar.tex}
+
+\renewcommand{\contentsname}{DAFTAR ISI}
+\tableofcontents
+\cleardoublepage
+
+\renewcommand{\listfigurename}{DAFTAR GAMBAR}
+\listoffigures
+\cleardoublepage
+
+\renewcommand{\listtablename}{DAFTAR TABEL}
+\listoftables
+\cleardoublepage
+
+\input{chapters/00-daftar-singkatan.tex}
+
+% ---------------------------------------------------------------------
+% Bagian Utama (Main Matter)
+% ---------------------------------------------------------------------
+\itbmainmatter
+
+\input{chapters/01-pendahuluan.tex}
+\input{chapters/02-tinjauan-pustaka.tex}
+\input{chapters/03-dasar-teori.tex}
+\input{chapters/04-metodologi.tex}
+\input{chapters/05-hasil-pembahasan.tex}
+\input{chapters/06-kesimpulan.tex}
+
+% ---------------------------------------------------------------------
+% Daftar Pustaka
+% ---------------------------------------------------------------------
+\cleardoublepage
+\printbibliography[title={DAFTAR PUSTAKA},heading=bibintoc]
+
+% ---------------------------------------------------------------------
+% Lampiran
+% ---------------------------------------------------------------------
+\cleardoublepage
+\appendix
+
+\input{lampiran/A-detail-fitur.tex}
+\input{lampiran/B-hyperparameter-baseline.tex}
+\input{lampiran/C-kode-implementasi.tex}
+
+\end{document}

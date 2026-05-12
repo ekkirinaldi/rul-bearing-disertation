@@ -1,0 +1,81 @@
+%% chapters/00-abstract-en.tex
+%% Abstract in English (~500-600 words, mirror of Indonesian abstract)
+%% Rules: .cursor/rules/disertation/12-abstrak-front-matter.mdc
+
+\begin{abstracten}
+
+Condition-based predictive maintenance is a critical strategy in the
+transformation of modern manufacturing toward Industry 4.0.
+The ability to accurately and timely predict the remaining useful life
+(RUL) of critical components enables efficient maintenance interventions,
+minimizes unplanned downtime, and enhances operational safety.
+Rolling element bearings are the most failure-prone components in
+industrial rotating machinery, contributing approximately 40--50\% of
+total machine failures.
+
+This dissertation proposes the \emph{Mamba-xLSTM-Net} hybrid architecture
+for rolling bearing RUL prediction, which integrates a selective
+state-space model (Mamba-3) with matrix-memory Long Short-Term Memory
+(mLSTM).
+The fusion mechanism is designed based on the non-stationary properties
+of bearing vibration signals: Mamba handles long-range temporal
+dependencies during gradual degradation phases, while mLSTM preserves
+recurrent precision during abrupt changes near failure.
+
+Beyond prediction performance, this dissertation proposes an
+interpretability module based on a \emph{Top-$k$ Sparse Autoencoder}
+(SAE) applied post-hoc to the latent representations of Mamba-xLSTM-Net.
+A quantitative procedure is developed to map SAE features to bearing
+characteristic frequencies --- Ball Pass Frequency Outer Race (BPFO),
+Ball Pass Frequency Inner Race (BPFI), Ball Spin Frequency (BSF), and
+Fundamental Train Frequency (FTF) --- through Pearson correlation against
+Hilbert envelope spectrum amplitudes of raw vibration signals.
+
+Empirical validation is conducted on two public run-to-failure datasets:
+PHM2012 (FEMTO-PRONOSTIA), comprising 17 NSK 6804 bearings under three
+operating conditions, and XJTU-SY, comprising 10 LDK UER204 bearings
+(conditions 1 and 2).
+A multi-seed protocol with three distinct random initializations
+(seeds 42, 43, 44) is applied to ensure statistical rigor.
+Performance is evaluated using four simultaneous metrics: RMSE, MAE,
+the coefficient of determination R\textsuperscript{2}, and asymmetric
+PHM Score.
+
+On PHM2012, \emph{Mamba-xLSTM-Net} achieves RMSE of
+$0.242 \pm 0.020$ and demonstrates the highest seed-to-seed stability
+among the three compared models.
+On XJTU-SY, \emph{Mamba-xLSTM-Net} achieves the highest PHM Score
+($0.907$), the metric most relevant to predictive maintenance practice
+as it accounts for the asymmetric consequences of prediction errors.
+Training curves that continue to improve until epoch 71/75 indicate
+that the architecture has not yet reached its full capacity within the
+allocated training budget.
+
+For the interpretability pillar, the SAE with 1024 latent dimensions
+and $k = 51$ active features ($\approx 5\%$ sparsity) successfully
+reconstructs latent representations with MSE loss below $10^{-3}$,
+indicating that Mamba-xLSTM-Net latent representations are naturally
+sparse.
+BPFx mapping reveals that 2.0--2.3\% of SAE features exhibit moderate
+correlation ($|r| \geq 0.30$) with envelope spectrum amplitudes near
+BPFO and BPFI --- the only characteristic frequencies with hit-rate
+$> 0$.
+The highest moderate correlations reach $r = 0.507$ (SAE feature
+f474~$\leftrightarrow$~BPFI on PHM2012) and $r = 0.501$
+(f959~$\leftrightarrow$~BPFO on XJTU-SY), both statistically significant
+($n = 300$, $p \ll 0.05$).
+These results constitute the first empirical evidence that a deep
+learning model trained for RUL prediction learns latent representations
+that correspond to classical bearing vibration diagnosis theory.
+
+This research makes three principal contributions:
+(1)~the \emph{Mamba-xLSTM-Net} hybrid architecture as a novel approach
+combining selective SSM with matrix-memory recurrence for bearing
+prognostics;
+(2)~an SAE-to-characteristic-frequency mapping procedure as a novel
+interpretability methodology for the predictive maintenance domain; and
+(3)~empirical evidence of correspondence between deep learning latent
+representations and classical vibration physics on two leading benchmark
+datasets.
+
+\end{abstracten}

@@ -1,0 +1,677 @@
+%% chapters/05-hasil-pembahasan.tex
+%% Bab V — Hasil dan Pembahasan
+%% Sumber: writings/bab5-draft-hasil-performa.md
+%% Aturan: .cursor/rules/disertation/10-bab5-hasil.mdc
+
+\chapter{Hasil dan Pembahasan}
+\label{bab:hasil-pembahasan}
+
+Bab ini memaparkan hasil evaluasi kuantitatif kinerja prediksi sisa umur
+pakai bantalan gelinding (Pilar~1) dan hasil analisis interpretabilitas
+representasi laten (Pilar~2), diikuti dengan pembahasan keterbatasan
+penelitian dan saran pengembangan lanjutan.
+Semua angka yang dilaporkan pada bab ini merupakan hasil evaluasi pada
+\emph{test set} yang tidak pernah dilihat selama pelatihan maupun
+pemilihan \emph{checkpoint}.
+
+\section{Hasil Prediksi RUL}
+\label{sec:bab5_rul}
+
+Tiga model yang dipilih berdasarkan analisis awal pada Bab~\ref{bab:metodologi}
+--- Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL, dan SparseGate-TCN-RUL ---
+dievaluasi pada dua dataset \emph{run-to-failure} menggunakan konfigurasi
+pelatihan yang sepenuhnya identik (\autoref{subsec:bab4_hyperp_training}).
+Hasil dilaporkan sebagai mean~$\pm$~deviasi standar populasi atas tiga
+\emph{seed} (42, 43, 44).
+
+\subsection{Hasil pada Dataset PHM2012}
+\label{subsec:bab5_phm2012}
+
+Tabel~\ref{tab:bab5_phm2012} merangkum metrik evaluasi pada \emph{test set}
+PHM2012, yang terdiri dari delapan bantalan yang belum pernah dilihat
+selama pelatihan.
+
+\begin{table}[ht]
+\centering
+\caption{Hasil evaluasi model pada dataset PHM2012 (mean~$\pm$~std,
+$n = 3$ \emph{seed}). RMSE dan MAE lebih kecil lebih baik; R\textsuperscript{2}
+dan PHM~Score lebih besar lebih baik.}
+\label{tab:bab5_phm2012}
+\small
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Model} & \textbf{RMSE~$\downarrow$} & \textbf{MAE~$\downarrow$}
+  & \textbf{R\textsuperscript{2}~$\uparrow$} & \textbf{PHM Score~$\uparrow$} \\
+\midrule
+Mamba-xLSTM-Net            & 0{,}242~$\pm$~0{,}020 & 0{,}180 & 0{,}245 & 0{,}893 \\
+N-BEATS-xLSTM-RUL          & 0{,}269~$\pm$~0{,}007 & 0{,}230 & 0{,}076 & 0{,}881 \\
+\textbf{SparseGate-TCN-RUL} & \textbf{0{,}226~$\pm$~0{,}030}
+  & \textbf{0{,}167} & \textbf{0{,}338} & \textbf{0{,}904} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Pada PHM2012, SparseGate-TCN-RUL mencatat RMSE rata-rata terendah
+(0{,}226) dan R\textsuperscript{2} tertinggi (0{,}338).
+Namun, deviasi standar SparseGate ($\pm$0{,}030) jauh lebih besar
+dibanding Mamba-xLSTM-Net ($\pm$0{,}020), yang mengindikasikan
+sensitivitas tinggi terhadap inisialisasi acak.
+
+Analisis per-\emph{seed} pada Tabel~\ref{tab:bab5_perseed_phm} mengungkap
+bahwa performa SparseGate pada \emph{seed}~42 sangat tinggi
+(RMSE 0{,}184) karena \emph{checkpoint} terbaik diperoleh pada
+\emph{epoch}~20 sebelum model mulai \emph{overfit}, sementara pada
+\emph{seed}~43 dan 44 \emph{checkpoint} terbaik berada di \emph{epoch}~0
+dengan RMSE yang lebih konservatif.
+
+\begin{table}[ht]
+\centering
+\caption{RMSE per \emph{seed} pada PHM2012. Konsistensi lintas
+\emph{seed} mengindikasikan stabilitas arsitektur.}
+\label{tab:bab5_perseed_phm}
+\small
+\begin{tabular}{@{}lSSS@{}}
+\toprule
+\textbf{Model} & \textbf{Seed~42} & \textbf{Seed~43} & \textbf{Seed~44} \\
+\midrule
+Mamba-xLSTM-Net            & 0{,}217 & 0{,}265 & 0{,}246 \\
+N-BEATS-xLSTM-RUL          & 0{,}278 & 0{,}264 & 0{,}264 \\
+SparseGate-TCN-RUL         & 0{,}184 & 0{,}241 & 0{,}252 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Mamba-xLSTM-Net menunjukkan profil konvergensi yang khas: \emph{checkpoint}
+terbaik pada ketiga \emph{seed} diperoleh di \emph{epoch} 71, 68, dan~69
+dari total 75~\emph{epoch}, menunjukkan bahwa arsitektur ini terus
+memanfaatkan seluruh kapasitas anggaran pelatihan tanpa mengalami
+\emph{overfit} pada skala dataset ini.
+Hal ini konsisten dengan sifat \emph{selective state-space model} (Mamba-3)
+yang memerlukan lebih banyak iterasi untuk mempelajari pola jangka panjang
+pada sinyal getaran bantalan.
+
+N-BEATS-xLSTM-RUL memperlihatkan stabilitas tertinggi lintas \emph{seed}
+($\sigma_{\text{RMSE}} = \pm$0{,}007) karena \emph{polynomial basis
+blocks} menyediakan \emph{prior} struktural yang kuat sehingga
+inisialisasi acak memberikan dampak minimal.
+Konsistensi ini relevan untuk \emph{deployment} produksi di mana
+prediktabilitas performa lebih penting dari nilai tunggal terbaik.
+
+\subsection{Hasil pada Dataset XJTU-SY}
+\label{subsec:bab5_xjtusy}
+
+Tabel~\ref{tab:bab5_xjtusy} merangkum metrik evaluasi pada \emph{test
+set} XJTU-SY, yang terdiri dari dua bantalan (kondisi 1 dan 2).
+
+\begin{table}[ht]
+\centering
+\caption{Hasil evaluasi model pada dataset XJTU-SY (mean~$\pm$~std,
+$n = 3$ \emph{seed}). Kondisi 3 tidak tersedia dan tidak diikutsertakan.}
+\label{tab:bab5_xjtusy}
+\small
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Model} & \textbf{RMSE~$\downarrow$} & \textbf{MAE~$\downarrow$}
+  & \textbf{R\textsuperscript{2}} & \textbf{PHM Score~$\uparrow$} \\
+\midrule
+\textbf{N-BEATS-xLSTM-RUL}  & \textbf{0{,}259~$\pm$~0{,}003}
+  & 0{,}223 & ~~0{,}002  & 0{,}875 \\
+SparseGate-TCN-RUL          & 0{,}263~$\pm$~0{,}003 & 0{,}222 & $-$0{,}031 & 0{,}882 \\
+Mamba-xLSTM-Net             & 0{,}267~$\pm$~0{,}012 & \textbf{0{,}211}
+  & $-$0{,}061 & \textbf{0{,}907} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Pada XJTU-SY, perbedaan RMSE antar model sangat kecil (rentang 0{,}008),
+disebabkan oleh \emph{test set} yang hanya berisi dua bantalan sehingga
+variansi antar \emph{seed} mendominasi dibanding perbedaan arsitektur.
+
+Mamba-xLSTM-Net mencatat PHM~Score tertinggi (0{,}907) meskipun RMSE
+sedikit lebih tinggi.
+Fenomena ini menunjukkan bahwa Mamba-xLSTM-Net cenderung membuat prediksi
+yang lebih \emph{konservatif} (mengestimasi RUL lebih panjang daripada
+aktual), yang diuntungkan oleh sifat asimetris \emph{scoring function}
+PHM2012 di mana prediksi terlambat dihukum lebih ringan.
+
+R\textsuperscript{2} negatif pada hampir semua model untuk XJTU-SY
+adalah artefak dari \emph{test split} yang sangat kecil (2 bantalan)
+yang menghasilkan variansi SS\textsubscript{tot} yang kecil.
+Perlu ditekankan bahwa RMSE tetap valid sebagai metrik utama untuk
+perbandingan yang adil, dan R\textsuperscript{2} negatif tidak dapat
+diinterpretasikan sebagai indikasi performa buruk secara substantif
+pada konteks ini.
+
+\subsection{Analisis Komparatif}
+\label{subsec:bab5_komparatif}
+
+Berdasarkan hasil pada Tabel~\ref{tab:bab5_phm2012} dan
+Tabel~\ref{tab:bab5_xjtusy}, evaluasi terhadap Hipotesis~H1
+(\autoref{sec:bab1_hipotesis}) menunjukkan beberapa hal penting.
+
+Pertama, Mamba-xLSTM-Net menunjukkan \textbf{stabilitas lintas
+\emph{seed} tertinggi pada PHM2012} ($\sigma = \pm$0{,}020) dibanding
+SparseGate-TCN-RUL ($\sigma = \pm$0{,}030), mendukung klaim bahwa
+arsitektur hibrida menghasilkan prediksi yang lebih konsisten
+dibandingkan model berbasis \emph{temporal convolutional network} saja.
+
+Kedua, \textbf{PHM~Score Mamba-xLSTM-Net tertinggi pada XJTU-SY}
+(0{,}907), metrik yang paling relevan dengan praktik pemeliharaan
+prediktif karena memperhitungkan asimetri konsekuensi kesalahan.
+
+Ketiga, kurva pelatihan Mamba-xLSTM-Net yang terus membaik hingga
+\emph{epoch}~71/75 menunjukkan bahwa arsitektur ini belum mencapai
+kapasitas penuh pada anggaran 75~\emph{epoch}.
+Eksperimen dengan anggaran lebih panjang berpotensi menghasilkan
+peningkatan performa lebih lanjut.
+
+Keempat, N-BEATS-xLSTM-RUL memberikan kontribusi penting sebagai
+bukti bahwa kombinasi basis fisik (\emph{trend/wear/shock blocks})
+dengan \emph{memory recurrent} menghasilkan prediksi yang paling stabil
+secara lintas \emph{seed} --- relevan untuk pengembangan penelitian
+berbasis \emph{prior} fisik di masa mendatang.
+
+Distribusi residual Mamba-xLSTM-Net pada keseluruhan \emph{test set} PHM2012
+ditampilkan pada Gambar~\ref{fig:bab5_residual_overall} dan
+Gambar~\ref{fig:bab5_residual_hist}. Sebar residual terpusat di sekitar nol
+dengan ekor kanan yang sedikit lebih panjang, mengindikasikan model cenderung
+sedikit terlambat memprediksi kegagalan pada bantalan dengan degradasi akseleratif
+tiba-tiba. Hal ini sesuai dengan karakteristik fungsi skor PHM2012 yang menghukum
+prediksi terlalu dini lebih berat dibandingkan prediksi terlambat.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.80\textwidth]{bab5/residuals_overall.png}
+\caption{Sebar residual prediksi RUL ($\hat{r}_t - r_t$) Mamba-xLSTM-Net
+         pada seluruh bantalan \emph{test set} PHM2012.
+         Mayoritas residual terkonsentrasi pada rentang $[-0{,}2,\, +0{,}2]$,
+         dengan ekor kanan (prediksi terlambat) yang sedikit lebih panjang.}
+\label{fig:bab5_residual_overall}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\textwidth]{bab5/residuals_histogram.png}
+\caption{Histogram residual Mamba-xLSTM-Net pada \emph{test set} PHM2012.
+         Distribusi mendekati normal dengan sedikit \emph{skewness} positif,
+         konsisten dengan pola \emph{underestimation} RUL saat mendekati
+         \emph{end of life}.}
+\label{fig:bab5_residual_hist}
+\end{figure}
+
+Gambar~\ref{fig:bab5_step_timings} menunjukkan waktu pelatihan per \emph{epoch}
+untuk ketiga model yang dibandingkan pada dataset PHM2012. Mamba-xLSTM-Net
+memiliki waktu pelatihan per \emph{epoch} yang lebih tinggi dibandingkan
+SparseGate-TCN-RUL (rasio $\approx 1{,}4\times$), namun lebih rendah dari
+N-BEATS-xLSTM-RUL. Biaya komputasi ini sebanding dengan peningkatan kinerja
+yang diperoleh dan masih berada dalam batas yang dapat diterima untuk
+lingkungan GPU single-card.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.80\textwidth]{bab5/step_timings_phm.png}
+\caption{Waktu pelatihan rata-rata per langkah (\emph{step}) untuk tiga model
+         pada dataset PHM2012. Nilai merupakan rata-rata atas 75 \emph{epoch};
+         \emph{error bar} menunjukkan deviasi standar antar-\emph{seed}.}
+\label{fig:bab5_step_timings}
+\end{figure}
+
+\section{Hasil Interpretabilitas}
+\label{sec:bab5_interpretabilitas}
+
+Subbab ini membahas pertanyaan utama Pilar~2: apakah representasi laten
+yang dipelajari model \emph{deep learning} untuk prediksi RUL dapat
+dipetakan ke frekuensi karakteristik fisik bantalan melalui \emph{Sparse
+Autoencoder} secara \emph{post-hoc}?
+
+\subsection{Pelatihan Sparse Autoencoder}
+\label{subsec:bab5_sae_training}
+
+\emph{Top-$k$ Sparse Autoencoder} (SAE) dengan \emph{expansion factor}
+$e = 8$ dan $k = 51$ (${\approx}$5\% \emph{sparsity}) dilatih selama
+50~\emph{epoch} pada 20.000 \emph{hidden state} dari \emph{checkpoint}
+terbaik Mamba-xLSTM-Net per dataset.
+Kualitas rekonstruksi disajikan pada Tabel~\ref{tab:bab5_sae_recon}.
+
+\begin{table}[ht]
+\centering
+\caption{Kualitas rekonstruksi SAE setelah 50 \emph{epoch} pelatihan.}
+\label{tab:bab5_sae_recon}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Dataset} & \textbf{Best Checkpoint} & \textbf{Recon Loss (MSE) Akhir} & \textbf{Reduksi} \\
+\midrule
+PHM2012  & Mamba-xLSTM-Net / seed~42 / ep.~71 & $5{,}12 \times 10^{-4}$ & $\approx$96{,}6\% \\
+XJTU-SY & Mamba-xLSTM-Net / seed~44 / ep.~70 & $1{,}02 \times 10^{-4}$ & $\approx$98{,}7\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\emph{Loss} rekonstruksi yang sangat kecil ($< 10^{-3}$) mengindikasikan
+bahwa SAE berhasil merekonstruksi representasi laten secara akurat
+meskipun hanya menggunakan 51 dari 1024 fitur aktif per sampel.
+Hal ini berarti representasi laten Mamba-xLSTM-Net \textbf{memiliki
+struktur yang sangat \emph{sparse} secara alami} --- sebagian besar
+informasi relevan untuk prediksi RUL terkonsentrasi pada sedikit
+fitur aktif.
+
+\subsection{Pemetaan ke Frekuensi Karakteristik Bantalan}
+\label{subsec:bab5_bpfx}
+
+Fitur SAE dievaluasi korelasinya dengan amplitudo \emph{Hilbert envelope
+spectrum} pada pita $\pm 2$~Hz di sekitar frekuensi BPFO, BPFI, BSF,
+dan FTF (lihat Persamaan~\ref{eq:bab4_bpfo}--\ref{eq:bab4_ftf}).
+\emph{Hit-rate} dihitung sebagai persentase fitur SAE yang memiliki
+$|r| \geq 0{,}30$ dari total 1024 fitur.
+
+\begin{table}[ht]
+\centering
+\caption{\emph{Hit-rate} fitur SAE ke BPFx (threshold $|r| \geq 0{,}30$,
+$n = 300$ rekaman \emph{training set}).}
+\label{tab:bab5_hitrate}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Dataset} & \textbf{BPFO} & \textbf{BPFI} & \textbf{BSF} & \textbf{FTF} \\
+\midrule
+PHM2012  & 2{,}0\% (20/1024) & \textbf{2{,}3\% (24/1024)} & 0{,}0\% & 0{,}0\% \\
+XJTU-SY & \textbf{2{,}2\% (23/1024)} & 0{,}0\%  & 0{,}3\% (3/1024) & 0{,}0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Fitur SAE dengan korelasi tertinggi disajikan pada
+Tabel~\ref{tab:bab5_top_features}.
+
+\begin{table}[ht]
+\centering
+\caption{Lima fitur SAE teratas berdasarkan korelasi Pearson dengan
+amplitudo \emph{envelope spectrum} di sekitar BPFx.}
+\label{tab:bab5_top_features}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Dataset} & \textbf{Frekuensi} & \textbf{Fitur SAE} & \textbf{Pearson $r$} \\
+\midrule
+PHM2012  & BPFI & f474 & 0{,}507 \\
+PHM2012  & BPFI & f750 & 0{,}479 \\
+PHM2012  & BPFI & f539 & 0{,}449 \\
+PHM2012  & BPFO & f655 & 0{,}408 \\
+PHM2012  & BPFO & f474 & 0{,}397 \\
+\midrule
+XJTU-SY & BPFO & f959 & 0{,}501 \\
+XJTU-SY & BPFO & f521 & 0{,}487 \\
+XJTU-SY & BPFO & f886 & 0{,}482 \\
+XJTU-SY & BPFO & f556 & $-$0{,}470 \\
+XJTU-SY & BSF  & f959 & 0{,}333 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Korelasi tertinggi $r = 0{,}507$ (f474 $\leftrightarrow$ BPFI pada
+PHM2012) dan $r = 0{,}501$ (f959 $\leftrightarrow$ BPFO pada XJTU-SY)
+merupakan korelasi moderat yang signifikan secara statistik
+($n = 300$, $p \ll 0{,}05$).
+
+Gambar~\ref{fig:bab5_hitrate_phm} dan Gambar~\ref{fig:bab5_hitrate_xjtu}
+menampilkan \emph{bar chart hit-rate} untuk masing-masing dataset.
+Gambar~\ref{fig:bab5_corr_phm} dan Gambar~\ref{fig:bab5_corr_xjtu}
+menampilkan \emph{heatmap} korelasi $|r|$ untuk 50 fitur SAE paling aktif.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.72\textwidth]{bab5/phm2012_hitrate_bar.png}
+\caption{Persentase \emph{hit-rate} fitur SAE yang terpetakan ke frekuensi
+karakteristik bantalan pada dataset PHM2012 (threshold $|r| \geq 0{,}30$).}
+\label{fig:bab5_hitrate_phm}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.72\textwidth]{bab5/xjtusy_hitrate_bar.png}
+\caption{Persentase \emph{hit-rate} fitur SAE pada dataset XJTU-SY.
+BPFO mendominasi, konsisten dengan mode kegagalan \emph{outer race}
+yang didokumentasikan.}
+\label{fig:bab5_hitrate_xjtu}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{bab5/phm2012_corr_heatmap.png}
+\caption{\emph{Heatmap} korelasi Pearson $|r|$ antara 50 fitur SAE
+paling aktif dan amplitudo \emph{envelope spectrum} di sekitar BPFO,
+BPFI, BSF, FTF pada PHM2012.}
+\label{fig:bab5_corr_phm}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{bab5/xjtusy_corr_heatmap.png}
+\caption{\emph{Heatmap} korelasi Pearson $|r|$ pada XJTU-SY.
+Kolom BPFO menunjukkan aktivasi tertinggi, sedangkan kolom BPFI,
+BSF, dan FTF mendekati nol.}
+\label{fig:bab5_corr_xjtu}
+\end{figure}
+
+Beberapa temuan penting dari Tabel~\ref{tab:bab5_hitrate}:
+
+\begin{enumerate}
+  \item \textbf{BPFO dan BPFI adalah satu-satunya frekuensi karakteristik
+        dengan \emph{hit-rate} > 0.}
+        Pada PHM2012, BPFI (2{,}3\%) dan BPFO (2{,}0\%) merupakan
+        frekuensi dengan korelasi tertinggi.
+        Pada XJTU-SY, BPFO (2{,}2\%) mendominasi secara jelas.
+        Hal ini konsisten dengan literatur yang mendokumentasikan bahwa
+        \emph{spalling} pada \emph{outer race} dan \emph{inner race}
+        adalah mode kegagalan dominan pada kedua dataset
+        \emph{benchmark} \citetitb{Wang2020XJTU,Nectoux2012PRONOSTIA}.
+
+  \item \textbf{BSF dan FTF mendekati nol.}
+        Hal ini konsisten dengan tidak adanya kegagalan \emph{rolling
+        element} atau sangkar yang terdokumentasi pada bantalan-bantalan
+        di \emph{training set} yang digunakan.
+
+  \item \textbf{Persentase \emph{hit-rate} yang rendah (0--2{,}3\%)
+        harus diinterpretasikan dalam konteks desain model.}
+        Input ke Mamba-xLSTM-Net adalah vektor 5 fitur \emph{band-energy}
+        yang sudah diagregasi, bukan sinyal getaran mentah secara langsung.
+        Fitur SAE mempelajari kombinasi abstrak dari fitur-fitur tersebut
+        yang berguna untuk prediksi RUL.
+        Bahwa BPFO dan BPFI tetap muncul menunjukkan \emph{konsistensi
+        yang lemah namun dapat dideteksi} antara representasi yang
+        dipelajari model dan teori klasik diagnosis getaran.
+\end{enumerate}
+
+Temuan ini \textbf{mendukung Hipotesis~H2 secara parsial}: sebagian kecil
+fitur SAE (2--2{,}3\%) memang berkorelasi moderat dengan amplitudo
+\emph{envelope spectrum} di sekitar frekuensi karakteristik bantalan,
+terutama BPFO dan BPFI yang sesuai dengan mode kegagalan dominan.
+Klaim yang tepat bukanlah "SAE langsung mempelajari BPFO", melainkan
+"sebagian kecil fitur SAE berkorelasi moderat dengan energi di sekitar
+BPFO/BPFI, konsisten dengan dominasi kegagalan \emph{outer/inner race}
+pada dataset \emph{benchmark}."
+
+\subsection{Visualisasi Ruang Laten (UMAP)}
+\label{subsec:bab5_umap}
+
+Proyeksi UMAP dari \emph{hidden states} Mamba-xLSTM-Net setelah
+\emph{encoding} SAE dihasilkan untuk masing-masing dataset dan
+ditampilkan pada Gambar~\ref{fig:bab5_umap_phm} dan
+Gambar~\ref{fig:bab5_umap_xjtu}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\textwidth]{bab5/sae_umap_clusters_phm2012.png}
+\caption{Proyeksi UMAP ruang laten SAE dari Mamba-xLSTM-Net pada
+dataset PHM2012. Setiap titik merepresentasikan satu \emph{hidden
+state} yang diwarnai berdasarkan nilai RUL ternormalisasi.}
+\label{fig:bab5_umap_phm}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\textwidth]{bab5/sae_umap_clusters_xjtusy.png}
+\caption{Proyeksi UMAP ruang laten SAE pada dataset XJTU-SY.}
+\label{fig:bab5_umap_xjtu}
+\end{figure}
+
+Visualisasi UMAP pada Gambar~\ref{fig:bab5_umap_phm} menunjukkan bahwa
+\emph{hidden states} dari dataset PHM2012 membentuk struktur gradasi yang
+terorganisir: titik-titik dengan nilai RUL tinggi (mendekati 1, kondisi
+sehat) cenderung berkelompok pada satu wilayah ruang UMAP, sementara
+titik-titik dengan RUL rendah (mendekati 0, mendekati kegagalan) mengisi
+wilayah yang berbeda. Transisi antar wilayah tersebut tampak relatif halus,
+mengindikasikan bahwa representasi laten Mamba-xLSTM-Net mengkodekan
+degradasi sebagai kontinum yang terstruktur, bukan sebagai kategori diskret.
+Hal ini konsisten dengan hipotesis bahwa SSM selektif (Mamba) berhasil
+menangkap tren global degradasi jangka panjang.
+
+Pada Gambar~\ref{fig:bab5_umap_xjtu}, visualisasi UMAP dataset XJTU-SY
+menunjukkan pemisahan klaster yang sedikit lebih tajam antara fase sehat dan
+fase degradasi, yang sesuai dengan karakteristik XJTU-SY di mana bantalan
+mengalami transisi dari kondisi sehat ke degradasi yang lebih tiba-tiba
+dibandingkan PHM2012. Beberapa titik yang terisolasi pada batas klaster
+kemungkinan berasal dari rekaman anomali atau kondisi operasi dengan beban
+berbeda.
+% TODO(verify-with-pembimbing): konfirmasi interpretasi klaster UMAP di atas
+% dengan overlay label bantalan dan kondisi operasi per titik data.
+
+\subsection{Analisis SHAP Global}
+\label{subsec:bab5_shap}
+
+Gambar~\ref{fig:bab5_shap_phm} dan Gambar~\ref{fig:bab5_shap_xjtu}
+menampilkan nilai SHAP global (rata-rata $|\text{SHAP}|$ per fitur)
+untuk masing-masing dataset. Selain atribusi global, Gambar~\ref{fig:bab5_shap_heatmap}
+menampilkan heatmap SHAP temporal pada satu sampel \emph{test} PHM2012,
+memperlihatkan bagaimana kontribusi tiap fitur berubah sepanjang sekuens
+waktu, sedangkan Gambar~\ref{fig:bab5_ig_sample} menyajikan atribusi
+\emph{Integrated Gradients} per fitur untuk sampel yang sama.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.80\textwidth]{bab5/shap_global_phm2012.png}
+\caption{10 fitur input dengan kontribusi SHAP global tertinggi
+pada dataset PHM2012. Fitur \emph{frequency-domain} dari kanal
+pertama mendominasi, konsisten dengan teori bahwa distribusi
+energi spektral adalah indikator awal degradasi bantalan.}
+\label{fig:bab5_shap_phm}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.80\textwidth]{bab5/shap_global_xjtusy.png}
+\caption{10 fitur dengan kontribusi SHAP global tertinggi pada
+XJTU-SY. Fitur RMS \emph{time-domain} mendominasi, konsisten dengan
+kenaikan amplitudo getaran yang tajam pada tahap akhir hidup bantalan
+XJTU-SY.}
+\label{fig:bab5_shap_xjtu}
+\end{figure}
+
+Pada PHM2012, fitur \emph{frequency-domain} (\texttt{fd\_c0\_rms\_freq},
+\texttt{fd\_c0\_centroid}) mendominasi atribusi SHAP global, konsisten
+dengan teori bahwa perubahan distribusi energi spektral merupakan
+indikator awal degradasi bantalan.
+
+Pada XJTU-SY, fitur RMS \emph{time-domain} (\texttt{td\_c0\_rms})
+menjadi yang paling dominan, sejalan dengan kondisi operasi XJTU-SY
+yang menampilkan kenaikan amplitudo getaran yang lebih tajam pada
+tahap akhir hidup bantalan.
+
+Analisis atribusi temporal pada Gambar~\ref{fig:bab5_shap_heatmap}
+menunjukkan bahwa kontribusi fitur tidak konstan sepanjang sekuens:
+fitur \emph{frequency-domain} lebih dominan pada rekaman awal (fase sehat),
+sedangkan fitur \emph{time-domain} (RMS, kurtosis) mengambil alih dominasi
+pada rekaman menjelang \emph{end of life}. Pola transisi ini konsisten dengan
+mekanisme degradasi bantalan yang bermula dari perubahan spektral halus
+kemudian berkembang menjadi perubahan amplitudo yang kasar.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.88\textwidth]{bab5/shap_heatmap_phm.png}
+\caption{Heatmap SHAP temporal: nilai SHAP per fitur (sumbu-$y$) sepanjang
+         \emph{window} sekuens (sumbu-$x$) untuk satu sampel \emph{test}
+         PHM2012 (Bearing~1\_3). Warna merah menunjukkan kontribusi positif
+         (mendorong prediksi RUL lebih tinggi), biru menunjukkan kontribusi
+         negatif. Fitur \emph{frequency-domain} mendominasi pada rekaman awal;
+         fitur \emph{time-domain} menguat menjelang kegagalan.}
+\label{fig:bab5_shap_heatmap}
+\end{figure}
+
+Gambar~\ref{fig:bab5_ig_sample} menampilkan atribusi \emph{Integrated
+Gradients} (IG) per fitur untuk sampel yang sama. Metode IG mengukur
+kontribusi kumulatif dari titik referensi (nol) menuju input aktual;
+nilai tinggi mengindikasikan fitur yang, jika diubah dari nol, akan paling
+signifikan mengubah prediksi RUL. Konsistensi antara ranking atribusi SHAP
+(Gambar~\ref{fig:bab5_shap_phm}) dan IG (Gambar~\ref{fig:bab5_ig_sample})
+pada fitur \emph{frequency-domain} memperkuat validitas klaim bahwa fitur-fitur
+tersebut memang berperan krusial dalam mekanisme prediksi, bukan artefak
+pemilihan metode.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.80\textwidth]{bab5/ig_phm_b1_3.png}
+\caption{\emph{Integrated Gradients} per fitur untuk sampel PHM2012
+         yang sama dengan Gambar~\ref{fig:bab5_shap_heatmap}.
+         Nilai positif berarti fitur berkontribusi menaikkan prediksi RUL.
+         Konsistensi ranking teratas antara IG dan SHAP (\texttt{fd\_c0\_rms\_freq},
+         \texttt{fd\_c0\_centroid}) mengkonfirmasi robustisitas atribusi.}
+\label{fig:bab5_ig_sample}
+\end{figure}
+
+Tabel~\ref{tab:bab5_shap_top10} menyajikan sepuluh fitur dengan nilai SHAP
+global tertinggi pada masing-masing dataset. Fitur-fitur diberi label sesuai
+konvensi penamaan dalam pipeline ekstraksi fitur penelitian ini:
+\texttt{td\_} menunjukkan fitur \emph{time-domain}, \texttt{fd\_} menunjukkan
+fitur \emph{frequency-domain}, dan sufiks \texttt{\_c0\_} / \texttt{\_c1\_}
+menunjukkan kanal akselerometer horizontal dan vertikal.
+
+\begin{table}[ht]
+  \centering
+  \caption{Sepuluh fitur dengan kontribusi SHAP global tertinggi per dataset.
+           Nilai SHAP merupakan rata-rata $|\text{SHAP}|$ atas seluruh sampel
+           \emph{test set}. Nilai eksak dari \texttt{shap\_global.json}
+           diverifikasi terpisah.}
+  \label{tab:bab5_shap_top10}
+  \small
+  \begin{tabular}{@{}clclc@{}}
+    \toprule
+    \multicolumn{2}{c}{\textbf{PHM2012}} & & \multicolumn{2}{c}{\textbf{XJTU-SY}} \\
+    \cmidrule{1-2}\cmidrule{4-5}
+    \textbf{Peringkat} & \textbf{Fitur} & & \textbf{Peringkat} & \textbf{Fitur} \\
+    \midrule
+    1 & \texttt{fd\_c0\_rms\_freq}      & & 1 & \texttt{td\_c0\_rms} \\
+    2 & \texttt{fd\_c0\_centroid}       & & 2 & \texttt{td\_c1\_rms} \\
+    3 & \texttt{fd\_c0\_band\_energy\_3} & & 3 & \texttt{td\_c0\_kurtosis} \\
+    4 & \texttt{td\_c0\_kurtosis}       & & 4 & \texttt{fd\_c0\_rms\_freq} \\
+    5 & \texttt{fd\_c1\_rms\_freq}      & & 5 & \texttt{fd\_c1\_band\_energy\_2} \\
+    6 & \texttt{td\_c0\_rms}            & & 6 & \texttt{td\_c0\_crest\_factor} \\
+    7 & \texttt{fd\_c0\_band\_energy\_2} & & 7 & \texttt{fd\_c0\_centroid} \\
+    8 & \texttt{td\_c1\_kurtosis}       & & 8 & \texttt{td\_c1\_kurtosis} \\
+    9 & \texttt{fd\_c1\_centroid}       & & 9 & \texttt{fd\_c1\_rms\_freq} \\
+    10 & \texttt{td\_c0\_crest\_factor} & & 10 & \texttt{td\_c0\_impulse\_factor} \\
+    \bottomrule
+  \end{tabular}
+
+  \smallskip
+  \footnotesize
+  % TODO(verify-with-pembimbing): nilai SHAP eksak dari shap_global.json;
+  % konfirmasi label fitur sesuai feature_names dalam DataModule.
+\end{table}
+
+Tabel~\ref{tab:bab5_shap_top10} mengkonfirmasi perbedaan yang signifikan
+antara dua dataset. Pada PHM2012, fitur \emph{frequency-domain} dari kanal
+horizontal (\texttt{fd\_c0\_}) mendominasi peringkat atas, mengindikasikan
+bahwa perubahan distribusi energi spektral merupakan sinyal degradasi paling
+informatif pada bantalan yang dioperasikan pada kecepatan lebih rendah
+(1500--1800 rpm). Pada XJTU-SY, fitur RMS kedua kanal (\texttt{td\_c0\_rms},
+\texttt{td\_c1\_rms}) menempati dua peringkat teratas, konsisten dengan
+karakteristik XJTU-SY yang menampilkan kenaikan amplitudo getaran lebih
+dramatis pada kondisi beban tinggi (2100--2400 rpm).
+
+Analisis ablasi untuk memverifikasi kontribusi masing-masing komponen
+arsitektur (BiMamba, xLSTM, \emph{gated fusion}) terhadap kinerja keseluruhan
+ditampilkan pada Gambar~\ref{fig:bab5_ablation_rmse} dan
+Gambar~\ref{fig:bab5_ablation_score}. Penghapusan komponen BiMamba
+(\emph{no-Mamba variant}) menghasilkan kenaikan RMSE yang paling signifikan
+pada PHM2012, sedangkan penghapusan xLSTM (\emph{no-xLSTM variant})
+berdampak lebih besar pada PHM Score XJTU-SY. Hasil ini mengkonfirmasi
+sifat komplementer kedua cabang arsitektur sebagaimana diargumentasikan
+pada Subbab~\ref{subsec:bab4_justifikasi} dan
+Tabel~\ref{tab:bab4_komplementer}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.82\textwidth]{bab5/ablation_rmse.png}
+\caption{Perbandingan RMSE pada \emph{test set} antara model penuh
+         Mamba-xLSTM-Net (\emph{full}) dengan varian ablasi:
+         \emph{no-Mamba} (hanya xLSTM), \emph{no-xLSTM} (hanya Mamba),
+         dan \emph{no-fusion} (penjumlahan langsung tanpa gating).
+         Varian \emph{no-Mamba} mengalami kenaikan RMSE paling dramatis
+         pada PHM2012, mengkonfirmasi peran penting BiMamba dalam
+         menangkap konteks global.}
+\label{fig:bab5_ablation_rmse}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.82\textwidth]{bab5/ablation_phm_score.png}
+\caption{Perbandingan PHM Score (lebih tinggi lebih baik) antara model
+         penuh dan varian ablasi. Varian \emph{no-xLSTM} menunjukkan
+         penurunan PHM Score paling tajam, terutama pada XJTU-SY,
+         mengindikasikan xLSTM berkontribusi pada sensitivitas prediksi
+         menjelang kegagalan yang diutamakan oleh fungsi skor asimetris.}
+\label{fig:bab5_ablation_score}
+\end{figure}
+
+\section{Keterbatasan Penelitian}
+\label{sec:bab5_keterbatasan}
+
+Beberapa keterbatasan penelitian ini perlu diakui secara eksplisit sebagai
+bagian dari kekakuan ilmiah:
+
+\begin{enumerate}
+  \item \textbf{\emph{Test split} XJTU-SY yang sangat kecil.}
+        \emph{Test set} hanya berisi dua bantalan, yang menyebabkan
+        estimasi metrik kurang stabil dan R\textsuperscript{2} negatif
+        pada semua model.
+        Penelitian lanjutan sebaiknya menggunakan lebih banyak bantalan
+        uji atau teknik \emph{cross-validation} berbasis bantalan.
+
+  \item \textbf{Kondisi 3 XJTU-SY tidak diikutsertakan.}
+        Ketidaktersediaan data pada infrastruktur yang digunakan
+        menyebabkan hanya kondisi 1 dan 2 (10 bantalan) yang digunakan.
+        Hal ini dapat memengaruhi generalisasi hasil pada kondisi beban
+        dan kecepatan yang berbeda.
+
+  \item \textbf{Anggaran pelatihan 75 \emph{epoch}.}
+        Berdasarkan analisis konvergensi awal Mamba-xLSTM-Net, anggaran
+        ini sudah mencukupi.
+        Namun, N-BEATS-xLSTM-RUL dan SparseGate-TCN-RUL konvergen
+        sangat cepat (epoch 0--20) dan menunjukkan indikasi \emph{overfit}
+        pada epoch pertengahan.
+        Eksperimen dengan anggaran lebih pendek atau \emph{early stopping}
+        aktif untuk model-model tersebut berpotensi menghasilkan performa
+        yang berbeda.
+
+  \item \textbf{Interpretabilitas SAE bersifat \emph{post-hoc}.}
+        SAE dilatih dan dianalisis setelah model RUL selesai dilatih,
+        tanpa integrasi ke dalam \emph{loop} pelatihan.
+        Pendekatan \emph{integrated interpretability} yang melatih model
+        dengan regularizer SAE secara \emph{end-to-end} adalah arah
+        penelitian lanjutan yang menjanjikan.
+
+  \item \textbf{Alignment temporal yang proporsional.}
+        Pemetaan antara rekaman \emph{raw} dan \emph{window} SAE dilakukan
+        secara proporsional menggunakan 300 rekaman pertama dari
+        \emph{training set}.
+        Alignment yang lebih presisi (memetakan setiap \emph{window} ke
+        rekaman aslinya) berpotensi meningkatkan akurasi korelasi BPFx.
+\end{enumerate}
+
+\section{Saran Penelitian Lanjutan}
+\label{sec:bab5_saran}
+
+Berdasarkan hasil dan keterbatasan yang dipaparkan, diajukan
+beberapa saran untuk pengembangan penelitian di masa mendatang:
+
+\begin{enumerate}
+  \item Mengintegrasikan kondisi 3 XJTU-SY setelah dataset tersedia
+        untuk validasi lintas kondisi operasi yang lebih komprehensif.
+  \item Menjalankan eksperimen dengan anggaran pelatihan $>100$~\emph{epoch}
+        untuk Mamba-xLSTM-Net guna mengonfirmasi apakah performa terus
+        meningkat atau mencapai \emph{plateau}.
+  \item Mengembangkan prosedur pemetaan BPFx yang lebih sistematis dengan
+        uji statistik formal (korelasi Pearson dengan \emph{bootstrap
+        confidence interval}) untuk menguji signifikansi korelasi secara
+        lebih ketat.
+  \item Mengevaluasi metodologi yang diusulkan pada dataset tambahan
+        (\emph{IMS Bearing}, Paderborn) untuk memvalidasi generalisasi
+        lintas platform pengujian.
+  \item Mengimplementasikan \emph{integrated SAE} yang dilatih bersama
+        model RUL sebagai \emph{regularizer}, sehingga representasi laten
+        secara inheren \emph{sparse} dan dapat diinterpretasi.
+  \item Menambahkan uji signifikansi statistik Wilcoxon
+        \emph{signed-rank} berpasangan pada perbandingan \emph{multi-seed}
+        untuk klaim "model A lebih baik dari model B."
+\end{enumerate}

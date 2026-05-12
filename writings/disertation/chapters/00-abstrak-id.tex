@@ -1,0 +1,83 @@
+%% chapters/00-abstrak-id.tex
+%% Abstrak Bahasa Indonesia (~500-600 kata)
+%% Aturan: .cursor/rules/disertation/12-abstrak-front-matter.mdc
+
+\begin{abstractid}
+
+Perawatan prediktif (\emph{predictive maintenance}) berbasis kondisi
+merupakan strategi kritis dalam transformasi industri manufaktur modern
+menuju era Industri 4.0.
+Kemampuan memprediksi sisa umur pakai (\emph{remaining useful life},
+RUL) komponen kritis secara akurat dan tepat waktu memungkinkan
+intervensi perawatan yang efisien, meminimalkan \emph{downtime} tidak
+terencana, dan meningkatkan keselamatan operasional.
+Bantalan gelinding merupakan komponen yang paling rentan terhadap
+kegagalan pada mesin rotasi industri, dengan kontribusi sekitar
+40--50\,\% dari total kegagalan mesin.
+
+Disertasi ini mengusulkan arsitektur hibrida \emph{Mamba-xLSTM-Net}
+untuk prediksi RUL bantalan gelinding, yang mengintegrasikan
+\emph{selective state-space model} (Mamba-3) dengan \emph{matrix-memory
+Long Short-Term Memory} (mLSTM).
+Mekanisme fusi dirancang berdasarkan sifat non-stasioner sinyal getaran
+bantalan: Mamba menangani dependensi temporal jangka panjang pada fase
+degradasi gradual, sementara mLSTM mempertahankan presisi rekuren pada
+perubahan mendadak menjelang kegagalan.
+
+Di samping aspek kinerja prediksi, disertasi ini juga mengusulkan modul
+interpretabilitas berbasis \emph{Top-$k$ Sparse Autoencoder} (SAE) yang
+bekerja secara \emph{post-hoc} terhadap representasi laten
+\emph{Mamba-xLSTM-Net}.
+Prosedur kuantitatif dikembangkan untuk memetakan fitur-fitur SAE ke
+frekuensi karakteristik fisik bantalan --- \emph{Ball Pass Frequency
+Outer Race} (BPFO), \emph{Ball Pass Frequency Inner Race} (BPFI),
+\emph{Ball Spin Frequency} (BSF), dan \emph{Fundamental Train Frequency}
+(FTF) --- melalui korelasi Pearson terhadap amplitudo \emph{Hilbert
+envelope spectrum} sinyal getaran mentah.
+
+Validasi empiris dilakukan pada dua dataset publik \emph{run-to-failure},
+yaitu PHM2012 (FEMTO-PRONOSTIA) yang memuat 17 bantalan NSK~6804 dalam
+tiga kondisi operasi, dan XJTU-SY yang memuat 10 bantalan LDK~UER204
+(kondisi 1 dan 2).
+Protokol multi-\emph{seed} dengan tiga inisialisasi berbeda (seed 42, 43,
+44) diterapkan untuk memastikan rigor statistik.
+Kinerja dievaluasi menggunakan empat metrik sekaligus: RMSE, MAE,
+koefisien determinasi R\textsuperscript{2}, dan PHM Score asimetris.
+
+Pada dataset PHM2012, \emph{Mamba-xLSTM-Net} mencapai RMSE
+$0{,}242 \pm 0{,}020$ dan memperlihatkan stabilitas lintas \emph{seed}
+tertinggi di antara tiga model yang dibandingkan.
+Pada XJTU-SY, \emph{Mamba-xLSTM-Net} mencapai PHM Score tertinggi
+($0{,}907$), metrik yang paling relevan dengan praktik pemeliharaan
+prediktif karena memperhitungkan asimetri konsekuensi kesalahan.
+Kurva pelatihan yang terus membaik hingga \emph{epoch} 71/75 menunjukkan
+bahwa arsitektur ini belum mencapai kapasitas penuh pada anggaran yang
+digunakan.
+
+Pada Pilar~2, SAE dengan 1024 dimensi laten dan $k = 51$ fitur aktif
+($\approx 5\%$ sparsity) berhasil merekonstruksi representasi laten
+dengan \emph{loss} MSE di bawah $10^{-3}$, mengindikasikan bahwa
+representasi laten \emph{Mamba-xLSTM-Net} secara alami bersifat
+\emph{sparse}.
+Pemetaan BPFx menunjukkan bahwa 2{,}0--2{,}3\% fitur SAE berkorelasi
+moderat ($|r| \geq 0{,}30$) dengan amplitudo \emph{envelope spectrum}
+di sekitar BPFO dan BPFI, yang merupakan satu-satunya frekuensi
+karakteristik dengan \emph{hit-rate} $> 0$.
+Korelasi moderat tertinggi mencapai $r = 0{,}507$ (fitur SAE
+f474~$\leftrightarrow$~BPFI pada PHM2012) dan $r = 0{,}501$
+(f959~$\leftrightarrow$~BPFO pada XJTU-SY), keduanya signifikan secara
+statistik ($n = 300$, $p \ll 0{,}05$).
+Hasil ini merupakan bukti empiris pertama bahwa model \emph{deep
+learning} yang dilatih untuk RUL mempelajari representasi laten yang
+berkorespondensi dengan teori klasik diagnosis getaran bantalan.
+
+Penelitian ini memberikan tiga kontribusi utama: (1)~arsitektur
+hibrida \emph{Mamba-xLSTM-Net} sebagai pendekatan baru yang menggabungkan
+SSM selektif dengan \emph{matrix-memory recurrent} untuk prognostik
+bantalan; (2)~prosedur pemetaan SAE ke frekuensi karakteristik fisik
+sebagai metodologi interpretabilitas baru untuk domain perawatan
+prediktif; dan (3)~bukti empiris korespondensi antara representasi laten
+\emph{deep learning} dan teori fisika klasik pada dua dataset
+\emph{benchmark} terkemuka.
+
+\end{abstractid}
