@@ -29,6 +29,7 @@ Gambar~\ref{fig:bab4_kerangka}.
 
 \begin{figure}[ht]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
     node distance = 0.5cm and 1.2cm,
     proc/.style  = {rectangle, rounded corners=3pt, draw, thick, fill=white,
@@ -40,7 +41,6 @@ Gambar~\ref{fig:bab4_kerangka}.
     metric/.style  = {proc, fill=yellow!15},
     arr/.style  = {-{Stealth[length=5pt]}, thick},
   ]
-  % Row 1: data pipeline
   \node[data]   (sensor) {Akselerometer\\{\small PHM2012, XJTU-SY}};
   \node[proc, right=of sensor]  (feat)   {Ekstraksi Fitur HI\\{\scriptsize band-energy + statistik}};
   \node[proc, right=of feat]    (window) {Jendela Sekuens\\{\scriptsize $L = 32$}};
@@ -48,14 +48,12 @@ Gambar~\ref{fig:bab4_kerangka}.
   \draw[arr] (sensor) -- (feat);
   \draw[arr] (feat)   -- (window);
 
-  % Pilar 1 branch
   \node[pilar1s, below=1.0cm of window] (mxnet) {Mamba-xLSTM-Net\\{\scriptsize Pilar~1}};
   \node[metric,  right=of mxnet] (rul) {Prediksi RUL $\hat{r}_t$\\{\scriptsize RMSE, MAE, $R^2$}};
 
   \draw[arr] (window.south) -- (mxnet.north);
   \draw[arr] (mxnet) -- (rul);
 
-  % Pilar 2 branch
   \node[pilar2s, below=1.0cm of mxnet] (sae) {Top-$k$ SAE\\{\scriptsize Pilar~2 post-hoc}};
   \node[metric,  right=of sae] (bpfx) {Pemetaan BPFx\\{\scriptsize hit-rate, korelasi Pearson}};
 
@@ -63,10 +61,10 @@ Gambar~\ref{fig:bab4_kerangka}.
         node[midway, right, font=\scriptsize]{laten $\mathbf{z}$};
   \draw[arr] (sae) -- (bpfx);
 
-  % Labels
   \node[font=\scriptsize, text=blue!60!black, left=0.1cm of mxnet] {$\uparrow$ P1};
   \node[font=\scriptsize, text=green!50!black, left=0.1cm of sae]  {$\uparrow$ P2};
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{Kerangka penelitian keseluruhan: sinyal akselerometer diproses menjadi
          fitur \emph{health indicator} (HI) dan sekuens berjendela, kemudian
          dimasukkan ke Mamba-xLSTM-Net untuk prediksi RUL (Pilar~1); representasi
@@ -288,6 +286,7 @@ belum pernah dilihat selama pelatihan.
 
 \begin{figure}[ht]
   \centering
+  \resizebox{\textwidth}{!}{%
   \begin{tikzpicture}[
       node distance = 0.35cm and 0.5cm,
       bear/.style = {rectangle, draw, thick, text centered, minimum height=0.6cm,
@@ -298,7 +297,6 @@ belum pernah dilihat selama pelatihan.
       hdr/.style   = {font=\small\bfseries, text centered},
       lbl/.style   = {font=\scriptsize, anchor=west},
     ]
-    % --- PHM2012 ---
     \node[hdr] (ph) {PHM2012};
     \node[train, below=0.3cm of ph] (p1) {1\_1};
     \node[train, right=of p1] (p2) {1\_2};
@@ -333,7 +331,8 @@ belum pernah dilihat selama pelatihan.
     \node[val,   right=0.6cm of x5] (xv) {1\_4};
     \node[test,  right=0.6cm of xv] (xt1) {1\_5};
     \node[test,  right=of xt1] (xt2) {2\_3};
-  \end{tikzpicture}
+  \end{tikzpicture}%
+  }
   \caption{Skema pembagian \emph{bearing-wise} pada PHM2012 (atas) dan
            XJTU-SY (bawah). Setiap kotak mewakili satu bantalan; warna
            menunjukkan set: biru = latih, oranye = validasi, merah = uji.
@@ -443,8 +442,8 @@ Mamba-xLSTM-Net mengeksploitasi komplementaritas ini.
   \caption{Perbandingan komplementer BiMamba dan xLSTM (sLSTM + mLSTM) pada
            lima aspek kritis, dan sinergi yang dihasilkan oleh Mamba-xLSTM-Net.}
   \label{tab:bab4_komplementer}
-  \small
-  \begin{tabular}{@{}p{3.0cm}p{3.5cm}p{3.5cm}p{3.5cm}@{}}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.4cm} X X X@{}}
     \toprule
     \textbf{Aspek} & \textbf{BiMamba} & \textbf{xLSTM (sLSTM+mLSTM)} &
     \textbf{Sinergi Mamba-xLSTM-Net} \\
@@ -481,7 +480,7 @@ Mamba-xLSTM-Net mengeksploitasi komplementaritas ini.
       & Kedua cabang dilatih secara bersamaan; total parameter $<\!1$M
         (lihat Tabel~\ref{tab:bab4_hyperp_mamba}) \\
     \bottomrule
-  \end{tabular}
+  \end{tabularx}
 \end{table}
 
 Justifikasi tambahan bersumber dari analisis mekanistik pada Bab~\ref{bab:dasar-teori}:
@@ -497,6 +496,7 @@ Gambar~\ref{fig:bab4_rasional} mengilustrasikan secara visual mekanisme
 
 \begin{figure}[ht]
   \centering
+  \resizebox{\textwidth}{!}{%
   \begin{tikzpicture}[
       node distance = 0.6cm and 1.6cm,
       inp/.style  = {rectangle, rounded corners=3pt, draw, thick, fill=gray!15,
@@ -508,7 +508,6 @@ Gambar~\ref{fig:bab4_rasional} mengilustrasikan secara visual mekanisme
       outbox/.style  = {inp, fill=yellow!20},
       arr/.style = {-{Stealth[length=5pt]}, thick},
     ]
-    % Input
     \node[inp] (x) {$\mathbf{x}_{1:L}$ (HI sekuens)};
 
     % Two parallel branches
@@ -537,7 +536,8 @@ Gambar~\ref{fig:bab4_rasional} mengilustrasikan secara visual mekanisme
          {tren jangka panjang};
     \node[font=\scriptsize, text=green!50!black, below=0.1cm of xl]
          {lonjakan akhir umur};
-  \end{tikzpicture}
+  \end{tikzpicture}%
+  }
   \caption{Rasional desain hibrida Mamba-xLSTM-Net: dua cabang paralel
            memproses sekuens HI secara bersamaan. Cabang BiMamba ($\times 4$ blok)
            menangkap tren degradasi jangka panjang dan konteks global, sedangkan
@@ -562,6 +562,7 @@ diagram blok arsitektur lengkap dari lapisan proyeksi hingga keluaran prediksi.
 
 \begin{figure}[ht]
   \centering
+  \resizebox{0.95\textwidth}{!}{%
   \begin{tikzpicture}[
       node distance = 0.45cm and 0.0cm,
       blk/.style  = {rectangle, rounded corners=3pt, draw, thick, fill=white,
@@ -614,7 +615,8 @@ diagram blok arsitektur lengkap dari lapisan proyeksi hingga keluaran prediksi.
     % Annotations
     \node[font=\scriptsize, text=blue!60!black, left=0.1cm of bm1] {$\leftarrow$ \footnotesize konteks panjang};
     \node[font=\scriptsize, text=green!50!black, right=0.1cm of xl1] {\footnotesize dinamika lokal $\rightarrow$};
-  \end{tikzpicture}
+  \end{tikzpicture}%
+  }
   \caption{Diagram blok arsitektur Mamba-xLSTM-Net. Input sekuens HI
            diproyeksikan oleh lapisan konvolusional, kemudian diproses secara
            paralel oleh empat blok BiMamba (cabang kiri, konteks panjang) dan
@@ -676,8 +678,9 @@ SparseGate-TCN-RUL menggunakan TCN (\emph{Temporal Convolutional
 Network}) dengan \emph{sparse gating} yang memaksa hanya sebagian kecil
 \emph{channel} aktif per sampel, memberikan interpretabilitas
 \emph{built-in} tanpa SAE \emph{post-hoc}.
-Hiperparameter: \texttt{tcn\_channels} = [64, 64, 128, 128],
-\texttt{lambda\_sparse} = 0{,}001, \texttt{lambda\_entropy} = 0{,}001.
+Hiperparameter: \texttt{tcn\_\allowbreak channels} = [64, 64, 128, 128],
+\texttt{lambda\_\allowbreak sparse} = 0{,}001,
+\texttt{lambda\_\allowbreak entropy} = 0{,}001.
 Total parameter: 249.192.
 
 \section{Modul Interpretabilitas}
@@ -755,14 +758,15 @@ pada Tabel~\ref{tab:bab4_bpfx}.
 \caption{Frekuensi karakteristik teoritis untuk kedua dataset
 (asumsi $\theta = 0$\textdegree).}
 \label{tab:bab4_bpfx}
-\small
-\begin{tabular}{@{}lcccccccc@{}}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}l l c c c c r r r@{}}
 \toprule
 \textbf{Dataset} & \textbf{Bantalan} & $n$ & $d$ (mm) & $D$ (mm) & $f_r$ (Hz)
-  & \textbf{BPFO} & \textbf{BPFI} & \textbf{BSF} \\
+  & \textbf{BPFO (Hz)} & \textbf{BPFI (Hz)} & \textbf{BSF (Hz)} \\
 \midrule
-PHM2012  & NSK 6804   & 13 & 3{,}5  & 25{,}5  & 30{,}0 & 168{,}24~Hz & 221{,}76~Hz & 107{,}23~Hz \\
-XJTU-SY & LDK UER204 &  8 & 7{,}92 & 34{,}55 & 35{,}0 & 107{,}91~Hz & 172{,}09~Hz & 72{,}33~Hz \\
+PHM2012  & NSK 6804   & 13 & 3{,}5  & 25{,}5  & 30{,}0 & 168{,}24 & 221{,}76 & 107{,}23 \\
+XJTU-SY  & LDK UER204 &  8 & 7{,}92 & 34{,}55 & 35{,}0 & 107{,}91 & 172{,}09 &  72{,}33 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -788,8 +792,8 @@ berdasarkan literatur).
 \label{sec:bab4_training}
 
 Semua model menggunakan konfigurasi pelatihan yang identik
-(berkas \texttt{configs/train/cloud\_full\_75.yaml}) untuk memastikan
-komparabilitas yang adil.
+(berkas \texttt{configs/\allowbreak train/\allowbreak cloud\_full\_75.yaml})
+untuk memastikan komparabilitas yang adil.
 
 \subsection{Pengaturan Inti}
 \label{subsec:bab4_hyperp_training}

@@ -109,8 +109,9 @@ SAE untuk pemetaan BPFx (Pilar~2).
 
 \begin{figure}[ht]
   \centering
+  \resizebox{\textwidth}{!}{%
   \begin{tikzpicture}[
-      node distance = 1.0cm and 1.4cm,
+      node distance = 1.0cm and 1.0cm,
       box/.style  = {rectangle, rounded corners=3pt, draw, thick,
                      fill=white, align=center, minimum height=0.9cm,
                      minimum width=2.4cm, font=\small},
@@ -119,31 +120,27 @@ SAE untuk pemetaan BPFx (Pilar~2).
       pilar2/.style = {box, fill=green!10, dashed},
       arr/.style  = {-{Stealth[length=5pt]}, thick},
     ]
-    % Input chain
     \node[iobox]  (sensor)  {Sensor Akselerometer};
     \node[box,   right=of sensor]  (hi)     {Ekstraksi Fitur HI};
     \node[pilar1, right=of hi]     (rul)    {Mamba-xLSTM-Net\\{\small Prediksi RUL}};
     \node[iobox,  right=of rul]    (dec)    {Keputusan Perawatan};
 
-    % Interpretability branch
     \node[pilar2, below=1.2cm of rul] (sae) {Top-$k$ SAE\\{\small Interpretabilitas}};
     \node[iobox,  right=of sae]  (bpfx) {Peta BPFx\\{\small BPFO, BPFI, BSF}};
 
-    % Arrows main
     \draw[arr] (sensor) -- (hi);
     \draw[arr] (hi)     -- (rul);
     \draw[arr] (rul)    -- (dec);
 
-    % Branch
     \draw[arr, dashed] (rul.south) -- (sae.north) node[midway, right, font=\scriptsize] {laten};
     \draw[arr] (sae)   -- (bpfx);
 
-    % Labels
     \node[font=\scriptsize, above=0.2cm of rul, text=blue!60!black]
           {Pilar 1};
     \node[font=\scriptsize, above=0.2cm of sae, text=green!50!black]
           {Pilar 2};
-  \end{tikzpicture}
+  \end{tikzpicture}%
+  }
   \caption{Alur sistem perawatan prediktif berbasis kondisi yang menjadi konteks
            penelitian ini: sinyal akselerometer diproses menjadi fitur \emph{health
            indicator} (HI), diprediksi oleh Mamba-xLSTM-Net (Pilar~1), kemudian

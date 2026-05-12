@@ -315,25 +315,26 @@ dan terjustifikasi secara empiris.
            hingga 2026. Kolom Kompleksitas merujuk pada kompleksitas
            komputasi terhadap panjang sekuens $L$.}
   \label{tab:bab2_evolusi_ssm}
-  \small
-  \begin{tabular}{@{}lccll@{}}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}l c c X X@{}}
     \toprule
-    \textbf{Model} & \textbf{Tahun} & \textbf{Kompleksitas}
-      & \textbf{Inovasi kunci} & \textbf{Kelemahan tercitasi} \\
+    \textbf{Model} & \textbf{Tahun} & \textbf{Kompleks.}
+      & \textbf{Inovasi kunci} & \textbf{Kelemahan} \\
     \midrule
-    HiPPO            & 2020 & $\mathcal{O}(N^2 L)$ & Fondasi teori SSM berbasis projeksi polinomial & Hanya teori; tidak efisien secara komputasi \\
-    S4               & 2022 & $\mathcal{O}(L\log L)$ & Dekomposisi \emph{low-rank} $\mathbf{A}$; konvolusi global & Parameter tetap (tidak \emph{content-aware}) \\
-    S4D / DSS        & 2023 & $\mathcal{O}(L\log L)$ & Diagonal $\mathbf{A}$; training lebih stabil & Kurang ekspresif untuk sinyal non-stasioner \\
-    Mamba            & 2023 & $\mathcal{O}(L)$ & $\Delta,\mathbf{B},\mathbf{C}$ bergantung input; \emph{parallel scan} & Unidireksional; tidak dapat merevisi konteks \\
-    Mamba-2 / SSD    & 2024 & $\mathcal{O}(L)$ & Kesetaraan SSM–\emph{linear attention}; lebih cepat & Masih unidireksional dalam implementasi dasar \\
-    xLSTM            & 2024 & $\mathcal{O}(L d^2)$ & \emph{Exponential gating}; memori matriks mLSTM & Kuadratik terhadap dimensi; biaya tinggi untuk $L$ panjang \\
-    xLSTM-Transformer & 2026 & $\mathcal{O}(L^2)$ & Hybrid xLSTM + Transformer; SOTA RUL & Kompleksitas Transformer; skala data besar diperlukan \\
+    HiPPO             & 2020 & $\mathcal{O}(N^2 L)$    & Fondasi teori SSM berbasis projeksi polinomial                            & Hanya teori; belum efisien komputasi                          \\
+    S4                & 2022 & $\mathcal{O}(L\log L)$  & Dekomposisi \emph{low-rank} $\mathbf{A}$; konvolusi global                & Parameter tetap (tidak \emph{content-aware})                  \\
+    S4D / DSS         & 2023 & $\mathcal{O}(L\log L)$  & Diagonal $\mathbf{A}$; pelatihan lebih stabil                             & Kurang ekspresif untuk sinyal non-stasioner                   \\
+    Mamba             & 2023 & $\mathcal{O}(L)$        & $\Delta,\mathbf{B},\mathbf{C}$ bergantung input; \emph{parallel scan}     & Unidireksional; tidak dapat merevisi konteks                  \\
+    Mamba-2 / SSD     & 2024 & $\mathcal{O}(L)$        & Kesetaraan SSM--\emph{linear attention}; lebih cepat                      & Masih unidireksional pada implementasi dasar                  \\
+    xLSTM             & 2024 & $\mathcal{O}(L d^2)$    & \emph{Exponential gating}; memori matriks mLSTM                           & Kuadratik terhadap dimensi; biaya tinggi pada $L$ panjang     \\
+    xLSTM-Transformer & 2026 & $\mathcal{O}(L^2)$      & \emph{Hybrid} xLSTM + Transformer; SOTA RUL                               & Kompleksitas Transformer; perlu data berskala besar           \\
     \bottomrule
-  \end{tabular}
-  \medskip\\
-  \footnotesize Sumber: \citenameitb{Gu2020HiPPO}, \citenameitb{Gu2022S4},
-  \citenameitb{Gu2023Mamba}, \citenameitb{Dao2024Mamba2},
-  \citenameitb{Beck2024xLSTM}, \citenameitb{Rui2026xLSTMTransformer}.
+  \end{tabularx}
+
+  \smallskip
+  {\footnotesize Sumber: \citenameitb{Gu2020HiPPO}, \citenameitb{Gu2022S4},
+   \citenameitb{Gu2023Mamba}, \citenameitb{Dao2024Mamba2},
+   \citenameitb{Beck2024xLSTM}, \citenameitb{Rui2026xLSTMTransformer}.}
 \end{table}
 
 \textbf{Kelemahan Mamba tercitasi.} Meskipun unggul dalam efisiensi dan
@@ -639,27 +640,23 @@ menutup ketiga gap di atas.
   \caption{Posisi penelitian ini relatif terhadap karya terkait pada
            empat dimensi kunci.}
   \label{tab:bab2_posisi_penelitian}
-  \small
-  \begin{tabular}{@{}lcccc@{}}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}X c c c c@{}}
     \toprule
     \textbf{Karya} & \textbf{Mamba} & \textbf{xLSTM} & \textbf{SAE} & \textbf{Peta BPFx} \\
     \midrule
-    LSTM / GRU (standar) & $\times$ & $\times$ & $\times$ & $\times$ \\
-    CNN-LSTM \citetitb{Khorram2021DiagnosisCNN}
-      & $\times$ & $\times$ & $\times$ & $\times$ \\
-    TCN \citetitb{Bai2018TCN} & $\times$ & $\times$ & $\times$ & $\times$ \\
-    Transformer \citetitb{Vaswani2017Attention} & $\times$ & $\times$ & $\times$ & $\times$ \\
-    TCN + graf \citetitb{Li2021SpatialGraph} & $\times$ & $\times$ & $\times$ & $\times$ \\
-    BiLSTM + Attention \citetitb{Chen2022BiLSTMAttention}
-      & $\times$ & $\times$ & $\times$ & $\times$ \\
-    Attention LSTM \citetitb{Hsu2020} & $\times$ & $\times$ & $\times$ & $\times$ \\
-    xLSTM-Transformer \citetitb{Rui2026xLSTMTransformer}
-      & $\times$ & \checkmark & $\times$ & $\times$ \\
-    Scaling Monosemanticity \citetitb{Templeton2024Scaling}
-      & --- & --- & \checkmark & $\times$ \\
-    \textbf{Penelitian ini} & \checkmark & \checkmark & \checkmark & \checkmark \\
+    LSTM / GRU (standar)                                    & $\times$    & $\times$    & $\times$    & $\times$    \\
+    CNN-LSTM \citetitb{Khorram2021DiagnosisCNN}             & $\times$    & $\times$    & $\times$    & $\times$    \\
+    TCN \citetitb{Bai2018TCN}                               & $\times$    & $\times$    & $\times$    & $\times$    \\
+    Transformer \citetitb{Vaswani2017Attention}             & $\times$    & $\times$    & $\times$    & $\times$    \\
+    TCN + graf \citetitb{Li2021SpatialGraph}                & $\times$    & $\times$    & $\times$    & $\times$    \\
+    BiLSTM + Attention \citetitb{Chen2022BiLSTMAttention}   & $\times$    & $\times$    & $\times$    & $\times$    \\
+    Attention LSTM \citetitb{Hsu2020}                       & $\times$    & $\times$    & $\times$    & $\times$    \\
+    xLSTM-Transformer \citetitb{Rui2026xLSTMTransformer}    & $\times$    & \checkmark  & $\times$    & $\times$    \\
+    Scaling Monosemanticity \citetitb{Templeton2024Scaling} & ---         & ---         & \checkmark  & $\times$    \\
+    \textbf{Penelitian ini}                                 & \checkmark  & \checkmark  & \checkmark  & \checkmark  \\
     \bottomrule
-  \end{tabular}
+  \end{tabularx}
 \end{table}
 
 Seperti ditunjukkan pada Tabel~\ref{tab:bab2_posisi_penelitian}, kombinasi
