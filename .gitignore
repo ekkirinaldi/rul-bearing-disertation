@@ -100,3 +100,8 @@ Thumbs.db
 .vscode/
 .idea/
 *.iml
+
+# =============================================================================
+# Cursor IDE workspace files (agent transcripts, project caches, local config)
+# =============================================================================
+.cursor/
