@@ -84,9 +84,8 @@ wandb/
 *.nav
 *.snm
 *.vrb
-disertasi-itb/build/
-disertasi-itb/output/
-disertasi-itb/disertasi.pdf
+# Legacy dissertation tree, superseded by writings/disertation/
+disertasi-itb/
 
 # =============================================================================
 # OS / IDE / temporary files
