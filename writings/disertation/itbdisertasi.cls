@@ -77,6 +77,14 @@
 \RequirePackage{setspace}
 \onehalfspacing  % approximately 1.5
 
+% Slightly more permissive justification to avoid frequent tiny overfull
+% boxes in Indonesian text (which has many long compound words).
+% This trades a small amount of inter-word spacing variation for cleaner
+% margins -- no body text ever bleeds past the printable area.
+\emergencystretch=3em
+\hbadness=10000
+\hfuzz=2pt
+
 % =====================================================================
 % Paragraph: no indent, blank line between paragraphs
 % =====================================================================
@@ -177,20 +185,37 @@
                 eprint=false,
                 date=year]{biblatex}
 
+% Map babel's `bahasa` (which has no .lbx file in biblatex) to english.lbx
+% so that all bibliography string overrides below are actually applied.
+% Without this, biblatex emits literal keys like "andothers" because the
+% bahasa language file is missing and fallback never triggers correctly.
+\DeclareLanguageMapping{bahasa}{english}
+\DeclareLanguageMapping{indonesian}{english}
+
 % Indonesian localization for "and", "et al.", "in", etc.
+% (Applied to english.lbx because of the mapping above.)
 \DefineBibliographyStrings{english}{%
-  andothers = {dkk\adddot},
-  and       = {dan},
-  in        = {pada},
-  editor    = {ed\adddot},
-  editors   = {eds\adddot},
-  pages     = {hlm\adddot},
-  page      = {hlm\adddot},
-  volume    = {vol\adddot},
-  number    = {no\adddot},
-  edition   = {edisi},
-  chapter   = {bab},
-  bibliography = {DAFTAR PUSTAKA}
+  andothers     = {dkk\adddot},
+  andmore       = {dkk\adddot},
+  and           = {dan},
+  in            = {pada},
+  editor        = {ed\adddot},
+  editors       = {ed\adddot},
+  bytranslator  = {diterjemahkan oleh},
+  byeditor      = {disunting oleh},
+  pages         = {hlm\adddot},
+  page          = {hlm\adddot},
+  volume        = {vol\adddot},
+  number        = {no\adddot},
+  edition       = {edisi},
+  chapter       = {bab},
+  techreport    = {laporan teknis},
+  mathesis      = {tesis magister},
+  phdthesis     = {disertasi doktor},
+  url           = {URL},
+  urlseen       = {diakses pada},
+  bibliography  = {DAFTAR PUSTAKA},
+  references    = {Daftar Pustaka}
 }
 
 % Bibliography format: hanging indent 1.27cm, single spacing
