@@ -377,72 +377,52 @@
 
 % =====================================================================
 % Halaman Pengesahan (mendukung 1 Ketua + 2 Anggota)
-%   Mengikuti template SPs ITB (Mei 2019). Spasi antar-blok dipadatkan
-%   supaya seluruh halaman pengesahan muat dalam satu lembar A4.
-%   Garis tanda tangan dibuat dengan \hrulefill --- bukan \underline{nama}
-%   yang mencegah pemenggalan baris --- sehingga nama panjang membungkus
-%   dengan rapi tanpa saling menumpuk.
+%   Mengikuti diagram tata letak resmi pada Juknis SPs ITB (Mei 2019,
+%   halaman 5). Seluruh konten dipusatkan (centered); TIDAK ada blok
+%   tanda tangan penulis --- hanya tanda tangan Tim Pembimbing.
+%   Nama pembimbing ditulis di antara tanda kurung sesuai contoh
+%   pada juknis.
 % =====================================================================
-\newcommand{\itbsignaturerule}{\rule{5.5cm}{0.4pt}}
+\newcommand{\itbsignaturerule}{\rule{6cm}{0.4pt}}
 \newcommand{\halamanpengesahan}{%
   \cleardoublepage
   \thispagestyle{empty}
-  \addcontentsline{toc}{chapter}{PENGESAHAN}
+  \addcontentsline{toc}{chapter}{HALAMAN PENGESAHAN}
   \begin{singlespace}
   \begin{center}
-    {\fontsize{14pt}{17pt}\selectfont\bfseries PENGESAHAN\par}
+    {\fontsize{14pt}{17pt}\selectfont\bfseries HALAMAN PENGESAHAN\par}
+    \vspace{0.8cm}
+    {\fontsize{14pt}{17pt}\selectfont\bfseries\MakeUppercase{\@title}\par}
+    \vspace{0.8cm}
+    Oleh\\[2pt]
+    \textbf{\@author}\\
+    \textbf{NIM: \@nim}\\
+    \textbf{(Program Studi Doktor \@prodi)}\\
+    Institut Teknologi Bandung\par
+    \vspace{0.9cm}
+    Menyetujui\\
+    Tim Pembimbing\par
+    \vspace{0.3cm}
+    Tanggal \makebox[3.5cm]{\dotfill}\par
     \vspace{0.6cm}
-    {\bfseries\MakeUppercase{\@title}\par}
+    Ketua\par
+    \vspace{1.5cm}
+    \itbsignaturerule\\
+    (\@promotor)\par
+    \vspace{0.8cm}
+    \begin{minipage}[t]{0.48\textwidth}
+      \centering
+      Anggota\\[1.5cm]
+      \itbsignaturerule\\
+      (\@anggotasatu)
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.48\textwidth}
+      \centering
+      Anggota\\[1.5cm]
+      \itbsignaturerule\\
+      (\@anggotadua)
+    \end{minipage}
   \end{center}
-  \vspace{0.4cm}
-
-  \noindent
-  Oleh \textbf{\@author}\\
-  NIM: \@nim\\
-  (Program Studi Doktor \@prodi)\\
-  Institut Teknologi Bandung
-
-  \vspace{0.4cm}
-  \noindent Adalah benar dibuat oleh saya sendiri dan belum pernah dibuat dan
-  dipublikasikan oleh siapapun baik di dalam maupun di luar Institut
-  Teknologi Bandung kecuali bagian-bagian tertentu yang telah dinyatakan
-  sumbernya dengan jelas.
-
-  \vspace{0.5cm}
-  \begin{flushright}
-  Bandung, \@bulan{} \@tahun\\[1.2cm]
-  \itbsignaturerule\\
-  \@author\\
-  NIM: \@nim
-  \end{flushright}
-
-  \vspace{0.4cm}
-  \noindent Menyetujui Tim Pembimbing
-
-  \vspace{0.15cm}
-  \noindent Ketua
-
-  \vspace{1.2cm}
-  \noindent\itbsignaturerule\\
-  \@promotor\\
-  NIP. \@nipPromotor
-
-  \vspace{0.4cm}
-  \noindent
-  \begin{minipage}[t]{0.48\textwidth}
-    \raggedright
-    Anggota,\\[1.2cm]
-    \itbsignaturerule\\
-    \@anggotasatu\\
-    NIP. \@nipAnggotaSatu
-  \end{minipage}\hfill
-  \begin{minipage}[t]{0.48\textwidth}
-    \raggedright
-    Anggota,\\[1.2cm]
-    \itbsignaturerule\\
-    \@anggotadua\\
-    NIP. \@nipAnggotaDua
-  \end{minipage}
   \end{singlespace}
   \cleardoublepage
 }
