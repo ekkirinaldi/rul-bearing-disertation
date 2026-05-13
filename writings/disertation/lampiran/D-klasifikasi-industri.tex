@@ -1,0 +1,137 @@
+%% lampiran/D-klasifikasi-industri.tex
+%% Lampiran D — Studi Kasus Klasifikasi Industri (Pilar 0)
+
+\chapter{Studi Kasus Klasifikasi Industri (Pilar~0)}
+\label{lamp:klasifikasi_industri}
+
+Lampiran ini mendokumentasikan rincian teknis tambahan untuk Pilar~0 ---
+studi kasus klasifikasi tiga kelas pada lini produksi PT~SKF~Indonesia
+yang telah diuraikan pada Subbab~\ref{sec:bab4_studi_kasus_industri}
+dan Subbab~\ref{sec:bab5_studi_kasus_industri}. Materi yang dimuat di
+sini bersifat penunjang reproducibility dan tidak menambahkan klaim
+ilmiah baru.
+
+% -----------------------------------------------------------------
+\section{Hyperparameter Algoritma Klasifikasi}
+\label{lamp:hparams_klasifikasi}
+% -----------------------------------------------------------------
+
+Konfigurasi hyperparameter berikut digunakan untuk benchmarking enam
+algoritma kandidat pada Subbab~\ref{subsec:bab4_benchmarking}. Pelatihan
+dilakukan dengan AdamW (\emph{learning rate} awal $10^{-3}$,
+\emph{cosine annealing} hingga $10^{-5}$), \emph{batch size} $128$,
+$50$ \emph{epoch} maksimal, \emph{early stopping} pada
+$F1_{\text{macro}}$ validasi (kesabaran $10$ \emph{epoch}), tiga
+\emph{seed} ($42, 43, 44$), dan \emph{class-weighted cross-entropy}
+loss. Hyperparameter spesifik per arsitektur dirangkum pada
+Tabel~\ref{tab:lampD_hparams_klasifikasi}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Hyperparameter spesifik per arsitektur klasifikasi pada
+           Pilar~0. Kolom \emph{Catatan} mencantumkan referensi
+           literatur untuk setiap pilihan.}
+  \label{tab:lampD_hparams_klasifikasi}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}lXX@{}}
+    \toprule
+    \textbf{Model} & \textbf{Hyperparameter inti} & \textbf{Catatan} \\
+    \midrule
+    XGBoost & $T = 500$, max\_depth $= 6$, $\eta = 0{,}05$,
+              subsample $= 0{,}8$, colsample\_bytree $= 0{,}8$
+            & Mengikuti default \citetitb{ChenGuestrin2016XGBoost};
+              SHAP \emph{TreeExplainer} dipakai untuk interpretasi. \\
+    CNN-LSTM & 2 lapis Conv1D ($64$ \& $128$ filter, kernel $5$),
+               1 lapis LSTM (128 unit), \emph{dropout} $0{,}3$
+             & Adaptasi \citetitb{Khorram2020CNNLSTM} dengan
+               panjang segmen $1{,}28$ detik. \\
+    TCN & 4 \emph{block} \emph{dilated} ($d \in \{1,2,4,8\}$),
+          $64$ filter, kernel $3$, \emph{residual} aktif
+        & Mengikuti \citetitb{Bai2018TCN}. \\
+    BiLSTM-Attn & 2 lapis BiLSTM (128 unit), T-FIAttn + L-GAAM
+                & Mengikuti \citetitb{Huang2025BiLSTMHIF}. \\
+    GRU (Parallel CNN--GRU) & 2 kanal Conv1D paralel + GRU $96$ unit
+                            + \emph{attention} ringan
+                            & Mengikuti \citetitb{Bai2025ParallelGRU}. \\
+    ARIMA-LSTM & ARIMA(2,1,2) untuk komponen linier; LSTM $64$ unit
+                 untuk residu non-linier
+                & Mengikuti \citetitb{Hamiane2024ARIMALSTM};
+                  pemilihan $(p,d,q)$ dengan AIC. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+% -----------------------------------------------------------------
+\section{Contoh Penjelasan SHAP per Sampel}
+\label{lamp:shap_per_sampel}
+% -----------------------------------------------------------------
+
+Sebagai pelengkap \emph{summary plot} pada
+Gambar~\ref{fig:bab5_shap_global}, Gambar~\ref{fig:lampD_shap_waterfall}
+menampilkan plot \emph{waterfall} SHAP untuk satu sampel
+misklasifikasi \emph{Critical} yang dipakai sebagai bahan
+\emph{root-cause analysis} bersama tim pemeliharaan PT~SKF~Indonesia.
+Sumbu horizontal menunjukkan kontribusi SHAP per fitur (positif:
+mendorong prediksi ke kelas \emph{Critical}; negatif: menahan).
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.78\textwidth]{shap_xgboost.png}
+  \caption{Plot \emph{waterfall} SHAP untuk satu sampel misklasifikasi
+           \emph{Critical} (gambar pendahuluan dari hasil V5).
+           Tiga fitur dengan kontribusi terbesar adalah energi pita
+           BPFO, \emph{vibration checking max}, dan \emph{rolling
+           failure ratio}. Pola ini menjadi acuan diskusi teknisi
+           pemeliharaan untuk memutuskan tindakan korektif.}
+  \label{fig:lampD_shap_waterfall}
+\end{figure}
+
+% -----------------------------------------------------------------
+\section{Skema Akuisisi dan Integrasi Data Multi-Sumber}
+\label{lamp:skema_akuisisi_industri}
+% -----------------------------------------------------------------
+
+Gambar~\ref{fig:lampD_quality_check} memperlihatkan tata-letak stasiun
+pemeriksaan kualitas (\emph{vibration checking} dan \emph{radial
+clearance checking}) di lini produksi yang menjadi sumber data
+kualitas untuk integrasi multi-sumber pada
+Subbab~\ref{subsec:bab4_akuisisi_data}. Setiap produk diuji oleh kedua
+stasiun ini sebelum dikirim ke pelanggan; hasil pengukuran disimpan
+dalam basis data MES dan disinkronisasi dengan sinyal getaran
+spindel pada lapisan \emph{data warehouse}.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.92\textwidth]{quality_check_stations.png}
+  \caption{Stasiun pemeriksaan kualitas \emph{end-of-line} pada lini
+           produksi PT~SKF~Indonesia: (kiri) \emph{vibration checking}
+           dan (kanan) \emph{radial clearance checking}. Hasil pengukuran
+           dari kedua stasiun ini diintegrasikan dengan sinyal getaran
+           spindel sebagai input gabungan klasifikasi tiga kelas
+           kondisi. Sumber: PT~SKF~Indonesia~\citetitb{SKF2017TechReport}.}
+  \label{fig:lampD_quality_check}
+\end{figure}
+
+% -----------------------------------------------------------------
+\section{Diagram Sebab-Akibat (Fishbone) Permasalahan Kualitas}
+\label{lamp:fishbone}
+% -----------------------------------------------------------------
+
+Diagram \emph{fishbone} pada Gambar~\ref{fig:lampD_fishbone} merangkum
+hasil analisis sebab-akibat awal yang dilakukan bersama tim teknis
+pabrik untuk mengidentifikasi sumber penolakan produk pada mesin OR1
+dan OR2. Diagram ini menjadi titik awal pemilihan fitur input pada
+algoritma klasifikasi (energi pita BPFO, parameter \emph{vibration
+checking}, \emph{rolling failure ratio}) sehingga setiap fitur input
+memiliki justifikasi teknis dari sisi proses produksi.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.92\textwidth]{fishbone_quality.png}
+  \caption{Diagram \emph{fishbone} sebab-akibat permasalahan kualitas
+           pada mesin \emph{outer ring grinding}. Cabang utama mencakup
+           \emph{man}, \emph{machine}, \emph{material}, \emph{method},
+           \emph{measurement}, dan \emph{environment}. Sumber:
+           dokumentasi internal PT~SKF~Indonesia~\citetitb{SKF2017TechReport}.}
+  \label{fig:lampD_fishbone}
+\end{figure}
