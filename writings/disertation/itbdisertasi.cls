@@ -109,16 +109,18 @@
 \renewcommand{\thetable}{\thechapter.\arabic{table}}
 
 % Chapter title format: "Bab I   Pendahuluan" pada SATU baris, sesuai
-% diagram juknis SPs ITB Mei 2019 ("Bab II   Tinjauan Pustaka"). Spasi
-% atas di-set 0pt sehingga judul bab dimulai pada batas margin atas
-% 3 cm (default \topskip 10pt menempatkan baseline tepat di bawahnya).
+% diagram juknis SPs ITB Mei 2019 ("Bab II   Tinjauan Pustaka").
+% Pengukuran empiris: dengan \titlespacing*{0pt}{0pt}{18pt} judul masih
+% berada ~11.7 mm di bawah margin 3 cm karena \topskip + offset internal
+% titlesec/report. Kompensasi ke atas dilakukan dengan above-space
+% negatif (-30pt) sehingga top "Bab" jatuh persis pada 3 cm.
 \RequirePackage[explicit]{titlesec}
 \titleformat{\chapter}[block]
   {\normalfont\fontsize{14pt}{17pt}\selectfont\bfseries\centering}
   {\chaptertitlename\ \thechapter}
   {1.5em}
   {#1}
-\titlespacing*{\chapter}{0pt}{0pt}{18pt}
+\titlespacing*{\chapter}{0pt}{-36pt}{18pt}
 
 \titleformat{\section}
   {\normalfont\fontsize{12}{14}\bfseries}
@@ -189,11 +191,14 @@
 \renewcommand{\cftafterloftitle}{\hfill}
 \renewcommand{\cftlottitlefont}{\hfill\fontsize{14pt}{17pt}\selectfont\bfseries}
 \renewcommand{\cftafterlottitle}{\hfill}
-% Hilangkan ruang ekstra di atas judul daftar (default tocloft = 50pt
-% yang membuat judul melayang jauh dari margin atas 3 cm).
-\setlength{\cftbeforetoctitleskip}{0pt}
-\setlength{\cftbeforeloftitleskip}{0pt}
-\setlength{\cftbeforelottitleskip}{0pt}
+% Hilangkan ruang ekstra di atas judul daftar.
+% Pengukuran empiris: dengan 0pt judul DAFTAR ISI/GAMBAR/TABEL berada di
+% ~37.1 mm dari tepi atas (≈7 mm di bawah target 3 cm). Kompensasi
+% negatif -20pt menggeser judul tepat ke 30 mm, konsisten dengan judul
+% bab biasa (\titlespacing*{\chapter}{0pt}{-36pt}{18pt} yang sudah set).
+\setlength{\cftbeforetoctitleskip}{-20pt}
+\setlength{\cftbeforeloftitleskip}{-20pt}
+\setlength{\cftbeforelottitleskip}{-20pt}
 \setlength{\cftaftertoctitleskip}{18pt}
 \setlength{\cftafterloftitleskip}{18pt}
 \setlength{\cftafterlottitleskip}{18pt}
