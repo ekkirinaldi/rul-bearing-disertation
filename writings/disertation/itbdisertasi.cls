@@ -108,14 +108,17 @@
 \renewcommand{\thefigure}{\thechapter.\arabic{figure}}
 \renewcommand{\thetable}{\thechapter.\arabic{table}}
 
-% Chapter title format: "Bab I" on first line, title on next
+% Chapter title format: "Bab I   Pendahuluan" pada SATU baris, sesuai
+% diagram juknis SPs ITB Mei 2019 ("Bab II   Tinjauan Pustaka"). Spasi
+% atas di-set 0pt sehingga judul bab dimulai pada batas margin atas
+% 3 cm (default \topskip 10pt menempatkan baseline tepat di bawahnya).
 \RequirePackage[explicit]{titlesec}
-\titleformat{\chapter}[display]
-  {\normalfont\fontsize{14}{18}\bfseries\centering}
-  {\MakeUppercase{\chaptertitlename}\ \thechapter}
-  {12pt}
-  {\MakeUppercase{#1}}
-\titlespacing*{\chapter}{0pt}{20pt}{30pt}
+\titleformat{\chapter}[block]
+  {\normalfont\fontsize{14pt}{17pt}\selectfont\bfseries\centering}
+  {\chaptertitlename\ \thechapter}
+  {1.5em}
+  {#1}
+\titlespacing*{\chapter}{0pt}{0pt}{18pt}
 
 \titleformat{\section}
   {\normalfont\fontsize{12}{14}\bfseries}
@@ -162,6 +165,38 @@
 % Captions — single-spaced, justified with hanging indent
 % =====================================================================
 \RequirePackage[labelfont=bf,labelsep=period,font=small,justification=justified,singlelinecheck=true]{caption}
+
+% =====================================================================
+% Daftar Isi / Daftar Gambar / Daftar Tabel
+%   Mengatasi dua masalah default:
+%   (a) jarak antar-entry terlalu lebar karena \parskip global +
+%       \addvspace{1.0em} bawaan \l@chapter / \l@figure / \l@table,
+%   (b) judul "DAFTAR ISI" terdorong jauh dari batas margin atas.
+%   Memakai tocloft untuk pengaturan spasi yang seragam dan ringkas.
+% =====================================================================
+\RequirePackage{tocloft}
+% Padatkan jarak vertikal antar-entry pada TOC/LOF/LOT.
+\setlength{\cftbeforechapskip}{0.2em}
+\setlength{\cftbeforesecskip}{0.1em}
+\setlength{\cftbeforesubsecskip}{0.1em}
+\setlength{\cftbeforefigskip}{0.1em}
+\setlength{\cftbeforetabskip}{0.1em}
+% Judul "DAFTAR ISI"/"DAFTAR GAMBAR"/"DAFTAR TABEL" rata-tengah,
+% bold, ukuran 14pt, dan tidak didorong ke bawah oleh spasi tambahan.
+\renewcommand{\cfttoctitlefont}{\hfill\fontsize{14pt}{17pt}\selectfont\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\renewcommand{\cftloftitlefont}{\hfill\fontsize{14pt}{17pt}\selectfont\bfseries}
+\renewcommand{\cftafterloftitle}{\hfill}
+\renewcommand{\cftlottitlefont}{\hfill\fontsize{14pt}{17pt}\selectfont\bfseries}
+\renewcommand{\cftafterlottitle}{\hfill}
+% Hilangkan ruang ekstra di atas judul daftar (default tocloft = 50pt
+% yang membuat judul melayang jauh dari margin atas 3 cm).
+\setlength{\cftbeforetoctitleskip}{0pt}
+\setlength{\cftbeforeloftitleskip}{0pt}
+\setlength{\cftbeforelottitleskip}{0pt}
+\setlength{\cftaftertoctitleskip}{18pt}
+\setlength{\cftafterloftitleskip}{18pt}
+\setlength{\cftafterlottitleskip}{18pt}
 
 % =====================================================================
 % Bibliography (biblatex + biber, Indonesian localization)
