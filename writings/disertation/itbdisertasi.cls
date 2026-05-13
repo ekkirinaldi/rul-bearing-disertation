@@ -328,34 +328,43 @@
 
 % =====================================================================
 % Sampul / Halaman Judul
-%   Mengikuti template SPs ITB (Mei 2019): logo Ganesha di atas, judul,
-%   "DISERTASI", teks pernyataan, identitas mahasiswa, lalu nama institusi
-%   di bawah. Hanya satu logo (tidak ganda) supaya muat di satu halaman.
+%   Mengikuti diagram tata letak resmi pada Juknis SPs ITB (Mei 2019,
+%   halaman 2). Urutan dari atas ke bawah:
+%     1. Judul (TNR 14, bold, kapital, spasi 1)
+%     2. "DISERTASI" (TNR 14, bold)
+%     3. "Karya tulis ... Institut Teknologi Bandung" (TNR 12)
+%     4. "Oleh"
+%     5. NAMA MAHASISWA (TNR 12, bold, kapital)
+%     6. NIM
+%     7. (Program Studi Doktor ...)
+%     8. Logo Ganesha (tinggi ~3,5 cm) -- DI BAWAH identitas mahasiswa
+%     9. INSTITUT TEKNOLOGI BANDUNG
+%    10. Bulan Tahun
 % =====================================================================
 \newcommand{\sampul}{%
   \begin{titlepage}
   \thispagestyle{empty}
   \begin{center}
     \vspace*{0.2cm}
-    \includegraphics[width=3.2cm]{\@logoITB}\par
-    \vspace{0.6cm}
     {\fontsize{14pt}{17pt}\selectfont\bfseries\MakeUppercase{\@title}\par}
-    \vspace{0.9cm}
-    {\bfseries DISERTASI DOKTOR\par}
-    \vspace{0.6cm}
+    \vspace{1.0cm}
+    {\fontsize{14pt}{17pt}\selectfont\bfseries DISERTASI\par}
+    \vspace{0.5cm}
     {Karya tulis sebagai salah satu syarat\\
      untuk memperoleh gelar Doktor dari\\
      Institut Teknologi Bandung\par}
-    \vspace{1.0cm}
+    \vspace{0.9cm}
     {Oleh\par}
     \vspace{0.3cm}
-    {\bfseries\@author\par}
+    {\bfseries\MakeUppercase{\@author}\par}
     {NIM: \@nim\par}
-    \vspace{0.3cm}
-    {(Program Studi Doktor \@prodi)\par}
-    \vfill
-    {\bfseries INSTITUT TEKNOLOGI BANDUNG\par}
     \vspace{0.2cm}
+    {(Program Studi Doktor \@prodi)\par}
+    \vspace{0.9cm}
+    \includegraphics[height=3.5cm]{\@logoITB}\par
+    \vfill
+    {\fontsize{14pt}{17pt}\selectfont\bfseries INSTITUT TEKNOLOGI BANDUNG\par}
+    \vspace{0.15cm}
     {\bfseries\@bulan{} \@tahun\par}
   \end{center}
   \end{titlepage}
