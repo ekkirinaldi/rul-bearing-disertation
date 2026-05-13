@@ -328,50 +328,64 @@
 
 % =====================================================================
 % Sampul / Halaman Judul
+%   Mengikuti template SPs ITB (Mei 2019): logo Ganesha di atas, judul,
+%   "DISERTASI", teks pernyataan, identitas mahasiswa, lalu nama institusi
+%   di bawah. Hanya satu logo (tidak ganda) supaya muat di satu halaman.
 % =====================================================================
 \newcommand{\sampul}{%
   \begin{titlepage}
   \thispagestyle{empty}
   \begin{center}
-    \vspace*{0.5cm}
-    \includegraphics[width=3cm]{\@logoITB}\par
-    \vspace{1.2cm}
+    \vspace*{0.2cm}
+    \includegraphics[width=3.2cm]{\@logoITB}\par
+    \vspace{0.6cm}
     {\fontsize{14pt}{17pt}\selectfont\bfseries\MakeUppercase{\@title}\par}
-    \vspace{1.5cm}
+    \vspace{0.9cm}
     {\bfseries DISERTASI DOKTOR\par}
-    \vspace{0.8cm}
+    \vspace{0.6cm}
     {Karya tulis sebagai salah satu syarat\\
      untuk memperoleh gelar Doktor dari\\
      Institut Teknologi Bandung\par}
-    \vspace{1.5cm}
+    \vspace{1.0cm}
     {Oleh\par}
-    \vspace{0.4cm}
+    \vspace{0.3cm}
     {\bfseries\@author\par}
     {NIM: \@nim\par}
-    \vspace{0.4cm}
+    \vspace{0.3cm}
     {(Program Studi Doktor \@prodi)\par}
     \vfill
-    \includegraphics[width=2.5cm]{\@logoITB}\par
-    \vspace{0.4cm}
     {\bfseries INSTITUT TEKNOLOGI BANDUNG\par}
+    \vspace{0.2cm}
     {\bfseries\@bulan{} \@tahun\par}
   \end{center}
   \end{titlepage}
-  \cleardoublepage
+  % Pastikan halaman verso (kosong) di belakang sampul tidak menampilkan
+  % nomor halaman arab sebelum \itbfrontmatter sempat mengaktifkan
+  % penomoran roman.
+  \thispagestyle{empty}
+  \mbox{}\newpage
 }
 
 % =====================================================================
 % Halaman Pengesahan (mendukung 1 Ketua + 2 Anggota)
+%   Mengikuti template SPs ITB (Mei 2019). Spasi antar-blok dipadatkan
+%   supaya seluruh halaman pengesahan muat dalam satu lembar A4.
+%   Garis tanda tangan dibuat dengan \hrulefill --- bukan \underline{nama}
+%   yang mencegah pemenggalan baris --- sehingga nama panjang membungkus
+%   dengan rapi tanpa saling menumpuk.
 % =====================================================================
+\newcommand{\itbsignaturerule}{\rule{5.5cm}{0.4pt}}
 \newcommand{\halamanpengesahan}{%
-  \chapter*{PENGESAHAN}
+  \cleardoublepage
   \thispagestyle{empty}
-  \addcontentsline{toc}{chapter}{Pengesahan}
+  \addcontentsline{toc}{chapter}{PENGESAHAN}
   \begin{singlespace}
   \begin{center}
-  {\bfseries\MakeUppercase{\@title}\par}
+    {\fontsize{14pt}{17pt}\selectfont\bfseries PENGESAHAN\par}
+    \vspace{0.6cm}
+    {\bfseries\MakeUppercase{\@title}\par}
   \end{center}
-  \vspace{0.5cm}
+  \vspace{0.4cm}
 
   \noindent
   Oleh \textbf{\@author}\\
@@ -379,36 +393,47 @@
   (Program Studi Doktor \@prodi)\\
   Institut Teknologi Bandung
 
-  \vspace{0.8cm}
-  Adalah benar dibuat oleh saya sendiri dan belum pernah dibuat dan
+  \vspace{0.4cm}
+  \noindent Adalah benar dibuat oleh saya sendiri dan belum pernah dibuat dan
   dipublikasikan oleh siapapun baik di dalam maupun di luar Institut
   Teknologi Bandung kecuali bagian-bagian tertentu yang telah dinyatakan
   sumbernya dengan jelas.
 
-  \vspace{1.5cm}
+  \vspace{0.5cm}
   \begin{flushright}
-  Bandung, \@bulan{} \@tahun\\[2.5cm]
-  \underline{\@author}\\
+  Bandung, \@bulan{} \@tahun\\[1.2cm]
+  \itbsignaturerule\\
+  \@author\\
   NIM: \@nim
   \end{flushright}
 
-  \vspace{1.0cm}
-  Menyetujui Tim Pembimbing
+  \vspace{0.4cm}
+  \noindent Menyetujui Tim Pembimbing
 
-  \vspace{0.3cm}
+  \vspace{0.15cm}
   \noindent Ketua
 
-  \vspace{2.0cm}
-  \noindent\underline{\@promotor}\\
+  \vspace{1.2cm}
+  \noindent\itbsignaturerule\\
+  \@promotor\\
   NIP. \@nipPromotor
 
-  \vspace{0.8cm}
+  \vspace{0.4cm}
   \noindent
-  \begin{tabular}{p{7cm}p{7cm}}
-  Anggota, & Anggota, \\[2.0cm]
-  \underline{\@anggotasatu} & \underline{\@anggotadua} \\
-  NIP. \@nipAnggotaSatu & NIP. \@nipAnggotaDua
-  \end{tabular}
+  \begin{minipage}[t]{0.48\textwidth}
+    \raggedright
+    Anggota,\\[1.2cm]
+    \itbsignaturerule\\
+    \@anggotasatu\\
+    NIP. \@nipAnggotaSatu
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \raggedright
+    Anggota,\\[1.2cm]
+    \itbsignaturerule\\
+    \@anggotadua\\
+    NIP. \@nipAnggotaDua
+  \end{minipage}
   \end{singlespace}
   \cleardoublepage
 }
