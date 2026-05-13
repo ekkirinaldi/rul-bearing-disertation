@@ -100,6 +100,12 @@ Thumbs.db
 .idea/
 *.iml
 
+# Ad-hoc extraction artefacts from .docx ingestion (V5 → LaTeX integration)
+.tmp_*
+**/.tmp_*
+.venv-docx/
+**/.venv-docx/
+
 # =============================================================================
 # Cursor IDE workspace files (agent transcripts, project caches, local config)
 # =============================================================================
