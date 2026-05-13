@@ -473,6 +473,187 @@ bantalan seperti BPFO dan BPFI --- menghubungkan \emph{learned representation}
 dengan teori fisika klasik diagnosis getaran.
 
 % -----------------------------------------------------------------
+\section{Klasifikasi Kondisi Bantalan dan Studi Kasus Industri}
+\label{sec:bab2_klasifikasi_industri}
+% -----------------------------------------------------------------
+
+Selain regresi RUL, jalur kerja yang berkembang pesat dalam pemeliharaan
+prediktif berbasis kondisi adalah \emph{klasifikasi kondisi bantalan}
+ke dalam beberapa kelas degradasi (mis. \emph{Normal}, \emph{Warning},
+\emph{Critical}). Pendekatan klasifikasi memberi sinyal awal yang
+mudah ditindaklanjuti tim pemeliharaan dan menjadi pelengkap alami bagi
+prediksi RUL kontinu pada Pilar~1. Karena disertasi ini menyertakan
+\emph{studi kasus industri} pada lini produksi PT~SKF~Indonesia
+(Pilar~0), subbab ini meninjau literatur klasifikasi yang menjadi
+acuan studi kasus tersebut.
+
+\subsection{Pembelajaran Mesin Tradisional dan \emph{XGBoost}}
+\label{subsec:bab2_kls_xgboost}
+
+Pendekatan tradisional bertumpu pada \emph{handcrafted features}
+domain waktu (RMS, kurtosis, \emph{crest factor}) dan domain frekuensi
+(\emph{spectral centroid}, energi pita karakteristik) yang kemudian
+diumpankan ke pengklasifikasi seperti \emph{Decision Tree}, \emph{Random
+Forest}, atau \emph{Support Vector Machine}. \emph{XGBoost}
+\citetitb{ChenGuestrin2016XGBoost} merupakan generasi lanjutan
+\emph{boosted decision tree} dengan regularisasi dan algoritma
+\emph{histogram-based} yang menjadi \emph{baseline} kuat di bidang
+prognostik karena kemampuan menyaring fitur secara internal serta
+kompatibilitas penuh dengan SHAP \emph{TreeExplainer}.
+
+\textbf{Kelemahan tercitasi.} Tergantung pada kualitas \emph{feature
+engineering} manual; sulit diskalakan saat dimensi fitur sangat tinggi
+atau ketika sinyal getaran perlu diolah secara mentah. Kinerja menurun
+saat distribusi fitur bergeser antar mesin atau kondisi operasi,
+sehingga rekayasa ulang fitur diperlukan setiap kali data baru masuk
+\citetitb{Carvalho2019PdMReview}.
+
+\subsection{Hibrida Konvolusi--Rekuren untuk Klasifikasi Bantalan}
+\label{subsec:bab2_kls_cnnlstm}
+
+Arsitektur \emph{end-to-end} \emph{CNN-LSTM} \citetitb{Khorram2020CNNLSTM}
+mengeliminasi kebutuhan ekstraksi fitur manual: lapisan konvolusi 1D
+bertindak sebagai \emph{denoiser} dan \emph{feature extractor} otomatis,
+sementara LSTM menangkap dependensi temporal antar segmen sinyal.
+Pada dataset acuan klasifikasi bantalan (CWRU, IMS), variasi CNN-LSTM
+menyentuh akurasi $> 99{,}7\%$. \emph{Temporal Convolutional Network}
+(TCN) \citetitb{Bai2018TCN}, dengan \emph{dilated causal convolution}
+dan \emph{residual connection}, menawarkan \emph{receptive field} luas
+tanpa beban komputasi rekuren; varian terbaru menggabungkan TCN dengan
+\emph{Graph Convolutional Network} untuk \emph{small-sample} dan
+\emph{cross-condition} \citetitb{Li2025TCNGraph}.
+
+\textbf{Kelemahan tercitasi.} Kompleksitas parameter tinggi sehingga
+beresiko \emph{overfitting} pada dataset industri kecil; latensi
+inferensi pada \emph{edge} masih menjadi tantangan untuk implementasi
+\emph{near real-time} \citetitb{Khorram2020CNNLSTM}.
+
+\subsection{BiLSTM-Attention dan GRU Ringan}
+\label{subsec:bab2_kls_bilstm_gru}
+
+\citetitb{Huang2025BiLSTMHIF} mengusulkan BiLSTM dengan
+\emph{Hierarchical Improved Fusion Attention} untuk klasifikasi
+kerusakan bantalan \emph{aero-engine}, mencapai akurasi $> 99\%$
+dengan kemampuan \emph{adaptive feature weighting}. \citetitb{Bai2025ParallelGRU}
+menggunakan kanal ganda 1D-CNN paralel yang dipasangkan dengan GRU
+plus mekanisme \emph{attention}, mencapai akurasi $99{,}62\%$ dengan
+parameter $\approx 33\%$ lebih sedikit dibandingkan LSTM, sehingga
+cocok untuk \emph{deployment} di perangkat \emph{edge} dengan sumber
+daya terbatas.
+
+\textbf{Kelemahan tercitasi.} \emph{Attention weights} sebagai
+penjelasan tunggal sering kali tidak cukup --- \citetitb{Jain2019Attention}
+menunjukkan bahwa atribusi berbasis \emph{attention} lemah secara
+kausal. Metode pelengkap berbasis SHAP atau IG diperlukan untuk
+mendukung klaim interpretabilitas.
+
+\subsection{Hibrida Statistik--\emph{Deep Learning}: ARIMA-LSTM}
+\label{subsec:bab2_kls_arima_lstm}
+
+\citetitb{Hamiane2024ARIMALSTM} menggabungkan \emph{Autoregressive
+Integrated Moving Average} (ARIMA) untuk komponen tren linier dengan
+LSTM untuk residu non-linier, memperoleh $R^2 = 0{,}99$ dan MSE
+$0{,}0018$ pada data deret waktu industri. Hibrida ini relevan untuk
+sinyal getaran spindel mesin produksi yang memiliki komponen tren
+sekuler sekaligus pola degradasi non-linier.
+
+\textbf{Kelemahan tercitasi.} Asumsi stasioneritas residu setelah
+\emph{differencing} ARIMA tidak selalu terpenuhi; tahap \emph{model
+selection} ARIMA bersifat semi-manual dan sulit diotomasi pada banyak
+\emph{time series} sekaligus.
+
+\subsection{Integrasi Data Multi-Sumber Heterogen}
+\label{subsec:bab2_multi_source}
+
+\citetitb{Yan2017BigData} memformulasikan kerangka kerja \emph{big data}
+untuk Industri~4.0 yang menstrukturkan informasi heterogen dari sensor
+mesin (vibrasi, suhu, RPM) dan basis data kualitas produk. Skema ini
+terbukti meningkatkan akurasi prediksi RUL hingga $15$--$20\%$
+dibandingkan pendekatan satu sumber.
+\citetitb{Cheng2019EdgeCloud} menunjukkan koordinasi \emph{edge--cloud}
+yang dapat memproses sinyal kondisi bantalan secara \emph{near real-time}
+melalui \emph{adaptive kernel spectral clustering}.
+\citetitb{Chiu2017IPM} mengusulkan \emph{Intelligent Predictive
+Maintenance} berbasis \emph{Cyber-Physical Agent} dan hierarki
+\emph{Health Index} untuk pengelolaan kesehatan se-pabrik.
+\citetitb{Lindstrom2019SmartProduction} mendemonstrasikan integrasi
+PdM dengan kontrol kualitas berkelanjutan pada sistem produksi cerdas;
+\citetitb{Einabadi2019DPM} memperkenalkan strategi \emph{Dynamic
+Predictive Maintenance} berbasis informasi \emph{real-time} di sektor
+otomotif.
+
+\subsection{Kerangka SHAP untuk Klasifikasi Kondisi Bantalan}
+\label{subsec:bab2_shap_klasifikasi}
+
+Pada konteks klasifikasi kondisi bantalan, \emph{SHAP}
+\citetitb{Lundberg2017SHAP} memberi peringkat fitur global maupun
+penjelasan per-prediksi yang dapat diverifikasi terhadap pengetahuan
+\emph{vibration analysis}. \citetitb{Bengherbia2024SHAPBearing}
+menerapkan SHAP pada model klasifikasi bantalan dan menemukan bahwa
+sebagian besar prediksi dapat dijelaskan oleh subset $5$--$10$ fitur
+sehingga model lebih ringan untuk \emph{deployment} di \emph{edge}.
+SHAP berbeda dari SAE: SHAP bekerja pada \emph{ruang fitur input}
+sedangkan SAE bekerja pada \emph{ruang representasi laten} model.
+Keduanya komplementer, sehingga disertasi ini menggunakan SHAP untuk
+Pilar~0 (klasifikasi industri) dan SAE untuk Pilar~2 (interpretabilitas
+mekanistik prediksi RUL).
+
+\subsection{Tinjauan Komparatif \emph{State-of-the-Art} Klasifikasi}
+\label{subsec:bab2_sota_klasifikasi}
+
+Tabel~\ref{tab:bab2_sota_klasifikasi} merangkum tonggak penting
+literatur klasifikasi bantalan yang menjadi acuan benchmarking enam
+algoritma pada Pilar~0 disertasi ini. Tabel ini tidak menyajikan
+hasil aktual eksperimen disertasi; hasil tersebut akan dilaporkan pada
+Bab~\ref{bab:hasil-pembahasan}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Ringkasan \emph{state-of-the-art} klasifikasi kondisi
+           bantalan yang menjadi acuan Pilar~0 disertasi.}
+  \label{tab:bab2_sota_klasifikasi}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}lp{2.8cm}p{2.4cm}X@{}}
+    \toprule
+    \textbf{Karya} & \textbf{Pendekatan} & \textbf{Dataset} & \textbf{Klaim utama tercitasi} \\
+    \midrule
+    \citenameitb{ChenGuestrin2016XGBoost}
+      & XGBoost \emph{tree boosting} & Beragam (umum)
+      & \emph{Baseline} kuat dengan \emph{built-in feature importance};
+        kompatibel penuh dengan SHAP \emph{TreeExplainer}. \\
+    \citenameitb{Khorram2020CNNLSTM}
+      & CNN-LSTM \emph{end-to-end} & CWRU, IMS
+      & Akurasi $> 99{,}7\%$; tidak memerlukan \emph{handcrafted features}. \\
+    \citenameitb{Li2025TCNGraph}
+      & TCN + Graph Fusion & IMS
+      & Tahan terhadap \emph{small-sample} dan \emph{cross-condition}. \\
+    \citenameitb{Huang2025BiLSTMHIF}
+      & BiLSTM + Hierarchical Fusion Attention & \emph{Aero-engine}
+      & Akurasi $> 99\%$; \emph{adaptive feature weighting}. \\
+    \citenameitb{Bai2025ParallelGRU}
+      & Parallel CNN--GRU + Attention & CWRU
+      & Akurasi $99{,}62\%$ dengan parameter $\approx 33\%$ lebih
+        sedikit daripada LSTM. \\
+    \citenameitb{Hamiane2024ARIMALSTM}
+      & ARIMA-LSTM hibrida & Industri (deret waktu)
+      & $R^2 = 0{,}99$; MSE $= 0{,}0018$. \\
+    \citenameitb{Bengherbia2024SHAPBearing}
+      & SHAP \emph{post-hoc} & CWRU
+      & Subset $5$--$10$ fitur sudah cukup untuk akurasi $> 90\%$. \\
+    \citenameitb{Yan2017BigData}
+      & Multi-sumber heterogen & Studi industri
+      & Akurasi naik $15$--$20\%$ dibanding pendekatan satu sumber. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Pemilihan enam algoritma kandidat untuk benchmarking Pilar~0 mengikuti
+tabel di atas: XGBoost sebagai \emph{baseline} ML tradisional dengan
+SHAP, CNN-LSTM dan TCN sebagai DL berbasis konvolusi, BiLSTM-Attention
+dan GRU sebagai DL berbasis rekuren, serta hibrida ARIMA-LSTM sebagai
+pendekatan statistik--DL.
+
+% -----------------------------------------------------------------
 \section{Sintesis Kritis dan Justifikasi Arsitektur Hibrida}
 \label{sec:bab2_sintesis}
 % -----------------------------------------------------------------

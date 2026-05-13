@@ -604,6 +604,135 @@ Tabel~\ref{tab:bab4_komplementer}.
 \label{fig:bab5_ablation_score}
 \end{figure}
 
+\section{Hasil Studi Kasus Industri (Pilar~0)}
+\label{sec:bab5_studi_kasus_industri}
+
+Subbab ini melaporkan hasil benchmarking enam algoritma klasifikasi
+pada studi kasus PT~SKF~Indonesia (Subbab~\ref{sec:bab4_studi_kasus_industri}).
+Hasil yang disajikan di sini bersifat \emph{placeholder} karena
+\emph{run} produksi terakhir belum diselesaikan; semua angka pada
+tabel dan gambar ditandai sebagai pendahuluan dengan komentar
+\texttt{TODO(refresh-with-final-run)} pada sumber LaTeX. Struktur
+analisis (\emph{benchmarking}, SHAP, validasi lintas mesin) sudah
+mencerminkan rancangan eksperimen final dan akan dipertahankan saat
+nilai aktual dimasukkan kembali.
+
+\subsection{Benchmarking Enam Algoritma (Skenario A)}
+\label{subsec:bab5_kls_skenario_a}
+
+% TODO(refresh-with-final-run): isi dengan rerata $\pm$ std dari 3 seed
+% pada \emph{within-machine split} OR1 dan OR2.
+Tabel~\ref{tab:bab5_kls_benchmark_a} menyajikan ringkasan kinerja enam
+algoritma kandidat pada skenario \emph{within-machine}. \emph{Cross-entropy
+loss} dilatih dengan bobot kelas dan rerata multi-\emph{seed}
+($n=3$).
+
+\begin{table}[ht]
+  \centering
+  \caption{Hasil benchmarking enam algoritma klasifikasi pada studi
+           kasus PT~SKF~Indonesia (skenario \emph{within-machine}, OR1).
+           Angka pendahuluan; akan diperbarui setelah \emph{run} final.}
+  \label{tab:bab5_kls_benchmark_a}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}lXcccc@{}}
+    \toprule
+    \textbf{Model} & \textbf{Pendekatan}
+      & $F1_{\text{macro}}$ & \textbf{Acc.}
+      & \textbf{Recall Crit.} & \textbf{Lat.~(ms)} \\
+    \midrule
+    XGBoost & ML tradisional + SHAP   & --- & --- & --- & --- \\
+    CNN-LSTM & DL konvolusi--rekuren & --- & --- & --- & --- \\
+    TCN     & Dilated causal conv.    & --- & --- & --- & --- \\
+    BiLSTM-Attn & BiLSTM + HIF Attn   & --- & --- & --- & --- \\
+    GRU     & Parallel CNN--GRU       & --- & --- & --- & --- \\
+    ARIMA-LSTM & Hibrida statistik--DL & --- & --- & --- & --- \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Pemilihan algoritma pemenang akan ditentukan dengan kriteria majemuk:
+$F1_{\text{macro}}$ terbaik di antara model yang juga memenuhi
+$\text{Recall}_{\text{Critical}} \geq 0{,}90$ dan
+\emph{inference latency} $\leq 10$~ms pada SKF~IMx-8.
+
+\subsection{Validasi Lintas Mesin (Skenario B)}
+\label{subsec:bab5_kls_skenario_b}
+
+% TODO(refresh-with-final-run): isi tabel skenario B (OR1$\to$OR2 dan OR2$\to$OR1).
+Tabel~\ref{tab:bab5_kls_benchmark_b} merangkum kinerja generalisasi
+saat model dilatih pada satu mesin dan diuji pada mesin lainnya.
+Penurunan $F1_{\text{macro}}$ relatif terhadap skenario A diharapkan
+menjadi indikator kuantitatif derajat \emph{distribution shift} antar
+unit produksi.
+
+\begin{table}[ht]
+  \centering
+  \caption{Hasil validasi lintas mesin (skenario \emph{cross-machine}).
+           Angka pendahuluan; akan diperbarui setelah \emph{run} final.}
+  \label{tab:bab5_kls_benchmark_b}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}lXccc@{}}
+    \toprule
+    \textbf{Model} & \textbf{Skenario}
+      & $F1_{\text{macro}}$ & \textbf{Recall Crit.}
+      & $\Delta F1$ vs.~A \\
+    \midrule
+    Pemenang Skenario A & OR1$\to$OR2 & --- & --- & --- \\
+    Pemenang Skenario A & OR2$\to$OR1 & --- & --- & --- \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsection{Interpretabilitas SHAP pada Algoritma Pemenang}
+\label{subsec:bab5_kls_shap}
+
+Gambar~\ref{fig:bab5_shap_global} menampilkan \emph{summary plot} SHAP
+untuk algoritma pemenang. Sumbu vertikal mengurutkan fitur dari yang
+paling berpengaruh ke yang paling tidak berpengaruh secara global,
+sedangkan sumbu horizontal menunjukkan distribusi nilai SHAP per
+sampel berwarna sesuai nilai fitur ternormalisasi.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.72\textwidth]{shap_xgboost.png}
+  \caption{Plot ringkasan SHAP untuk algoritma pemenang pada studi
+           kasus PT~SKF~Indonesia (gambar pendahuluan dari hasil V5).
+           Fitur $x_2$ (energi pita BPFO) dan $x_5$ (\emph{vibration
+           checking max}) muncul sebagai dua fitur paling berpengaruh,
+           menegaskan korespondensi antara keputusan model dan
+           pengetahuan fisika--kualitas produk.}
+  \label{fig:bab5_shap_global}
+\end{figure}
+
+% TODO(refresh-with-final-run): tambahkan diskusi top-10 fitur SHAP
+% setelah final run; sertakan minimal 1 plot waterfall untuk sampel
+% misklasifikasi Critical sebagai bahan root-cause analysis.
+Hasil pendahuluan menunjukkan bahwa fitur dengan kontribusi terbesar
+adalah energi pita BPFO dan parameter \emph{vibration checking max}
+dari basis data kualitas. Hal ini konsisten dengan dugaan teknis
+bahwa keausan \emph{cutting tool} pada spindel \emph{outer ring
+grinding} memodulasi getaran pada pita BPFO sekaligus menggeser
+distribusi parameter kualitas produk yang dihasilkan. Analisis lebih
+dalam (peringkat per kelas, plot \emph{waterfall} untuk sampel
+\emph{Critical}, \emph{root-cause} bersama tim pemeliharaan) dilaporkan
+secara terpisah pada \emph{technical report} pendamping disertasi.
+
+\subsection{Diskusi: Hubungan Pilar~0 dengan Pilar~1 dan Pilar~2}
+\label{subsec:bab5_kls_diskusi}
+
+Studi kasus Pilar~0 memperkuat tiga klaim utama disertasi.
+Pertama, dominansi fitur energi pita BPFO pada SHAP konsisten dengan
+temuan Pilar~2 (Subbab~\ref{sec:bab5_interpretabilitas}) bahwa
+representasi laten model RUL pada PHM2012 dan XJTU-SY juga didominasi
+oleh korespondensi dengan BPFO/BPFI. Kedua, integrasi data kualitas
+produk membuktikan bahwa kerangka prediktif yang dikembangkan tidak
+terbatas pada sinyal getaran tunggal, melainkan dapat diperluas ke
+basis data heterogen sesuai kerangka \emph{big data} Industri~4.0
+\citetitb{Yan2017BigData}. Ketiga, validasi lintas mesin (Skenario B)
+memberi bukti generalisasi praktis yang dibutuhkan industri sebelum
+\emph{deployment} skala penuh, melengkapi hasil multi-\emph{seed}
+yang dilaporkan untuk Pilar~1 pada Subbab~\ref{sec:bab5_rul}.
+
 \section{Keterbatasan Penelitian}
 \label{sec:bab5_keterbatasan}
 

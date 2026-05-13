@@ -1012,3 +1012,152 @@ dari total 1024 fitur.
 
 \textbf{Keluaran:} Tabel \emph{hit-rate} per BPFx per dataset,
 \emph{bar chart} \emph{hit-rate}, \emph{heatmap} korelasi top-50 fitur aktif.
+
+% -----------------------------------------------------------------
+\section{Studi Kasus Industri: PT~SKF~Indonesia (Pilar~0)}
+\label{sec:bab4_studi_kasus_industri}
+% -----------------------------------------------------------------
+
+Untuk memvalidasi relevansi disertasi pada konteks produksi industri
+nyata, dilakukan studi kasus pada lini produksi PT~SKF~Indonesia
+(Pilar~0). Pilar~0 menempatkan kerangka kerja interpretabilitas yang
+dikembangkan pada Pilar~1 dan Pilar~2 ke dalam tata-kerja
+\emph{condition-based predictive maintenance} pabrik nyata, dengan
+keluaran berupa klasifikasi tiga kelas kondisi (\emph{Normal},
+\emph{Warning}, \emph{Critical}) yang langsung dapat ditindaklanjuti
+oleh tim pemeliharaan.
+
+\subsection{Konteks Industri dan Objek Studi}
+\label{subsec:bab4_industri_konteks}
+
+PT~SKF~Indonesia memproduksi bantalan gelinding untuk sektor otomotif
+melalui beberapa tahapan permesinan: \emph{forging}, \emph{turning},
+\emph{outer ring grinding}, \emph{inner ring grinding}, dan
+\emph{honing} (lihat Gambar~\ref{fig:bab1_objek_industri}). Studi kasus
+ini fokus pada dua mesin \emph{outer ring grinding} (OR1 dan OR2)
+yang memproduksi cincin luar bantalan. Permasalahan utama adalah
+tingginya \emph{scrap rate} akibat keausan \emph{cutting tool}
+spindel yang menyebabkan parameter kualitas (\emph{vibration checking}
+dan \emph{radial clearance checking}) keluar dari rentang spesifikasi.
+Pendekatan pemeliharaan korektif konvensional (mengganti komponen
+setelah terjadi penolakan produk) berdampak \emph{unplanned downtime}
+dan kerugian material; klasifikasi kondisi tiga kelas berbasis sinyal
+getaran spindel diharapkan memberikan peringatan dini sebelum produk
+gagal.
+
+\subsection{Akuisisi Data Multi-Sumber}
+\label{subsec:bab4_akuisisi_data}
+
+Sinyal getaran spindel diakuisisi oleh modul \emph{wireless} SKF~IMx-8
+dengan akselerometer \emph{piezoelectric} (frekuensi sampling
+$25{,}6$~kHz, \emph{snapshot} $1{,}28$~detik per perekaman, interval
+$1$~menit). Data diteruskan ke SKF AWS Cloud melalui
+\emph{gateway} pabrik. Pada paralel, data kualitas produk
+(\emph{vibration checking} dan \emph{radial clearance checking}) di
+\emph{end-of-line} stasiun dicatat oleh sistem MES pabrik dengan
+\emph{timestamp} per produk. Integrasi dilakukan dengan kerangka
+\emph{big data} \citetitb{Yan2017BigData}: \emph{event timestamp}
+sinyal getaran disinkronisasi dengan \emph{batch timestamp} produk
+hingga toleransi $\pm 30$~detik, lalu di-\emph{join} pada lapisan
+\emph{data warehouse}. Skema akuisisi diilustrasikan oleh
+Gambar~\ref{fig:bab4_pipeline_industri}.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.92\textwidth]{data_collection_pipeline.png}
+  \caption{Pipa data \emph{end-to-end} studi kasus PT~SKF~Indonesia:
+           sensor SKF~IMx-8 pada spindel mesin OR1/OR2, transmisi ke
+           SKF AWS Cloud, integrasi dengan basis data kualitas produk
+           pabrik, ekstraksi fitur, klasifikasi tiga kelas, dan
+           penjelasan SHAP yang dikirim balik ke tim pemeliharaan.
+           Sumber: PT~SKF~Indonesia~\citetitb{SKF2017TechReport}.}
+  \label{fig:bab4_pipeline_industri}
+\end{figure}
+
+Setiap perekaman diolah menjadi vektor fitur 16 dimensi (9 fitur
+domain waktu, 7 fitur domain frekuensi --- mengikuti rule domain
+disertasi), dilengkapi tiga fitur kualitas turunan: \emph{vibration
+checking max}, \emph{radial clearance mean}, dan \emph{rolling failure
+ratio} dalam jendela 30 menit terakhir. Total dimensi fitur per
+jendela adalah $19$.
+
+\subsection{Skema Pelabelan Tiga Kelas}
+\label{subsec:bab4_label_tiga_kelas}
+
+Label tiga kelas dihitung secara otomatis menggunakan ambang
+\emph{Progression Index} (PI) ternormalisasi yang sudah dijelaskan
+pada Subbab~\ref{subsec:bab3_kls_label}. PI dihitung per perekaman
+sebagai rasio kenaikan parameter \emph{velocity RMS} terhadap
+\emph{baseline} bantalan baru, dikoreksi oleh kemiringan tren
+\emph{moving window} 1~jam. Ambang $\text{PI} \in [0,\,0{,}20)$
+menghasilkan label \emph{Normal}, $[0{,}20,\,0{,}50)$ menghasilkan
+\emph{Warning}, dan $\geq 0{,}50$ menghasilkan \emph{Critical}.
+Konsistensi label divalidasi terhadap ambang ISO~10816/20816 dan
+\emph{cross-check} oleh teknisi senior pemeliharaan SKF.
+
+\subsection{Pembagian Data dan Validasi Lintas Mesin}
+\label{subsec:bab4_split_industri}
+
+Pembagian data mengikuti dua skenario:
+
+\begin{enumerate}
+  \item \textbf{Skenario A (\emph{within-machine})}: data setiap mesin
+        (OR1 atau OR2) dibagi 70/15/15 secara temporal --- 70\% rentang
+        waktu paling awal sebagai \emph{train}, 15\% berikutnya sebagai
+        \emph{validation}, dan 15\% paling baru sebagai \emph{test}. Skenario
+        ini mengukur kinerja model pada mesin yang sama yang dipakai
+        untuk pelatihan.
+  \item \textbf{Skenario B (\emph{cross-machine})}: pelatihan dilakukan
+        sepenuhnya pada satu mesin (mis. OR1) dan pengujian pada mesin
+        lain (OR2), dan sebaliknya. Skenario ini mengukur generalisasi
+        model lintas variasi unit.
+\end{enumerate}
+
+Statistik fitur (mean, std) di-\emph{fit} hanya pada \emph{training set}
+masing-masing skenario, sesuai aturan domain. Skenario B berperan
+penting untuk membuktikan bahwa keputusan klasifikasi tidak
+\emph{overfit} pada karakteristik spesifik satu mesin.
+
+\subsection{Benchmarking Enam Algoritma}
+\label{subsec:bab4_benchmarking}
+
+Enam algoritma kandidat (Subbab~\ref{subsec:bab3_kls_kandidat})
+dilatih dengan protokol identik untuk memastikan perbandingan adil:
+
+\begin{itemize}
+  \item \textbf{Optimizer}: AdamW, \emph{learning rate} awal $10^{-3}$
+        dengan \emph{cosine annealing} hingga $10^{-5}$.
+  \item \textbf{Batch size}: $128$ jendela, $50$ \emph{epoch} maksimal,
+        \emph{early stopping} dengan kesabaran $10$ \emph{epoch} pada
+        $F1_{\text{macro}}$ validasi.
+  \item \textbf{Loss}: \emph{class-weighted cross-entropy}
+        (Persamaan~\ref{eq:bab3_xentropy}).
+  \item \textbf{Multi-\emph{seed}}: tiga \emph{seed} ($42, 43, 44$);
+        rerata $\pm$ \emph{standard deviation} dilaporkan.
+\end{itemize}
+
+Detail \emph{hyperparameter} per arsitektur dirinci pada
+Lampiran~\ref{lamp:hparams_klasifikasi}.
+
+\subsection{Modul Interpretabilitas SHAP}
+\label{subsec:bab4_shap_industri}
+
+Untuk algoritma pemenang dari benchmarking, dihitung peringkat
+\emph{global feature importance} via SHAP (Subbab~\ref{subsec:bab3_kls_shap}).
+\emph{TreeExplainer} dipakai jika pemenang berbasis pohon (XGBoost),
+sedangkan \emph{DeepExplainer} dipakai jika pemenang berbasis jaringan
+saraf. Output utama adalah \emph{summary plot} per kelas dan
+\emph{waterfall plot} untuk minimal lima sampel misklasifikasi
+\emph{Critical} sebagai bahan \emph{root-cause analysis} bersama tim
+pemeliharaan.
+
+\subsection{Metrik Operasional Tambahan}
+\label{subsec:bab4_metrik_operasional}
+
+Selain $F1_{\text{macro}}$, akurasi, dan \emph{recall} per kelas,
+dilaporkan dua metrik operasional yang menjadi syarat \emph{deployment}
+di \emph{edge}: (i) \emph{inference latency} per jendela diukur pada
+SKF~IMx-8 (target $\leq 10$~ms) dan (ii) jumlah parameter terlatih
+sebagai proksi \emph{memory footprint}. Algoritma yang melampaui
+$F1_{\text{macro}} = 0{,}85$ \emph{dan} memenuhi keduanya dianggap
+kandidat siap-\emph{deployment}.

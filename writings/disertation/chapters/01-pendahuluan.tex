@@ -100,6 +100,52 @@ standar industri, yaitu PHM2012 (FEMTO-PRONOSTIA) \citetitb{Nectoux2012PRONOSTIA
 dan XJTU-SY \citetitb{Wang2020XJTU}, dengan tiga \emph{seed} berbeda untuk
 menjamin rigor statistik.
 
+Untuk memperkuat relevansi industri, penelitian ini juga melakukan
+\emph{studi kasus industri} pada lini produksi bantalan gelinding di
+PT~SKF Indonesia. Objek studi adalah dua mesin \emph{grinding outer
+ring} (OR1 dan OR2) yang memproduksi cincin luar bantalan untuk
+sektor otomotif. Kedua mesin mengalami permasalahan tingkat penolakan
+produk (\emph{scrap rate}) yang relatif tinggi akibat keausan
+\emph{cutting tool} dan keluarnya parameter permesinan dari rentang
+spesifikasi. Pada studi kasus ini, sinyal getaran spindel diakuisisi
+oleh modul SKF~IMx-8 dan diteruskan ke SKF AWS Cloud, kemudian
+diintegrasikan dengan data kualitas produk (\emph{vibration checking}
+dan \emph{radial clearance checking}) untuk membentuk basis data
+multi-sumber heterogen \citetitb{Yan2017BigData}. Pada basis data ini
+diterapkan \emph{Pilar~0} berupa klasifikasi tiga kelas kondisi
+bantalan (\emph{Normal}, \emph{Warning}, \emph{Critical}) dengan
+benchmarking enam algoritma kandidat (XGBoost, CNN-LSTM, TCN,
+BiLSTM-Attention, GRU, dan hibrida ARIMA-LSTM) yang dilengkapi
+analisis \emph{SHAP} \citetitb{Lundberg2017SHAP} untuk memberi
+transparansi keputusan model. Pilar~0 berperan sebagai konteks
+aplikatif yang melengkapi Pilar~1 (RUL) dan Pilar~2 (interpretabilitas
+mekanistik) tanpa menggeser fokus ilmiah utama disertasi.
+
+Gambar~\ref{fig:bab1_objek_industri} memperlihatkan komponen bantalan
+gelinding dan dua tahapan permesinan utama (\emph{outer ring grinding}
+dan \emph{honing}) yang menjadi konteks fisik studi kasus
+PT~SKF~Indonesia.
+
+\begin{figure}[ht]
+  \centering
+  \begin{minipage}[b]{0.42\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{ball_bearing_components.png}
+    \caption*{(a) Komponen bantalan gelinding}
+  \end{minipage}\hfill
+  \begin{minipage}[b]{0.55\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{ball_bearing_machining.png}
+    \caption*{(b) Proses permesinan \emph{outer ring} dan \emph{inner ring}}
+  \end{minipage}
+  \caption{Konteks fisik objek studi kasus industri: (a)~komponen utama
+           bantalan gelinding (cincin luar, sangkar, bola, cincin dalam),
+           dan (b)~tahapan \emph{grinding} dan \emph{honing} pada cincin
+           luar dan dalam yang menjadi sumber sinyal getaran pada mesin
+           OR1 dan OR2. Sumber: SKF Group~\citetitb{SKF2017TechReport}.}
+  \label{fig:bab1_objek_industri}
+\end{figure}
+
 Gambar~\ref{fig:bab1_pipeline_pdm} mengilustrasikan alur sistem perawatan
 prediktif berbasis kondisi yang menjadi landasan penelitian ini, mulai dari
 akuisisi sinyal sensor hingga keputusan intervensi perawatan. Alur tersebut
@@ -214,9 +260,12 @@ Penelitian ini dibatasi pada hal-hal berikut:
   \item \textbf{Dataset:} PHM2012 / FEMTO-PRONOSTIA (17 bantalan,
         3 kondisi operasi) dan XJTU-SY (10 bantalan kondisi~1 dan~2;
         kondisi~3 tidak tersedia).
-  \item \textbf{Output model:} Prediksi RUL skalar ternormalisasi
-        $[0{,}1]$ (regresi tunggal); tidak mencakup klasifikasi mode
-        kegagalan.
+  \item \textbf{Output model:} Pada Pilar~1, prediksi RUL skalar
+        ternormalisasi $[0{,}1]$ (regresi tunggal). Pada Pilar~0
+        (studi kasus industri), klasifikasi tiga kelas kondisi
+        degradasi (\emph{Normal}, \emph{Warning}, \emph{Critical}) ---
+        bukan klasifikasi mode kegagalan spesifik (BPFO/BPFI/BSF/FTF
+        sebagai label) yang memerlukan anotasi pakar.
   \item \textbf{Interpretabilitas:} Analisis \emph{post-hoc} berbasis
         SAE, SHAP, dan \emph{Integrated Gradients} pada level fitur
         laten; tidak mencakup interpretabilitas kausal berbasis
@@ -340,6 +389,18 @@ kebaruan dalam Pedoman Penulisan Disertasi Doktor ITB:
         dengan \emph{hit-rate} $> 0$, konsisten dengan mode kegagalan
         \emph{outer race} dan \emph{inner race} yang didokumentasikan
         pada kedua dataset.
+  \item \textbf{(Konsep-Objek + Output)} Studi kasus industri pada
+        lini produksi PT~SKF~Indonesia (mesin \emph{grinding outer
+        ring} OR1 dan OR2) yang mengintegrasikan data sinyal getaran
+        spindel dengan informasi kualitas produk (\emph{vibration
+        checking} dan \emph{radial clearance checking}) secara
+        \emph{near real-time} \citetitb{Yan2017BigData}. Pada studi
+        kasus ini dilakukan benchmarking enam algoritma klasifikasi
+        kondisi tiga kelas (XGBoost, CNN-LSTM, TCN, BiLSTM-Attention,
+        GRU, dan hibrida ARIMA-LSTM) yang dilengkapi analisis
+        \emph{SHAP} \citetitb{Lundberg2017SHAP} untuk transparansi
+        keputusan model dan validasi lintas mesin (OR1$\leftrightarrow$OR2)
+        sebagai bukti generalisasi pada konteks produksi nyata.
 \end{enumerate}
 
 Ketiga kebaruan ini akan dipertanggungjawabkan secara teknis pada

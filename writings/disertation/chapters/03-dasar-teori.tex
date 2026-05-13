@@ -868,3 +868,156 @@ aktualnya) dihukum lebih berat karena dapat menyebabkan operasi bantalan
 melewati titik kegagalan tanpa intervensi. Interpretasi lengkap dan analisis
 distribusi PHM Score per \emph{bearing} disajikan pada
 Bab~\ref{bab:hasil-pembahasan}.
+
+% -----------------------------------------------------------------
+\section{Klasifikasi Kondisi Bantalan dan Algoritma Kandidat (Pilar~0)}
+\label{sec:bab3_klasifikasi}
+% -----------------------------------------------------------------
+
+Subbab ini memuat fondasi teoretis untuk Pilar~0 disertasi --- studi
+kasus industri yang melakukan klasifikasi tiga kelas kondisi bantalan
+(\emph{Normal}, \emph{Warning}, \emph{Critical}) pada lini produksi
+PT~SKF~Indonesia. Dasar teori ini diletakkan terpisah dari materi RUL
+karena keluaran model, fungsi kerugian, dan metrik evaluasi berbeda
+secara struktural.
+
+\subsection{Formulasi Klasifikasi Multi-Kelas}
+\label{subsec:bab3_kls_formulasi}
+
+Diberikan jendela sekuens fitur $\mathbf{X} \in \mathbb{R}^{L \times d}$
+($L$ panjang jendela, $d$ jumlah fitur per langkah), pengklasifikasi
+$f_\theta : \mathbb{R}^{L \times d} \to \Delta^{K-1}$ memetakan jendela
+ke distribusi probabilitas atas $K$ kelas pada simpleks
+$\Delta^{K-1}$. Untuk Pilar~0, $K = 3$ dengan label
+$\{\,\text{Normal},\, \text{Warning},\, \text{Critical}\,\}$. Prediksi
+kelas diperoleh dengan
+$\hat{y} = \arg\max_{k \in \{1,\ldots,K\}} f_\theta(\mathbf{X})_k$, dan
+parameter dilatih dengan meminimalkan \emph{cross-entropy}:
+
+\begin{equation}\label{eq:bab3_xentropy}
+  \mathcal{L}_{\text{CE}}(\theta) = -\frac{1}{N} \sum_{i=1}^{N}
+    \sum_{k=1}^{K} y_{i,k} \log f_\theta(\mathbf{X}_i)_k,
+\end{equation}
+
+\noindent dengan $y_{i,k} \in \{0,1\}$ adalah label \emph{one-hot} sampel
+ke-$i$. Karena distribusi kelas pada data industri umumnya tidak
+seimbang (kelas \emph{Critical} jarang teramati), digunakan
+\emph{class-weighted cross-entropy} dengan bobot
+$w_k \propto N / (K \cdot N_k)$.
+
+\subsection{Metrik Evaluasi Klasifikasi}
+\label{subsec:bab3_kls_metrik}
+
+Kinerja klasifikasi dievaluasi dengan empat metrik yang saling melengkapi:
+
+\begin{equation}\label{eq:bab3_kls_metrik}
+  \begin{aligned}
+    \text{Accuracy} &= \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}, \\
+    \text{Precision}_k &= \frac{\text{TP}_k}{\text{TP}_k + \text{FP}_k},\quad
+    \text{Recall}_k = \frac{\text{TP}_k}{\text{TP}_k + \text{FN}_k}, \\
+    F1_k &= 2 \cdot \frac{\text{Precision}_k \cdot \text{Recall}_k}{\text{Precision}_k + \text{Recall}_k},
+  \end{aligned}
+\end{equation}
+
+\noindent dengan $F1_{\text{macro}} = (1/K)\sum_k F1_k$ menjadi metrik
+utama karena tidak terbias terhadap kelas mayoritas. Untuk konteks
+pemeliharaan, \emph{Recall} kelas \emph{Critical} adalah metrik
+keselamatan paling kritis: kegagalan mendeteksi kelas ini berakibat
+\emph{unplanned downtime}. Dua metrik operasional juga dilaporkan:
+\emph{inference latency} per jendela ($\leq 10$~ms untuk implementasi
+\emph{near real-time}) dan jumlah parameter terlatih sebagai proksi
+\emph{memory footprint}.
+
+\subsection{Algoritma Kandidat untuk Benchmarking}
+\label{subsec:bab3_kls_kandidat}
+
+Enam algoritma yang dibandingkan pada Pilar~0 dipilih untuk
+merepresentasikan tiga keluarga pendekatan: ML tradisional,
+\emph{deep learning} murni, dan hibrida. Mekanisme detail tiap
+algoritma sudah dibahas sebagian pada bab ini (LSTM, GRU, mLSTM,
+SSM); ringkasan komplementer per kandidat dijelaskan di bawah.
+
+\paragraph{XGBoost (\emph{baseline} ML tradisional).}
+\emph{Extreme Gradient Boosting} \citetitb{ChenGuestrin2016XGBoost}
+adalah \emph{ensemble} pohon keputusan yang dilatih secara
+\emph{additive}: pada iterasi ke-$m$ ditambahkan satu pohon $h_m$ yang
+meminimalkan
+\begin{equation*}
+  \mathcal{L}^{(m)} = \sum_i \ell\bigl(y_i,\, \hat{y}_i^{(m-1)} + h_m(\mathbf{x}_i)\bigr)
+    + \Omega(h_m),
+\end{equation*}
+dengan $\Omega(h) = \gamma T + \tfrac{1}{2}\lambda\|w\|^2$ sebagai
+regularisasi pada jumlah daun $T$ dan bobot daun $w$. Input model adalah
+vektor fitur \emph{handcrafted} (RMS, kurtosis, \emph{crest factor},
+energi pita BPFx, dan fitur kualitas produk).
+
+\paragraph{CNN-LSTM \emph{end-to-end}.}
+Dua-tahap: lapisan konvolusi 1D mengekstraksi fitur spasial dari
+segmen sinyal getaran mentah, lalu LSTM menangkap dependensi temporal
+\citetitb{Khorram2020CNNLSTM}. Mekanisme LSTM dijelaskan pada
+Persamaan~\ref{eq:bab3_lstm_i}--\ref{eq:bab3_lstm_h}. Lapisan akhir adalah
+\emph{fully-connected} dengan \emph{softmax} $K$ kelas.
+
+\paragraph{Temporal Convolutional Network (TCN).}
+TCN \citetitb{Bai2018TCN} memakai \emph{dilated causal convolution}
+\begin{equation*}
+  y_t = \sum_{k=0}^{K-1} f(k)\, x_{t - d \cdot k},
+\end{equation*}
+dengan faktor dilatasi $d \in \{1, 2, 4, \ldots\}$ tumbuh eksponensial
+sehingga \emph{receptive field} mencakup beberapa ribu langkah waktu
+tanpa beban rekuren. \emph{Residual block} ditambahkan agar pelatihan
+stabil pada kedalaman besar.
+
+\paragraph{BiLSTM dengan \emph{Hierarchical Improved Fusion Attention}.}
+\citetitb{Huang2025BiLSTMHIF} menggabungkan BiLSTM dengan dua mekanisme
+\emph{attention}: \emph{Time-Frequency Improved Attention} (T-FIAttn)
+yang membobotkan fitur waktu-frekuensi, dan \emph{Layered Global
+Adaptive Attention Mechanism} (L-GAAM) yang membobotkan fitur antar
+lapisan. \emph{Gating} di akhir memungkinkan BiLSTM fokus pada subset
+fitur yang paling esensial untuk klasifikasi.
+
+\paragraph{GRU ringan untuk \emph{edge}.}
+\emph{Gated Recurrent Unit} \citetitb{Cho2014GRU} menggabungkan
+\emph{forget} dan \emph{input gate} LSTM menjadi satu \emph{update
+gate}, sehingga jumlah parameter berkurang $\approx 33\%$. Pada Pilar~0,
+GRU dipasangkan dengan kanal ganda 1D-CNN paralel mengikuti
+\citetitb{Bai2025ParallelGRU} agar tetap kompetitif tanpa kehilangan
+keuntungan ringan untuk \emph{deployment} di SKF IMx-8 atau perangkat
+\emph{edge} setara.
+
+\paragraph{Hibrida ARIMA-LSTM.}
+Model \emph{Autoregressive Integrated Moving Average} (ARIMA)
+\citetitb{Box1976ARIMA} memodelkan komponen linier deret waktu:
+\begin{equation*}
+  \phi(B)\, (1-B)^d\, x_t = \theta(B)\, \varepsilon_t,
+\end{equation*}
+dengan $B$ \emph{backshift operator} dan $\phi, \theta$ polinomial
+\emph{autoregressive} dan \emph{moving-average}. Residu non-linier
+$r_t = x_t - \hat{x}_t^{\text{ARIMA}}$ diumpankan ke LSTM untuk
+menangkap pola yang tidak dapat dipotret ARIMA \citetitb{Hamiane2024ARIMALSTM}.
+
+\subsection{SHAP untuk Klasifikasi: Implementasi Praktis}
+\label{subsec:bab3_kls_shap}
+
+SHAP sudah diuraikan pada subbab~\ref{subsec:bab3_shap}. Dalam konteks
+Pilar~0, dua varian dipakai: \emph{TreeExplainer} untuk XGBoost
+(eksak, $O(TLD^2)$ untuk $T$ pohon, $L$ daun, $D$ kedalaman maksimum)
+dan \emph{KernelExplainer}/\emph{DeepExplainer} untuk DL. Output utama
+adalah peringkat \emph{global feature importance}
+$\bar{\phi}_j = \tfrac{1}{N}\sum_i |\phi_{i,j}|$ dan plot
+\emph{summary} per kelas. Penjelasan per-prediksi (\emph{waterfall plot})
+dipakai untuk \emph{root-cause analysis} pada misklasifikasi
+\emph{Critical} yang berdampak operasional.
+
+\subsection{Skema Pelabelan Tiga Kelas}
+\label{subsec:bab3_kls_label}
+
+Pelabelan kondisi tiga kelas mengikuti praktik standar SKF Observer
+yang membagi rentang \emph{Progression Index} (PI) ternormalisasi
+ke ambang berikut: \emph{Normal} jika $\text{PI} < 0{,}20$; \emph{Warning}
+jika $0{,}20 \leq \text{PI} < 0{,}50$; dan \emph{Critical} jika
+$\text{PI} \geq 0{,}50$. PI sendiri merupakan rasio kenaikan
+parameter getaran dari \emph{baseline} yang dikoreksi oleh kemiringan
+tren \emph{moving window}. Konsistensi label tervalidasi melalui
+\emph{cross-check} dengan ambang ISO~10816/20816 untuk kelas
+\emph{velocity RMS} mesin grinding industri presisi.
