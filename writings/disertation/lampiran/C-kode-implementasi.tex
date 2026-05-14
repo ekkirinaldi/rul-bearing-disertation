@@ -4,38 +4,60 @@
 \chapter{Tautan Kode Implementasi dan Reproducibility}
 \label{lamp:kode}
 
-Seluruh kode implementasi, konfigurasi eksperimen, dan \emph{checkpoint}
-model yang digunakan dalam disertasi ini tersedia secara publik untuk
-mendukung \emph{reproducibility}.
+Seluruh kode implementasi dan konfigurasi eksperimen yang digunakan dalam
+disertasi ini tersedia secara publik untuk mendukung
+\emph{reproducibility}.
+Berkas \emph{checkpoint} model tidak dilampirkan pada repositori karena
+ukuran; berkas tersebut dapat dihasilkan ulang dengan menjalankan
+skrip pelatihan yang disertakan.
 
 \section{Repositori}
 \label{lamp:kode_repo}
 
 \begin{itemize}
-  \item Repositori utama: \url{https://github.com/USERNAME/disertasi-mambaxlstm}
+  \item Repositori utama:
+        \url{https://github.com/ekkirinaldi/rul-bearing-disertation}
   \item Lisensi: MIT (kode), CC-BY-4.0 (dokumentasi)
-  \item \emph{Commit hash} yang sesuai dengan hasil pada Bab~V:
-        \texttt{XXXXXXX}
+  \item Pencatatan revisi kode untuk Bab~V: setelah
+        \texttt{git clone} / \texttt{git pull} pada salinan lokal,
+        jalankan \texttt{git rev-parse HEAD} dan simpan keluarannya
+        bersama \emph{log} pelatihan di
+        \texttt{Mamba-xLSTM/results/runs/} agar setiap angka pada
+        Bab~V dapat dirujuk ke objek \emph{commit} yang tepat.
 \end{itemize}
 
 \section{Cara Menjalankan}
 \label{lamp:kode_run}
 
-% Snippet command-line untuk reproduksi eksperimen E1, E2, dst.
+% Perintah mengikuti README repositori (subdirektori Mamba-xLSTM/).
 \begin{verbatim}
-# Setup environment
-conda env create -f environment.yml
-conda activate disertasi
+# Unduh dataset mentah ke akar repositori (sibling Mamba-xLSTM/)
+curl -fL -o data-bearing.zip \
+  'https://dataset-bearing-rul.s3.ap-southeast-2.amazonaws.com/data-bearing/data-bearing.zip'
+unzip -q data-bearing.zip && rm -f data-bearing.zip
 
-# Reproduksi eksperimen E1 (perbandingan SOTA pada XJTU-SY)
-python scripts/run_experiment.py --config configs/E1_xjtusy.yaml --seed 42
+# Lingkungan Python (GPU: ikuti scripts/bootstrap_gpu_vps.sh di repositori)
+cd Mamba-xLSTM
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -e ".[mamba_pure,xlstm,interp]"
 
-# Reproduksi seluruh eksperimen (5 seed × 5 eksperimen)
-bash scripts/run_all.sh
+# Perbandingan algoritma (contoh: PHM2012 + XJTU-SY, satu model)
+python scripts/run_algorithm_comparison.py \
+  --datasets phm2012 xjtusy \
+  --models mamba_xlstm_rul \
+  --train configs/train/algorithm_comparison.yaml
 \end{verbatim}
 
 \section{Daftar Versi Pustaka}
 \label{lamp:kode_versi}
 
-% Salin dari requirements.txt / environment.yml
-\dots
+Daftar dependensi inti dan rentang versi yang disyaratkan dicantumkan
+pada berkas \texttt{Mamba-xLSTM/pyproject.toml} (tabel dependensi
+proyek \texttt{mxlstm}).
+Untuk merekam versi paket yang identik dengan lingkungan pelatihan
+Bab~V, gunakan
+keluaran \texttt{pip freeze} setelah instalasi pada mesin target dan
+simpan bersama \emph{log} pelatihan di
+\texttt{Mamba-xLSTM/results/runs/}.
