@@ -4,21 +4,163 @@
 \chapter{Detail Fitur Time-Domain dan Frequency-Domain}
 \label{lamp:fitur}
 
-Lampiran ini memuat formulasi lengkap dari 16 fitur yang digunakan
-sebagai input pada arsitektur \emph{Mamba-xLSTM-Net}, mencakup 9
-fitur \emph{time-domain} dan 7 fitur \emph{frequency-domain}.
+Lampiran ini merinci definisi numerik vektor \emph{Health Indicator} (HI)
+yang memasuki model pada Bab~\ref{bab:metodologi}--\ref{bab:hasil-pembahasan}.
+Implementasi mengikuti modul \path{mxlstm/data/hi.py} pada repositori
+publik (Lampiran~\ref{lamp:kode}).
+
+Setiap rekaman getaran memuat dua kanal akselerometer (horizontal lalu
+vertikal, sesuai urutan kolom pada berkas CSV adaptor dataset).
+Untuk setiap kanal $c \in \{0,1\}$ diekstraksi sembilan skalar
+\emph{time-domain} dan sembilan skalar turunan spektral berbasis PSD
+Welch, sehingga
+\begin{equation}\label{eq:lampA_dim}
+  F = 2 \times (9 + 9) = 36.
+\end{equation}
+\noindent Konvensi penamaan fitur dalam kode dan pada tabel SHAP/IG
+Bab~\ref{bab:hasil-pembahasan} mengikuti pola
+\texttt{td\_c\textit{c}\_}\textit{nama} dan
+\texttt{fd\_c\textit{c}\_}\textit{nama}, dengan indeks kanal
+$c=0$ untuk horizontal dan $c=1$ untuk vertikal.
+
+Ringkasan energi pada lima pita frekuensi seragam hingga Nyquist
+(Persamaan~\ref{eq:bab4_band_energy} pada Bab~\ref{bab:metodologi})
+menggambarkan prinsip dekomposisi spektral; secara numerik, energi pita
+pada Lampiran ini dihitung sebagai jumlah kontribusi bin PSD Welch
+pada rentang frekuensi yang sama lebar, sehingga konsisten dengan
+implementasi pelatihan.
+
+\section{Notasi Bersama}
+\label{lamp:fitur_notasi}
+
+Misalkan $(x_1, x_2, \ldots, x_N)$ menyatakan sampel sinyal satu kanal
+pada satu rekaman, dengan $N$ panjang rekaman dan
+$f_s = 25{,}6$~kHz frekuensi \emph{sampling}.
+Diberikan $\mu = \frac{1}{N}\sum_{i=1}^{N} x_i$,
+$\sigma^2 = \frac{1}{N}\sum_{i=1}^{N}(x_i - \mu)^2$,
+dan $\sigma = \sqrt{\sigma^2 + \varepsilon}$ dengan
+$\varepsilon > 0$ kecil untuk stabilitas numerik.
+Notasi $\mathbb{E}[\cdot]$ pada skewness dan kurtosis di bawah ini
+merujuk pada momen empiris terhadap distribusi sampel yang sama.
 
 \section{Fitur Time-Domain}
 \label{lamp:fitur_time}
 
-% Tabel 9 fitur time-domain dengan formula:
-% Mean, RMS, Std, Variance, Crest factor, Impulse factor, Shape factor,
-% Skewness, Kurtosis. Lihat .cursor/rules/15-domain-rul-bearings.mdc §D.1
-\dots
+Tabel~\ref{tab:lampA_time} merinci sembilan fitur \emph{time-domain}
+per kanal. Urutan vektor pada keluaran program mengikuti baris tabel.
 
-\section{Fitur Frequency-Domain}
+\begin{table}[ht]
+  \centering
+  \caption{Definisi sembilan fitur \emph{time-domain} per kanal.}
+  \label{tab:lampA_time}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}c l X@{}}
+    \toprule
+    \textbf{No.} & \textbf{ID (\texttt{td\_c$c$\_\dots})} & \textbf{Definisi} \\
+    \midrule
+    1 & \texttt{rms} &
+    $\mathrm{RMS} = \sqrt{\frac{1}{N}\sum_{i=1}^{N} x_i^2}$. \\
+    2 & \texttt{peak} &
+    $\mathrm{Peak} = \max_{1 \le i \le N} |x_i|$. \\
+    3 & \texttt{kurtosis} &
+    Kurtosis Pearson
+    $\mathbb{E}\bigl[(x_i-\mu)^4\bigr]/\sigma^4$
+    (parameter \texttt{fisher=False} pada \texttt{scipy.stats.kurtosis},
+    sehingga untuk sinyal Gaussian mendekati $3{,}0$). \\
+    4 & \texttt{skewness} &
+    Skewness
+    $\mathbb{E}\bigl[(x_i-\mu)^3\bigr]/\sigma^3$. \\
+    5 & \texttt{crest} &
+    \emph{Crest factor} $\mathrm{Peak}/(\mathrm{RMS}+\varepsilon)$. \\
+    6 & \texttt{shape} &
+    \emph{Shape factor}
+    $\mathrm{RMS}/\bigl(\frac{1}{N}\sum_{i=1}^{N}|x_i| + \varepsilon\bigr)$. \\
+    7 & \texttt{impulse} &
+    \emph{Impulse factor}
+    $\mathrm{Peak}/\bigl(\frac{1}{N}\sum_{i=1}^{N}|x_i| + \varepsilon\bigr)$. \\
+    8 & \texttt{margin} &
+    \emph{Margin factor}
+    $\mathrm{Peak}/\bigl(\bigl(\frac{1}{N}\sum_{i=1}^{N}\sqrt{|x_i|}\bigr)^2 + \varepsilon\bigr)$. \\
+    9 & \texttt{variance} &
+    Variansi populasi
+    $\sigma^2 = \frac{1}{N}\sum_{i=1}^{N}(x_i-\mu)^2$. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Fitur Frequency-Domain (PSD Welch)}
 \label{lamp:fitur_freq}
 
-% Tabel 7 fitur frequency-domain. Lihat
-% .cursor/rules/15-domain-rul-bearings.mdc §D.2
-\dots
+Spektral dihitung dengan metode Welch (\texttt{scipy.signal.welch}):
+panjang segmen FFT
+$n_{\mathrm{perseg}} = \min(2048,\, N)$,
+jendela default bibliotek, dan vektor frekuensi $f_\ell$ serta PSD
+diskrit $P_\ell$ pada bin yang dihasilkan.
+Didefinisikan bobot ternormalisasi
+\begin{equation}\label{eq:lampA_psd_norm}
+  \tilde{P}_\ell = \frac{P_\ell}{\sum_{j} P_j + \varepsilon},
+  \qquad
+  \sum_{\ell} \tilde{P}_\ell \approx 1.
+\end{equation}
+
+\noindent Empat statistik spektral global (baris 1--4 pada
+Tabel~\ref{tab:lampA_freq}) menggunakan $P_\ell$ mentah untuk
+\emph{mean frequency} dan \emph{RMS frequency}, serta $\tilde{P}_\ell$
+untuk pusat massa spektral dan entropi spektral.
+Lima energi pita (baris 5--9) merupakan jumlah $P_\ell$ pada bin yang
+jatuh ke dalam lima sub-interval seragam
+$[0,\, f_s/2]$:
+\begin{equation}\label{eq:lampA_band}
+  \mathcal{B}_k =
+  \Bigl[f_{k-1},\, f_k\Bigr),
+  \quad
+  f_k = k \cdot \frac{f_s/2}{5},
+  \quad
+  k = 1,\ldots,5,
+\end{equation}
+\begin{equation}\label{eq:lampA_band_energy}
+  E_k = \sum_{f_\ell \in \mathcal{B}_k} P_\ell .
+\end{equation}
+
+\begin{table}[ht]
+  \centering
+  \caption{Definisi sembilan fitur frekuensi per kanal (Welch PSD).}
+  \label{tab:lampA_freq}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}c l X@{}}
+    \toprule
+    \textbf{No.} & \textbf{ID (\texttt{fd\_c$c$\_\dots})} & \textbf{Definisi} \\
+    \midrule
+    1 & \texttt{centroid} &
+    Frekuensi pusat massa spektrum terbobot $\tilde{P}$:
+    $\sum_{\ell} f_\ell\, \tilde{P}_\ell$. \\
+    2 & \texttt{entropy} &
+    Entropi Shannon
+    $-\sum_{\ell : \tilde{P}_\ell > 0}
+    \tilde{P}_\ell \ln(\tilde{P}_\ell + \varepsilon)$. \\
+    3 & \texttt{mean\_freq} &
+    \emph{Mean frequency}
+    $\sum_{\ell} f_\ell P_\ell / (\sum_{j} P_j + \varepsilon)$. \\
+    4 & \texttt{rms\_freq} &
+    \emph{RMS frequency}
+    $\sqrt{\sum_{\ell} f_\ell^2 P_\ell / (\sum_{j} P_j + \varepsilon)}$. \\
+    5--9 & \texttt{band0}--\texttt{band4} &
+    Energi pita $E_k$ pada Persamaan~\eqref{eq:lampA_band_energy}
+    untuk $k = 1,\ldots,5$ (berkas kode memakai indeks nol:
+    \texttt{band0} $\equiv E_1$, \ldots, \texttt{band4} $\equiv E_5$). \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{Pasca-Ekstraksi pada Rantai Pelatihan}
+\label{lamp:fitur_post}
+
+Setelah vektor $36$-dimensi terbentuk per rekaman, diterapkan
+normalisasi \emph{Min--Max} per fitur yang di-\emph{fit} hanya pada
+bantalan pelatihan, diikuti pemulusan eksponensial sepanjang indeks
+waktu dengan koefisien $\alpha_{\mathrm{smooth}} = 0{,}10$
+(sebagaimana pada Bab~\ref{bab:metodologi}).
+Parameter normalisasi disimpan per fitur agar dapat diterapkan identik
+pada validasi dan uji tanpa penyimpangan statistik antar-set.
+Urutan operasi dan parameter persis tercatat pada kelas
+\texttt{HIPipeline} dalam \path{mxlstm/data/hi.py}.
