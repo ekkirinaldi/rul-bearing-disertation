@@ -28,7 +28,11 @@
 \newcommand{\ITBGeomBottom}{3cm}
 \newcommand{\ITBGeomHeadHeight}{15pt}
 \newcommand{\ITBGeomHeadSep}{12pt}
-\newcommand{\ITBGeomFootSkip}{30pt}
+% Juknis: nomor halaman bagian persiapan di tengah bawah; diagram menunjukkan
+% jarak vertikal ~1{,}5\,cm dari tepi bawah kertas ke teks nomor. |\footskip|
+% mengatur posisi relatif footer; nilai ini disetel agar mendekati diagram
+% (verifikasi visual dengan |juknis_disertasi_Mei2019.pdf|).
+\newcommand{\ITBGeomFootSkip}{42.5pt}
 
 \newcommand{\ITBApplyPageGeometry}{%
   \geometry{%
@@ -46,7 +50,9 @@
 
 % ---------------------------------------------------------------------------
 % (2) Chapter / section vertical spacing (titlesec + report baseline).
-%     Chapter: single line "Bab I  Judul" per juknis Mei 2019 hal.\ 6.
+%     Chapter: single line "Bab I  Judul" per juknis Mei 2019 hal.\ 6;
+%     judul bab / daftar: TNR 14 bold, jarak baris 1{,}5 (|\baselineskip|
+%     = 21\,pt pada 14\,pt).
 % ---------------------------------------------------------------------------
 \newskip\ITBLayoutChapterTitleAbove
 \newskip\ITBLayoutChapterTitleBelow
@@ -103,25 +109,34 @@
 }
 
 % ---------------------------------------------------------------------------
-% (4) Sampul & halaman pengesahan — vertical gaps (juknis diagram)
+% (4) Sampul, halaman judul, halaman pengesahan
+%     Referensi: Juknis Penulisan Disertasi SPs ITB (diagram hal.\ sampul,
+%     halaman judul, pengesahan). ``1 spasi'' = satu baris teks 12\,pt
+%     berjarak normal (|\baselineskip| = 12\,pt), ``3 spasi'' = 3×12\,pt.
+%     Jarak antar blok sampul selain itu tetap proporsional (``tidak
+%     mengikat'') agar muat satu halaman.
 % ---------------------------------------------------------------------------
-\newcommand{\ITBSampulTopGap}{0.2cm}
-\newcommand{\ITBSampulAfterTitle}{1.0cm}
-\newcommand{\ITBSampulAfterDisertasi}{0.5cm}
-\newcommand{\ITBSampulAfterKaryaTulis}{0.9cm}
-\newcommand{\ITBSampulAfterOleh}{0.3cm}
-\newcommand{\ITBSampulAfterNimBlock}{0.2cm}
-\newcommand{\ITBSampulAfterProdi}{0.9cm}
+% --- Juknis: satu / tiga spasi pada 12\,pt (|\singlespace|) ---
+\newcommand{\ITBJuknisSpasiSatu}{12pt}
+\newcommand{\ITBJuknisSpasiTiga}{36pt}
+% --- Sampul / halaman judul (proporsional; disesuaikan dengan panjang judul) ---
+\newcommand{\ITBSampulTopGap}{0pt}
+\newcommand{\ITBSampulAfterTitle}{24pt}
+\newcommand{\ITBSampulAfterDisertasi}{\ITBJuknisSpasiSatu}
+\newcommand{\ITBSampulAfterKaryaTulis}{18pt}
+\newcommand{\ITBSampulAfterOleh}{\ITBJuknisSpasiSatu}
+\newcommand{\ITBSampulAfterNimBlock}{\ITBJuknisSpasiSatu}
+\newcommand{\ITBSampulAfterProdi}{21pt}
 \newcommand{\ITBSampulLogoHeight}{3.5cm}
-\newcommand{\ITBSampulAfterInstitusi}{0.15cm}
+\newcommand{\ITBSampulAfterInstitusi}{\ITBJuknisSpasiSatu}
+% --- Halaman pengesahan (diagram: beberapa blok berjarak 1 atau 3 spasi) ---
+\newcommand{\ITBPengesahanAfterHeading}{\ITBJuknisSpasiSatu}
+\newcommand{\ITBPengesahanAfterTitle}{\ITBJuknisSpasiTiga}
+\newcommand{\ITBPengesahanAfterAuthorBlock}{\ITBJuknisSpasiTiga}
+\newcommand{\ITBPengesahanAfterMenyetujui}{\ITBJuknisSpasiSatu}
+\newcommand{\ITBPengesahanAfterTanggal}{\ITBJuknisSpasiSatu}
+\newcommand{\ITBPengesahanAfterKetuaLabel}{36pt}
+\newcommand{\ITBPengesahanAfterKetuaRule}{\ITBJuknisSpasiTiga}
+\newcommand{\ITBPengesahanAnggotaRuleDrop}{36pt}
 
-\newcommand{\ITBPengesahanAfterHeading}{0.8cm}
-\newcommand{\ITBPengesahanAfterTitle}{0.8cm}
-\newcommand{\ITBPengesahanAfterAuthorBlock}{0.9cm}
-\newcommand{\ITBPengesahanAfterMenyetujui}{0.3cm}
-\newcommand{\ITBPengesahanAfterTanggal}{0.6cm}
-\newcommand{\ITBPengesahanAfterKetuaLabel}{1.5cm}
-\newcommand{\ITBPengesahanAfterKetuaRule}{0.8cm}
-\newcommand{\ITBPengesahanAnggotaRuleDrop}{1.5cm}
-
-\newcommand{\ITBPedomanBetweenParagraphs}{0.5cm}
+\newcommand{\ITBPedomanBetweenParagraphs}{\ITBJuknisSpasiSatu}

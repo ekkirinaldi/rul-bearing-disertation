@@ -108,7 +108,7 @@
 % |itbdisertasi-layout.tex|.
 \RequirePackage[explicit]{titlesec}
 \titleformat{\chapter}[block]
-  {\normalfont\fontsize{14pt}{17pt}\selectfont\bfseries\centering}
+  {\normalfont\fontsize{14pt}{21pt}\selectfont\bfseries\centering}
   {\chaptertitlename\ \thechapter}
   {1.5em}
   {#1}
@@ -145,13 +145,13 @@
 % Headers / Footers
 % =====================================================================
 \RequirePackage{fancyhdr}
-\pagestyle{fancy}
+\pagestyle{empty}
 \fancyhf{}
-\fancyfoot[C]{\thepage}
+\fancyfoot[C]{\normalfont\fontsize{12}{12}\selectfont\thepage}
 \renewcommand{\headrulewidth}{0pt}
 \fancypagestyle{plain}{%
   \fancyhf{}%
-  \fancyfoot[C]{\thepage}%
+  \fancyfoot[C]{\normalfont\fontsize{12}{12}\selectfont\thepage}%
   \renewcommand{\headrulewidth}{0pt}%
 }
 
@@ -168,11 +168,11 @@
 \ITBApplyTocloftLayout
 % Judul "DAFTAR ISI"/"DAFTAR GAMBAR"/"DAFTAR TABEL" rata-tengah,
 % bold, ukuran 14pt.
-\renewcommand{\cfttoctitlefont}{\hfill\fontsize{14pt}{17pt}\selectfont\bfseries}
+\renewcommand{\cfttoctitlefont}{\hfill\fontsize{14pt}{21pt}\selectfont\bfseries}
 \renewcommand{\cftaftertoctitle}{\hfill}
-\renewcommand{\cftloftitlefont}{\hfill\fontsize{14pt}{17pt}\selectfont\bfseries}
+\renewcommand{\cftloftitlefont}{\hfill\fontsize{14pt}{21pt}\selectfont\bfseries}
 \renewcommand{\cftafterloftitle}{\hfill}
-\renewcommand{\cftlottitlefont}{\hfill\fontsize{14pt}{17pt}\selectfont\bfseries}
+\renewcommand{\cftlottitlefont}{\hfill\fontsize{14pt}{21pt}\selectfont\bfseries}
 \renewcommand{\cftafterlottitle}{\hfill}
 
 % =====================================================================
@@ -339,52 +339,56 @@
 \newcommand{\logoITB}[1]{\renewcommand{\@logoITB}{#1}}
 
 % =====================================================================
-% Sampul / Halaman Judul
-%   Mengikuti diagram tata letak resmi pada Juknis SPs ITB (Mei 2019,
-%   halaman 2). Urutan dari atas ke bawah:
-%     1. Judul (TNR 14, bold, kapital, spasi 1)
-%     2. "DISERTASI" (TNR 14, bold)
-%     3. "Karya tulis ... Institut Teknologi Bandung" (TNR 12)
-%     4. "Oleh"
-%     5. NAMA MAHASISWA (TNR 12, bold, kapital)
-%     6. NIM
-%     7. (Program Studi Doktor ...)
-%     8. Logo Ganesha (tinggi ~3,5 cm) -- DI BAWAH identitas mahasiswa
-%     9. INSTITUT TEKNOLOGI BANDUNG
-%    10. Bulan Tahun
+% Sampul, halaman judul, halaman pengesahan
+%   Juknis SPs ITB (diagram): margin atas 3\,cm (|\geometry|), judul
+%   sampul TNR 14 bold rata tengah dengan jarak baris 1; ``DISERTASI
+%   DOKTOR'' TNR 12 bold; blok keterangan TNR 12 biasa; logo Ganesha
+%   tinggi 3{,}5\,cm di bawah identitas; bulan--tahun di tepi bawah
+%   area cetak. Halaman judul identik dengan sampul (kertas putih).
 % =====================================================================
-\newcommand{\sampul}{%
-  \begin{titlepage}
-  \thispagestyle{empty}
-  \begin{center}
-    \vspace*{\ITBSampulTopGap}
-    {\fontsize{14pt}{17pt}\selectfont\bfseries\MakeUppercase{\@title}\par}
-    \vspace{\ITBSampulAfterTitle}
-    {\fontsize{14pt}{17pt}\selectfont\bfseries DISERTASI\par}
-    \vspace{\ITBSampulAfterDisertasi}
-    {Karya tulis sebagai salah satu syarat\\
+\newcommand{\ITBSampulJudulBersama}{%
+  \begin{singlespace}%
+  \begin{center}%
+    \vspace*{\ITBSampulTopGap}%
+    {\fontsize{14}{14}\selectfont\bfseries\MakeUppercase{\@title}\par}%
+    \vspace{\ITBSampulAfterTitle}%
+    {\fontsize{12}{12}\selectfont\bfseries DISERTASI DOKTOR\par}%
+    \vspace{\ITBSampulAfterDisertasi}%
+    {\fontsize{12}{12}\selectfont
+     Karya tulis sebagai salah satu syarat\\
      untuk memperoleh gelar Doktor dari\\
-     Institut Teknologi Bandung\par}
-    \vspace{\ITBSampulAfterKaryaTulis}
-    {Oleh\par}
-    \vspace{\ITBSampulAfterOleh}
-    {\bfseries\MakeUppercase{\@author}\par}
-    {NIM: \@nim\par}
-    \vspace{\ITBSampulAfterNimBlock}
-    {(Program Studi Doktor \@prodi)\par}
-    \vspace{\ITBSampulAfterProdi}
+     Institut Teknologi Bandung\par}%
+    \vspace{\ITBSampulAfterKaryaTulis}%
+    {\fontsize{12}{12}\selectfont Oleh\par}%
+    \vspace{\ITBSampulAfterOleh}%
+    {\fontsize{12}{12}\selectfont\bfseries\MakeUppercase{\@author}\par}%
+    {\fontsize{12}{12}\selectfont NIM: \@nim\par}%
+    \vspace{\ITBSampulAfterNimBlock}%
+    {\fontsize{12}{12}\selectfont (Program Studi Doktor \@prodi)\par}%
+    \vspace{\ITBSampulAfterProdi}%
     \includegraphics[height=\ITBSampulLogoHeight]{\@logoITB}\par
     \vfill
-    {\fontsize{14pt}{17pt}\selectfont\bfseries INSTITUT TEKNOLOGI BANDUNG\par}
-    \vspace{\ITBSampulAfterInstitusi}
-    {\bfseries\@bulan{} \@tahun\par}
-  \end{center}
-  \end{titlepage}
-  % Pastikan halaman verso (kosong) di belakang sampul tidak menampilkan
-  % nomor halaman arab sebelum \itbfrontmatter sempat mengaktifkan
-  % penomoran roman.
-  \thispagestyle{empty}
-  \mbox{}\newpage
+    {\fontsize{12}{12}\selectfont\bfseries INSTITUT TEKNOLOGI BANDUNG\par}%
+    \vspace{\ITBSampulAfterInstitusi}%
+    {\fontsize{12}{12}\selectfont\bfseries\@bulan{} \@tahun\par}%
+  \end{center}%
+  \end{singlespace}%
+}
+
+\newcommand{\sampul}{%
+  \begin{titlepage}%
+  \thispagestyle{empty}%
+  \ITBSampulJudulBersama
+  \end{titlepage}%
+}
+
+% Halaman judul (kertas putih): isi identik sampul; nomor halaman tidak
+% dicetak namun dihitung sebagai i (Pedoman / Juknis SPs ITB).
+\newcommand{\halamanjudul}{%
+  \begin{titlepage}%
+  \thispagestyle{empty}%
+  \ITBSampulJudulBersama
+  \end{titlepage}%
 }
 
 % =====================================================================
@@ -402,9 +406,9 @@
   \addcontentsline{toc}{chapter}{HALAMAN PENGESAHAN}
   \begin{singlespace}
   \begin{center}
-    {\fontsize{14pt}{17pt}\selectfont\bfseries HALAMAN PENGESAHAN\par}
+    {\fontsize{14pt}{21pt}\selectfont\bfseries HALAMAN PENGESAHAN\par}
     \vspace{\ITBPengesahanAfterHeading}
-    {\fontsize{14pt}{17pt}\selectfont\bfseries\MakeUppercase{\@title}\par}
+    {\fontsize{14pt}{21pt}\selectfont\bfseries\MakeUppercase{\@title}\par}
     \vspace{\ITBPengesahanAfterTitle}
     Oleh\\[2pt]
     \textbf{\@author}\\
@@ -512,15 +516,18 @@
 
 % Front matter / main matter helpers (renamed to avoid clash with report)
 \newcommand{\itbfrontmatter}{%
-  \pagenumbering{roman}
-  \pagestyle{fancy}
-  \fancyhf{}
-  \fancyfoot[C]{\thepage}
+  \pagestyle{fancy}%
+  \pagenumbering{roman}%
+  \fancyhf{}%
+  \fancyfoot[C]{\normalfont\fontsize{12}{12}\selectfont\thepage}%
 }
 \newcommand{\itbmainmatter}{%
   \cleardoublepage
-  \pagenumbering{arabic}
-  \setcounter{page}{1}
+  \pagenumbering{arabic}%
+  \setcounter{page}{1}%
+  \pagestyle{fancy}%
+  \fancyhf{}%
+  \fancyfoot[C]{\normalfont\fontsize{12}{12}\selectfont\thepage}%
 }
 
 \endinput
