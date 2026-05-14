@@ -129,6 +129,24 @@
   {\thesubsubsection}{1em}{#1}
 \titlespacing*{\subsubsection}{0pt}{\ITBLayoutSubsubsectionTitleAbove}{\ITBLayoutSubsubsectionTitleBelow}
 
+% --- Lampiran (setelah |\appendix|): juknis Mei 2019 — judul lampiran
+%     rata kiri, TNR 14 bold jarak baris 1{,}5; baris lanjutan judul
+%     menjorok selebar label ``Lampiran X '' (bentuk |[hang]| dari
+%     titlesec). Bab tubuh tetap memakai |[block]| terpusat di atas.
+\let\itb@appendixorig\appendix
+\renewcommand{\appendix}{%
+  \itb@appendixorig
+  \itbSetupAppendixChapterHeadings
+}
+\newcommand{\itbSetupAppendixChapterHeadings}{%
+  \titleformat{\chapter}[hang]
+    {\normalfont\fontsize{14pt}{21pt}\selectfont\bfseries\raggedright}
+    {\appendixname\ \thechapter}
+    {0.75em}
+    {}%
+  \titlespacing*{\chapter}{0pt}{\ITBLayoutChapterTitleAbove}{\ITBLayoutChapterTitleBelow}%
+}
+
 % Localize chapter name
 \addto\captionsbahasa{%
   \renewcommand{\chaptername}{Bab}%
@@ -136,7 +154,7 @@
   \renewcommand{\listfigurename}{DAFTAR GAMBAR}%
   \renewcommand{\listtablename}{DAFTAR TABEL}%
   \renewcommand{\bibname}{DAFTAR PUSTAKA}%
-  \renewcommand{\appendixname}{LAMPIRAN}%
+  \renewcommand{\appendixname}{Lampiran}%
   \renewcommand{\figurename}{Gambar}%
   \renewcommand{\tablename}{Tabel}%
 }

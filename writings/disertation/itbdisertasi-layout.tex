@@ -52,7 +52,10 @@
 % (2) Chapter / section vertical spacing (titlesec + report baseline).
 %     Chapter: single line "Bab I  Judul" per juknis Mei 2019 hal.\ 6;
 %     judul bab / daftar: TNR 14 bold, jarak baris 1{,}5 (|\baselineskip|
-%     = 21\,pt pada 14\,pt).
+%     = 21\,pt pada 14\,pt). Setelah |\appendix|, judul lampiran memakai
+%     bentuk |[hang]| (rata kiri; baris lanjutan menjorok selebar label
+%     ``Lampiran X '') --- lihat |\itbSetupAppendixChapterHeadings| di
+%     |itbdisertasi.cls|.
 % ---------------------------------------------------------------------------
 \newskip\ITBLayoutChapterTitleAbove
 \newskip\ITBLayoutChapterTitleBelow
