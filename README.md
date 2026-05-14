@@ -17,6 +17,8 @@ The work proposes **Mamba-xLSTM-Net**, a novel hybrid architecture combining:
 
 Experiments are conducted on two public run-to-failure datasets: **PHM2012 (FEMTO-PRONOSTIA)** and **XJTU-SY**.
 
+**Lampiran (appendices)** for the dissertation live under [`writings/disertation/lampiran/`](writings/disertation/lampiran/) and are included from the master file `disertasi.tex`. They are versioned in this repository together with the main chapters.
+
 ---
 
 ## Repository Structure
@@ -30,17 +32,15 @@ Experiments are conducted on two public run-to-failure datasets: **PHM2012 (FEMT
 │   └── results/          # Experiment outputs (reports, chapter assets, BPFx mapping)
 │
 ├── writings/
-│   └── disertation/      # LaTeX dissertation source
+│   └── disertation/      # LaTeX dissertation source (canonical ITB manuscript)
 │       ├── disertasi.tex         # Master file
 │       ├── itbdisertasi.cls      # ITB dissertation class
 │       ├── chapters/             # Chapter .tex files (Bab I–VI + front matter)
-│       ├── lampiran/             # Appendices
+│       ├── lampiran/             # Lampiran (appendices A, B, …) — source of truth for appendices
 │       ├── figures/              # Figures organized by chapter
 │       ├── references.bib        # BibLaTeX bibliography
 │       └── Makefile              # Build targets (build, clean, check, lint)
 │
-├── spec/                 # Research plans, algorithm design notes, draft content
-├── disertasi/            # Reference materials (ITB template, guidelines)
 └── data-bearing/         # Bearing datasets (not committed — download from S3)
 ```
 

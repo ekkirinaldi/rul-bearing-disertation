@@ -87,6 +87,10 @@ wandb/
 # Legacy dissertation tree, superseded by writings/disertation/
 disertasi-itb/
 
+# ITB reference PDFs/DOCX and internal spec drafts — keep locally, not in git
+disertasi/
+spec/
+
 # =============================================================================
 # OS / IDE / temporary files
 # =============================================================================
