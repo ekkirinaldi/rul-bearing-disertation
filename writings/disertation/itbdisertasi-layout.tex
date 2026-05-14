@@ -1,0 +1,127 @@
+%% itbdisertasi-layout.tex
+%% ---------------------------------------------------------------------------
+%% Single source of truth for ITB dissertation layout tokens.
+%%
+%% Loaded by |itbdisertasi.cls| via |\input{itbdisertasi-layout.tex}|.
+%% Compile from the directory that contains this file (same folder as
+%% |disertasi.tex|) so the input resolves.
+%%
+%% Sections:
+%%   (1) Page geometry — mirror margins (Pedoman / Juknis SPs ITB)
+%%   (2) Heading vertical rhythm — titlesec (chapter aligns to 3 cm rule)
+%%   (3) TOC / LOF / LOT — tocloft skips and list title vertical tweak
+%%   (4) Sampul & halaman pengesahan — vertical gaps (juknis diagram)
+%%
+%% To adjust globally: change the macro or skip value here only, then
+%% rebuild. For empirical fine-tuning of chapter vs.\ topskip offset,
+%% edit |\ITBLayoutChapterTitleAbove| (negative = pull title up).
+%% ---------------------------------------------------------------------------
+
+% ---------------------------------------------------------------------------
+% (1) Page geometry — applied via |\ITBApplyPageGeometry| after
+%     |\RequirePackage{geometry}| in the class file.
+% ---------------------------------------------------------------------------
+\newcommand{\ITBGeomPaper}{a4paper}
+\newcommand{\ITBGeomInner}{4cm}
+\newcommand{\ITBGeomOuter}{3cm}
+\newcommand{\ITBGeomTop}{3cm}
+\newcommand{\ITBGeomBottom}{3cm}
+\newcommand{\ITBGeomHeadHeight}{15pt}
+\newcommand{\ITBGeomHeadSep}{12pt}
+\newcommand{\ITBGeomFootSkip}{30pt}
+
+\newcommand{\ITBApplyPageGeometry}{%
+  \geometry{%
+    \ITBGeomPaper,%
+    inner=\ITBGeomInner,%
+    outer=\ITBGeomOuter,%
+    top=\ITBGeomTop,%
+    bottom=\ITBGeomBottom,%
+    headheight=\ITBGeomHeadHeight,%
+    headsep=\ITBGeomHeadSep,%
+    footskip=\ITBGeomFootSkip,%
+    twoside%
+  }%
+}
+
+% ---------------------------------------------------------------------------
+% (2) Chapter / section vertical spacing (titlesec + report baseline).
+%     Chapter: single line "Bab I  Judul" per juknis Mei 2019 hal.\ 6.
+% ---------------------------------------------------------------------------
+\newskip\ITBLayoutChapterTitleAbove
+\newskip\ITBLayoutChapterTitleBelow
+\newskip\ITBLayoutSectionTitleAbove
+\newskip\ITBLayoutSectionTitleBelow
+\newskip\ITBLayoutSubsectionTitleAbove
+\newskip\ITBLayoutSubsectionTitleBelow
+\newskip\ITBLayoutSubsubsectionTitleAbove
+\newskip\ITBLayoutSubsubsectionTitleBelow
+
+\ITBLayoutChapterTitleAbove=-36pt plus 0pt minus 0pt
+\ITBLayoutChapterTitleBelow=18pt plus 0pt minus 0pt
+\ITBLayoutSectionTitleAbove=18pt plus 0pt minus 0pt
+\ITBLayoutSectionTitleBelow=6pt plus 0pt minus 0pt
+\ITBLayoutSubsectionTitleAbove=14pt plus 0pt minus 0pt
+\ITBLayoutSubsectionTitleBelow=4pt plus 0pt minus 0pt
+\ITBLayoutSubsubsectionTitleAbove=12pt plus 0pt minus 0pt
+\ITBLayoutSubsubsectionTitleBelow=4pt plus 0pt minus 0pt
+
+% ---------------------------------------------------------------------------
+% (3) Daftar isi / gambar / tabel — tocloft vertical density + title skip
+% ---------------------------------------------------------------------------
+\newcommand{\ITBLayoutCftBeforeChapSkip}{0.2em}
+\newcommand{\ITBLayoutCftBeforeSecSkip}{0.1em}
+\newcommand{\ITBLayoutCftBeforeSubsecSkip}{0.1em}
+\newcommand{\ITBLayoutCftBeforeFigSkip}{0.1em}
+\newcommand{\ITBLayoutCftBeforeTabSkip}{0.1em}
+\newlength{\ITBLayoutCftBeforeTocTitle}
+\newlength{\ITBLayoutCftBeforeLoFTitle}
+\newlength{\ITBLayoutCftBeforeLoTTitle}
+\newlength{\ITBLayoutCftAfterTocTitle}
+\newlength{\ITBLayoutCftAfterLoFTitle}
+\newlength{\ITBLayoutCftAfterLoTTitle}
+
+\setlength{\ITBLayoutCftBeforeTocTitle}{-20pt}
+\setlength{\ITBLayoutCftBeforeLoFTitle}{-20pt}
+\setlength{\ITBLayoutCftBeforeLoTTitle}{-20pt}
+\setlength{\ITBLayoutCftAfterTocTitle}{18pt}
+\setlength{\ITBLayoutCftAfterLoFTitle}{18pt}
+\setlength{\ITBLayoutCftAfterLoTTitle}{18pt}
+
+\newcommand{\ITBApplyTocloftLayout}{%
+  \setlength{\cftbeforechapskip}{\ITBLayoutCftBeforeChapSkip}%
+  \setlength{\cftbeforesecskip}{\ITBLayoutCftBeforeSecSkip}%
+  \setlength{\cftbeforesubsecskip}{\ITBLayoutCftBeforeSubsecSkip}%
+  \setlength{\cftbeforefigskip}{\ITBLayoutCftBeforeFigSkip}%
+  \setlength{\cftbeforetabskip}{\ITBLayoutCftBeforeTabSkip}%
+  \setlength{\cftbeforetoctitleskip}{\ITBLayoutCftBeforeTocTitle}%
+  \setlength{\cftbeforeloftitleskip}{\ITBLayoutCftBeforeLoFTitle}%
+  \setlength{\cftbeforelottitleskip}{\ITBLayoutCftBeforeLoTTitle}%
+  \setlength{\cftaftertoctitleskip}{\ITBLayoutCftAfterTocTitle}%
+  \setlength{\cftafterloftitleskip}{\ITBLayoutCftAfterLoFTitle}%
+  \setlength{\cftafterlottitleskip}{\ITBLayoutCftAfterLoTTitle}%
+}
+
+% ---------------------------------------------------------------------------
+% (4) Sampul & halaman pengesahan — vertical gaps (juknis diagram)
+% ---------------------------------------------------------------------------
+\newcommand{\ITBSampulTopGap}{0.2cm}
+\newcommand{\ITBSampulAfterTitle}{1.0cm}
+\newcommand{\ITBSampulAfterDisertasi}{0.5cm}
+\newcommand{\ITBSampulAfterKaryaTulis}{0.9cm}
+\newcommand{\ITBSampulAfterOleh}{0.3cm}
+\newcommand{\ITBSampulAfterNimBlock}{0.2cm}
+\newcommand{\ITBSampulAfterProdi}{0.9cm}
+\newcommand{\ITBSampulLogoHeight}{3.5cm}
+\newcommand{\ITBSampulAfterInstitusi}{0.15cm}
+
+\newcommand{\ITBPengesahanAfterHeading}{0.8cm}
+\newcommand{\ITBPengesahanAfterTitle}{0.8cm}
+\newcommand{\ITBPengesahanAfterAuthorBlock}{0.9cm}
+\newcommand{\ITBPengesahanAfterMenyetujui}{0.3cm}
+\newcommand{\ITBPengesahanAfterTanggal}{0.6cm}
+\newcommand{\ITBPengesahanAfterKetuaLabel}{1.5cm}
+\newcommand{\ITBPengesahanAfterKetuaRule}{0.8cm}
+\newcommand{\ITBPengesahanAnggotaRuleDrop}{1.5cm}
+
+\newcommand{\ITBPedomanBetweenParagraphs}{0.5cm}

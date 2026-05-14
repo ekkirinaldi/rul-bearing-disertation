@@ -28,6 +28,10 @@
 % Base class: report, twoside for mirror margins, openright for chapters on odd pages
 \LoadClass[12pt,a4paper,twoside,openright]{report}
 
+% Layout tokens (margins, vertical rhythm, sampul gaps) — single file.
+% Must live beside this .cls; compile from |writings/disertation/|.
+\input{itbdisertasi-layout.tex}
+
 % =====================================================================
 % Encoding & Fonts
 % =====================================================================
@@ -54,22 +58,12 @@
 \RequirePackage[main=bahasa,english]{babel}
 
 % =====================================================================
-% Geometry — ITB mirror margins
+% Geometry — ITB mirror margins (tokens: |itbdisertasi-layout.tex|)
 %   Odd pages (right-hand): left=4cm, right=3cm, top=3cm, bottom=3cm
 %   Even pages (left-hand): right=4cm, left=3cm, others=3cm
 % =====================================================================
 \RequirePackage{geometry}
-\geometry{
-  a4paper,
-  inner=4cm,        % left on odd, right on even
-  outer=3cm,        % right on odd, left on even
-  top=3cm,
-  bottom=3cm,
-  headheight=15pt,
-  headsep=12pt,
-  footskip=30pt,
-  twoside
-}
+\ITBApplyPageGeometry
 
 % =====================================================================
 % Line spacing: 1.5 body; 1.0 for blocks
@@ -110,32 +104,30 @@
 
 % Chapter title format: "Bab I   Pendahuluan" pada SATU baris, sesuai
 % diagram juknis SPs ITB Mei 2019 ("Bab II   Tinjauan Pustaka").
-% Pengukuran empiris: dengan \titlespacing*{0pt}{0pt}{18pt} judul masih
-% berada ~11.7 mm di bawah margin 3 cm karena \topskip + offset internal
-% titlesec/report. Kompensasi ke atas dilakukan dengan above-space
-% negatif (-30pt) sehingga top "Bab" jatuh persis pada 3 cm.
+% Spasi vertikal: |\ITBLayoutChapterTitleAbove| dsb.\ di
+% |itbdisertasi-layout.tex|.
 \RequirePackage[explicit]{titlesec}
 \titleformat{\chapter}[block]
   {\normalfont\fontsize{14pt}{17pt}\selectfont\bfseries\centering}
   {\chaptertitlename\ \thechapter}
   {1.5em}
   {#1}
-\titlespacing*{\chapter}{0pt}{-36pt}{18pt}
+\titlespacing*{\chapter}{0pt}{\ITBLayoutChapterTitleAbove}{\ITBLayoutChapterTitleBelow}
 
 \titleformat{\section}
   {\normalfont\fontsize{12}{14}\bfseries}
   {\thesection}{1em}{#1}
-\titlespacing*{\section}{0pt}{18pt}{6pt}
+\titlespacing*{\section}{0pt}{\ITBLayoutSectionTitleAbove}{\ITBLayoutSectionTitleBelow}
 
 \titleformat{\subsection}
   {\normalfont\fontsize{12}{14}\bfseries}
   {\thesubsection}{1em}{#1}
-\titlespacing*{\subsection}{0pt}{14pt}{4pt}
+\titlespacing*{\subsection}{0pt}{\ITBLayoutSubsectionTitleAbove}{\ITBLayoutSubsectionTitleBelow}
 
 \titleformat{\subsubsection}
   {\normalfont\fontsize{12}{14}\bfseries\itshape}
   {\thesubsubsection}{1em}{#1}
-\titlespacing*{\subsubsection}{0pt}{12pt}{4pt}
+\titlespacing*{\subsubsection}{0pt}{\ITBLayoutSubsubsectionTitleAbove}{\ITBLayoutSubsubsectionTitleBelow}
 
 % Localize chapter name
 \addto\captionsbahasa{%
@@ -170,38 +162,18 @@
 
 % =====================================================================
 % Daftar Isi / Daftar Gambar / Daftar Tabel
-%   Mengatasi dua masalah default:
-%   (a) jarak antar-entry terlalu lebar karena \parskip global +
-%       \addvspace{1.0em} bawaan \l@chapter / \l@figure / \l@table,
-%   (b) judul "DAFTAR ISI" terdorong jauh dari batas margin atas.
-%   Memakai tocloft untuk pengaturan spasi yang seragam dan ringkas.
+%   Spasi vertikal: |\ITBApplyTocloftLayout| (|itbdisertasi-layout.tex|).
 % =====================================================================
 \RequirePackage{tocloft}
-% Padatkan jarak vertikal antar-entry pada TOC/LOF/LOT.
-\setlength{\cftbeforechapskip}{0.2em}
-\setlength{\cftbeforesecskip}{0.1em}
-\setlength{\cftbeforesubsecskip}{0.1em}
-\setlength{\cftbeforefigskip}{0.1em}
-\setlength{\cftbeforetabskip}{0.1em}
+\ITBApplyTocloftLayout
 % Judul "DAFTAR ISI"/"DAFTAR GAMBAR"/"DAFTAR TABEL" rata-tengah,
-% bold, ukuran 14pt, dan tidak didorong ke bawah oleh spasi tambahan.
+% bold, ukuran 14pt.
 \renewcommand{\cfttoctitlefont}{\hfill\fontsize{14pt}{17pt}\selectfont\bfseries}
 \renewcommand{\cftaftertoctitle}{\hfill}
 \renewcommand{\cftloftitlefont}{\hfill\fontsize{14pt}{17pt}\selectfont\bfseries}
 \renewcommand{\cftafterloftitle}{\hfill}
 \renewcommand{\cftlottitlefont}{\hfill\fontsize{14pt}{17pt}\selectfont\bfseries}
 \renewcommand{\cftafterlottitle}{\hfill}
-% Hilangkan ruang ekstra di atas judul daftar.
-% Pengukuran empiris: dengan 0pt judul DAFTAR ISI/GAMBAR/TABEL berada di
-% ~37.1 mm dari tepi atas (≈7 mm di bawah target 3 cm). Kompensasi
-% negatif -20pt menggeser judul tepat ke 30 mm, konsisten dengan judul
-% bab biasa (\titlespacing*{\chapter}{0pt}{-36pt}{18pt} yang sudah set).
-\setlength{\cftbeforetoctitleskip}{-20pt}
-\setlength{\cftbeforeloftitleskip}{-20pt}
-\setlength{\cftbeforelottitleskip}{-20pt}
-\setlength{\cftaftertoctitleskip}{18pt}
-\setlength{\cftafterloftitleskip}{18pt}
-\setlength{\cftafterlottitleskip}{18pt}
 
 % =====================================================================
 % Bibliography (biblatex + biber, Indonesian localization)
@@ -385,26 +357,26 @@
   \begin{titlepage}
   \thispagestyle{empty}
   \begin{center}
-    \vspace*{0.2cm}
+    \vspace*{\ITBSampulTopGap}
     {\fontsize{14pt}{17pt}\selectfont\bfseries\MakeUppercase{\@title}\par}
-    \vspace{1.0cm}
+    \vspace{\ITBSampulAfterTitle}
     {\fontsize{14pt}{17pt}\selectfont\bfseries DISERTASI\par}
-    \vspace{0.5cm}
+    \vspace{\ITBSampulAfterDisertasi}
     {Karya tulis sebagai salah satu syarat\\
      untuk memperoleh gelar Doktor dari\\
      Institut Teknologi Bandung\par}
-    \vspace{0.9cm}
+    \vspace{\ITBSampulAfterKaryaTulis}
     {Oleh\par}
-    \vspace{0.3cm}
+    \vspace{\ITBSampulAfterOleh}
     {\bfseries\MakeUppercase{\@author}\par}
     {NIM: \@nim\par}
-    \vspace{0.2cm}
+    \vspace{\ITBSampulAfterNimBlock}
     {(Program Studi Doktor \@prodi)\par}
-    \vspace{0.9cm}
-    \includegraphics[height=3.5cm]{\@logoITB}\par
+    \vspace{\ITBSampulAfterProdi}
+    \includegraphics[height=\ITBSampulLogoHeight]{\@logoITB}\par
     \vfill
     {\fontsize{14pt}{17pt}\selectfont\bfseries INSTITUT TEKNOLOGI BANDUNG\par}
-    \vspace{0.15cm}
+    \vspace{\ITBSampulAfterInstitusi}
     {\bfseries\@bulan{} \@tahun\par}
   \end{center}
   \end{titlepage}
@@ -431,34 +403,34 @@
   \begin{singlespace}
   \begin{center}
     {\fontsize{14pt}{17pt}\selectfont\bfseries HALAMAN PENGESAHAN\par}
-    \vspace{0.8cm}
+    \vspace{\ITBPengesahanAfterHeading}
     {\fontsize{14pt}{17pt}\selectfont\bfseries\MakeUppercase{\@title}\par}
-    \vspace{0.8cm}
+    \vspace{\ITBPengesahanAfterTitle}
     Oleh\\[2pt]
     \textbf{\@author}\\
     \textbf{NIM: \@nim}\\
     \textbf{(Program Studi Doktor \@prodi)}\\
     Institut Teknologi Bandung\par
-    \vspace{0.9cm}
+    \vspace{\ITBPengesahanAfterAuthorBlock}
     Menyetujui\\
     Tim Pembimbing\par
-    \vspace{0.3cm}
+    \vspace{\ITBPengesahanAfterMenyetujui}
     Tanggal \makebox[3.5cm]{\dotfill}\par
-    \vspace{0.6cm}
+    \vspace{\ITBPengesahanAfterTanggal}
     Ketua\par
-    \vspace{1.5cm}
+    \vspace{\ITBPengesahanAfterKetuaLabel}
     \itbsignaturerule\\
     (\@promotor)\par
-    \vspace{0.8cm}
+    \vspace{\ITBPengesahanAfterKetuaRule}
     \begin{minipage}[t]{0.48\textwidth}
       \centering
-      Anggota\\[1.5cm]
+      Anggota\\[\ITBPengesahanAnggotaRuleDrop]
       \itbsignaturerule\\
       (\@anggotasatu)
     \end{minipage}\hfill
     \begin{minipage}[t]{0.48\textwidth}
       \centering
-      Anggota\\[1.5cm]
+      Anggota\\[\ITBPengesahanAnggotaRuleDrop]
       \itbsignaturerule\\
       (\@anggotadua)
     \end{minipage}
@@ -482,7 +454,7 @@
   dilakukan seizin pengarang dan harus disertai dengan kebiasaan ilmiah
   untuk menyebutkan sumbernya.
 
-  \vspace{0.5cm}
+  \vspace{\ITBPedomanBetweenParagraphs}
   Memperbanyak atau menerbitkan sebagian atau seluruh disertasi haruslah
   seizin Dekan Sekolah Pascasarjana, Institut Teknologi Bandung.
   \end{singlespace}
