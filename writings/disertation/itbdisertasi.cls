@@ -298,6 +298,9 @@
 \floatname{algorithm}{Algoritma}
 \renewcommand{\thealgorithm}{\thechapter.\arabic{algorithm}}
 
+% Break long URLs/paths at slashes (helps lampiran + footnotes stay in margins).
+\RequirePackage{xurl}
+
 % =====================================================================
 % Hyperref (last among packages by convention)
 % =====================================================================

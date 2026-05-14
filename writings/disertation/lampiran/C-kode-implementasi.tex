@@ -22,7 +22,7 @@ skrip pelatihan yang disertakan.
         \texttt{git clone} / \texttt{git pull} pada salinan lokal,
         jalankan \texttt{git rev-parse HEAD} dan simpan keluarannya
         bersama \emph{log} pelatihan di
-        \texttt{Mamba-xLSTM/results/runs/} agar setiap angka pada
+        \path{Mamba-xLSTM/results/runs/} agar setiap angka pada
         Bab~V dapat dirujuk ke objek \emph{commit} yang tepat.
 \end{itemize}
 
@@ -30,10 +30,14 @@ skrip pelatihan yang disertakan.
 \label{lamp:kode_run}
 
 % Perintah mengikuti README repositori (subdirektori Mamba-xLSTM/).
+% Font lebih kecil + baris dipatahkan agar tetap dalam tepi cetak ITB.
+{\footnotesize
 \begin{verbatim}
 # Unduh dataset mentah ke akar repositori (sibling Mamba-xLSTM/)
+U=https://dataset-bearing-rul.s3.\
+ap-southeast-2.amazonaws.com
 curl -fL -o data-bearing.zip \
-  'https://dataset-bearing-rul.s3.ap-southeast-2.amazonaws.com/data-bearing/data-bearing.zip'
+  "$U/data-bearing/data-bearing.zip"
 unzip -q data-bearing.zip && rm -f data-bearing.zip
 
 # Lingkungan Python (GPU: ikuti scripts/bootstrap_gpu_vps.sh di repositori)
@@ -41,7 +45,8 @@ cd Mamba-xLSTM
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
-pip install -e ".[mamba_pure,xlstm,interp]"
+pip install -e \
+  ".[mamba_pure,xlstm,interp]"
 
 # Perbandingan algoritma (contoh: PHM2012 + XJTU-SY, satu model)
 python scripts/run_algorithm_comparison.py \
@@ -49,15 +54,16 @@ python scripts/run_algorithm_comparison.py \
   --models mamba_xlstm_rul \
   --train configs/train/algorithm_comparison.yaml
 \end{verbatim}
+}
 
 \section{Daftar Versi Pustaka}
 \label{lamp:kode_versi}
 
 Daftar dependensi inti dan rentang versi yang disyaratkan dicantumkan
-pada berkas \texttt{Mamba-xLSTM/pyproject.toml} (tabel dependensi
+pada berkas \path{Mamba-xLSTM/pyproject.toml} (tabel dependensi
 proyek \texttt{mxlstm}).
 Untuk merekam versi paket yang identik dengan lingkungan pelatihan
 Bab~V, gunakan
 keluaran \texttt{pip freeze} setelah instalasi pada mesin target dan
 simpan bersama \emph{log} pelatihan di
-\texttt{Mamba-xLSTM/results/runs/}.
+\path{Mamba-xLSTM/results/runs/}.
