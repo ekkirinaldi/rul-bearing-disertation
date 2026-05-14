@@ -15,6 +15,7 @@ NC='\033[0m'
 CHAPTERS="chapters/*.tex"
 LAMPIRAN="lampiran/*.tex"
 ALL_BODY="$CHAPTERS $LAMPIRAN"
+TEX_MAIN="disertasi.tex"
 FATAL=0
 
 ok()    { echo -e "${GREEN}[OK]${NC}    $1"; }
@@ -65,38 +66,39 @@ fi
 # --- 4. Spelling baku ---------------------------------------------------
 echo ""
 echo "--- 4. Spelling baku KBBI ---"
-declare -A WRONG_RIGHT=(
-  ["obyek"]="objek"
-  ["obyektif"]="objektif"
-  ["analisa"]="analisis"
-  ["sintesa"]="sintesis"
-  ["aktifitas"]="aktivitas"
-  ["aktip"]="aktif"
-  ["praktek"]="praktik"
-  ["nasehat"]="nasihat"
-  ["resiko"]="risiko"
-  ["atlit"]="atlet"
-  ["frekwensi"]="frekuensi"
-  ["sistim"]="sistem"
-  ["jadual"]="jadwal"
-  ["managemen"]="manajemen"
-  ["managament"]="manajemen"
-  ["technologi"]="teknologi"
-  ["effektif"]="efektif"
-  ["effisien"]="efisien"
-  ["assesment"]="asesmen"
-  ["azas"]="asas"
-  ["hipotesa"]="hipotesis"
-)
+# Portabel (tanpa associative array / bash 4+): cocok untuk bash 3.2 macOS.
 spell_warn=0
-for wrong in "${!WRONG_RIGHT[@]}"; do
-  hits=$(grep -inE "\\b${wrong}\\b" $ALL_BODY 2>/dev/null || true)
+while IFS=: read -r wrong right; do
+  case "$wrong" in ''|\#*) continue ;; esac
+  hits=$(grep -inE "(^|[^[:alnum:]])${wrong}([^[:alnum:]]|$)" $ALL_BODY 2>/dev/null || true)
   if [ -n "$hits" ]; then
-    warn "Ejaan tidak baku '${wrong}' (gunakan '${WRONG_RIGHT[$wrong]}'):"
+    warn "Ejaan tidak baku '${wrong}' (gunakan '${right}'):"
     echo "$hits"
     spell_warn=1
   fi
-done
+done <<'SPELLPAIRS'
+obyek:objek
+obyektif:objektif
+analisa:analisis
+sintesa:sintesis
+aktifitas:aktivitas
+aktip:aktif
+praktek:praktik
+nasehat:nasihat
+resiko:risiko
+atlit:atlet
+frekwensi:frekuensi
+sistim:sistem
+jadual:jadwal
+managemen:manajemen
+managament:manajemen
+technologi:teknologi
+effektif:efektif
+effisien:efisien
+assesment:asesmen
+azas:asas
+hipotesa:hipotesis
+SPELLPAIRS
 [ "$spell_warn" -eq 0 ] && ok "Tidak ada ejaan tidak baku yang dideteksi."
 
 # --- 5. Decimal separator -----------------------------------------------
