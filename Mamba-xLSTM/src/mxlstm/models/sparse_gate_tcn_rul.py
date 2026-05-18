@@ -6,7 +6,7 @@ models stay decoupled from the pinball / gate-specific training path.
 
 from __future__ import annotations
 
-from typing import Sequence
+from typing import Any, Sequence
 
 import torch
 import torch.nn as nn
@@ -57,7 +57,15 @@ class SparseGateTCNRUL(nn.Module):
             lambda_entropy=float(lambda_entropy),
         )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self,
+        x: torch.Tensor,
+        *,
+        return_hidden: bool = False,
+    ) -> torch.Tensor | tuple[torch.Tensor, dict[str, Any]]:
+        if return_hidden:
+            out = self.backbone(x, return_attn=False, return_sequence=True)
+            return out["rul"], {"fused": out["tcn_sequence"]}
         return self.backbone(x, return_attn=False)["rul"]
 
     def compute_loss(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:

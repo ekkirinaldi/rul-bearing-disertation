@@ -15,17 +15,25 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-DatasetKey = Literal["phm2012", "xjtusy", "xjtu_sy"]
+DatasetKey = Literal["phm2012", "xjtusy", "xjtu_sy", "ims", "cwru"]
 
 # NSK 6804 (PHM2012 / PRONOSTIA) and LDK UER204 (XJTU-SY), mm, theta = 0.
 _NSK6804 = {"n": 13, "d_mm": 3.50, "D_mm": 25.50}
 _LDKUER204 = {"n": 8, "d_mm": 7.92, "D_mm": 34.55}
+# Rexnord ZA-2115 (NASA IMS rig), mm, theta = 0 — geometry from IMS prognostics references.
+_ZA2115 = {"n": 16, "d_mm": 8.4074, "D_mm": 71.501}
+# SKF 6205 deep-groove (CWRU drive-end convention in vibration literature), mm, theta = 0.
+_SKF6205 = {"n": 9, "d_mm": 7.938, "D_mm": 39.04}
 
 _PHM_ACQ_INTERVAL_S = 10.0
 _XJTU_ACQ_INTERVAL_S = 60.0
+_IMS_ACQ_INTERVAL_S = 600.0  # ~10 min between IMS acquisition files
+# One CWRU segmented window (480 samples @ 48 kHz) used as one acquisition step.
+_CWRU_SEGMENT_DT_S = 480.0 / 48_000.0
 
 _PHM_RPM = {1: 1800.0, 2: 1650.0, 3: 1500.0}
 _XJTU_RPM = {1: 2100.0, 2: 2250.0, 3: 2400.0}
+_CWRU_RPM_BY_LOAD = (1797.0, 1772.0, 1750.0, 1730.0)  # load 0..3 hp, matches adapters._CWRU_RPM_MAP
 
 
 def _dataset_key(ds: str) -> DatasetKey:
@@ -34,6 +42,10 @@ def _dataset_key(ds: str) -> DatasetKey:
         return "phm2012"
     if d in ("xjtusy", "xjtu_sy", "xjtu"):
         return "xjtusy"
+    if d in ("ims",):
+        return "ims"
+    if d in ("cwru",):
+        return "cwru"
     raise ValueError(f"Unknown dataset for physics N-BEATS: {ds!r}")
 
 
@@ -53,7 +65,14 @@ def bearing_fault_freqs_hz(
        when ``condition_id`` switches.
     """
     key = _dataset_key(dataset)
-    spec = _NSK6804 if key == "phm2012" else _LDKUER204
+    if key == "phm2012":
+        spec = _NSK6804
+    elif key == "xjtusy":
+        spec = _LDKUER204
+    elif key == "ims":
+        spec = _ZA2115
+    else:
+        spec = _SKF6205
     n = float(spec["n"])
     d = float(spec["d_mm"])
     D = float(spec["D_mm"])
@@ -76,16 +95,32 @@ def shaft_hz_from_conditions(
 ) -> torch.Tensor:
     """Map batch condition ids (1..3) to ``f_r`` in Hz."""
     key = _dataset_key(dataset)
+    device = condition_ids.device
+    dtype = torch.float32
+    if key == "cwru":
+        cid = condition_ids.long().clamp(min=0, max=3)
+        rpms = torch.tensor(_CWRU_RPM_BY_LOAD, device=device, dtype=dtype)
+        return rpms[cid] / 60.0
+    if key == "ims":
+        # IMS BearingRun uses condition=1; FiLM indices may be 1..3 — constant 2000 rpm shaft.
+        cid = condition_ids.long().clamp(min=1, max=3)
+        return torch.full_like(cid, 2000.0 / 60.0, dtype=dtype, device=device)
     table = _PHM_RPM if key == "phm2012" else _XJTU_RPM
     cid = condition_ids.long().clamp(min=1, max=3)
-    rpms = torch.tensor([table[1], table[2], table[3]], device=cid.device, dtype=torch.float32)
+    rpms = torch.tensor([table[1], table[2], table[3]], device=device, dtype=dtype)
     r = rpms[cid - 1]
     return r / 60.0
 
 
 def acquisition_dt_s(dataset: str) -> float:
     key = _dataset_key(dataset)
-    return _PHM_ACQ_INTERVAL_S if key == "phm2012" else _XJTU_ACQ_INTERVAL_S
+    if key == "phm2012":
+        return _PHM_ACQ_INTERVAL_S
+    if key == "ims":
+        return _IMS_ACQ_INTERVAL_S
+    if key == "cwru":
+        return _CWRU_SEGMENT_DT_S
+    return _XJTU_ACQ_INTERVAL_S
 
 
 def expand_basis_lf(basis_l: torch.Tensor, n_features: int) -> torch.Tensor:

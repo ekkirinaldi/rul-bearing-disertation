@@ -78,7 +78,7 @@ class PhysicsNBeatsRUL(nn.Module):
         if encoder_kernel_size is not None:
             self._encoder_kernel = int(encoder_kernel_size)
         else:
-            self._encoder_kernel = 7 if self.dataset == "xjtusy" else 5
+            self._encoder_kernel = 7 if self.dataset in ("xjtusy", "ims") else 5
 
         if self.use_xlstm_front:
             if xlstm_d_model % xlstm_heads != 0:
@@ -182,6 +182,7 @@ class PhysicsNBeatsRUL(nn.Module):
         condition_ids: torch.Tensor | None = None,
         *,
         return_parts: bool = False,
+        return_hidden: bool = False,
     ) -> torch.Tensor | tuple[torch.Tensor, dict[str, Any]]:
         if condition_ids is None:
             condition_ids = _default_condition_ids(x)
@@ -197,6 +198,9 @@ class PhysicsNBeatsRUL(nn.Module):
         residual_correction = 0.01 * self.residual_head(res_flat).squeeze(-1)
         raw = trend_f + wear_f + shock_f + residual_correction + self.bias
         rul = raw.clamp(0.0, 1.0)
+        if return_hidden:
+            # Per-timestep encoder output (same convention as Mamba-xLSTM ``fused``).
+            return rul, {"fused": x_enc}
         if not return_parts:
             return rul
         wear_named: dict[str, torch.Tensor] = {}

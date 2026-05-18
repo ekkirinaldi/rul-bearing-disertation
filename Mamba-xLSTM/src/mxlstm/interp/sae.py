@@ -182,7 +182,13 @@ def save_sae(sae: TopKSparseAutoencoder, path: str | Path) -> None:
 
 
 def load_sae(path: str | Path) -> TopKSparseAutoencoder:
-    payload = torch.load(path, map_location="cpu")
-    sae = TopKSparseAutoencoder(SAEConfig(**payload["cfg"]))
+    try:
+        payload = torch.load(path, map_location="cpu", weights_only=False)
+    except TypeError:
+        # Older PyTorch versions do not accept the weights_only keyword.
+        payload = torch.load(path, map_location="cpu")  # type: ignore[call-overload]
+    cfg_raw = payload["cfg"]
+    cfg = cfg_raw if isinstance(cfg_raw, SAEConfig) else SAEConfig(**cfg_raw)
+    sae = TopKSparseAutoencoder(cfg)
     sae.load_state_dict(payload["state_dict"])
     return sae

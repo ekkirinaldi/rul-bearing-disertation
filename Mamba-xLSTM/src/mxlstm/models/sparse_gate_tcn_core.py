@@ -294,8 +294,13 @@ class SparseGateTCN(nn.Module):
             hidden=cfg.head_hidden,
         )
 
-    def forward(self, x: torch.Tensor,
-                return_attn: bool = False) -> Dict[str, torch.Tensor]:
+    def forward(
+        self,
+        x: torch.Tensor,
+        return_attn: bool = False,
+        *,
+        return_sequence: bool = False,
+    ) -> Dict[str, torch.Tensor]:
         """x: (B, T, F)"""
         B, T, F_ = x.shape
         assert F_ == self.cfg.n_features, \
@@ -325,6 +330,8 @@ class SparseGateTCN(nn.Module):
             "feature_gates": gates,
             "last_hidden": h_last,
         }
+        if return_sequence:
+            out["tcn_sequence"] = h_seq
         if return_attn:
             out["attn_scores"] = attn_scores
         return out
