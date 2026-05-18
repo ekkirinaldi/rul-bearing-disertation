@@ -112,11 +112,11 @@ DATASET_INFO = {
         ],
         "sae_pt": Path(__file__).resolve().parents[1]
             / "results/runs"
-            / "20260512_151550_algorithm_comparison_phm2012_mamba_xlstm_net_s42"
+            / "20260515_174110_algorithm_comparison_phm2012_mamba_xlstm_net_s42"
             / "explain/sae.pt",
         "run_dir": Path(__file__).resolve().parents[1]
             / "results/runs"
-            / "20260512_151550_algorithm_comparison_phm2012_mamba_xlstm_net_s42",
+            / "20260515_174110_algorithm_comparison_phm2012_mamba_xlstm_net_s42",
     },
     "xjtusy": {
         "bearing_geom": LDK_UER204,
@@ -131,11 +131,11 @@ DATASET_INFO = {
         ],
         "sae_pt": Path(__file__).resolve().parents[1]
             / "results/runs"
-            / "20260512_193202_algorithm_comparison_xjtusy_mamba_xlstm_net_s44"
+            / "20260515_173301_algorithm_comparison_xjtusy_mamba_xlstm_net_s42"
             / "explain/sae.pt",
         "run_dir": Path(__file__).resolve().parents[1]
             / "results/runs"
-            / "20260512_193202_algorithm_comparison_xjtusy_mamba_xlstm_net_s44",
+            / "20260515_173301_algorithm_comparison_xjtusy_mamba_xlstm_net_s42",
     },
 }
 

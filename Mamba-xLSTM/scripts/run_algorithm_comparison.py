@@ -21,6 +21,10 @@ _DATA_CONFIGS = {
     "xjtu_legacy": _ROOT / "configs" / "data" / "xjtu_sy.yaml",
     # Dense eval + dual-condition val/test split (same as xjtusy default above).
     "xjtu_available": _ROOT / "configs" / "data" / "xjtu_sy_available_full.yaml",
+    # IMS (NASA PrognCenter run-to-failure, linear RUL labels)
+    "ims": _ROOT / "configs" / "data" / "ims.yaml",
+    # CWRU (fault-severity regression → macro-F1 evaluation)
+    "cwru": _ROOT / "configs" / "data" / "cwru.yaml",
 }
 
 _MODEL_CONFIGS = {
