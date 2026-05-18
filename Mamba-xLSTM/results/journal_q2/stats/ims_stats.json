@@ -1,0 +1,55 @@
+{
+  "dataset": "ims",
+  "threshold": 0.3,
+  "n_boot": 1000,
+  "n_perm": 1000,
+  "n_recordings": 300,
+  "n_bearings": 1,
+  "bearing_names": [
+    "ims_b1"
+  ],
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "freqs_hz": {
+    "BPFO": 235.27716923076923,
+    "BPFI": 298.0028307692308,
+    "BSF": 139.7220466203238,
+    "FTF": 14.704823076923077
+  },
+  "point_hit_rate": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "bootstrap_low": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "bootstrap_high": [
+    0.0,
+    0.0,
+    0.0,
+    0.001953125
+  ],
+  "permutation_pvalue": [
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "per_bearing_hit_rate": {
+    "ims_b1": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+}

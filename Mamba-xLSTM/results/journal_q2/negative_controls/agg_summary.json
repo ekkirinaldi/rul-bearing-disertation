@@ -1,0 +1,210 @@
+{
+  "phm2012": {
+    "untrained_backbone": {
+      "dataset": "phm2012",
+      "control": "untrained_backbone",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "n_seeds": 3,
+      "threshold": 0.3,
+      "epochs": 30,
+      "n_hidden": 5000,
+      "d_model": 128,
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "freqs_hz": {
+        "BPFO": 168.23529411764707,
+        "BPFI": 221.76470588235293,
+        "BSF": 107.22689075630251,
+        "FTF": 12.941176470588236
+      },
+      "hit_rate_mean": [
+        0.0026041666666666665,
+        0.008138020833333334,
+        0.0,
+        0.0
+      ],
+      "hit_rate_std": [
+        0.0024359748611809512,
+        0.004391516133864596,
+        0.0,
+        0.0
+      ],
+      "hit_rate_mean_pct": [
+        0.26,
+        0.81,
+        0.0,
+        0.0
+      ],
+      "hit_rate_std_pct": [
+        0.24,
+        0.44,
+        0.0,
+        0.0
+      ],
+      "sae_recon_mse_mean": 0.0003879140131175518
+    },
+    "gaussian_noise": {
+      "dataset": "phm2012",
+      "control": "gaussian_noise",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "n_seeds": 3,
+      "threshold": 0.3,
+      "epochs": 30,
+      "n_hidden": 5000,
+      "d_model": 128,
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "freqs_hz": {
+        "BPFO": 168.23529411764707,
+        "BPFI": 221.76470588235293,
+        "BSF": 107.22689075630251,
+        "FTF": 12.941176470588236
+      },
+      "hit_rate_mean": [
+        0.0003255208333333333,
+        0.0006510416666666666,
+        0.0,
+        0.0
+      ],
+      "hit_rate_std": [
+        0.0004603559773349919,
+        0.0004603559773349919,
+        0.0,
+        0.0
+      ],
+      "hit_rate_mean_pct": [
+        0.03,
+        0.07,
+        0.0,
+        0.0
+      ],
+      "hit_rate_std_pct": [
+        0.05,
+        0.05,
+        0.0,
+        0.0
+      ],
+      "sae_recon_mse_mean": 0.08143994460503261
+    }
+  },
+  "xjtusy": {
+    "untrained_backbone": {
+      "dataset": "xjtusy",
+      "control": "untrained_backbone",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "n_seeds": 3,
+      "threshold": 0.3,
+      "epochs": 30,
+      "n_hidden": 5000,
+      "d_model": 128,
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "freqs_hz": {
+        "BPFO": 107.90738060781476,
+        "BPFI": 172.09261939218524,
+        "BSF": 72.32996298001724,
+        "FTF": 13.488422575976845
+      },
+      "hit_rate_mean": [
+        0.014322916666666666,
+        0.020182291666666668,
+        0.009114583333333334,
+        0.012369791666666666
+      ],
+      "hit_rate_std": [
+        0.0037681760751270264,
+        0.011995785008260599,
+        0.009445714927439394,
+        0.010375896777675279
+      ],
+      "hit_rate_mean_pct": [
+        1.43,
+        2.02,
+        0.91,
+        1.24
+      ],
+      "hit_rate_std_pct": [
+        0.38,
+        1.2,
+        0.94,
+        1.04
+      ],
+      "sae_recon_mse_mean": 0.0006517176235017056
+    },
+    "gaussian_noise": {
+      "dataset": "xjtusy",
+      "control": "gaussian_noise",
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "n_seeds": 3,
+      "threshold": 0.3,
+      "epochs": 30,
+      "n_hidden": 5000,
+      "d_model": 128,
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "freqs_hz": {
+        "BPFO": 107.90738060781476,
+        "BPFI": 172.09261939218524,
+        "BSF": 72.32996298001724,
+        "FTF": 13.488422575976845
+      },
+      "hit_rate_mean": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "hit_rate_std": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "hit_rate_mean_pct": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "hit_rate_std_pct": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sae_recon_mse_mean": 0.01843534903600812
+    }
+  }
+}

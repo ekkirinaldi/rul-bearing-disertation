@@ -1,0 +1,150 @@
+{
+  "baseline_trained": {
+    "phm2012": {
+      "characteristic_frequencies_hz": {
+        "BPFO": 168.23529411764707,
+        "BPFI": 221.76470588235293,
+        "BSF": 107.22689075630251,
+        "FTF": 12.941176470588236
+      },
+      "hit_rate": {
+        "BPFO": 0.01953125,
+        "BPFI": 0.0234375,
+        "BSF": 0.0,
+        "FTF": 0.0
+      }
+    },
+    "xjtusy": {
+      "characteristic_frequencies_hz": {
+        "BPFO": 107.90738060781476,
+        "BPFI": 172.09261939218524,
+        "BSF": 72.32996298001724,
+        "FTF": 13.488422575976845
+      },
+      "hit_rate": {
+        "BPFO": 0.0224609375,
+        "BPFI": 0.0,
+        "BSF": 0.0029296875,
+        "FTF": 0.0
+      }
+    }
+  },
+  "controls": {
+    "ims": {
+      "untrained_backbone": {
+        "dataset": "ims",
+        "control": "untrained_backbone",
+        "seed": 0,
+        "threshold": 0.3,
+        "epochs": 50,
+        "n_hidden": 5000,
+        "d_model": 128,
+        "sae_recon_mse": 1.0443823761363547e-07,
+        "freqs_hz": {
+          "BPFO": 235.27716923076923,
+          "BPFI": 298.0028307692308,
+          "BSF": 139.7220466203238,
+          "FTF": 14.704823076923077
+        },
+        "bpfx_names": [
+          "BPFO",
+          "BPFI",
+          "BSF",
+          "FTF"
+        ],
+        "hit_rate": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "gaussian_noise": {
+        "dataset": "ims",
+        "control": "gaussian_noise",
+        "seed": 1,
+        "threshold": 0.3,
+        "epochs": 50,
+        "n_hidden": 5000,
+        "d_model": 128,
+        "sae_recon_mse": 9.678940295998473e-05,
+        "freqs_hz": {
+          "BPFO": 235.27716923076923,
+          "BPFI": 298.0028307692308,
+          "BSF": 139.7220466203238,
+          "FTF": 14.704823076923077
+        },
+        "bpfx_names": [
+          "BPFO",
+          "BPFI",
+          "BSF",
+          "FTF"
+        ],
+        "hit_rate": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "cwru": {
+      "untrained_backbone": {
+        "dataset": "cwru",
+        "control": "untrained_backbone",
+        "seed": 0,
+        "threshold": 0.3,
+        "epochs": 50,
+        "n_hidden": 5000,
+        "d_model": 128,
+        "sae_recon_mse": 1.0133515608856669e-07,
+        "freqs_hz": {
+          "BPFO": 107.36430584016392,
+          "BPFI": 162.1856941598361,
+          "BSF": 70.58459401582566,
+          "FTF": 11.929367315573769
+        },
+        "bpfx_names": [
+          "BPFO",
+          "BPFI",
+          "BSF",
+          "FTF"
+        ],
+        "hit_rate": [
+          0.0126953125,
+          0.0546875,
+          0.033203125,
+          0.0068359375
+        ]
+      },
+      "gaussian_noise": {
+        "dataset": "cwru",
+        "control": "gaussian_noise",
+        "seed": 1,
+        "threshold": 0.3,
+        "epochs": 50,
+        "n_hidden": 5000,
+        "d_model": 128,
+        "sae_recon_mse": 0.00043393434170866383,
+        "freqs_hz": {
+          "BPFO": 107.36430584016392,
+          "BPFI": 162.1856941598361,
+          "BSF": 70.58459401582566,
+          "FTF": 11.929367315573769
+        },
+        "bpfx_names": [
+          "BPFO",
+          "BPFI",
+          "BSF",
+          "FTF"
+        ],
+        "hit_rate": [
+          0.13671875,
+          0.05078125,
+          0.072265625,
+          0.1484375
+        ]
+      }
+    }
+  }
+}

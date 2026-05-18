@@ -1,0 +1,19 @@
+data:
+  dataset: ims
+  root: ../data-bearing/IMS
+  cache_dir: ../data-bearing/processed/ims
+  window_length: 32
+  stride_train: 2
+  stride_eval: 16
+  label_scheme: linear
+  smoothing_alpha: 0.1
+  n_bands: 5
+  batch_size: 512
+  num_workers: 0
+  train_bearings:
+  - '1'
+  - '2'
+  val_bearings:
+  - '3'
+  test_bearings:
+  - '4'

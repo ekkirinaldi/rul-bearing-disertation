@@ -1,0 +1,28 @@
+{
+  "dataset": "phm2012",
+  "control": "gaussian_noise",
+  "seed": 43,
+  "threshold": 0.3,
+  "epochs": 30,
+  "n_hidden": 5000,
+  "d_model": 128,
+  "sae_recon_mse": 0.08124427385628223,
+  "freqs_hz": {
+    "BPFO": 168.23529411764707,
+    "BPFI": 221.76470588235293,
+    "BSF": 107.22689075630251,
+    "FTF": 12.941176470588236
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.0,
+    0.0009765625,
+    0.0,
+    0.0
+  ]
+}

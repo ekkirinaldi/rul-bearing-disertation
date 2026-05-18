@@ -1,0 +1,27 @@
+{
+  "dataset": "xjtusy",
+  "architecture": "sparse_gate_tcn_rul",
+  "run_dir": "/Users/ekkirinaldi/Documents/Git/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260512_163817_algorithm_comparison_xjtusy_sparse_gate_tcn_rul_s42",
+  "d_model": 128,
+  "d_latent": 1024,
+  "k": 51,
+  "threshold": 0.3,
+  "freqs_hz": {
+    "BPFO": 107.90738060781476,
+    "BPFI": 172.09261939218524,
+    "BSF": 72.32996298001724,
+    "FTF": 13.488422575976845
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.005859375,
+    0.0205078125,
+    0.015625,
+    0.0263671875
+  ]
+}

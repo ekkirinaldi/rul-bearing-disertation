@@ -1,0 +1,52 @@
+data:
+  dataset: ims
+  root: ../data-bearing/IMS
+  cache_dir: ../data-bearing/processed/ims
+  window_length: 32
+  stride_train: 2
+  stride_eval: 16
+  label_scheme: linear
+  smoothing_alpha: 0.1
+  n_bands: 5
+  batch_size: 512
+  num_workers: 8
+  train_bearings:
+  - '1'
+  - '2'
+  val_bearings:
+  - '3'
+  test_bearings:
+  - '4'
+model:
+  name: sparse_gate_tcn_rul
+  model_specific_loss: true
+  tcn_channels:
+  - 64
+  - 64
+  - 128
+  - 128
+  tcn_kernel: 3
+  gate_hidden: 32
+  gate_context: 5
+  attn_d_model: 32
+  attn_heads: 4
+  head_hidden: 64
+  dropout: 0.1
+  lambda_sparse: 0.001
+  lambda_entropy: 0.001
+train:
+  model_specific_loss: true
+  max_epochs: 75
+  lr: 0.0008
+  weight_decay: 0.0003
+  xlstm_lr_mult: 0.75
+  freeze_xlstm_epochs: 5
+  scheduler: cosine
+  warmup_epochs: 5
+  monotonicity_weight: 0.05
+  gradient_clip_val: 1.0
+  early_stopping_patience: 9999
+  precision: bf16-mixed
+  seed: 42
+  results_root: results
+  run_id: null

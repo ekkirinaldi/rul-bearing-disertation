@@ -1,0 +1,28 @@
+{
+  "dataset": "phm2012",
+  "architecture": "vanilla_tcn_rul",
+  "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_123415_algorithm_comparison_phm2012_vanilla_tcn_rul_s42",
+  "d_model": 128,
+  "d_latent": 1024,
+  "k": 51,
+  "sae_recon_mse": 0.021463650930672883,
+  "threshold": 0.3,
+  "freqs_hz": {
+    "BPFO": 168.23529411764707,
+    "BPFI": 221.76470588235293,
+    "BSF": 107.22689075630251,
+    "FTF": 12.941176470588236
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.005859375,
+    0.0068359375,
+    0.0,
+    0.0
+  ]
+}

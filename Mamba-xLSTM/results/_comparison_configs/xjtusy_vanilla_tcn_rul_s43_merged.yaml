@@ -22,29 +22,12 @@ data:
   - '1_5'
   - '2_3'
 model:
-  name: mamba_xlstm_net
+  name: vanilla_tcn_rul
   d_model: 128
-  xlstm_blocks: 3
-  slstm_positions:
-  - 1
-  xlstm_heads: 4
-  xlstm_force_fallback: false
-  mamba_blocks: 2
-  mamba_d_state: 128
-  mamba_d_conv: 4
-  mamba_expand: 2
-  mamba_headdim: 64
-  mamba_n_groups: 1
-  mamba_rope_fraction: 0.5
-  mamba_is_mimo: false
-  mamba_mimo_rank: 4
-  mamba_chunk_size: 64
-  mamba_is_outproj_norm: false
-  mamba_bidirectional: true
-  mamba_backend: auto
-  fusion: gated
-  head_hidden: 64
-  dropout: 0.1
+  num_blocks: 6
+  kernel_size: 5
+  head_hidden: 128
+  dropout: 0.15
 train:
   max_epochs: 75
   lr: 0.0008

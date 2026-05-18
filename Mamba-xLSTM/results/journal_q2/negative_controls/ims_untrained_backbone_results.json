@@ -1,0 +1,28 @@
+{
+  "dataset": "ims",
+  "control": "untrained_backbone",
+  "seed": 0,
+  "threshold": 0.3,
+  "epochs": 50,
+  "n_hidden": 5000,
+  "d_model": 128,
+  "sae_recon_mse": 1.0443823761363547e-07,
+  "freqs_hz": {
+    "BPFO": 235.27716923076923,
+    "BPFI": 298.0028307692308,
+    "BSF": 139.7220466203238,
+    "FTF": 14.704823076923077
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ]
+}

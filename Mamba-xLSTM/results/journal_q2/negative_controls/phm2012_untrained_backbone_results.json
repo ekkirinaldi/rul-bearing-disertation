@@ -1,0 +1,26 @@
+{
+  "dataset": "phm2012",
+  "control": "untrained_backbone",
+  "threshold": 0.3,
+  "epochs": 30,
+  "n_hidden": 5000,
+  "d_model": 128,
+  "freqs_hz": {
+    "BPFO": 168.23529411764707,
+    "BPFI": 221.76470588235293,
+    "BSF": 107.22689075630251,
+    "FTF": 12.941176470588236
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.0009765625,
+    0.0048828125,
+    0.0,
+    0.0
+  ]
+}

@@ -1,0 +1,346 @@
+{
+  "phm2012": {
+    "vanilla_lstm_rul": {
+      "dataset": "phm2012",
+      "architecture": "vanilla_lstm_rul",
+      "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_123253_algorithm_comparison_phm2012_vanilla_lstm_rul_s42",
+      "d_model": 128,
+      "d_latent": 1024,
+      "k": 51,
+      "sae_recon_mse": 4.6316951056724065e-06,
+      "threshold": 0.3,
+      "freqs_hz": {
+        "BPFO": 168.23529411764707,
+        "BPFI": 221.76470588235293,
+        "BSF": 107.22689075630251,
+        "FTF": 12.941176470588236
+      },
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "hit_rate": [
+        0.0029296875,
+        0.00390625,
+        0.0,
+        0.0
+      ]
+    },
+    "vanilla_tcn_rul": {
+      "dataset": "phm2012",
+      "architecture": "vanilla_tcn_rul",
+      "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_123415_algorithm_comparison_phm2012_vanilla_tcn_rul_s42",
+      "d_model": 128,
+      "d_latent": 1024,
+      "k": 51,
+      "sae_recon_mse": 0.021463650930672883,
+      "threshold": 0.3,
+      "freqs_hz": {
+        "BPFO": 168.23529411764707,
+        "BPFI": 221.76470588235293,
+        "BSF": 107.22689075630251,
+        "FTF": 12.941176470588236
+      },
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "hit_rate": [
+        0.005859375,
+        0.0068359375,
+        0.0,
+        0.0
+      ]
+    },
+    "vanilla_transformer_rul": {
+      "dataset": "phm2012",
+      "architecture": "vanilla_transformer_rul",
+      "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_123548_algorithm_comparison_phm2012_vanilla_transformer_rul_s42",
+      "d_model": 128,
+      "d_latent": 1024,
+      "k": 51,
+      "sae_recon_mse": 0.022445639502257107,
+      "threshold": 0.3,
+      "freqs_hz": {
+        "BPFO": 168.23529411764707,
+        "BPFI": 221.76470588235293,
+        "BSF": 107.22689075630251,
+        "FTF": 12.941176470588236
+      },
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "hit_rate": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "xjtusy": {
+    "vanilla_lstm_rul": {
+      "dataset": "xjtusy",
+      "architecture": "vanilla_lstm_rul",
+      "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_124710_algorithm_comparison_xjtusy_vanilla_lstm_rul_s42",
+      "d_model": 128,
+      "d_latent": 1024,
+      "k": 51,
+      "sae_recon_mse": 1.2118055892074153e-07,
+      "threshold": 0.3,
+      "freqs_hz": {
+        "BPFO": 107.90738060781476,
+        "BPFI": 172.09261939218524,
+        "BSF": 72.32996298001724,
+        "FTF": 13.488422575976845
+      },
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "hit_rate": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "vanilla_tcn_rul": {
+      "dataset": "xjtusy",
+      "architecture": "vanilla_tcn_rul",
+      "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_124732_algorithm_comparison_xjtusy_vanilla_tcn_rul_s42",
+      "d_model": 128,
+      "d_latent": 1024,
+      "k": 51,
+      "sae_recon_mse": 0.00745129007846117,
+      "threshold": 0.3,
+      "freqs_hz": {
+        "BPFO": 107.90738060781476,
+        "BPFI": 172.09261939218524,
+        "BSF": 72.32996298001724,
+        "FTF": 13.488422575976845
+      },
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "hit_rate": [
+        0.0126953125,
+        0.0166015625,
+        0.0078125,
+        0.0302734375
+      ]
+    },
+    "vanilla_transformer_rul": {
+      "dataset": "xjtusy",
+      "architecture": "vanilla_transformer_rul",
+      "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_124753_algorithm_comparison_xjtusy_vanilla_transformer_rul_s42",
+      "d_model": 128,
+      "d_latent": 1024,
+      "k": 51,
+      "sae_recon_mse": 0.002295181236695498,
+      "threshold": 0.3,
+      "freqs_hz": {
+        "BPFO": 107.90738060781476,
+        "BPFI": 172.09261939218524,
+        "BSF": 72.32996298001724,
+        "FTF": 13.488422575976845
+      },
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "hit_rate": [
+        0.0,
+        0.0,
+        0.0,
+        0.0009765625
+      ]
+    }
+  },
+  "ims": {
+    "vanilla_lstm_rul": {
+      "dataset": "ims",
+      "architecture": "vanilla_lstm_rul",
+      "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_125033_algorithm_comparison_ims_vanilla_lstm_rul_s42",
+      "d_model": 128,
+      "d_latent": 1024,
+      "k": 51,
+      "sae_recon_mse": 1.6270561218334478e-07,
+      "threshold": 0.3,
+      "freqs_hz": {
+        "BPFO": 235.27716923076923,
+        "BPFI": 298.0028307692308,
+        "BSF": 139.7220466203238,
+        "FTF": 14.704823076923077
+      },
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "hit_rate": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "vanilla_tcn_rul": {
+      "dataset": "ims",
+      "architecture": "vanilla_tcn_rul",
+      "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_125059_algorithm_comparison_ims_vanilla_tcn_rul_s42",
+      "d_model": 128,
+      "d_latent": 1024,
+      "k": 51,
+      "sae_recon_mse": 0.004906648327596486,
+      "threshold": 0.3,
+      "freqs_hz": {
+        "BPFO": 235.27716923076923,
+        "BPFI": 298.0028307692308,
+        "BSF": 139.7220466203238,
+        "FTF": 14.704823076923077
+      },
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "hit_rate": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "vanilla_transformer_rul": {
+      "dataset": "ims",
+      "architecture": "vanilla_transformer_rul",
+      "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_125127_algorithm_comparison_ims_vanilla_transformer_rul_s42",
+      "d_model": 128,
+      "d_latent": 1024,
+      "k": 51,
+      "sae_recon_mse": 0.003679199027828872,
+      "threshold": 0.3,
+      "freqs_hz": {
+        "BPFO": 235.27716923076923,
+        "BPFI": 298.0028307692308,
+        "BSF": 139.7220466203238,
+        "FTF": 14.704823076923077
+      },
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "hit_rate": [
+        0.0,
+        0.001953125,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "cwru": {
+    "vanilla_lstm_rul": {
+      "dataset": "cwru",
+      "architecture": "vanilla_lstm_rul",
+      "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_125502_algorithm_comparison_cwru_vanilla_lstm_rul_s42",
+      "d_model": 128,
+      "d_latent": 1024,
+      "k": 51,
+      "sae_recon_mse": 2.3157962090181172e-07,
+      "threshold": 0.3,
+      "freqs_hz": {
+        "BPFO": 107.36430584016392,
+        "BPFI": 162.1856941598361,
+        "BSF": 70.58459401582566,
+        "FTF": 11.929367315573769
+      },
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "hit_rate": [
+        0.0400390625,
+        0.0595703125,
+        0.046875,
+        0.009765625
+      ]
+    },
+    "vanilla_tcn_rul": {
+      "dataset": "cwru",
+      "architecture": "vanilla_tcn_rul",
+      "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_125532_algorithm_comparison_cwru_vanilla_tcn_rul_s42",
+      "d_model": 128,
+      "d_latent": 1024,
+      "k": 51,
+      "sae_recon_mse": 0.009429675294086337,
+      "threshold": 0.3,
+      "freqs_hz": {
+        "BPFO": 107.36430584016392,
+        "BPFI": 162.1856941598361,
+        "BSF": 70.58459401582566,
+        "FTF": 11.929367315573769
+      },
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "hit_rate": [
+        0.0478515625,
+        0.0546875,
+        0.056640625,
+        0.0185546875
+      ]
+    },
+    "vanilla_transformer_rul": {
+      "dataset": "cwru",
+      "architecture": "vanilla_transformer_rul",
+      "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_125607_algorithm_comparison_cwru_vanilla_transformer_rul_s42",
+      "d_model": 128,
+      "d_latent": 1024,
+      "k": 51,
+      "sae_recon_mse": 0.002196895913220942,
+      "threshold": 0.3,
+      "freqs_hz": {
+        "BPFO": 107.36430584016392,
+        "BPFI": 162.1856941598361,
+        "BSF": 70.58459401582566,
+        "FTF": 11.929367315573769
+      },
+      "bpfx_names": [
+        "BPFO",
+        "BPFI",
+        "BSF",
+        "FTF"
+      ],
+      "hit_rate": [
+        0.033203125,
+        0.0341796875,
+        0.0302734375,
+        0.015625
+      ]
+    }
+  }
+}

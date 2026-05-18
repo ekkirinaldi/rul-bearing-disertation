@@ -1,0 +1,27 @@
+{
+  "dataset": "phm2012",
+  "architecture": "sparse_gate_tcn_rul",
+  "run_dir": "/Users/ekkirinaldi/Documents/Git/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260512_163040_algorithm_comparison_phm2012_sparse_gate_tcn_rul_s42",
+  "d_model": 128,
+  "d_latent": 1024,
+  "k": 51,
+  "threshold": 0.3,
+  "freqs_hz": {
+    "BPFO": 168.23529411764707,
+    "BPFI": 221.76470588235293,
+    "BSF": 107.22689075630251,
+    "FTF": 12.941176470588236
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.0,
+    0.0009765625,
+    0.0,
+    0.0
+  ]
+}

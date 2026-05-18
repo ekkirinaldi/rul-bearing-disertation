@@ -1,0 +1,28 @@
+{
+  "dataset": "xjtusy",
+  "architecture": "vanilla_lstm_rul",
+  "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_124710_algorithm_comparison_xjtusy_vanilla_lstm_rul_s42",
+  "d_model": 128,
+  "d_latent": 1024,
+  "k": 51,
+  "sae_recon_mse": 1.2118055892074153e-07,
+  "threshold": 0.3,
+  "freqs_hz": {
+    "BPFO": 107.90738060781476,
+    "BPFI": 172.09261939218524,
+    "BSF": 72.32996298001724,
+    "FTF": 13.488422575976845
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ]
+}

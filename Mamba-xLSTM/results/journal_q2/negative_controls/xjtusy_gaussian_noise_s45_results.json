@@ -1,0 +1,28 @@
+{
+  "dataset": "xjtusy",
+  "control": "gaussian_noise",
+  "seed": 45,
+  "threshold": 0.3,
+  "epochs": 30,
+  "n_hidden": 5000,
+  "d_model": 128,
+  "sae_recon_mse": 0.01825726218521595,
+  "freqs_hz": {
+    "BPFO": 107.90738060781476,
+    "BPFI": 172.09261939218524,
+    "BSF": 72.32996298001724,
+    "FTF": 13.488422575976845
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ]
+}

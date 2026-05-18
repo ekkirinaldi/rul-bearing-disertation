@@ -1,0 +1,28 @@
+{
+  "dataset": "ims",
+  "architecture": "sparse_gate_tcn_rul",
+  "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260514_083345_algorithm_comparison_ims_sparse_gate_tcn_rul_s42",
+  "d_model": 128,
+  "d_latent": 1024,
+  "k": 51,
+  "sae_recon_mse": 8.36269641695253e-06,
+  "threshold": 0.3,
+  "freqs_hz": {
+    "BPFO": 235.27716923076923,
+    "BPFI": 298.0028307692308,
+    "BSF": 139.7220466203238,
+    "FTF": 14.704823076923077
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ]
+}

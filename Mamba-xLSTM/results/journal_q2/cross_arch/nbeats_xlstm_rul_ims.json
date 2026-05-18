@@ -1,0 +1,28 @@
+{
+  "dataset": "ims",
+  "architecture": "nbeats_xlstm_rul",
+  "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260514_083131_algorithm_comparison_ims_nbeats_xlstm_rul_s42",
+  "d_model": 96,
+  "d_latent": 768,
+  "k": 38,
+  "sae_recon_mse": 0.0008373512740945443,
+  "threshold": 0.3,
+  "freqs_hz": {
+    "BPFO": 235.27716923076923,
+    "BPFI": 298.0028307692308,
+    "BSF": 139.7220466203238,
+    "FTF": 14.704823076923077
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.0,
+    0.0234375,
+    0.0013020833333333333,
+    0.0
+  ]
+}

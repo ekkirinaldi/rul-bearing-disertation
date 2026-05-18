@@ -1,0 +1,28 @@
+{
+  "dataset": "cwru",
+  "architecture": "vanilla_tcn_rul",
+  "run_dir": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_125532_algorithm_comparison_cwru_vanilla_tcn_rul_s42",
+  "d_model": 128,
+  "d_latent": 1024,
+  "k": 51,
+  "sae_recon_mse": 0.009429675294086337,
+  "threshold": 0.3,
+  "freqs_hz": {
+    "BPFO": 107.36430584016392,
+    "BPFI": 162.1856941598361,
+    "BSF": 70.58459401582566,
+    "FTF": 11.929367315573769
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.0478515625,
+    0.0546875,
+    0.056640625,
+    0.0185546875
+  ]
+}

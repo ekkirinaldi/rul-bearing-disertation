@@ -1,0 +1,51 @@
+{
+  "dataset": "xjtusy",
+  "control": "gaussian_noise",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_seeds": 3,
+  "threshold": 0.3,
+  "epochs": 30,
+  "n_hidden": 5000,
+  "d_model": 128,
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "freqs_hz": {
+    "BPFO": 107.90738060781476,
+    "BPFI": 172.09261939218524,
+    "BSF": 72.32996298001724,
+    "FTF": 13.488422575976845
+  },
+  "hit_rate_mean": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "hit_rate_std": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "hit_rate_mean_pct": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "hit_rate_std_pct": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "sae_recon_mse_mean": 0.01843534903600812
+}

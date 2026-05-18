@@ -1,0 +1,28 @@
+{
+  "dataset": "cwru",
+  "control": "gaussian_noise",
+  "seed": 1,
+  "threshold": 0.3,
+  "epochs": 50,
+  "n_hidden": 5000,
+  "d_model": 128,
+  "sae_recon_mse": 0.00043393434170866383,
+  "freqs_hz": {
+    "BPFO": 107.36430584016392,
+    "BPFI": 162.1856941598361,
+    "BSF": 70.58459401582566,
+    "FTF": 11.929367315573769
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.13671875,
+    0.05078125,
+    0.072265625,
+    0.1484375
+  ]
+}

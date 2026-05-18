@@ -1,0 +1,27 @@
+{
+  "dataset": "phm2012",
+  "architecture": "nbeats_xlstm_rul",
+  "run_dir": "/Users/ekkirinaldi/Documents/Git/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260512_151551_algorithm_comparison_phm2012_nbeats_xlstm_rul_s42",
+  "d_model": 96,
+  "d_latent": 768,
+  "k": 38,
+  "threshold": 0.3,
+  "freqs_hz": {
+    "BPFO": 168.23529411764707,
+    "BPFI": 221.76470588235293,
+    "BSF": 107.22689075630251,
+    "FTF": 12.941176470588236
+  },
+  "bpfx_names": [
+    "BPFO",
+    "BPFI",
+    "BSF",
+    "FTF"
+  ],
+  "hit_rate": [
+    0.009114583333333334,
+    0.0078125,
+    0.0,
+    0.0
+  ]
+}
