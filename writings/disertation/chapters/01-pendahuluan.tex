@@ -37,14 +37,14 @@ tidak terencana yang merugikan secara finansial, mengganggu rantai pasok,
 dan pada kasus ekstrem menimbulkan risiko keselamatan kerja
 \citetitb{Mobley2002PlantMaintenance}.
 
-Bantalan gelinding (\emph{rolling element bearings}) merupakan komponen
+\emph{Rolling element bearings} merupakan komponen
 mekanis yang paling kritis sekaligus paling rentan terhadap kegagalan dalam
 hampir seluruh mesin rotasi industri, mulai dari motor listrik, pompa,
 kompresor, hingga lini otomasi manufaktur \citetitb{Lei2018Machinery}.
-Studi empiris menunjukkan bahwa kegagalan bantalan menyumbang sekitar
+Studi empiris menunjukkan bahwa kegagalan \emph{bearing} menyumbang sekitar
 40--50\,\% dari total kegagalan mesin rotasi \citetitb{Nectoux2012PRONOSTIA}.
 Kemampuan memprediksi \emph{sisa umur pakai} (\emph{remaining useful life},
-RUL) bantalan secara akurat menjadi inti dari strategi perawatan prediktif
+RUL) \emph{bearing} secara akurat menjadi inti dari strategi perawatan prediktif
 berbasis kondisi yang efektif.
 
 Pendekatan prediksi RUL telah berkembang dari model fisika berbasis
@@ -53,13 +53,13 @@ rekaman degradasi berskala besar \citetitb{Lei2018Machinery}.
 Dalam dekade terakhir, arsitektur \emph{deep learning} --- khususnya
 \emph{Long Short-Term Memory} (LSTM) dan Transformer --- mendominasi
 literatur prediksi RUL karena kemampuannya memodelkan dependensi temporal
-jangka panjang dalam sinyal getaran bantalan
+jangka panjang dalam sinyal getaran \emph{bearing}
 \citetitb{Hochreiter1997LSTM,Vaswani2017Attention}.
 Namun, keduanya masih menghadapi keterbatasan mendasar: LSTM terbebani oleh
 kompleksitas rekuren $O(T)$ yang sulit diskalakan pada sekuens sangat
 panjang; Transformer memiliki kompleksitas perhatian $O(T^{2})$ yang mahal
 secara komputasi; dan keduanya menghasilkan representasi laten yang tidak
-transparan terhadap pemahaman fisika degradasi bantalan.
+transparan terhadap pemahaman fisika degradasi \emph{bearing}.
 
 Dua arsitektur urutan baru yang muncul baru-baru ini membuka peluang untuk
 mengatasi keterbatasan tersebut.
@@ -86,24 +86,24 @@ Frequency Inner race} (BPFI), dan \emph{Ball Spin Frequency} (BSF).
 \emph{Sparse Autoencoder} (SAE) \citetitb{Bricken2023Monosemanticity}
 telah terbukti efektif dalam mengekstrak fitur laten yang
 \emph{monosemantik} dari model \emph{deep learning} di domain bahasa alami,
-dan penerapannya secara \emph{post-hoc} pada model prognostik bantalan
+dan penerapannya secara \emph{post-hoc} pada model prognostik \emph{bearing}
 berpotensi menjembatani jurang antara pendekatan berbasis data dan
 teori fisika.
 
 Berdasarkan konteks di atas, penelitian ini mengusulkan arsitektur
 \emph{Mamba-xLSTM-Net} --- hibrida SSM selektif dan \emph{matrix-memory
-xLSTM} --- untuk prediksi RUL bantalan gelinding, dilengkapi modul
+xLSTM} --- untuk prediksi RUL \emph{rolling element bearings}, dilengkapi modul
 interpretabilitas berbasis \emph{Top-$k$ Sparse Autoencoder} dengan
-prosedur pemetaan ke frekuensi karakteristik fisik bantalan.
+prosedur pemetaan ke frekuensi karakteristik fisik \emph{bearing}.
 Validasi empiris dilakukan pada dua dataset publik \emph{run-to-failure}
 standar industri, yaitu PHM2012 (FEMTO-PRONOSTIA) \citetitb{Nectoux2012PRONOSTIA}
 dan XJTU-SY \citetitb{Wang2020XJTU}, dengan tiga \emph{seed} berbeda untuk
 menjamin rigor statistik.
 
 Untuk memperkuat relevansi industri, penelitian ini juga melakukan
-\emph{studi kasus industri} pada lini produksi bantalan gelinding di
+\emph{studi kasus industri} pada lini produksi \emph{rolling element bearings} di
 PT~SKF Indonesia. Objek studi adalah dua mesin \emph{grinding outer
-ring} (OR1 dan OR2) yang memproduksi cincin luar bantalan untuk
+ring} (OR1 dan OR2) yang memproduksi cincin luar \emph{bearing} untuk
 sektor otomotif. Kedua mesin mengalami permasalahan tingkat penolakan
 produk (\emph{scrap rate}) yang relatif tinggi akibat keausan
 \emph{cutting tool} dan keluarnya parameter permesinan dari rentang
@@ -113,7 +113,7 @@ diintegrasikan dengan data kualitas produk (\emph{vibration checking}
 dan \emph{radial clearance checking}) untuk membentuk basis data
 multi-sumber heterogen \citetitb{Yan2017BigData}. Pada basis data ini
 diterapkan \emph{Pilar~0} berupa klasifikasi tiga kelas kondisi
-bantalan (\emph{Normal}, \emph{Warning}, \emph{Critical}) dengan
+\emph{bearing} (\emph{Normal}, \emph{Warning}, \emph{Critical}) dengan
 benchmarking enam algoritma kandidat (XGBoost, CNN-LSTM, TCN,
 BiLSTM-Attention, GRU, dan hibrida ARIMA-LSTM) yang dilengkapi
 analisis \emph{SHAP} \citetitb{Lundberg2017SHAP} untuk memberi
@@ -121,8 +121,7 @@ transparansi keputusan model. Pilar~0 berperan sebagai konteks
 aplikatif yang melengkapi Pilar~1 (RUL) dan Pilar~2 (interpretabilitas
 mekanistik) tanpa menggeser fokus ilmiah utama disertasi.
 
-Gambar~\ref{fig:bab1_objek_industri} memperlihatkan komponen bantalan
-gelinding dan dua tahapan permesinan utama (\emph{outer ring grinding}
+Gambar~\ref{fig:bab1_objek_industri} memperlihatkan komponen \emph{rolling element bearings} dan dua tahapan permesinan utama (\emph{outer ring grinding}
 dan \emph{honing}) yang menjadi konteks fisik studi kasus
 PT~SKF~Indonesia.
 
@@ -131,7 +130,7 @@ PT~SKF~Indonesia.
   \begin{minipage}[b]{0.42\textwidth}
     \centering
     \includegraphics[width=\linewidth]{ball_bearing_components.png}
-    \caption*{(a) Komponen bantalan gelinding}
+    \caption*{(a) Komponen \emph{rolling element bearings}}
   \end{minipage}\hfill
   \begin{minipage}[b]{0.55\textwidth}
     \centering
@@ -139,7 +138,7 @@ PT~SKF~Indonesia.
     \caption*{(b) Proses permesinan \emph{outer ring} dan \emph{inner ring}}
   \end{minipage}
   \caption{Konteks fisik objek studi kasus industri: (a)~komponen utama
-           bantalan gelinding (cincin luar, sangkar, bola, cincin dalam),
+           \emph{rolling element bearings} (cincin luar, sangkar, bola, cincin dalam),
            dan (b)~tahapan \emph{grinding} dan \emph{honing} pada cincin
            luar dan dalam yang menjadi sumber sinyal getaran pada mesin
            OR1 dan OR2. Sumber: SKF Group~\citetitb{SKF2017TechReport}.}
@@ -191,7 +190,7 @@ SAE untuk pemetaan BPFx (Pilar~2).
            penelitian ini: sinyal akselerometer diproses menjadi fitur \emph{health
            indicator} (HI), diprediksi oleh Mamba-xLSTM-Net (Pilar~1), kemudian
            representasi latennya diinterpretasi melalui Top-$k$ SAE untuk pemetaan
-           frekuensi karakteristik bantalan (Pilar~2).}
+           frekuensi karakteristik \emph{bearing} (Pilar~2).}
   \label{fig:bab1_pipeline_pdm}
 \end{figure}
 
@@ -200,10 +199,10 @@ SAE untuk pemetaan BPFx (Pilar~2).
 
 Berdasarkan latar belakang yang telah dipaparkan, dirumuskan masalah utama
 penelitian disertasi ini sebagai berikut:
-\textit{Bagaimana merancang sistem prediksi sisa umur pakai bantalan gelinding
+\textit{Bagaimana merancang sistem prediksi sisa umur pakai \emph{rolling element bearings}
 berbasis arsitektur hibrida \emph{deep learning} yang akurat, stabil lintas
 kondisi operasi, dan menghasilkan representasi laten yang dapat diinterpretasi
-secara fisis melalui frekuensi karakteristik bantalan?}
+secara fisis melalui frekuensi karakteristik \emph{bearing}?}
 
 Untuk menjawab masalah utama tersebut, dirumuskan tiga pertanyaan penelitian:
 
@@ -211,15 +210,15 @@ Untuk menjawab masalah utama tersebut, dirumuskan tiga pertanyaan penelitian:
   \item[RQ1.] Apakah arsitektur hibrida \emph{Mamba-xLSTM-Net} yang
         menggabungkan \emph{selective state-space model} (Mamba-3)
         dengan \emph{matrix-memory recurrent} (mLSTM) mampu menghasilkan
-        prediksi RUL bantalan yang kompetitif terhadap arsitektur kontemporer
+        prediksi RUL \emph{bearing} yang kompetitif terhadap arsitektur kontemporer
         pada dataset \emph{run-to-failure} PHM2012 dan XJTU-SY?
   \item[RQ2.] Apakah representasi laten yang dipelajari model RUL berbasis
         \emph{deep learning} dapat dipetakan, melalui \emph{Top-$k$ Sparse
         Autoencoder} secara \emph{post-hoc}, ke frekuensi karakteristik
-        fisik bantalan (BPFO, BPFI, BSF, FTF)?
+        fisik \emph{bearing} (BPFO, BPFI, BSF, FTF)?
   \item[RQ3.] Sejauh mana metodologi yang diusulkan menunjukkan
         konsistensi hasil lintas dataset dengan kondisi operasi, geometri
-        bantalan, dan protokol eksperimen yang berbeda?
+        \emph{bearing}, dan protokol eksperimen yang berbeda?
 \end{description}
 
 \section{Tujuan Penelitian}
@@ -232,11 +231,11 @@ sebagai berikut:
   \item Mengembangkan arsitektur hibrida \emph{Mamba-xLSTM-Net} yang
         mengintegrasikan \emph{state-space model} selektif dengan
         \emph{matrix-memory xLSTM} untuk prediksi sisa umur pakai
-        bantalan gelinding, disertai justifikasi desain berbasis sifat
+        \emph{rolling element bearings}, disertai justifikasi desain berbasis sifat
         non-stasioner sinyal getaran.
   \item Merancang dan memvalidasi modul interpretabilitas berbasis
         \emph{Top-$k$ Sparse Autoencoder} yang dapat dipetakan secara
-        kuantitatif ke frekuensi karakteristik fisik bantalan
+        kuantitatif ke frekuensi karakteristik fisik \emph{bearing}
         (BPFO, BPFI, BSF, FTF) melalui korelasi Pearson terhadap
         \emph{Hilbert envelope spectrum}.
   \item Memvalidasi metodologi yang diusulkan secara empiris pada
@@ -252,13 +251,13 @@ sebagai berikut:
 Penelitian ini dibatasi pada hal-hal berikut:
 
 \begin{itemize}
-  \item \textbf{Jenis komponen:} Bantalan gelinding jenis
+  \item \textbf{Jenis komponen:} \emph{Rolling element bearings} jenis
         \emph{deep groove ball bearing} (NSK~6804 dan LDK~UER204)
         pada rezim degradasi alami (\emph{natural run-to-failure}).
   \item \textbf{Sinyal sensor:} Sinyal getaran akselerometer horizontal
         dan vertikal dengan frekuensi sampling \SI{25,6}{\kilo\hertz}.
-  \item \textbf{Dataset:} PHM2012 / FEMTO-PRONOSTIA (17 bantalan,
-        3 kondisi operasi) dan XJTU-SY (10 bantalan kondisi~1 dan~2;
+  \item \textbf{Dataset:} PHM2012 / FEMTO-PRONOSTIA (17 \emph{bearings},
+        3 kondisi operasi) dan XJTU-SY (10 \emph{bearings} kondisi~1 dan~2;
         kondisi~3 tidak tersedia).
   \item \textbf{Output model:} Pada Pilar~1, prediksi RUL skalar
         ternormalisasi $[0{,}1]$ (regresi tunggal). Pada Pilar~0
@@ -281,18 +280,18 @@ Penelitian ini dibatasi pada hal-hal berikut:
 Penelitian ini menggunakan asumsi-asumsi berikut:
 
 \begin{enumerate}
-  \item Proses degradasi bantalan diasumsikan memiliki tren menurun
+  \item Proses degradasi \emph{bearing} diasumsikan memiliki tren menurun
         secara umum dari kondisi sehat menuju kegagalan, dengan toleransi
         terhadap fluktuasi lokal yang tidak mengubah pola jangka panjang.
   \item Label RUL dihitung secara linier menurun dari titik rekaman pertama
         (nilai~1{,}0) hingga rekaman terakhir sebelum kegagalan (nilai~0{,}0)
-        berdasarkan panjang hidup aktual tiap bantalan.
+        berdasarkan panjang hidup aktual tiap \emph{bearing}.
         Skema \emph{piecewise} berbasis \emph{First Prediction Time}
         (FPT) merupakan alternatif yang diakui sebagai pekerjaan
         lanjutan (lihat \autoref{sec:bab5_keterbatasan}).
-  \item Pembagian data dilakukan secara berbasis bantalan
-        (\emph{bearing-wise split}) untuk mencegah kebocoran data
-        (\emph{data leakage}); karakteristik tiap bantalan dianggap
+  \item Pembagian data dilakukan secara \emph{bearing-wise split}
+        untuk mencegah kebocoran data
+        (\emph{data leakage}); karakteristik tiap \emph{bearing} dianggap
         cukup berbeda sehingga pembagian ini bermakna secara statistik.
   \item Statistik normalisasi fitur (\emph{mean}, deviasi standar)
         dihitung hanya pada \emph{training set} dan diterapkan ke
@@ -316,11 +315,11 @@ berikut:
         \emph{Mamba-xLSTM-Net} menghasilkan fitur yang berkorelasi
         secara moderat ($|r| \geq 0{,}30$) dengan amplitudo
         \emph{Hilbert envelope spectrum} di sekitar frekuensi
-        karakteristik bantalan (BPFO dan/atau BPFI) pada kedua dataset.
+        karakteristik \emph{bearing} (BPFO dan/atau BPFI) pada kedua dataset.
   \item[H3 (terkait RQ3).] Metode yang diusulkan menunjukkan pola
         peringkat konsisten (RMSE relatif terhadap model pembanding)
         lintas PHM2012 dan XJTU-SY meskipun terdapat perbedaan geometri
-        bantalan, kondisi operasi, dan ukuran \emph{test set}.
+        \emph{bearing}, kondisi operasi, dan ukuran \emph{test set}.
 \end{description}
 
 \section{Pendekatan dan Metodologi (Gambaran Umum)}
@@ -342,7 +341,7 @@ rigor statistik.
 Representasi laten dari \emph{checkpoint} terbaik \emph{Mamba-xLSTM-Net}
 dianalisis menggunakan \emph{Top-$k$ Sparse Autoencoder} untuk menghasilkan
 ruang fitur laten yang \emph{sparse} dan lebih dapat diinterpretasi.
-Fitur SAE kemudian dipetakan ke frekuensi karakteristik fisik bantalan
+Fitur SAE kemudian dipetakan ke frekuensi karakteristik fisik \emph{bearing}
 melalui korelasi Pearson terhadap amplitudo \emph{Hilbert envelope spectrum}
 dari sinyal mentah.
 Analisis atribusi tambahan menggunakan SHAP dan \emph{Integrated Gradients}
@@ -362,9 +361,9 @@ kebaruan dalam Pedoman Penulisan Disertasi Doktor ITB:
         \emph{Mamba-xLSTM-Net} yang mengintegrasikan
         \emph{state-space model} selektif (Mamba-3) dengan
         \emph{matrix-memory xLSTM} (mLSTM) untuk prediksi sisa umur
-        pakai bantalan gelinding.
+        pakai \emph{rolling element bearings}.
         Mekanisme fusi dirancang berdasarkan sifat non-stasioner sinyal
-        getaran bantalan, di mana Mamba menangkap konteks degradasi
+        getaran \emph{bearing}, di mana Mamba menangkap konteks degradasi
         jangka panjang dan mLSTM mempertahankan presisi rekuren pada
         perubahan cepat menjelang kegagalan.
         Bukti empiris: stabilitas tertinggi lintas \emph{seed} pada
@@ -374,13 +373,13 @@ kebaruan dalam Pedoman Penulisan Disertasi Doktor ITB:
         \emph{Top-$k$ Sparse Autoencoder} yang bekerja secara
         \emph{post-hoc} terhadap representasi laten model RUL,
         dilengkapi prosedur kuantitatif untuk memetakan fitur SAE ke
-        frekuensi karakteristik fisik bantalan (BPFO, BPFI, BSF, FTF)
+        frekuensi karakteristik fisik \emph{bearing} (BPFO, BPFI, BSF, FTF)
         melalui korelasi Pearson terhadap amplitudo \emph{Hilbert
         envelope spectrum} sinyal getaran.
   \item \textbf{(Output)} Bukti empiris bahwa model \emph{deep learning}
         yang dilatih untuk prediksi RUL mempelajari representasi laten
         yang berkorespondensi dengan teori klasik diagnosis getaran
-        bantalan.
+        \emph{bearing}.
         Korelasi moderat tertinggi $r = 0{,}507$ (fitur SAE f474
         $\leftrightarrow$ BPFI pada PHM2012) dan $r = 0{,}501$
         (fitur f959 $\leftrightarrow$ BPFO pada XJTU-SY) signifikan
@@ -455,14 +454,14 @@ tujuan penelitian, lingkup dan batasan, asumsi, hipotesis, gambaran
 umum pendekatan metodologi, klaim kebaruan, dan sistematika penulisan.
 
 \textbf{Bab~\ref{bab:tinjauan-pustaka}} (Tinjauan Pustaka) memetakan
-\emph{state-of-the-art} prediksi RUL bantalan, perkembangan arsitektur
+\emph{state-of-the-art} prediksi RUL \emph{bearing}, perkembangan arsitektur
 \emph{deep learning} untuk data deret waktu, dan identifikasi
 kesenjangan penelitian (\emph{research gap}) yang dimotivasi oleh
 keterbatasan metode terkini.
 
 \textbf{Bab~\ref{bab:dasar-teori}} (Dasar Teori) menguraikan
 fondasi teoretis yang digunakan: formulasi RUL dan \emph{Health
-Indicator}, teori bantalan gelinding dan frekuensi karakteristik,
+Indicator}, teori \emph{rolling element bearings} dan frekuensi karakteristik,
 arsitektur LSTM, xLSTM (sLSTM dan mLSTM), \emph{State-Space Model}
 dan Mamba, serta \emph{Sparse Autoencoder} dan metode atribusi.
 

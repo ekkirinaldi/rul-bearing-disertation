@@ -36,7 +36,7 @@ Bab V.
 **Pertanyaan Penelitian 1 (Performa Arsitektur).**
 Apakah arsitektur hibrida Mamba-xLSTM-Net, yang menggabungkan *state-space model*
 selektif (Mamba-3) dengan *matrix-memory recurrent* (mLSTM), mampu memberikan
-prediksi sisa umur pakai (*remaining useful life*, RUL) bantalan gelinding yang
+prediksi sisa umur pakai (*remaining useful life*, RUL) *rolling element bearings* yang
 kompetitif terhadap arsitektur kontemporer pada dua tolok ukur publik
 *run-to-failure*, yaitu PHM2012 (FEMTO-PRONOSTIA) dan XJTU-SY?
 

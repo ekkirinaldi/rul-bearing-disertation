@@ -11,16 +11,16 @@ Kemampuan memprediksi sisa umur pakai (\emph{remaining useful life},
 RUL) komponen kritis secara akurat dan tepat waktu memungkinkan
 intervensi perawatan yang efisien, meminimalkan \emph{downtime} tidak
 terencana, dan meningkatkan keselamatan operasional.
-Bantalan gelinding merupakan komponen yang paling rentan terhadap
+\emph{Rolling element bearings} merupakan komponen yang paling rentan terhadap
 kegagalan pada mesin rotasi industri, dengan kontribusi sekitar
 40--50\,\% dari total kegagalan mesin.
 
 Disertasi ini mengusulkan arsitektur hibrida \emph{Mamba-xLSTM-Net}
-untuk prediksi RUL bantalan gelinding, yang mengintegrasikan
+untuk prediksi RUL \emph{rolling element bearings}, yang mengintegrasikan
 \emph{selective state-space model} (Mamba-3) dengan \emph{matrix-memory
 Long Short-Term Memory} (mLSTM).
 Mekanisme fusi dirancang berdasarkan sifat non-stasioner sinyal getaran
-bantalan: Mamba menangani dependensi temporal jangka panjang pada fase
+\emph{bearing}: Mamba menangani dependensi temporal jangka panjang pada fase
 degradasi gradual, sementara mLSTM mempertahankan presisi rekuren pada
 perubahan mendadak menjelang kegagalan.
 
@@ -29,15 +29,15 @@ interpretabilitas berbasis \emph{Top-$k$ Sparse Autoencoder} (SAE) yang
 bekerja secara \emph{post-hoc} terhadap representasi laten
 \emph{Mamba-xLSTM-Net}.
 Prosedur kuantitatif dikembangkan untuk memetakan fitur-fitur SAE ke
-frekuensi karakteristik fisik bantalan --- \emph{Ball Pass Frequency
+frekuensi karakteristik fisik \emph{bearing} --- \emph{Ball Pass Frequency
 Outer Race} (BPFO), \emph{Ball Pass Frequency Inner Race} (BPFI),
 \emph{Ball Spin Frequency} (BSF), dan \emph{Fundamental Train Frequency}
 (FTF) --- melalui korelasi Pearson terhadap amplitudo \emph{Hilbert
 envelope spectrum} sinyal getaran mentah.
 
 Validasi empiris dilakukan pada dua dataset publik \emph{run-to-failure},
-yaitu PHM2012 (FEMTO-PRONOSTIA) yang memuat 17 bantalan NSK~6804 dalam
-tiga kondisi operasi, dan XJTU-SY yang memuat 10 bantalan LDK~UER204
+yaitu PHM2012 (FEMTO-PRONOSTIA) yang memuat 17 \emph{bearings} NSK~6804 dalam
+tiga kondisi operasi, dan XJTU-SY yang memuat 10 \emph{bearings} LDK~UER204
 (kondisi 1 dan 2).
 Protokol multi-\emph{seed} dengan tiga inisialisasi berbeda (seed 42, 43,
 44) diterapkan untuk memastikan rigor statistik.
@@ -69,12 +69,12 @@ f474~$\leftrightarrow$~BPFI pada PHM2012) dan $r = 0{,}501$
 statistik ($n = 300$, $p \ll 0{,}05$).
 Hasil ini merupakan bukti empiris pertama bahwa model \emph{deep
 learning} yang dilatih untuk RUL mempelajari representasi laten yang
-berkorespondensi dengan teori klasik diagnosis getaran bantalan.
+berkorespondensi dengan teori klasik diagnosis getaran \emph{bearing}.
 
 Penelitian ini memberikan tiga kontribusi utama: (1)~arsitektur
 hibrida \emph{Mamba-xLSTM-Net} sebagai pendekatan baru yang menggabungkan
 SSM selektif dengan \emph{matrix-memory recurrent} untuk prognostik
-bantalan; (2)~prosedur pemetaan SAE ke frekuensi karakteristik fisik
+\emph{bearing}; (2)~prosedur pemetaan SAE ke frekuensi karakteristik fisik
 sebagai metodologi interpretabilitas baru untuk domain perawatan
 prediktif; dan (3)~bukti empiris korespondensi antara representasi laten
 \emph{deep learning} dan teori fisika klasik pada dua dataset

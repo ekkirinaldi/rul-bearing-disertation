@@ -9,8 +9,8 @@ keilmuan dan praktis yang dihasilkan, serta mengidentifikasi arah
 pengembangan lanjutan yang bermakna. Struktur bab mengikuti tiga tujuan
 penelitian yang ditetapkan pada Bab~\ref{bab:pendahuluan}: (1) merancang
 dan mengevaluasi arsitektur hibrida Mamba-xLSTM-Net untuk prediksi RUL
-bantalan, (2) membangun skema interpretabilitas berbasis SAE dengan pemetaan
-ke frekuensi karakteristik fisik bantalan, dan (3) menganalisis konsistensi
+\emph{bearing}, (2) membangun skema interpretabilitas berbasis SAE dengan pemetaan
+ke frekuensi karakteristik fisik \emph{bearing}, dan (3) menganalisis konsistensi
 kinerja lintas dataset dan lintas kondisi operasi.
 
 % -----------------------------------------------------------------
@@ -41,7 +41,7 @@ memperhitungkan asimetri konsekuensi prediksi terlambat versus terlalu dini.
 Hasil ini konsisten dengan hipotesis bahwa paduan kemampuan pemodelan global
 jangka panjang (Mamba) dan penangkapan dinamika lokal akhir degradasi
 (\emph{exponential gating} xLSTM) memberikan manfaat komplementer yang
-saling memperkuat pada sinyal getaran bantalan yang bersifat non-stasioner.
+saling memperkuat pada sinyal getaran \emph{bearing} yang bersifat non-stasioner.
 
 Kurva pelatihan Mamba-xLSTM-Net yang terus membaik hingga \emph{epoch}
 terakhir (71--75 dari 75) mengindikasikan bahwa arsitektur belum mencapai
@@ -60,7 +60,7 @@ mengkonfirmasi bahwa representasi laten model memiliki struktur yang sangat
 jarang (\emph{sparse}) secara inheren.
 
 Analisis korelasi antara aktivasi fitur SAE dan amplitudo spektrum
-\emph{envelope} Hilbert pada pita frekuensi karakteristik bantalan
+\emph{envelope} Hilbert pada pita frekuensi karakteristik \emph{bearing}
 menghasilkan temuan yang signifikan. Pada PHM2012, \emph{hit-rate} fitur
 SAE tertinggi diperoleh pada BPFI (2,3\%, atau 24 dari 1024 fitur) dengan
 korelasi maksimum $r = 0{,}507$, diikuti BPFO (2,0\%). Pada XJTU-SY,
@@ -68,11 +68,11 @@ BPFO mencatat \emph{hit-rate} tertinggi (2,2\%, 23 fitur) dengan korelasi
 maksimum $r = 0{,}501$. Kedua dataset menunjukkan korespondensi yang
 konsisten antara fitur SAE dan frekuensi karakteristik cincin dalam
 (BPFI) dan cincin luar (BPFO), yang secara fisik merupakan lokasi spalling
-yang paling umum pada bantalan gelinding.
+yang paling umum pada \emph{rolling element bearings}.
 
 Temuan ini merupakan bukti empiris pertama bahwa model \emph{deep learning}
 yang dilatih untuk prediksi RUL mempelajari representasi laten yang
-berkorespondensi dengan konsep fisika klasik diagnosis getaran bantalan,
+berkorespondensi dengan konsep fisika klasik diagnosis getaran \emph{bearing},
 tanpa supervisi eksplisit tentang frekuensi karakteristik tersebut. Implikasi
 teoritis dari temuan ini dibahas lebih lanjut pada
 subbab~\ref{subsec:bab6_kontribusi_keilmuan}.
@@ -81,12 +81,12 @@ subbab~\ref{subsec:bab6_kontribusi_keilmuan}.
 \label{subsec:bab6_kesimpulan_t3}
 
 Perbandingan ketiga arsitektur pada dua dataset dengan karakteristik berbeda
-(PHM2012: \emph{test set} delapan bantalan, tiga kondisi operasi;
-XJTU-SY: \emph{test set} dua bantalan, dua kondisi operasi) menunjukkan
+(PHM2012: \emph{test set} delapan \emph{bearings}, tiga kondisi operasi;
+XJTU-SY: \emph{test set} dua \emph{bearings}, dua kondisi operasi) menunjukkan
 beberapa pola konsistensi yang bermakna.
 
 Pertama, peringkat kinerja antar model berfluktuasi antar dataset karena
-karakteristik distribusi data yang berbeda (rekaman per bantalan, variasi
+karakteristik distribusi data yang berbeda (rekaman per \emph{bearing}, variasi
 kondisi operasi, dominansi noise), namun Mamba-xLSTM-Net secara konsisten
 mempertahankan \emph{trade-off} terbaik antara akurasi titik (RMSE) dan
 stabilitas (deviasi standar lintas \emph{seed}) di PHM2012, serta PHM Score
@@ -118,7 +118,7 @@ dan penerapan praktis dalam konteks industri Indonesia.
 merupakan kombinasi pertama yang secara eksplisit memadukan \emph{selective
 state space model} (Mamba bidireksional) dan \emph{extended LSTM} (xLSTM
 dengan sLSTM dan mLSTM) melalui mekanisme \emph{gated fusion} yang
-didesain khusus untuk karakteristik sinyal degradasi bantalan gelinding.
+didesain khusus untuk karakteristik sinyal degradasi \emph{rolling element bearings}.
 Penelitian yang ada (\citeauthor{Rui2026xLSTMTransformer}, \citeyear{Rui2026xLSTMTransformer})
 menggabungkan xLSTM dengan Transformer (yang memiliki kompleksitas kuadratik),
 sementara penelitian ini mengganti komponen Transformer dengan Mamba
@@ -127,7 +127,7 @@ adaptif. Kontribusi ini relevan untuk komunitas penelitian prognostik yang
 mencari arsitektur yang skalabel untuk sekuens degradasi panjang.
 
 \textbf{Kontribusi 2 (Teknologi-Metodologi)}: Prosedur kuantitatif pemetaan
-fitur SAE ke frekuensi karakteristik fisik bantalan (BPFO, BPFI, BSF, FTF)
+fitur SAE ke frekuensi karakteristik fisik \emph{bearing} (BPFO, BPFI, BSF, FTF)
 dikembangkan dan divalidasi pada dua dataset publik. Prosedur ini terdiri
 dari: (a) pelatihan SAE \emph{post-hoc} pada representasi laten model RUL,
 (b) perhitungan korelasi antara aktivasi fitur SAE dan amplitudo spektrum
@@ -137,9 +137,9 @@ fisik. Prosedur ini dapat diadopsi untuk model dan dataset lain dalam domain
 prognostik mekanik.
 
 \textbf{Kontribusi 3 (Output --- Temuan Empiris)}: Bukti empiris pertama
-bahwa model \emph{deep learning} yang dilatih untuk prediksi RUL bantalan
+bahwa model \emph{deep learning} yang dilatih untuk prediksi RUL \emph{bearing}
 mempelajari representasi laten yang berkorespondensi dengan frekuensi
-karakteristik fisik bantalan (BPFI pada PHM2012, $r = 0{,}507$; BPFO pada
+karakteristik fisik \emph{bearing} (BPFI pada PHM2012, $r = 0{,}507$; BPFO pada
 XJTU-SY, $r = 0{,}501$) tanpa supervisi eksplisit. Temuan ini mendukung
 hipotesis \emph{superposition} di domain prognostik mekanik: model
 mengkodekan konsep fisika domain secara implisit dalam representasi
@@ -246,4 +246,4 @@ pelatihan model (penalti \emph{sparsity} pada representasi laten) dapat
 menghasilkan model yang secara inheren lebih interpretatif tanpa biaya
 akurasi yang signifikan. Pendekatan ini juga dapat dieksplorasi untuk
 mendorong korespondensi langsung antara fitur laten dan frekuensi
-karakteristik bantalan melalui supervisi fisik parsial.
+karakteristik \emph{bearing} melalui supervisi fisik parsial.
