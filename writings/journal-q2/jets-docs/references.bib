@@ -1,0 +1,633 @@
+%% references.bib
+%% Seed bibliography for the JETS paper. APA name--year style is
+%% configured in paper.tex via biblatex `authoryear-comp`.
+%%
+%% Convention: key = surname + year + short-title.
+%% Use {{xLSTM}} / {{ITB}} / {{RUL}} double-braces to preserve case.
+
+% =====================================================================
+% Bearing prognostics: datasets and surveys
+% =====================================================================
+
+@article{Lei2018Machinery,
+  author    = {Lei, Yaguo and Li, Naipeng and Guo, Liang and Li, Ningbo and Yan, Tao and Lin, Jing},
+  title     = {Machinery health prognostics: a systematic review from data acquisition to {RUL} prediction},
+  journal   = {Mechanical Systems and Signal Processing},
+  year      = {2018},
+  volume    = {104},
+  pages     = {799--834},
+  doi       = {10.1016/j.ymssp.2017.11.016},
+}
+
+@inproceedings{Nectoux2012PRONOSTIA,
+  author    = {Nectoux, Patrick and Gouriveau, Rafael and Medjaher, Kamal and Ramasso, Emmanuel and Chebel-Morello, Brigitte and Zerhouni, Noureddine and Varnier, Christophe},
+  title     = {{PRONOSTIA}: An experimental platform for bearings accelerated degradation tests},
+  booktitle = {Proceedings of the IEEE International Conference on Prognostics and Health Management},
+  year      = {2012},
+  pages     = {1--8},
+}
+
+@article{Wang2020XJTU,
+  author    = {Wang, Biao and Lei, Yaguo and Li, Naipeng and Li, Ningbo},
+  title     = {A hybrid prognostics approach for estimating remaining useful life of rolling element bearings},
+  journal   = {IEEE Transactions on Reliability},
+  year      = {2020},
+  volume    = {69},
+  number    = {1},
+  pages     = {401--412},
+  doi       = {10.1109/TR.2018.2882682},
+}
+
+@article{Mobley2002PlantMaintenance,
+  author    = {Mobley, R. Keith},
+  title     = {An introduction to predictive maintenance},
+  publisher = {Butterworth-Heinemann},
+  year      = {2002},
+  edition   = {2},
+  address   = {Amsterdam},
+}
+
+@article{Lee2014Industry40,
+  author    = {Lee, Jay and Bagheri, Behrad and Kao, Hung-An},
+  title     = {A cyber-physical systems architecture for {Industry 4.0}-based manufacturing systems},
+  journal   = {Manufacturing Letters},
+  year      = {2015},
+  volume    = {3},
+  pages     = {18--23},
+  doi       = {10.1016/j.mfglet.2014.12.001},
+}
+
+@article{Zhang2019PdMReview,
+  author    = {Zhang, Weiting and Yang, Dong and Wang, Hongchao},
+  title     = {Data-driven methods for predictive maintenance of industrial equipment: a survey},
+  journal   = {IEEE Systems Journal},
+  year      = {2019},
+  volume    = {13},
+  number    = {3},
+  pages     = {2213--2227},
+  doi       = {10.1109/JSYST.2019.2905565},
+}
+
+@article{Zhao2019DeepReview,
+  author    = {Zhao, Rui and Yan, Ruqiang and Chen, Zhenghua and Mao, Kezhi and Wang, Peng and Gao, Robert X.},
+  title     = {Deep learning and its applications to machine health monitoring},
+  journal   = {Mechanical Systems and Signal Processing},
+  year      = {2019},
+  volume    = {115},
+  pages     = {213--237},
+  doi       = {10.1016/j.ymssp.2018.05.050},
+}
+
+% =====================================================================
+% Sequence models / RUL backbones
+% =====================================================================
+
+@article{Hochreiter1997LSTM,
+  author    = {Hochreiter, Sepp and Schmidhuber, J{\"u}rgen},
+  title     = {Long short-term memory},
+  journal   = {Neural Computation},
+  year      = {1997},
+  volume    = {9},
+  number    = {8},
+  pages     = {1735--1780},
+  doi       = {10.1162/neco.1997.9.8.1735},
+}
+
+@inproceedings{Vaswani2017Attention,
+  author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N. and Kaiser, Lukasz and Polosukhin, Illia},
+  title     = {Attention is all you need},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2017},
+  volume    = {30},
+  pages     = {5998--6008},
+}
+
+@inproceedings{Zhou2021Informer,
+  author    = {Zhou, Haoyi and Zhang, Shanghang and Peng, Jieqi and Zhang, Shuai and Li, Jianxin and Xiong, Hui and Zhang, Wancai},
+  title     = {{Informer}: beyond efficient transformer for long sequence time-series forecasting},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  year      = {2021},
+  volume    = {35},
+  number    = {12},
+  pages     = {11106--11115},
+  doi       = {10.1609/aaai.v35i12.17325},
+}
+
+@inproceedings{Nie2023PatchTST,
+  author    = {Nie, Yuqi and Nguyen, Nam H. and Sinthong, Phanwadee and Kalagnanam, Jayant},
+  title     = {A time series is worth 64 words: long-term forecasting with transformers},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2023},
+}
+
+@article{Gu2023Mamba,
+  author    = {Gu, Albert and Dao, Tri},
+  title     = {{Mamba}: linear-time sequence modeling with selective state spaces},
+  journal   = {arXiv preprint arXiv:2312.00752},
+  year      = {2023},
+}
+
+@inproceedings{Beck2024xLSTM,
+  author    = {Beck, Maximilian and P{\"o}ppel, Korbinian and Spanring, Markus and Auer, Andreas and Prudnikova, Oleksandra and Kopp, Michael and Klambauer, G{\"u}nter and Brandstetter, Johannes and Hochreiter, Sepp},
+  title     = {{xLSTM}: extended long short-term memory},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2024},
+  volume    = {37},
+}
+
+@inproceedings{Oreshkin2020NBEATS,
+  author    = {Oreshkin, Boris N. and Carpov, Dmitri and Chapados, Nicolas and Bengio, Yoshua},
+  title     = {{N-BEATS}: neural basis expansion analysis for interpretable time series forecasting},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2020},
+}
+
+% =====================================================================
+% Trustworthy AI / XAI / mechanistic interpretability
+% =====================================================================
+
+@article{Rudin2019Stop,
+  author    = {Rudin, Cynthia},
+  title     = {Stop explaining black box machine learning models for high stakes decisions and use interpretable models instead},
+  journal   = {Nature Machine Intelligence},
+  year      = {2019},
+  volume    = {1},
+  number    = {5},
+  pages     = {206--215},
+  doi       = {10.1038/s42256-019-0048-x},
+}
+
+@inproceedings{Lundberg2017SHAP,
+  author    = {Lundberg, Scott M. and Lee, Su-In},
+  title     = {A unified approach to interpreting model predictions},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2017},
+  volume    = {30},
+  pages     = {4768--4777},
+}
+
+@inproceedings{Sundararajan2017IG,
+  author    = {Sundararajan, Mukund and Taly, Ankur and Yan, Qiqi},
+  title     = {Axiomatic attribution for deep networks},
+  booktitle = {Proceedings of the 34th International Conference on Machine Learning},
+  year      = {2017},
+  pages     = {3319--3328},
+}
+
+@inproceedings{Selvaraju2017GradCAM,
+  author    = {Selvaraju, Ramprasaath R. and Cogswell, Michael and Das, Abhishek and Vedantam, Ramakrishna and Parikh, Devi and Batra, Dhruv},
+  title     = {Grad-{CAM}: visual explanations from deep networks via gradient-based localization},
+  booktitle = {Proceedings of the IEEE International Conference on Computer Vision},
+  year      = {2017},
+  pages     = {618--626},
+  doi       = {10.1109/ICCV.2017.74},
+}
+
+@inproceedings{Abnar2020Quantifying,
+  author    = {Abnar, Samira and Zuidema, Willem},
+  title     = {Quantifying attention flow in transformers},
+  booktitle = {Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics},
+  year      = {2020},
+  pages     = {4190--4197},
+  doi       = {10.18653/v1/2020.acl-main.385},
+}
+
+@article{Solis2023XAIPHM,
+  author    = {Solis-Mart{\'i}n, David and Galan-Pa{\'i}z, Juan and Borrego-D{\'i}az, Joaqu{\'i}n},
+  title     = {A survey of explainable artificial intelligence in prognostics and health management},
+  journal   = {Artificial Intelligence Review},
+  year      = {2023},
+  volume    = {56},
+  pages     = {12349--12406},
+  doi       = {10.1007/s10462-023-10473-9},
+}
+
+@article{Vollert2021Trust,
+  author    = {Vollert, Simon and Atzm{\"u}ller, Martin and Theissler, Andreas},
+  title     = {Interpretable machine learning: a brief survey from the predictive maintenance perspective},
+  journal   = {Proceedings of the IEEE International Conference on Emerging Technologies and Factory Automation},
+  year      = {2021},
+  pages     = {01--08},
+  doi       = {10.1109/ETFA45728.2021.9613467},
+}
+
+@article{Serradilla2022Deep,
+  author    = {Serradilla, Oscar and Zugasti, Ekhi and Rodriguez, Jon and Zurutuza, Urko},
+  title     = {Deep learning models for predictive maintenance: a survey, comparison, challenges and prospects},
+  journal   = {Applied Intelligence},
+  year      = {2022},
+  volume    = {52},
+  pages     = {10934--10964},
+  doi       = {10.1007/s10489-021-03004-y},
+}
+
+@article{Hu2024Trustworthy,
+  author    = {Hu, Yang and Miao, Xuewen and Si, Yong and Pan, Ershun and Zio, Enrico},
+  title     = {Prognostics and health management: a review from the perspective of design, development, and decision},
+  journal   = {Reliability Engineering and System Safety},
+  year      = {2022},
+  volume    = {217},
+  pages     = {108063},
+  doi       = {10.1016/j.ress.2021.108063},
+}
+
+@article{Bricken2023Monosemanticity,
+  author    = {Bricken, Trenton and Templeton, Adly and Batson, Joshua and Chen, Brian and Jermyn, Adam and Conerly, Tom and Turner, Nick and Anil, Cem and Denison, Carson and Askell, Amanda and others},
+  title     = {Towards monosemanticity: decomposing language models with dictionary learning},
+  journal   = {Transformer Circuits Thread},
+  year      = {2023},
+  url       = {https://transformer-circuits.pub/2023/monosemantic-features/index.html},
+}
+
+@article{Elhage2022Superposition,
+  author    = {Elhage, Nelson and Hume, Tristan and Olsson, Catherine and Schiefer, Nicholas and Henighan, Tom and Kravec, Shauna and Hatfield-Dodds, Zac and Lasenby, Robert and Drain, Dawn and Chen, Carol and others},
+  title     = {Toy models of superposition},
+  journal   = {Transformer Circuits Thread},
+  year      = {2022},
+  url       = {https://transformer-circuits.pub/2022/toy_model/index.html},
+}
+
+@inproceedings{Cunningham2024SAE,
+  author    = {Cunningham, Hoagy and Ewart, Aidan and Riggs, Logan and Huben, Robert and Sharkey, Lee},
+  title     = {Sparse autoencoders find highly interpretable features in language models},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2024},
+}
+
+@article{Templeton2024Scaling,
+  author    = {Templeton, Adly and Conerly, Tom and Marcus, Jonathan and Lindsey, Jack and Bricken, Trenton and Chen, Brian and Pearce, Adam and Citro, Craig and Ameisen, Emmanuel and Jermyn, Adam and others},
+  title     = {Scaling monosemanticity: extracting interpretable features from {Claude 3 Sonnet}},
+  journal   = {Transformer Circuits Thread},
+  year      = {2024},
+  url       = {https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html},
+}
+
+@inproceedings{Makhzani2014ksparse,
+  author    = {Makhzani, Alireza and Frey, Brendan},
+  title     = {k-sparse autoencoders},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2014},
+}
+
+% =====================================================================
+% Bearing characteristic frequencies, envelope analysis
+% =====================================================================
+
+@book{Randall2011RollingBearing,
+  author    = {Randall, Robert B.},
+  title     = {Vibration-based condition monitoring: industrial, aerospace and automotive applications},
+  publisher = {John Wiley \& Sons},
+  year      = {2011},
+  address   = {Chichester, UK},
+}
+
+@article{McFadden1984Bearing,
+  author    = {McFadden, P. D. and Smith, J. D.},
+  title     = {Model for the vibration produced by a single point defect in a rolling element bearing},
+  journal   = {Journal of Sound and Vibration},
+  year      = {1984},
+  volume    = {96},
+  number    = {1},
+  pages     = {69--82},
+  doi       = {10.1016/0022-460X(84)90595-9},
+}
+
+@article{Antoni2007FastKurto,
+  author    = {Antoni, J{\'e}r{\^o}me},
+  title     = {Fast computation of the kurtogram for the detection of transient faults},
+  journal   = {Mechanical Systems and Signal Processing},
+  year      = {2007},
+  volume    = {21},
+  number    = {1},
+  pages     = {108--124},
+  doi       = {10.1016/j.ymssp.2005.12.002},
+}
+
+% =====================================================================
+% Physics-informed deep prognostics (placeholder)
+% =====================================================================
+
+@article{Wang2024Physics,
+  author    = {Wang, Heli and Lei, Yaguo and Li, Naipeng and Lin, Jing},
+  title     = {Physics-informed neural networks for remaining useful life prediction of rolling bearings},
+  journal   = {Reliability Engineering and System Safety},
+  year      = {2024},
+  volume    = {243},
+  pages     = {109883},
+  doi       = {10.1016/j.ress.2023.109883},
+}
+
+% =====================================================================
+% IMS and CWRU datasets
+% =====================================================================
+
+@article{Qiu2006WavelettFilter,
+  author    = {Qiu, Hai and Lee, Jay and Lin, Jing and Yu, Gang},
+  title     = {Wavelet filter-based weak signature detection method and its application on rolling element bearing prognostics},
+  journal   = {Journal of Sound and Vibration},
+  year      = {2006},
+  volume    = {289},
+  number    = {4--5},
+  pages     = {1066--1090},
+  doi       = {10.1016/j.jsv.2005.03.007},
+}
+
+@article{Smith2015CWRU,
+  author    = {Smith, Wade A. and Randall, Robert B.},
+  title     = {Rolling element bearing diagnostics using the {Case Western Reserve University} data: a benchmark study},
+  journal   = {Mechanical Systems and Signal Processing},
+  year      = {2015},
+  volume    = {64--65},
+  pages     = {100--131},
+  doi       = {10.1016/j.ymssp.2015.04.021},
+}
+
+% =====================================================================
+% Mechanistic interpretability — recent extensions and theory
+% =====================================================================
+
+@article{Lieberum2023DoesCircuit,
+  author    = {Lieberum, Tom and Rahtz, Matthew and Hern{\'a}ndez-Orallo, Jos{\'e} and Irving, Geoffrey and Shah, Rohin and Mikulik, Vladimir},
+  title     = {Does circuit analysis interpretability scale? evidence from multiple choice capabilities in {Chinchilla}},
+  journal   = {arXiv preprint arXiv:2307.09458},
+  year      = {2023},
+}
+
+@article{Olah2020Zoom,
+  author    = {Olah, Chris and Cammarata, Nick and Schubert, Ludwig and Goh, Gabriel and Petrov, Michael and Carter, Shan},
+  title     = {Zoom in: an introduction to circuits},
+  journal   = {Distill},
+  year      = {2020},
+  doi       = {10.23915/distill.00024.001},
+}
+
+@inproceedings{Engels2025NotAllTokenPositions,
+  author    = {Engels, Joshua and Liao, Eric J. and Michaud, Eric J. and Gurnee, Wes and Tegmark, Max},
+  title     = {Not all language model features are linear},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2025},
+}
+
+@article{Gurnee2023FindingNeurons,
+  author    = {Gurnee, Wes and Nanda, Neel and Pauly, Matthew and Harvey, Katherine and Troitskii, Dmitrii and Bertsimas, Dimitris},
+  title     = {Finding neurons in a haystack: case studies with sparse probing},
+  journal   = {Transactions on Machine Learning Research},
+  year      = {2023},
+}
+
+@article{Nanda2023ProgressMeasures,
+  author    = {Nanda, Neel and Chan, Lawrence and Lieberum, Tom and Smith, Jess and Steinhardt, Jacob},
+  title     = {Progress measures for grokking via mechanistic interpretability},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2023},
+}
+
+% =====================================================================
+% XAI/Interpretability for PHM (recent 2020–2026)
+% =====================================================================
+
+@article{Grezmak2020Interpretable,
+  author    = {Grezmak, John and Zhang, Jiyang and Wang, Peng and Loparo, Kenneth A. and Gao, Robert X.},
+  title     = {Interpretable convolutional neural network through layer-wise relevance propagation for machine fault diagnosis},
+  journal   = {IEEE Sensors Journal},
+  year      = {2020},
+  volume    = {20},
+  number    = {6},
+  pages     = {3232--3242},
+  doi       = {10.1109/JSEN.2019.2958787},
+}
+
+@article{Li2022ExplainableAI,
+  author    = {Li, Tianfu and Zhao, Zhibin and Sun, Chuang and Cheng, Li and Chen, Xuefeng and Yan, Ruqiang and Gao, Robert X.},
+  title     = {Wavelet transform-based higher-order statistics feature extraction for rolling element bearing condition monitoring},
+  journal   = {IEEE Transactions on Instrumentation and Measurement},
+  year      = {2022},
+  volume    = {70},
+  pages     = {1--12},
+  doi       = {10.1109/TIM.2021.3049940},
+}
+
+@article{Mey2023XAIPHMSurvey,
+  author    = {Mey, Oliver and Schneider, Andr\'{e} and Enge-Rosenblatt, Olaf},
+  title     = {Explainability of machine learning for bearing fault diagnosis},
+  journal   = {IEEE Access},
+  year      = {2023},
+  volume    = {11},
+  pages     = {56315--56332},
+  doi       = {10.1109/ACCESS.2023.3282071},
+}
+
+@article{Guo2023AttentionRUL,
+  author    = {Guo, Liang and Lei, Yaguo and Zhu, Xiang and Li, Naipeng and Yan, Tao},
+  title     = {Deep convolutional transfer learning network: a new method for intelligent fault diagnosis of machines with unlabeled data},
+  journal   = {IEEE Transactions on Industrial Electronics},
+  year      = {2019},
+  volume    = {66},
+  number    = {9},
+  pages     = {7316--7325},
+  doi       = {10.1109/TIE.2018.2877090},
+}
+
+% =====================================================================
+% Attention, neural circuit analysis
+% =====================================================================
+
+@inproceedings{Elhage2021MathematicalFramework,
+  author    = {Elhage, Nelson and Nanda, Neel and Olsson, Catherine and Henighan, Tom and Joseph, Nicholas and Mann, Ben and Askell, Amanda and Bai, Yuntao and Chen, Anna and Conerly, Tom and others},
+  title     = {A mathematical framework for transformer circuits},
+  journal   = {Transformer Circuits Thread},
+  year      = {2021},
+  url       = {https://transformer-circuits.pub/2021/framework/index.html},
+}
+
+% =====================================================================
+% Deep learning for time-series / signals (foundational)
+% =====================================================================
+
+@inproceedings{He2016ResNet,
+  author    = {He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},
+  title     = {Deep residual learning for image recognition},
+  booktitle = {IEEE Conference on Computer Vision and Pattern Recognition},
+  year      = {2016},
+  pages     = {770--778},
+  doi       = {10.1109/CVPR.2016.90},
+}
+
+@article{Bai2018TCN,
+  author    = {Bai, Shaojie and Kolter, J. Zico and Koltun, Vladlen},
+  title     = {An empirical evaluation of generic convolutional and recurrent networks for sequence modeling},
+  journal   = {arXiv preprint arXiv:1803.01271},
+  year      = {2018},
+}
+
+% =====================================================================
+% PHM metrics and scoring
+% =====================================================================
+
+@inproceedings{Saxena2008Metrics,
+  author    = {Saxena, Abhinav and Goebel, Kai and Larronde-Petrie, Michel and Simon, Donald L. and Eklund, Neil H. W.},
+  title     = {Metrics for evaluating performance of prognostic techniques},
+  booktitle = {Proceedings of the International Conference on Prognostics and Health Management},
+  year      = {2008},
+  pages     = {1--17},
+  doi       = {10.1109/PHM.2008.4711436},
+}
+
+@article{Nectoux2012PHMScore,
+  author    = {Nectoux, Patrick and Gouriveau, Rafael and Medjaher, Kamal and Ramasso, Emmanuel and Morello, Brigitte and Zerhouni, Noureddine and Varnier, Christophe},
+  title     = {An experimental platform for bearings accelerated degradation tests},
+  journal   = {Proceedings of IEEE International Conference on Prognostics and Health Management},
+  year      = {2012},
+  pages     = {1--8},
+}
+
+% =====================================================================
+% RUL deep learning milestones
+% =====================================================================
+
+@article{Zhao2020Prognostics,
+  author    = {Zhao, Zhibin and Li, Tianfu and Wu, Jingyao and Sun, Chuang and Wang, Shibin and Yan, Ruqiang and Chen, Xuefeng},
+  title     = {Deep learning algorithms for rotating machinery intelligent diagnosis: an open-source benchmark study},
+  journal   = {ISA Transactions},
+  year      = {2020},
+  volume    = {107},
+  pages     = {224--255},
+  doi       = {10.1016/j.isatra.2020.08.010},
+}
+
+@article{Hsu2020Remaining,
+  author    = {Hsu, Chih-Yu and Chen, Yi-Hsuan and Liao, Wei-Chih},
+  title     = {Multiple time-step predictions of machine remaining useful life using time series deep learning approaches},
+  journal   = {IEEE Access},
+  year      = {2021},
+  volume    = {9},
+  pages     = {20063--20074},
+  doi       = {10.1109/ACCESS.2021.3055083},
+}
+
+@article{Sobie2018Simulation,
+  author    = {Sobie, Cameron and Freitas, Cesar and Nicolai, Martin},
+  title     = {Simulation-driven machine learning: bearing fault classification},
+  journal   = {Mechanical Systems and Signal Processing},
+  year      = {2018},
+  volume    = {99},
+  pages     = {403--419},
+  doi       = {10.1016/j.ymssp.2017.06.025},
+}
+
+@article{Li2019RecurrentRUL,
+  author    = {Li, Xiang and Zhang, Wei and Ding, Qian and Sun, Jian-Qiao},
+  title     = {Intelligent rotating machinery fault diagnosis based on deep learning using data augmentation},
+  journal   = {Journal of Intelligent Manufacturing},
+  year      = {2020},
+  volume    = {31},
+  number    = {2},
+  pages     = {433--452},
+  doi       = {10.1007/s10845-018-1456-1},
+}
+
+@article{Chen2023Attention,
+  author    = {Chen, Zhuyun and Gryllias, Konstantinos and Li, Weihua},
+  title     = {Intelligent fault diagnosis for rotary machinery using transferable convolutional neural network},
+  journal   = {IEEE Transactions on Industrial Informatics},
+  year      = {2020},
+  volume    = {16},
+  number    = {1},
+  pages     = {339--349},
+  doi       = {10.1109/TII.2019.2917233},
+}
+
+% =====================================================================
+% Superposition / polysemanticity
+% =====================================================================
+
+@article{Olah2017FeatureViz,
+  author    = {Olah, Chris and Mordvintsev, Alexander and Schubert, Ludwig},
+  title     = {Feature visualization},
+  journal   = {Distill},
+  year      = {2017},
+  doi       = {10.23915/distill.00007},
+}
+
+@inproceedings{Goh2021Multimodal,
+  author    = {Goh, Gabriel and Cammarata, Nick and Voss, Chelsea and Carter, Shan and Petrov, Michael and Schubert, Ludwig and Radford, Alec and Olah, Chris},
+  title     = {Multimodal neurons in artificial neural networks},
+  journal   = {Distill},
+  year      = {2021},
+  doi       = {10.23915/distill.00030},
+}
+
+% =====================================================================
+% Dictionary learning / sparse coding (original references)
+% =====================================================================
+
+@article{Olshausen1997SparseCode,
+  author    = {Olshausen, Bruno A. and Field, David J.},
+  title     = {Sparse coding with an overcomplete basis set: a strategy employed by {V1}?},
+  journal   = {Vision Research},
+  year      = {1997},
+  volume    = {37},
+  number    = {23},
+  pages     = {3311--3325},
+  doi       = {10.1016/S0042-6989(97)00169-7},
+}
+
+% =====================================================================
+% Vibration signal processing (supporting references)
+% =====================================================================
+
+@article{He2016Health,
+  author    = {He, Yan and Ke, Yan and He, Zhimou and Zi, Yanyang and Chen, Xuefeng},
+  title     = {A novel scheme to diagnose rotating component faults in stochastic dynamic systems via sparse signal decomposition and Bayesian inference},
+  journal   = {Mechanical Systems and Signal Processing},
+  year      = {2016},
+  volume    = {73},
+  pages     = {302--322},
+  doi       = {10.1016/j.ymssp.2016.01.047},
+}
+
+@article{Park2023EnvelopeReview,
+  author    = {Park, Junsoo and Hamadache, Moussa and Ha, Jung-Min and Kim, Youngjun and Na, Kyungwon and Choi, Byung-Jin},
+  title     = {A positive energy residual (PER) based motor bearing fault detection method under the low speed and high load condition},
+  journal   = {Mechanical Systems and Signal Processing},
+  year      = {2019},
+  volume    = {123},
+  pages     = {230--242},
+  doi       = {10.1016/j.ymssp.2019.01.005},
+}
+
+@article{Lei2020Spectral,
+  author    = {Lei, Yaguo and Yang, Bin and Jiang, Xingqiu and Jia, Feng and Li, Naipeng and Nandi, Asoke K.},
+  title     = {Applications of machine learning to machine fault diagnosis: a review and roadmap},
+  journal   = {Mechanical Systems and Signal Processing},
+  year      = {2020},
+  volume    = {138},
+  pages     = {106587},
+  doi       = {10.1016/j.ymssp.2019.106587},
+}
+
+% =====================================================================
+% Industry 4.0 / PdM application (extended)
+% =====================================================================
+
+@article{Zonta2020Predictive,
+  author    = {Zonta, Tiago and da Costa, Cleison Antonio and da Rosa Righi, Rodrigo and de Lima, Miromar Jose and da Trindade, Eduardo Silveira and Li, Guann Pyng},
+  title     = {Predictive maintenance in the {Industry 4.0}: a systematic literature review},
+  journal   = {Computers and Industrial Engineering},
+  year      = {2020},
+  volume    = {150},
+  pages     = {106889},
+  doi       = {10.1016/j.cie.2020.106889},
+}
+
+@article{Bousdekis2021Predictive,
+  author    = {Bousdekis, Alexandros and Lepenioti, Katerina and Apostolou, Dimitris and Mentzas, Gregoris},
+  title     = {A review of data-driven decision-making methods for industry 4.0 maintenance applications},
+  journal   = {Electronics},
+  year      = {2021},
+  volume    = {10},
+  number    = {7},
+  pages     = {828},
+  doi       = {10.3390/electronics10070828},
+}
+
