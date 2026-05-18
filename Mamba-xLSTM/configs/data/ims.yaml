@@ -1,0 +1,29 @@
+data:
+  dataset: ims
+  root: ../data-bearing/IMS
+  cache_dir: ../data-bearing/processed/ims
+
+  # IMS (NASA PrognCenter / Rexnord ZA-2115 deep-groove ball bearings)
+  # Test rig: 4 bearings, single run-to-failure experiment
+  # fs = 20 480 Hz, 1 s per acquisition file, ~2 156 files total
+  # Bearings 3 and 4 failed (outer-race and rolling-element respectively)
+  # Reference: Qiu et al. (2006) J. Sound Vib. 289(4-5), 1066-1090.
+  #
+  # Split: train=[1,2] (minor surface wear), val=[3] (outer-race failure),
+  #        test=[4] (rolling-element failure). Bearing IDs are "1"–"4" and
+  #        correspond to columns (0-1), (2-3), (4-5), (6-7) in each
+  #        tab-delimited acquisition file.
+
+  window_length: 32
+  stride_train: 2
+  stride_eval: 16
+
+  label_scheme: linear
+  smoothing_alpha: 0.1
+  n_bands: 5
+  batch_size: 128
+  num_workers: 0
+
+  train_bearings: ["1", "2"]
+  val_bearings:   ["3"]
+  test_bearings:  ["4"]

@@ -200,7 +200,6 @@ class RULDataModule(pl.LightningDataModule):
             raise ValueError(
                 f"hi_pipeline='{self.hi_pipeline}' requires label_scheme='piecewise_liu2026'."
             )
-
         train_set = set(self.train_bearings)
         val_set = set(self.val_bearings)
         test_set = set(self.test_bearings)
@@ -286,6 +285,11 @@ class RULDataModule(pl.LightningDataModule):
                     )
                     onset = detect_degradation_onset(hi_raw[:, rms_idx])
                     rul = make_rul_labels(T, scheme="piecewise", degradation_onset=onset)
+                elif self.label_scheme == "fault_severity":
+                    severity_raw = run.metadata.get("fault_severity", 0)
+                    # Normalise: severity in {0,1,2,3} → [0, 1]
+                    constant_val = float(severity_raw) / 3.0
+                    rul = make_rul_labels(T, scheme="fault_severity", constant_value=constant_val)
                 else:
                     rul = make_rul_labels(T, scheme=self.label_scheme, degradation_onset=None)
                 names = list(self.pipeline.feature_names)
@@ -410,7 +414,14 @@ class RULDataModule(pl.LightningDataModule):
 
         # Determine which conditions we need; load only what's required.
         needed_ids = set(self.train_bearings + self.val_bearings + self.test_bearings)
-        needed_conditions = sorted({int(b.split("_")[0]) for b in needed_ids})
+        # Some datasets (ims, cwru) use non-numeric bearing IDs; fall back to
+        # loading all available bearings when condition extraction fails.
+        try:
+            needed_conditions: list[int] | None = sorted(
+                {int(b.split("_")[0]) for b in needed_ids}
+            )
+        except ValueError:
+            needed_conditions = None
         runs = load_dataset(
             self.dataset_name,
             root=self.root,

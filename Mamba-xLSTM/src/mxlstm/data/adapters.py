@@ -1,14 +1,14 @@
-"""Self-contained PHM2012 and XJTU-SY loaders.
+"""Self-contained PHM2012, XJTU-SY, IMS, and CWRU loaders.
 
 Returns lightweight ``BearingRun`` objects (a local dataclass — *not*
 ``brul.data.base.BearingRun``) so the package has zero external runtime
 dependencies beyond the standard scientific stack.
 
-Both loaders honor the parquet cache layout produced by the historical
-``brul`` project (``<cache>/<bid>_<fingerprint>.parquet`` with columns
-``t_idx, sample_idx, h, v`` and a sibling ``.meta.json``). When the cache
-is missing the loaders read the raw CSV folders directly and persist a
-parquet for next time.
+Both original loaders honor the parquet cache layout produced by the
+historical ``brul`` project (``<cache>/<bid>_<fingerprint>.parquet``
+with columns ``t_idx, sample_idx, h, v`` and a sibling ``.meta.json``).
+When the cache is missing the loaders read the raw folders directly and
+persist a parquet for next time.
 
 PHM2012:
   Raw layout    : ``<root>/{Learning_set, Test_set, Full_Test_Set}/Bearing<C>_<I>/acc_*.csv``
@@ -21,6 +21,24 @@ XJTU-SY:
   CSV columns   : Horizontal_vibration_signals, Vertical_vibration_signals
   Sampling      : 25_600 Hz, 32_768 samples per acquisition (= 1.28 s)
   Interval      : 60 s between acquisitions
+
+IMS (NASA PrognCenter):
+  Raw layout    : ``<root>/<timestamp_filename>`` (flat directory, no subdirs)
+  File format   : ASCII tab-separated, 8 columns; each file = 1 acquisition.
+                  Columns 0–7 map to channels 1–8 (pairs per bearing:
+                  Bearing 1 = cols 0,1; Bearing 2 = cols 2,3;
+                  Bearing 3 = cols 4,5; Bearing 4 = cols 6,7).
+  Sampling      : 20_480 Hz, 20_480 samples per acquisition (= 1.0 s)
+  Interval      : 10 min (600 s) between acquisitions
+
+CWRU (Case Western Reserve University):
+  Raw layout    : ``<root>/*.mat``
+  Naming        : ``{fault_type}{size_mils}_{load_hp}_{rpm_id}.mat``
+                  fault_type in {B, IR, OR, Normal}; e.g. ``IR007_0_109.mat``
+  MAT variables : ``DE_time`` (drive-end accelerometer, primary channel used)
+  Sampling      : 12_000 or 48_000 Hz (depends on rpm_id); 48k files preferred
+  Task          : Fault diagnosis (no run-to-failure; no RUL labels).
+                  Fault class is encoded in bearing_id and metadata.
 """
 
 from __future__ import annotations
@@ -400,6 +418,10 @@ def load_dataset(
         return load_phm2012(root, conditions=conditions, cache_dir=cache_dir, use_cache=use_cache)
     if dataset in ("xjtusy", "xjtu_sy", "xjtu-sy"):
         return load_xjtusy(root, conditions=conditions, cache_dir=cache_dir, use_cache=use_cache)
+    if dataset == "ims":
+        return load_ims(root, cache_dir=cache_dir, use_cache=use_cache)
+    if dataset == "cwru":
+        return load_cwru(root, cache_dir=cache_dir)
     raise ValueError(f"Unknown dataset: {dataset}")
 
 
@@ -409,4 +431,309 @@ def load_one_bearing(dataset: str, root: str | Path, bearing_id: str, **kwargs: 
     if dataset in ("xjtusy", "xjtu_sy", "xjtu-sy"):
         condition = int(bearing_id.split("_")[0])
         return load_xjtusy_bearing(root, condition=condition, bearing_id=bearing_id, **kwargs)
+    if dataset == "ims":
+        return load_ims_bearing(root, bearing_id, **kwargs)
+    if dataset == "cwru":
+        return load_cwru_bearing(root, bearing_id, **kwargs)
     raise ValueError(f"Unknown dataset: {dataset}")
+
+
+# ---------------------------------------------------------------------------
+# IMS (NASA PrognCenter) specifics
+# ---------------------------------------------------------------------------
+
+_IMS_FS = 20_480
+_IMS_SAMPLES = 20_480   # one second per acquisition file
+_IMS_INTERVAL_S = 600.0  # files are ~10 min apart
+_IMS_RPM = 2000.0
+_IMS_BEARINGS = {
+    "1": (0, 1),   # channel indices (0-based) in the 8-column file
+    "2": (2, 3),
+    "3": (4, 5),
+    "4": (6, 7),
+}
+
+
+def _ims_list_files(root: Path) -> list[Path]:
+    """Return sorted list of ASCII data files in ``root``.
+
+    The IMS raw directory contains one file per acquisition named as a
+    timestamp string (e.g. ``2003.10.22.12.06.24``). Files with common
+    non-data extensions are skipped.
+    """
+    skip = {".zip", ".pdf", ".txt", ".md", ".json", ".parquet"}
+    files = sorted(
+        [p for p in root.iterdir() if p.is_file() and p.suffix.lower() not in skip],
+        key=lambda p: p.name,
+    )
+    return files
+
+
+def _ims_load_file(path: Path, ch_indices: tuple[int, int]) -> np.ndarray:
+    """Load one IMS acquisition file; return (L,) array for the two channels stacked."""
+    data = np.loadtxt(path, dtype=np.float32)  # (20480, 8) or similar
+    n = min(data.shape[0], _IMS_SAMPLES)
+    out = np.zeros((_IMS_SAMPLES, 2), dtype=np.float32)
+    out[:n, 0] = data[:n, ch_indices[0]]
+    out[:n, 1] = data[:n, ch_indices[1]]
+    return out  # (L, 2)
+
+
+def load_ims_bearing(
+    root: str | Path,
+    bearing_id: str,
+    *,
+    cache_dir: str | Path | None = None,
+    use_cache: bool = True,
+) -> BearingRun | None:
+    """Load one IMS bearing as a ``BearingRun``.
+
+    ``bearing_id`` should be one of ``"1"``, ``"2"``, ``"3"``, ``"4"``.
+    """
+    root = Path(root)
+    if not root.is_dir():
+        return None
+    if bearing_id not in _IMS_BEARINGS:
+        raise ValueError(f"IMS bearing_id must be one of {list(_IMS_BEARINGS)}; got {bearing_id!r}")
+    ch_idx = _IMS_BEARINGS[bearing_id]
+
+    cache_dir = Path(cache_dir) if cache_dir else (root.parent / "processed" / "ims")
+    cache_key = f"ims_bearing{bearing_id}"
+    cache_pq = cache_dir / f"{cache_key}.parquet"
+    cache_meta = cache_dir / f"{cache_key}.meta.json"
+
+    sig: np.ndarray | None = None
+    if use_cache and cache_pq.exists() and cache_meta.exists():
+        try:
+            import pyarrow.parquet as _pq
+
+            meta = json.loads(cache_meta.read_text())
+            t = _pq.read_table(cache_pq)
+            df = t.to_pandas()
+            T = int(meta["n_acquisitions"])
+            L = int(meta["samples_per_acquisition"])
+            h_arr = df["h"].to_numpy(dtype=np.float32).reshape(T, L)
+            v_arr = df["v"].to_numpy(dtype=np.float32).reshape(T, L)
+            sig = np.stack([h_arr, v_arr], axis=1).astype(np.float32)
+        except Exception:
+            sig = None
+
+    if sig is None:
+        files = _ims_list_files(root)
+        if not files:
+            return None
+        acqs: list[np.ndarray] = []
+        for f in files:
+            try:
+                acq = _ims_load_file(f, ch_idx)  # (L, 2)
+                acqs.append(acq)
+            except Exception:
+                continue
+        if not acqs:
+            return None
+        sig = np.stack(acqs, axis=0)          # (T, L, 2)
+        sig = sig.transpose(0, 2, 1)          # (T, 2, L)
+        if use_cache:
+            try:
+                _phm_write_cache(cache_dir, cache_key, "nofingerprint", sig)
+                (cache_dir / f"{cache_key}_nofingerprint.meta.json").rename(cache_meta)
+            except Exception:
+                pass
+
+    return BearingRun(
+        dataset="ims",
+        condition=1,
+        bearing_id=bearing_id,
+        signal=sig,
+        channel_names=["ch_a", "ch_b"],
+        fs=_IMS_FS,
+        acquisition_interval_s=_IMS_INTERVAL_S,
+        rpm=_IMS_RPM,
+        load_N=0.0,
+        full_life=True,
+        metadata={"channel_indices": list(ch_idx), "source_root": str(root)},
+    )
+
+
+def load_ims(
+    root: str | Path,
+    *,
+    cache_dir: str | Path | None = None,
+    use_cache: bool = True,
+) -> list[BearingRun]:
+    """Load all four IMS bearings from ``root``."""
+    root = Path(root)
+    runs: list[BearingRun] = []
+    for bid in _IMS_BEARINGS:
+        run = load_ims_bearing(root, bid, cache_dir=cache_dir, use_cache=use_cache)
+        if run is not None:
+            runs.append(run)
+    return runs
+
+
+# ---------------------------------------------------------------------------
+# CWRU (Case Western Reserve University) specifics
+# ---------------------------------------------------------------------------
+
+_CWRU_FS = 48_000   # 48 kHz preferred; 12 kHz files also present
+_CWRU_SAMPLES_48K = 48_000   # 1 second at 48 kHz
+_CWRU_RPM_MAP = {
+    "0": 1797.0,
+    "1": 1772.0,
+    "2": 1750.0,
+    "3": 1730.0,
+}
+_CWRU_FAULT_PATTERN = re.compile(
+    r"^(?P<type>B|IR|OR|Normal)(?P<size>\d{3})?_(?P<load>[0-3])_(?P<rpm_id>\d+)\.mat$",
+    re.IGNORECASE,
+)
+
+
+def _cwru_parse_filename(fname: str) -> dict[str, str] | None:
+    """Parse a CWRU .mat filename into a metadata dict."""
+    m = re.match(
+        r"^(?P<type>B|IR|OR|Time_Normal|Normal)"
+        r"(?P<size>\d{3})?_(?P<pos>[0-9]+)?_?(?P<load>[0-3])_(?P<rpm_id>\d+)\.mat$",
+        fname, re.IGNORECASE,
+    )
+    if m is None:
+        # Try simpler Normal format: Time_Normal_0_097.mat
+        m2 = re.match(r"Time_Normal_(?P<load>[0-3])_(?P<rpm_id>\d+)\.mat$", fname, re.IGNORECASE)
+        if m2 is None:
+            return None
+        return {
+            "fault_type": "normal",
+            "fault_size_mils": "0",
+            "load_hp": m2.group("load"),
+            "rpm_id": m2.group("rpm_id"),
+        }
+    fault_type = m.group("type").upper()
+    if fault_type in ("NORMAL", "TIME_NORMAL"):
+        fault_type = "normal"
+    return {
+        "fault_type": fault_type.lower(),
+        "fault_size_mils": m.group("size") or "0",
+        "load_hp": m.group("load"),
+        "rpm_id": m.group("rpm_id"),
+    }
+
+
+_CWRU_ACQ_SAMPLES = 480  # ~10 ms per acquisition at 48 kHz; gives T≈100 per file
+
+
+def load_cwru_bearing(
+    root: str | Path,
+    bearing_id: str,
+    *,
+    acq_samples: int = _CWRU_ACQ_SAMPLES,
+    **_kwargs: Any,
+) -> BearingRun | None:
+    """Load one CWRU .mat file as a ``BearingRun``.
+
+    ``bearing_id`` should be the stem of the .mat filename (without extension),
+    e.g. ``"IR007_0_109"`` or ``"B014_2_124"``.
+
+    The raw signal (48 kHz, ~48 000 samples) is segmented into T acquisitions
+    of ``acq_samples`` samples each, yielding ``signal.shape = (T, 1, acq_samples)``.
+    This makes the BearingRun compatible with the HI pipeline and the sequence
+    modelling datamodule.  For each file all acquisitions share the same fault
+    condition, so ``fault_severity`` metadata is constant within the run.
+    """
+    root = Path(root)
+    mat_path = root / f"{bearing_id}.mat"
+    if not mat_path.exists():
+        return None
+
+    try:
+        import scipy.io
+    except ImportError as exc:
+        raise ImportError("scipy is required to load CWRU .mat files; install it with 'pip install scipy'") from exc
+
+    mat = scipy.io.loadmat(str(mat_path))
+
+    # Find the DE_time key (naming varies slightly between files)
+    de_key = next(
+        (k for k in mat if "DE_time" in k or (k.endswith("DE") and not k.startswith("_"))),
+        None,
+    )
+    if de_key is None:
+        # Fallback: pick the largest numeric array
+        de_key = max(
+            (k for k in mat if not k.startswith("_")),
+            key=lambda k: mat[k].size if isinstance(mat[k], np.ndarray) else 0,
+            default=None,
+        )
+    if de_key is None:
+        return None
+
+    raw = mat[de_key].squeeze().astype(np.float32)
+    # Determine FS from array length (if 48k samples ≈ 1 s → 48 kHz; else 12 kHz)
+    fs = 48_000 if raw.size >= 40_000 else 12_000
+
+    # Segment into T acquisitions of acq_samples each.
+    T = max(1, raw.size // acq_samples)
+    used = T * acq_samples
+    raw = raw[:used]
+    # shape: (T, acq_samples)
+    chunks = raw.reshape(T, acq_samples)
+    # Expand channel dim: (T, 1, acq_samples)
+    sig = chunks[:, np.newaxis, :]
+
+    meta = _cwru_parse_filename(mat_path.name)
+    if meta is None:
+        meta = {"fault_type": "unknown", "fault_size_mils": "0",
+                "load_hp": "0", "rpm_id": "0"}
+
+    rpm = _CWRU_RPM_MAP.get(meta["load_hp"], 1797.0)
+
+    # Fault severity proxy: 0 = normal, 1 = 0.007", 2 = 0.014", 3 = 0.021" (mils).
+    # Filenames use three-digit mils ("007", "021"); normalize before lookup.
+    fault_size_mils = meta.get("fault_size_mils", "0")
+    try:
+        mils_int = int(str(fault_size_mils).lstrip("0") or "0")
+    except ValueError:
+        mils_int = 0
+    if mils_int == 7:
+        severity = 1
+    elif mils_int == 14:
+        severity = 2
+    elif mils_int == 21:
+        severity = 3
+    else:
+        severity = 0
+
+    return BearingRun(
+        dataset="cwru",
+        condition=int(meta.get("load_hp", 0)),
+        bearing_id=bearing_id,
+        signal=sig,
+        channel_names=["DE_time"],
+        fs=fs,
+        acquisition_interval_s=float(acq_samples) / fs,
+        rpm=rpm,
+        load_N=0.0,
+        full_life=True,
+        eol_index=T - 1,
+        metadata={
+            "fault_type": meta["fault_type"],
+            "fault_size_mils": fault_size_mils,
+            "fault_severity": severity,
+            "load_hp": meta.get("load_hp", "0"),
+            "source_file": str(mat_path),
+        },
+    )
+
+
+def load_cwru(
+    root: str | Path,
+    *,
+    cache_dir: str | Path | None = None,  # unused; accepted for API parity
+) -> list[BearingRun]:
+    """Load all CWRU .mat files from ``root``."""
+    root = Path(root)
+    runs: list[BearingRun] = []
+    for mat_file in sorted(root.glob("*.mat")):
+        run = load_cwru_bearing(root, mat_file.stem)
+        if run is not None:
+            runs.append(run)
+    return runs

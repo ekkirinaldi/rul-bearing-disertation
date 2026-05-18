@@ -12,7 +12,7 @@ from typing import Literal
 
 import numpy as np
 
-LabelScheme = Literal["linear", "piecewise", "piecewise_liu2026"]
+LabelScheme = Literal["linear", "piecewise", "piecewise_liu2026", "fault_severity"]
 
 
 def detect_degradation_onset_liu2026(
@@ -83,11 +83,12 @@ def make_rul_labels(
     *,
     scheme: LabelScheme = "linear",
     degradation_onset: int | None = None,
+    constant_value: float | None = None,
 ) -> np.ndarray:
-    """Build RUL labels in [0, 1] for a single bearing.
+    """Build labels in [0, 1] for a single bearing.
 
-    For ``piecewise`` you must pass ``degradation_onset`` (call
-    ``detect_degradation_onset`` first using the un-smoothed RMS series).
+    For ``piecewise`` you must pass ``degradation_onset``.
+    For ``fault_severity`` you must pass ``constant_value`` in [0, 1].
     """
     T = int(n_acquisitions)
     if T < 2:
@@ -104,6 +105,10 @@ def make_rul_labels(
         if ds < eol:
             decay_len = eol - ds
             rul[ds:] = (eol - np.arange(ds, T, dtype=np.float32)) / decay_len
+    elif scheme == "fault_severity":
+        if constant_value is None:
+            raise ValueError("fault_severity labels require constant_value in [0, 1].")
+        rul = np.full(T, float(constant_value), dtype=np.float32)
     else:
         raise ValueError(f"Unknown label scheme: {scheme}")
     return np.clip(rul, 0.0, 1.0).astype(np.float32)
