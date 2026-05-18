@@ -206,6 +206,74 @@ else
   ok "Semua \\caption terisi."
 fi
 
+# --- 11. "di mana" sebagai kata ganti relatif --------------------------
+echo ""
+echo "--- 11. 'di mana' sebagai kata ganti relatif ---"
+hits=$(grep -inE '(,\s*di\s+mana\b|[.;]\s+[Dd]i\s+mana\b)' $ALL_BODY 2>/dev/null \
+  | grep -vE ':[[:space:]]*%' || true)
+if [ -n "$hits" ]; then
+  warn "Ditemukan pola 'di mana' — kemungkinan kata ganti relatif (calque 'where'). Ganti dengan 'yang', 'tempat', 'pada saat', atau restrukturisasi:"
+  echo "$hits"
+else
+  ok "Tidak ada pola 'di mana' yang mencurigakan."
+fi
+
+# --- 12. Kalimat dimulai dengan konjungsi terlarang --------------------
+echo ""
+echo "--- 12. Kalimat dimulai dengan Maka/Sedangkan/Sehingga ---"
+hits=$(grep -inE '^\s*(Maka|Sedangkan|Sehingga)\b' $ALL_BODY 2>/dev/null \
+  | grep -vE ':[[:space:]]*%' || true)
+if [ -n "$hits" ]; then
+  warn "Kalimat dimulai dengan konjungsi terlarang (Maka/Sedangkan/Sehingga). Restrukturisasi kalimat:"
+  echo "$hits"
+else
+  ok "Tidak ada kalimat yang dimulai dengan Maka/Sedangkan/Sehingga."
+fi
+
+# --- 13. Heading berakhir dengan titik ---------------------------------
+echo ""
+echo "--- 13. Heading \\section/\\subsection berakhir dengan titik ---"
+hits=$(grep -inE '\\(sub)*section\*?\{[^}]*\.\s*\}' $ALL_BODY 2>/dev/null \
+  | grep -vE ':[[:space:]]*%' || true)
+if [ -n "$hits" ]; then
+  warn "Judul subbab berakhir dengan titik (pedoman: judul bukan kalimat — hapus titiknya):"
+  echo "$hits"
+else
+  ok "Tidak ada heading yang berakhir dengan titik."
+fi
+
+# --- 14. \footnote di bab body -----------------------------------------
+echo ""
+echo "--- 14. \\footnote di bab body ---"
+hits=$(grep -inE '\\footnote\{' $ALL_BODY 2>/dev/null \
+  | grep -vE ':[[:space:]]*%' \
+  | grep -vE 'kata-pengantar' || true)
+if [ -n "$hits" ]; then
+  warn "Ditemukan \\footnote di body. Referensi harus inline via \\citetitb{}, bukan catatan kaki:"
+  echo "$hits"
+else
+  ok "Tidak ada \\footnote di body."
+fi
+
+# --- 15. Sitasi (\cite) di dalam teks abstrak --------------------------
+echo ""
+echo "--- 15. \\cite di teks abstrak ---"
+ABSTRACTS=""
+[ -f "chapters/00-abstrak-id.tex" ]  && ABSTRACTS="$ABSTRACTS chapters/00-abstrak-id.tex"
+[ -f "chapters/00-abstract-en.tex" ] && ABSTRACTS="$ABSTRACTS chapters/00-abstract-en.tex"
+if [ -n "$ABSTRACTS" ]; then
+  hits=$(grep -inE '\\(cite|citetitb|citenameitb|parencite|textcite)\{' $ABSTRACTS 2>/dev/null \
+    | grep -vE ':[[:space:]]*%' || true)
+  if [ -n "$hits" ]; then
+    fatal "Ditemukan sitasi di abstrak. Pedoman ITB §II.2: abstrak tidak boleh memuat rujukan literatur:"
+    echo "$hits"
+  else
+    ok "Tidak ada sitasi di teks abstrak."
+  fi
+else
+  warn "File abstrak (00-abstrak-id.tex / 00-abstract-en.tex) tidak ditemukan — lewati cek #15."
+fi
+
 # --- Summary -----------------------------------------------------------
 echo ""
 echo "============================================================"

@@ -1,0 +1,1173 @@
+  PERAWATAN PREDIKTIF UNTUK SISTEM PRODUKSI
+     DENGAN PENDEKATAN ANALISIS BIG DATA DAN
+
+KECERDASAN BUATAN MENGGUNAKAN DATA KONDISI
+ MESIN DAN INFORMASI KUALITAS YANG REAL TIME
+
+                                 DISERTASI
+
+                         Karya tulis sebagai salah satu syarat
+                        untuk memperoleh gelar Doktor dari
+
+                               Institut Teknologi Bandung
+
+                                             Oleh
+
+                             TOTO SUHARTO
+                               NIM: 33420002
+
+    (Program Studi Doktor Teknik Dan Manajemen Industri)
+
+                INSTITUT TEKNOLOGI BANDUNG
+                                 Agustus 2025
+                                   ABSTRAK
+
+   PERAWATAN PREDIKTIF UNTUK SISTEM PRODUKSI
+      DENGAN PENDEKATAN ANALISIS BIG DATA DAN
+
+KECERDASAN BUATAN MENGGUNAKAN DATA KONDISI
+  MESIN DAN INFORMASI KUALITAS YANG REAL TIME
+
+                                               Oleh
+
+                              TOTO SUHARTO
+                                NIM: 33420002
+
+     (Program Studi Doktor Teknik Dan Manajemen Industri)
+
+Pemerintah Indonesia telah berkomitmen untuk membangun industri manufaktur
+yang kokoh dengan diluncurkannya Making Indonesia 4.0 pada bulan April 2018
+untuk meningkatkan produktivitas di industri manufaktur sehingga meningkatkan
+daya saing Indonesia secara global dan juga mengangkat pangsa pasar ekspor
+global. Kelima sektor industri yang menjadi prioritas yaitu industri makanan dan
+minuman, tekstil, kimia, otomotif dan elektronika, diharapkan menjadi ujung
+tombak dalam penerapan teknologi industri 4.0, seperti Internet of Things (IoT), 3D
+printing, robotika maju, analisis big data dan kecerdasan buatan.
+
+Saat ini implementasi industri 4.0 di negara-negara Eropa sudah sangat maju,
+sementara industri manufaktur di Indonesia masih harus mengejar ketinggalan.
+Salah satu implementasi industri 4.0 adalah perawatan cerdas atau smart
+maintenance. Terdapat dua jenis perawatan yang umum dilakukan pada industri
+manufaktur saat ini, yaitu perawatan korektif dan perawatan preventif. Kedua jenis
+perawatan tersebut memiliki kelemahan seperti terjadinya kerusakan mesin yang
+tidak terduga dan mengakibatkan produksi berhenti atau melakukan pergantian
+mesin terlalu cepat. Oleh karena itu, diperlukan penerapan perawatan prediktif
+dengan menggunakan data-data sensor yang dianalisis menggunakan kecerdasan
+buatan sebagai bentuk penerapan implementasi industri 4.0 yaitu perawatan cerdas.
+
+Penelitian ini bertujuan untuk mengembangkan model perawatan prediktif berbasis
+integrasi data sensor heterogen, yang mencakup data sensor kondisi mesin serta
+informasi kualitas produk (misalnya vibration checking dan radial clearance
+checking) secara waktu nyata. Pengembangan dilakukan melalui pendekatan
+gabungan machine learning (ML) dan deep learning (DL), yang memadukan
+metode statistik, model ML konvensional, dan arsitektur DL untuk meningkatkan
+kemampuan deteksi anomali dan prediksi Remaining Useful Life (RUL) dengan
+tetap mempertahankan Overall Equipment Effectiveness (OEE) dan kualitas produk
+sesuai spesifikasi manufaktur.
+
+Selain itu, penelitian ini mengimplementasikan metode Explainable Artificial
+Intelligence (XAI), khususnya SHAP (SHapley Additive exPlanations), untuk
+mengidentifikasi kepentingan fitur dari variabel sensor yang berpengaruh pada
+
+                                                      i
+performa mesin dan kualitas produk. Pendekatan ini memberikan transparansi dan
+interpretabilitas model, sehingga hasil prediksi dapat dipahami dan dipercaya oleh
+engineer serta lebih mudah diadopsi dalam lingkungan industri manufaktur.
+Penelitian dimulai dengan melakukan studi literatur mengenai perawatan prediktif
+secara komprehensif sehingga peta penelitian mutakhir (state of the art) dapat
+digambarkan serta celah teori dengan penelitian sebelumnya didapatkan untuk
+membuat perumusan masalah dan tujuan penelitian. Selanjutnya akan dilakukan
+pengujian ulang praktik terbaik mengenai perawatan prediktif pada objek
+penelitian. Pengembangan model akan dimulai dengan melakukan deteksi anomali
+pada proses produksi ball bearing dengan menerapkan machine learning dan deep
+learning pada objek penelitian. Model yang dikembangkan kemudian akan
+disimplifikasi sesuai dengan kebutuhan objek penelitian.
+Secara ilmiah, penelitian ini berkontribusi pada pengembangan perawatan prediktif
+waktu nyata dengan integrasi data heterogen yang selama ini masih jarang
+dilakukan, serta menghadirkan model yang tidak hanya akurat tetapi juga dapat
+dijelaskan. Secara praktis, implementasi model diharapkan mampu mengurangi
+waktu henti yang tidak terencana, meningkatkan efisiensi operasional dan OEE,
+menjaga kualitas ball bearing, serta menurunkan biaya perawatan melalui
+pengambilan keputusan yang lebih cerdas dan berbasis data.
+Kata kunci: perawatan prediktif, big data, kecerdasan buatan, data kualitas,
+machine learning.
+
+                                                     ii
+                                  ABSTRACT
+
+  PREDICTIVE MAINTENANCE IN PRODUCTION SYSTEM
+        WITH BIG DATA ANALYTICS AND ANTIFICIAL
+
+    INTELLIGENCE USING MACHINE CONDITIONA AND
+                      QUALITY DATA REAL TIME
+
+                                                By
+
+                              TOTO SUHARTO
+                                NIM: 33420002
+
+  (Doctoral Program in Industrial Engineering and Management)
+
+The Government of Indonesia has committed to strengthening the manufacturing
+industry through the launch of Making Indonesia 4.0 in April 2018, with the
+objective of increasing productivity in the manufacturing sector, thereby enhancing
+Indonesia's global competitiveness and expanding its share in the global export
+market. The five industrial sectors prioritized, which are food and beverage,
+textiles, chemicals, automotive, and electronics, are expected to spearhead the
+implementation of Industry 4.0 technologies, such as the Internet of Things (IoT),
+3D printing, advanced robotics, big data analytics, and artificial intelligence (AI).
+
+Currently, the implementation of Industry 4.0 is well advanced in European
+countries, whereas Indonesia's manufacturing industry must continue to catch up.
+One important implementation of Industry 4.0 is smart maintenance. There are two
+types of maintenance practices commonly applied in manufacturing systems today:
+corrective maintenance and preventive maintenance. Both have shortcomings,
+including unexpected machine failures that cause production stoppages or
+premature replacement of components. Therefore, the adoption of predictive
+maintenance utilizing sensor data analyzed through AI technologies is necessary
+as part of the Industry 4.0 approach to smart maintenance.
+
+This research aims to develop a predictive maintenance model based on the
+integration of heterogeneous sensor data, including machine condition data and
+real-time product quality information (e.g., vibration checking and radial
+clearance checking). The model is developed using a hybrid approach that
+combines machine learning (ML) and deep learning (DL), integrating statistical
+methods, conventional ML models, and DL architectures to improve anomaly
+detection and Remaining Useful Life (RUL) prediction capabilities while
+maintaining Overall Equipment Effectiveness (OEE) and product quality in
+accordance with manufacturing standards.
+
+In addition, this research implements Explainable Artificial Intelligence (XAI)
+methods, specifically SHAP (SHapley Additive exPlanations), to identify feature
+importance across sensor variables that influence machine performance and
+product quality. This approach provides transparency and interpretability,
+
+                                                     iii
+enabling engineers to better understand and trust the model's decision-making
+process, thereby supporting its adoption in manufacturing environments.
+The research begins with a comprehensive literature review on predictive
+maintenance to establish the state of the art and identify theoretical gaps that
+inform the formulation of research problems and objectives. Subsequently, best
+practices in predictive maintenance will be re-evaluated within the research
+context. Model development starts with anomaly detection in the ball bearing
+production process using ML and DL methods, followed by model simplification
+tailored to industrial requirements.
+Scientifically, this research contributes to advancing real-time predictive
+maintenance with the integration of heterogeneous data, which remains limited in
+prior studies, while delivering a model that is not only accurate but also
+explainable. Practically, the implementation of the proposed model is expected to
+reduce unplanned downtime, improve operational efficiency and OEE, maintain
+ball bearing product quality, and reduce maintenance costs through smarter, data-
+driven decision-making.
+Keywords: predictive maintenance, big data, artificial intelligence, quality
+data, machine learning.
+
+                                                     iv
+                        HALAMAN PENGESAHAN
+
+   PERAWATAN PREDIKTIF UNTUK SISTEM PRODUKSI
+      DENGAN PENDEKATAN ANALISIS BIG DATA DAN
+
+KECERDASAN BUATAN MENGGUNAKAN DATA KONDISI
+   MESIN DAN INFORMASI KUALITAS YANG REAL TIME
+
+HALAMAN PENGESAHAN
+
+                                               Oleh
+
+                                  Toto Suharto
+                                NIM: 33420002
+     (Program Studi Doktor Teknik dan Manajemen Industri)
+
+                                 Institut Teknologi Bandung
+
+                 Menyetujui
+             Tim Pembimbing
+         Tanggal 28 Agustus 2025
+
+                     Ketua
+
+     ______________________
+Prof. Dr. Ir. Kadarsah Suryadi, DEA
+
+Anggota                                               Anggota
+
+                        ______________________                 ______________________
+Prof. Ir. Bermawi Priyatna Iskandar, M.Sc., Ph.D.  Prof. Dr. Ir. Bambang Riyanto Trilaksono
+
+                                                   -
+                                                   v
+                            KATA PENGANTAR
+
+Segala puji dan syukur penulis panjatkan kepada Allah SWT yang telah
+memberikan rahmat dan hidayah-Nya sehingga penulis dapat menyelesaikan
+dokumen proposal desertasi program doktor ini dengan baik. Penyusunan dokumen
+proposal disertasi ini merupakan syarat ujian proposal disertasi pada program studi
+Teknik dan Manajemen Industri (TMI) Fakultas Teknologi Industri (FTI) Institut
+Teknologi Bandung (ITB). Ujian proposal merupakan salah satu syarat kelulusan
+mahasiswa program doktoral dalam proses penyusunan disertasi.
+
+Disertasi yang diusulkan oleh penulis berjudul "Perawatan Prediktif untuk Sistem
+Produksi dengan Pendekatan Analisis Big Data dan Kecerdasan Buatan
+menggunakan Data Kondisi Mesin dan Informasi Kualitas yang Real Time."
+
+Penulis mengucapkan terima kasih kepada:
+    1. Prof. Dr. Kadarsah Suryadi, DEA, Prof. Ir. Bermawi Priyatna Iskandar,
+         M.Sc., Ph.D. dan Prof. Dr. Ir. Bambang Riyanto Trilaksono selaku
+         Promotor dan Co-Promotor atas bimbingan dan masukannya yang bernilai
+         dalam menyusun dan menyelesaikan proposal desertasi ini.
+    2. Khoirul Muslim, S.T, M.Sc., Ph.D. selaku Ketua Program Studi Doktor
+         Teknik dan Manajemen Industri atas masukan dan arahannya dalam
+         menyelesaikan proposal desertasi ini.
+    3. Para Dosen penguji ujian kualifikasi, ujian proposal dan seminar kemajuan
+         yang sudah memberikan masukan yang konstruktif dan membuat proposal
+         ini menjadi lebih baik.
+    4. Keluarga dan teman-teman yang selalu memberikan dukungan dan doa
+         untuk kesuksesan menyelesaikan studi program doktor ini.
+
+                                                     vi
+Penulis menyadari bahwa penulisan proposal ini jauh dari kata sempurna, maka
+penulis mengharapkan masukan untuk perbaikan desertasi ini sehingga dapat
+menjadi acuan untuk penelitian lanjutan dan penyelesaian disertasi.
+
+                                                                     Jakarta, 24 Agustus 2025
+                                                                                    Toto Suharto
+
+                                                    vii
+                                  DAFTAR ISI
+
+ABSTRAK ............................................................................................................... I
+
+ABSTRACT ........................................................................................................... III
+
+HALAMAN PENGESAHAN .....................................................................................V
+
+KATA PENGANTAR...............................................................................................VI
+
+DAFTAR ISI ........................................................................................................ VIII
+
+DAFTAR GAMBAR DAN ILUSTRASI ........................................................................ X
+
+DAFTAR TABEL ................................................................................................... XII
+
+DAFTAR SINGKATAN DAN LAMBANG................................................................. XIII
+
+BAB I PENDAHULUAN ........................................................................................ 1
+
+I.1 Latar Belakang .................................................................................................................1
+I.2 Perumusan Masalah ......................................................................................................15
+I.3 Tujuan Penelitian...........................................................................................................15
+I.4 Manfaat Penelitian ........................................................................................................17
+I.5 Batasan dan Asumsi Penelitian......................................................................................17
+I.6 Kontribusi dan Posisi Penelitian.....................................................................................18
+
+   I.6.1 Tahap Perencanaan .....................................................................................................19
+   I.6.2 Rancangan dan Persiapan Penelitian ..........................................................................27
+   I.6.3 Pengembangan Model ................................................................................................33
+   I.6.4 Komparasi Model dengan Dunia Nyata.......................................................................33
+   I.6.5 Aksi untuk Perbaikan Situasi .......................................................................................33
+   I.6.6 Kesimpulan dan Saran .................................................................................................33
+   I.6.7 Sistematika Penelitian .................................................................................................34
+
+BAB II TINJAUAN PUSTAKA ............................................................................ 36
+
+II.1 Product Quality Control.................................................................................................36
+II.2 Industri 4.0 ....................................................................................................................36
+
+                                                    viii
+II.3 Internet of Things ..........................................................................................................37
+
+II.4 Big Data .........................................................................................................................37
+
+II.5 Artificial Intelligence......................................................................................................39
+
+II.6 Machine Learning ..........................................................................................................39
+
+II.6.1   Deep Learning .........................................................................................................42
+
+II.6.2   Explainable AI dan SHAP (SHapley Additive exPlanations) .....................................44
+
+II.7 Perawatan Prediktif.......................................................................................................46
+
+BAB III PENGEMBANGAN MODEL................................................................... 48
+
+III.1 Sintesa Model State of the Art ...................................................................................48
+
+III.2 Model Perawatan Prediktif untuk Sistem Produksi dengan Pendekatan Analisis Big
+
+Data dan Kecerdasan Buatan Menggunakan Data Kondisi Mesin dan Informasi Kualitas Waktu-
+
+Nyata (Usulan) ..........................................................................................................................61
+
+III.2.1  Keterkaitan Model dengan Tujuan Penelitian.........................................................66
+
+III.2.2  Studi Kasus I: Proses Seleksi Algoritma ...................................................................67
+
+III.2.3  Studi Kasus II: Perbandingan Algoritma dan Integrasi Data Kualitas ......................68
+
+III.2.4  Studi Kasus III: Simplifikasi dan Peluncuran Model.................................................72
+
+BAB IV PENGUMPULAN DAN PENGOLAHAN DATA.......................................... 73
+
+IV.1 Sumber Vibrasi ..............................................................................................................73
+IV.2 Analisis Spektrum..........................................................................................................74
+IV.3 Sensor untuk mengkoleksi data.....................................................................................79
+IV.4 Koleksi data dari mesin..................................................................................................80
+
+BAB V ANALISIS DAN PEMBAHASAN.................................................................. 82
+
+V.1 Pengolahan Data Vibrasi................................................................................................82
+V.2 Analisis Data Dengan Trend (Time-based Monitoring)...................................................83
+V.3 Analisis Data Dengan Spektrum (Frequency-based Monitoring) ....................................83
+V.4 Model Pengembangan Perawatan Prediktif ..................................................................88
+
+         ix
+                 DAFTAR GAMBAR DAN ILUSTRASI
+
+Gambar I.1 Perjalanan Industri 4.0 ......................................................................... 1
+Gambar I.2 Arsitektur analisis big data. ................................................................. 4
+Gambar I.3 Contoh kasus penerapan analisis big data dalam sistem produksi.5
+Gambar I.4 Studi kasus analisis big data. Sumber: (Cheng, Zhang, & Gao, 2019).
+................................................................................................................................. 5
+Gambar I.5 Tool aus di pada proses cutting (kiri), data pengukuran dan model
+yang disesuaikan (kanan). ....................................................................................... 7
+Gambar I.6 Prediksi sisa waktu penggunaan (RUL) menggunakan dua model. .... 7
+Gambar I.7 Arsitektur CPA dan Health Index Hierarchy. ..................................... 9
+Gambar I.8 Sudut pandang level manajemen dan level peralatan (equipment)...... 9
+Gambar I.9 Factory Health Index (FHI) sebelum dan sesudah perawatan
+katup gas. 10
+Gambar I.10 Komponen-komponen ball bearing. Sumber: (SKF Group, 2017) . 11
+Gambar I.11 Proses permesinan ball bearing. Sumber: (SKF Group, 2017) ....... 11
+Gambar I.12 Diagram Tulang Ikan penelitian ...................................................... 13
+Gambar I.13 Sistem pengujian ball bearing. Sumber: (SKF Group, 2017) ......... 14
+Gambar I.14 Skema pendekatan penelitian........................................................... 16
+Gambar I.15 Taksonomi penelitian....................................................................... 20
+Gambar III.1 Model penelitian acuan ................................................................... 48
+Gambar III.2 Diagram Alur Pengembangan Model Perawatan Prediktif............. 62
+Gambar IV.1 Konversi Getaran Menjadi Sinyal Melalui Sensor Vibrasi
+(Predictive Maintenance and Vibration Signature Analysis II, 1997) .................. 73
+
+                                                     x
+Gambar IV.2 Ilustrasi Sinyal Dalam Domain Waktu dan Domain Frekeunsi
+(Predictive Maintenance and Vibration Signature Analysis II, 1997) .................. 74
+Gambar IV.3 Display yang ditunjukan lewat time domain atau frequency domain
+(Predictive Maintenance and Vibration Signature Analysis II, 1997) .................. 75
+Gambar IV.4 Konversi Getaran Menjadi Spektrum (Signal Processing in Detail,
+Mobius Institute, 2016) ......................................................................................... 75
+Gambar IV.5 Spektrum Normal Dari Data Sensor Vibrasi (Signal Processing in
+Detail, Mobius Institute, 2016) ............................................................................. 76
+Gambar IV.6 Kecepatan Dan Percepatan Dalam Spektrum (Signal Processing in
+Detail, Mobius Institute, 2016) ............................................................................. 77
+Gambar IV.7 Perbandingan Baseline Dengan Kenaikan Frekuensi 1x Dan Vibrasi
+Bearing (Signal Processing in Detail, Mobius Institute, 2016) ............................ 77
+Gambar IV.8 Proses Enveloping Atau Demodulasi Amplitudo (Signal Processing
+in Detail, Mobius Institute, 2016) ......................................................................... 78
+Gambar IV.9 Cara Kerja Akselerometer .............................................................. 80
+Gambar IV.10 Proses Koleksi Data Dari Mesin ................................................... 80
+Gambar IV.11 Penempatan Sensor di Mesin ........................................................ 81
+Gambar V.1 Pengolahan Data Vibrasi .................................................................. 82
+Gambar V.2 Contoh Tren dan Spektrum ............................................................. 84
+Gambar V.3 Contoh Looseness dan Envelope ...................................................... 85
+
+                                                     xi
+                               DAFTAR TABEL
+
+Tabel I-1 Posisi penelitian .................................................................................... 21
+Tabel III-1 Pemaparan State of the Art penelitian (SotA) Perawatan Prediktif
+(PdM) .................................................................................................................... 49
+Tabel III-2 Pemaparan State of the Art penelitian (SotA) Perawatan Prediktif
+(PdM) (lanjutan).................................................................................................... 51
+Tabel III-3 Pemaparan State of the Art penelitian (SotA) Perawatan Prediktif
+(PdM) (lanjutan).................................................................................................... 53
+Tabel III-4 Pemaparan State of the Art penelitian (SotA) Perawatan Prediktif
+(PdM) (lanjutan).................................................................................................... 55
+Tabel III-5 Pemaparan State of the Art penelitian (SotA) Perawatan Prediktif
+(PdM) (lanjutan).................................................................................................... 57
+Tabel III-6 Sintesa model acuan yang digunakan dalam pengembangan model.. 59
+Tabel III-7. Keterkaitan Algoritma Kandidat dengan Tujuan Penelitian.............. 66
+
+                                                    xii
+DAFTAR SINGKATAN DAN LAMBANG
+
+SINGKATAN                           Nama             Pemakaian
+           Artificial Intelligence                   pertama kali
+AI                                                   pada halaman
+TPS
+ARIMA                                                        1
+ANN
+RUL        Toyota Production System                  1
+AMCoT
+CPA        Autoregressive Integrated Moving Average  4
+DHI
+FHI        Artificial Neural Network                 6
+FMEA
+HIH        Remaining Useful Life                     6
+MHI
+RF         Advanced Manufacturing Cloud of Things    7
+SHI
+CBM        Cyber-Physical Agent                      7
+CNN
+DBN        Device Health Index                       8
+DRL
+DT         Factory Health Index                      8
+GAN
+OSA-CBM    Failure Mode and Effects Analysis         8
+
+PdM        Health Index Hierarchy                    8
+R2F
+RNN        Module Health Index                       8
+SVM
+           Random Forest                             8
+
+           Station Health Index                      8
+
+           Condition-Based Maintenance               18
+
+           Convolutional Neural Network              18
+
+           Deep Belief Network                       18
+
+           Deep Reinforcement Learning               18
+
+           Decision Tree                             18
+
+           Generative Adversarial Network            18
+
+           Open System Architecture for Condition    18
+
+           Based Monitoring
+
+           Predictive Maintenance                    18
+
+           Run-to-Failure                            18
+
+           Recurrent Neural Network                  18
+
+           Support Vector Machine                    18
+
+                                 xiii
+SINGKATAN  Nama                                Pemakaian
+                                               pertama kali
+ML         Machine Learning                    pada halaman
+LR         Linear Regression
+DL         Deep Learning                              20
+IoT        Internet of Things                         21
+CPD        Cyber-Physical System                      22
+IIoT       Industrial Internet of Things              23
+BN         Bayesian Network                           25
+GRU        Gated Recurrent Units                      25
+LSTM       Long Short-Term Memory                     31
+SVR        Support Vector Regression                  31
+AE         Auto Encoder                               31
+PM         Preventive Maintenance                     31
+OEE        Overall Equipment Effectiveness            32
+OGE        Overall Tool Group Efficiency              33
+IPM        Intelligent Predictive Maintenance         34
+                                                      34
+                                                      37
+
+           xiv
+                         Bab I Pendahuluan
+
+I.1 Latar Belakang
+Pemerintah Indonesia telah berkomitmen untuk membangun industri manufaktur
+yang kokoh dengan diluncurkannya Making Indonesia 4.0 pada bulan April 2018.
+Program ini diharapkan dapat meningkatkan produktivitas di industri manufaktur
+sehingga meningkatkan daya saing Indonesia secara global dan juga mengangkat
+pangsa pasar ekspor global. Pemerintah dalam hal ini telah menetapkan fokus
+penerapan industri 4.0 di lima sektor industri yang merupakan penyumbang terbesar
+untuk ekspor dan penyedia kesempatan untuk tenaga kerja terbanyak. Lima sektor
+industri tersebut terdiri atas industri makanan dan minuman, tekstil, kimia, otomotif
+dan elektronika. Kelima sektor tersebut diharapkan menjadi ujung tombak dalam
+penerapan teknologi industri 4.0, seperti Internet of Things (IoT), 3D printing,
+robotika maju, analisis big data dan kecerdasan buatan.
+
+                             Gambar I.1 Perjalanan Industri 4.0
+
+                                                     1
+Penerapan Industri 4.0 pada kelima sektor industri diharapkan dapat menyelesaikan
+permasalahan pada delapan aspek seperti yang dapat dilihat pada Gambar I.1.
+Delapan aspek tersebut meliputi peningkatan produktivitas dalam proses produksi,
+mengurangi total waktu henti mesin pada utilisasi aset, peningkatkan produktivitas
+dengan melakukan otomasi produksi, mengurangi biaya inventaris, mengurangi
+biaya untuk manajemen kualitas, meningkatkan akurasi peramalan produksi,
+mengurangi waktu menuju pasar bagi suatu produk, dan mengurangi biaya
+perawatan. Studi doktoral ini akan berfokus pada empat dari delapan aspek tersebut,
+meliputi aspek proses, utilisasi aset, kualitas, dan layanan.
+
+Pemerintah telah menetapkan 10 prioritas nasional dalam inisiatif Making
+Indonesia 4.0 untuk merevitalisasi industri manufaktur. Beberapa prioritas nasional
+yang sangat berhubungan dengan tujuan studi doktoral ini yaitu membangun
+infrastruktur digital nasional, peningkatan kualitas SDM, membangun ekosistem
+inovasi dan insentif untuk investasi teknologi. Salah satu aspek dalam mendorong
+implementasi industri 4.0 di Indonesia adalah penerapan sistem produksi sesuai
+dengan metode lean manufacturing. Metode ini bisa menjadi mesin penggerak yang
+mempercepat implementasi industri 4.0 di perusahaan-perusahaan manufaktur.
+Lean manufacturing yang lahir dari Toyota Production System (TPS) merupakan
+prinsip dalam sistem produksi yang sangat memperhatikan perbaikan yang
+dilakukan secara terus menerus (continous improvement), memanfaatkan sumber
+daya secara optimal dan menghilangkan kegiatan yang tidak menghasilkan nilai
+tambah (waste atau non-value added activities).
+
+                                                     2
+Prinsip-prinsip lean manufacturing yang diterapkan di industri manufaktur saat ini
+meliputi sistem tarik (hanya memproduksi dan memasok yang dibutuhkan
+pelanggan), menghindari kesalahan secara preventif, berorientasi kepada proses
+dan fleksibel, standardisasi dari proses, transparansi sehingga deviasi mudah
+dideteksi, dan perbaikan yang terus menerus. Perkembangan dan penerapan
+teknologi industri 4.0 di industri manufaktur, seperti Internet of Things (IoT),
+integrasi antara IT (Information Technology) dan OT (Operation Technology) serta
+sensor-sensor yang digunakan di mesin produksi yang semakin memiliki
+kecerdasan lokal, perusahaan manufaktur bisa mengumpulkan data-data produksi
+dari berbagai titik di mesin produksi ataupun dari proses produksi itu sendiri. Data-
+data ini kemudian bisa dimanfaatkan untuk mengoptimalkan sistem produksi sesuai
+lean manufacturing.
+
+Terkait dengan aspek menghindari kesalahan (fault prevention) dalam sistem lean
+manufacturing telah diterapkan perawatan preventif (preventive maintenance)
+dengan jadwal yang teratur. Seperti yang dijelaskan oleh (Ayvaz & Alpay, 2021),
+perawatan preventif biasanya dilakukan dengan menggantikan komponen atau
+peralatan yang digunakan setelah terjadi kerusakan atau untuk jangka waktu yang
+sudah ditentukan. Pendekatan preventif ini memiliki kekurangan karena dua hal,
+mengganti peralatan yang terlalu dini sehingga mengakibatkan biaya tambahan atau
+terlambat mengganti peralatan sehingga terjadi kerusakan mesin yang
+mengakibatkan produksi berhenti. Produksi berhenti mengakibatkan kerugian pada
+perusahaan.
+
+Teknologi industri 4.0 seperti kecerdasan buatan, machine learning dan analisis big
+data, menghasilkan sistem perawatan baru yang bersifat prediktif (predictive
+maintenance) seperti yang digunakan pada penelitian (Einabadi et al., 2019),
+(Traini et al., 2019), dan (Ayvaz & Alpay, 2021). Penggunaan analisis big data dan
+kecerdasan buatan digunakan untuk optimalisasi parameter dalam menjalankan
+mesin produksi atau penunjang pengambilan keputusan dalam manajemen kualitas
+produk di perusahaan manufaktur seperti yang diuraikan (Zhu et al., 2024).
+
+                                                     3
+Implementasi analisis big data saat ini pada umumnya menggunakan arsitektur
+seperti pada Gambar I.2, dimana data yang bersumber dari sistem produksi
+kemudian dikoleksi atau disimpan dalam sistem penyimpanan data seperti sistem
+Kafka untuk kemudian diproses menggunakan metode analisis big data tertentu
+menggunakan sistem perangkat lunak Hadoop. Hasil analisis ini kemudian
+ditampilkan dalam bentuk presentasi atau visualisasi kepada pengguna yang
+bersangkutan menggunakan aplikasi seperti perangkat lunak Tableau atau yang
+berbasis web. Implementasi aplikasi seperti ini dapat memberikan jawaban atas
+tantangan (pain point) yang dihadapi perusahaan manufaktur. Selanjutnya
+diharapkan sistem seperti ini bisa diintegrasikan dalam sistem produksi yang lebih
+luas lagi lingkupnya.
+
+                          Gambar I.2 Arsitektur analisis big data.
+
+Saat ini implementasi industri 4.0 di negara-negara Eropa sudah sangat maju,
+sementara industri manufaktur di Indonesia masih harus mengejar ketinggalan. Dari
+berbagai kasus implementasi di negara-negara Eropa, perusahaan manufaktur di
+Indonesia bisa belajar dan mengadopsi solusi yang sudah ada. Meskipun demikian
+beberapa implementasi industri 4.0 terutama yang menggunakan analisis big data
+masih terlihat secara parsial dan belum terintegrasi penuh dengan sistem produksi.
+Aplikasi analisis big data saat ini umumnya mencakup bidang perbaikan waktu
+siklus dalam proses produksi, analisis penyebab utama (root cause analysis) atau
+pendeteksian anomali (anomaly detection) dalam sistem manajemen kualitas,
+
+                                                     4
+optimasi kapasitas dalam bidang logistik ataupun pengurangan waktu pengetesan
+suatu produk. Contoh kasus implementasi analisis big data umumnya bertahap dari
+metode deskriptif, diagnostik, prediktif baru mengarah ke pendekatan kognitif dan
+otomatis seperti diilustrasikan pada Gambar I.3.
+
+                    Plant/product/line/station performance
+       Descriptive dashboards
+
+       Diagnostic   Test Time Reduction
+                    Root Cause Analysis
+
+       Predictive    Anomaly detection & predictive of
+                    anomalies
+
+       Cognitive &  Automated Optical Inspection
+       Automated
+
+Gambar I.3 Contoh kasus penerapan analisis big data dalam sistem produksi.
+
+Sebagai contoh, Gambar I.4 menampilkan studi kasus dengan menggunakan
+analisis big data untuk mengidentifikasikan parameter yang sangat berpengaruh
+dalam proses produksi. Setelah melakukan identifikasi, langkah berikutnya adalah
+membuat analisis penyebab utama terjadinya produk yang rusak serta memberikan
+rekomendasi perbaikan parameter terkait. Namun, proses tersebut masih
+dilakukan secara manual dan belum terintegrasi dengan sistem produksi.
+
+PRODUCT & DATA METHODOLOGY                              RESULTS
+
+Pressure, speed, and Using ARIMA Model,
+
+current data of the LSTM Neural Networks,
+
+bearing production and ARIMA-LSTM
+
+line.               Prediction Model
+
+Gambar I.4 Studi kasus analisis big data. Sumber: (Cheng, Zhang, & Gao, 2019).
+
+                    5
+Penelitian yang dilakukan (Einabadi, Baboli, & Ebrahimi, 2019) menjelaskan
+bahwa perawatan prediktif dapat dilakukan dengan menggunakan data sensor yang
+dianalisis menggunakan kecerdasan buatan. Model prediktif yang dihasilkan dapat
+mengoptimalkan penjadwalan perawatan dan memperlihatkan korelasi terhadap
+biaya perawatan yang harus dikeluarkan. Waktu yang dibutuhkan untuk perawatan
+rutin didapatkan dengan memperbarui data dari mesin di lantai pabrik
+menggunakan strategi baru yang bernama perawatan preventif dinamis (Dynamic
+Preventive Maintenance seperti yang disampaikan (Einabadi, Baboli, & Ebrahimi,
+2019). Data atau informasi dari mesin di lantai pabrik biasanya didapatkan dari
+sensor-sensor yang terpasang di mesin. Tantangannya adalah menemukan
+prognosis untuk dapat memprediksi kerusakan berikutnya pada mesin dan
+melakukan perbaikan sebelum waktu yang diprediksi mesin akan rusak Keuntungan
+dari perawatan secara prediktif yaitu mengurangi perawatan yang tidak diharapkan,
+meningkatkan waktu penggunaan suku cadang dengan pemanfaatan penggunaan
+suku cadang semaksimal mungkin, mengurangi atau menghindari kerusakan sistem
+(shutdown) dengan memonitor dan menganalisis kesalahan mesin, dan
+meningkatkan ketersediaan waktu produksi (Einabadi, Baboli, & Ebrahimi, 2019).
+
+Penelitian (Yan, Meng, Lu, & Li, 2017) mengedepankan kemajuan pemrosesan big
+data di industri dan mengeksplorasi perawatan prediktif berbasis pemrosesan big
+data. Kerangka kerja yang diusulkan berguna untuk menstruktur informasi yang
+heterogen dari beberapa sumber, melakukan karakterisasi struktur data dengan
+mempertimbangkan ciri-ciri ruang dan waktu (spatial temporal), pemodelan faktor
+yang tidak muncul yang membuat proses produksi lebih transparan dengan
+mengimplementasikan perawatan prediktif di era industri 4.0. Efektivitas sistem
+yang diusulkan telah divariasikan dengan menganalisis sumber data yang heterogen
+untuk memprediksi RUL dari komponen-komponen kunci yang ada di mesin.
+
+                                                     6
+ Gambar I.5 Tool aus di pada proses cutting (kiri), data pengukuran dan model
+                                  yang disesuaikan (kanan).
+
+Gambar I.5 menunjukkan model yang disesuaikan dengan data-data yang diukur.
+Pada model prediksi I data vibrasi digunakan untuk memprediksi RUL dari cutter
+dengan menggunakan model ANN dan 10 fitur statistik. Maka, dapat terlihat
+terjadinya fluktuasi yang besar pada periode prediksi terutama antara menit ke 146
+dan 149. Pada model prediksi II selain menggunakan 10 fitur statistik, pendekatan
+ini menggabungkan fitur daya. Dibandingkan model prediksi I, analisis
+menggunakan sumber data yang heterogen memberikan kurva yang lebih baik.
+Hasil penelitian ini menunjukkan model prediksi II dengan berbagai sumber data
+yang heterogen dapat memberikan hasil prediksi yang lebih akurat, seperti terlihat
+dalam Gambar I.6.
+
+   Gambar I.6 Prediksi sisa waktu penggunaan (RUL) menggunakan dua model.
+
+                                                     7
+Studi kasus ini dilakukan untuk memprediksi waktu penggunaan yang tersisa
+(RUL) dari komponen kunci dari peralatan mesin dengan menganalisis data dari
+sumber yang heterogen. Hasil dari penelitian menunjukkan pendekatan yang
+diusulkan memiliki kinerja yang lebih baik dalam menentukan RUL dibandingkan
+metode tradisional menggunakan informasi dari satu sumber. Di lain pihak metode
+machine learning yang tradisional seperti ANN masih memiliki peranan yang
+penting dalam industri 4.0 untuk kondisi-kondisi tertentu. Hasil penelitian ini
+memberikan indikasi bahwa sumber data yang heterogen dapat memberikan solusi
+baru untuk perawatan prediktif, penjadwalan dan optimasi proses produksi untuk
+menghemat energi.
+
+Masalah perbaikan prediktif secara tradisional saat ini hanya diimplementasikan
+untuk satu peralatan atau mesin dan tidak untuk memonitor semua peralatan secara
+keseluruhan untuk satu pabrik. Untuk pabrik yang besar alokasi dari sumber daya
+akan rumit karena melibatkan peralatan atau mesin yang berjumlah besar. Solusi
+yang diusulkan oleh (Chiu, Cheng, & Huang, 2017) adalah perawatan prediktif
+untuk seluruh pabrik. Untuk itu dibutuhkan infrastruktur dan platform untuk
+komunikasi dan pengolahan data yang sangat baik, diagnosa mesin dan prognosis
+kesalahan yang efektif, struktur indeks kesehatan mesin yang bisa dikelola dengan
+baik dipandang dari keseluruhan pabrik. Sistem perbaikan prediktif yang pintar
+untuk keseluruhan pabrik atau intelligent predictive maintenance (IPM) diusulkan
+dengan mengimplementasikan cyber-physical agent (CPA) dan advanced
+manufacturing cloud of things (AMCoT) untuk memenuhi persyaratan Industri 4.0
+(Cheng, Zhang, & Gao, 2019), yaitu baseline predictive maintenance (BPM) (Chiu,
+Cheng, & Huang, 2017).
+
+                                                     8
+               Gambar I.7 Arsitektur CPA dan Health Index Hierarchy.
+Sebagai contoh kasus dari HIH ditampilkan di Gambar I.8 dan Gambar I.9. Seorang
+ahli dalam bidang ini mendefinisikan generator RF, pengontrol suhu, MFC, dan
+katup gas seperti digambarkan dalam Gambar I.8 menjadi alat yang dinamakan
+PECVD (CVD 1) melalui FMEA (failure mode and effects analysis). Dari sudut
+pandang CVD 1-1 sebelum perbaikan katup gas DHI dari empat alat di atas adalah
+0.21, 0.87, 0.84 dan 0.93 seperti di tabel (a) pada Gambar I.9. Sedangkan MHI dari
+modul vakum, suhu dan RF adalah 0.21, 0.84 dan 0.93. Sehingga EHI dari CVD 1-
+1 menjadi 0.21.
+
+   Gambar I.8 Sudut pandang level manajemen dan level peralatan (equipment).
+
+                                                     9
+Di tabel (a) pada Gambar I.9 komponen-komponen terkait memiliki SHI berikut
+0.86, 0.75, 0.91, 0.21, 0.77 dan 0.89. Sehingga FHI sistem menjadi 0.21 (merah),
+karena DHI dari katup gas merupakan yang paling rendah 0.21 (merah), sehingga
+katup gas harus segera mendapatkan perawatan. Setelah perbaikan katup gas
+memiliki nilai DHI 0.96. Sehingga DHIs, MHIs, EHIs baru ditunjukkan di tabel (b)
+pada Gambar I.9, dengan FHI menjadi 0.75 karena DIF dari stasiun tersebut
+memiliki SHI yang paling rendah yaitu 0.75.
+
+Gambar I.9 Factory Health Index (FHI) sebelum dan sesudah perawatan katup
+                                               gas.
+
+                                                     10
+Objek penelitian yang diusulkan adalah produksi ball bearing yang memiliki
+komponen seperti ring, ball dan cage seperti terlihat dalam Gambar I.10. Sebelum
+dilakukan perakitan bearing, komponen ring akan melalui proses permesinan
+(machining) seperti grinding dan honing yang terlihat dalam Gambar I.11. Apabila
+perawatan prediktif dapat dilakukan untuk proses permesinan, maka perawatan
+yang tidak terjadwal dapat diturunkan, waktu penggunaan perkakas dapat
+dimaksimalkan, mengurangi produksi yang terhenti karena kerusakan perkakas dan
+mengurangi masalah kualitas pada produk.
+
+  Gambar I.10 Komponen-komponen ball bearing. Sumber: (SKF Group, 2017)
+
+    Gambar I.11 Proses permesinan ball bearing. Sumber: (SKF Group, 2017)
+
+                                                     11
+Peneliti kemudian melakukan observasi lapangan pada salah satu channel produksi
+objek penelitian. Berdasarkan hasil observasi lapangan yang dilakukan oleh
+peneliti, maka didapatkan beberapa tantangan dan peluang dalam menerapkan
+perawatan prediktif pada objek penelitian, yaitu sebagai berikut.
+
+    1. Terdapat beberapa kasus kesalahan pemotongan perkakas saat proses
+         produksi sehingga mengakibatkan pemeliharaan yang tidak terencana. Hal
+         ini menimbulkan kerusakan cutting tool, masalah kualitas produk,
+         peningkatan biaya produksi, dan peningkatan biaya pemeliharaan.
+
+    2. Suku cadang mesin tidak digunakan secara maksimal akibat kerusakan
+         tooling yang terjadi sehingga efisiensi mesin menurun.
+
+    3. Terjadinya kerusakan dan mesin berhenti pada lini produksi secara tiba-tiba
+         sehingga merusak prediksi yang telah dilakukan.
+
+Tingkat kerusakan pada produk ball bearing yang dihasilkan oleh objek penelitian
+saat ini masih cukup tinggi. Hal tersebut menjadi akar masalah pada penelitian ini
+yaitu tingginya tingkat penolakan produk karena tidak sesuai dengan standar
+kualitas. Peneliti kemudian melakukan analisis tulang ikan dengan menggunakan
+diagram tulang ikan seperti pada Gambar I.12. Analisis dilakukan pada enam aspek
+yaitu pekerja, metode, mesin, pengukuran, material, dan lingkungan. Pada aspek
+pekerja, saat ini pelatihan yang dilakukan kepada operator mesin masih kurang
+memadai sehingga operator tidak memiliki pengetahuan mengenai kualitas produk.
+Pada aspek metode, saat ini perancangan desain proses dan produk masih buruk,
+serta manajemen kualitas yang diterapkan belum efektif dalam rangka
+meningkatkan kualitas produk. Pada aspek mesin, saat ini mesin yang digunakan
+sudah cukup tua atau usang, dimana sering terjadi masalah pada perkakas, dan
+keluar dari parameter permesinan yang ditetapkan sebelumnya. Pada aspek
+pengukuran, saat ini terdapat beberapa kesalahan dalam menggunakan peralatan
+pengujian sehingga perlu dilakukan perbaikan metode pengukuran kualitas produk.
+Pada aspek material, saat ini masih terdapat masalah dalam penanganan material
+serta terdapat kemungkinan produk cacat dari vendor atau pemasok material. Pada
+aspek lingkungan, saat ini kontrol suhu yang dilakukan masih belum akurat serta
+masih terdapat debu atau kotoran pada lingkungan kerja.
+
+                                                     12
+                      Gambar I.12 Diagram Tulang Ikan penelitian
+
+Berdasarkan hasil analisis tulang ikan pada Gambar I.12, penelitian ini akan
+berfokus pada penyelesaian aspek mesin dan pengukuran. Penelitian yang
+diusulkan untuk program studi doktor ini akan mengembangkan model prediktif
+yang sudah dikembangkan tersebut dengan menambahkan masukan seperti
+informasi produksi, jumlah dan tipe produk yang dihasilkan serta informasi kualitas
+dari produk yang dihasilkan secara waktu nyata.
+
+Implementasi perawatan prediktif pada produksi bearing saat ini hanya berfokus
+pada penggantian perkakas yang bisa mengakibatkan kerusakan pada mesin dan
+menghentikan produksi, atau kerusakan pada komponen ring yang diakibatkan oleh
+proses permesinan dengan perkakas yang sudah tidak bagus (tool wear). Sementara,
+data-data kualitas hasil pengetesan produk akhir bearing seperti Vibration Checking
+dan Radial Clearance Checking seperti terlihat dalam Gambar I.13 belum
+dimasukkan sebagai parameter dalam model perawatan prediktif yang dilakukan
+(Einabadi, Baboli, & Ebrahimi, 2019). Untuk memperbaiki model prediksi bisa
+memanfaatkan hasil penelitian yang sudah dilakukan oleh (Yan, Meng, Lu, & Li,
+2017) terkait pengolahan sumber informasi lebih dari satu sumber yang heterogen.
+Sehingga prediksi perawatan menjadi lebih akurat.
+
+                                                     13
+     Gambar I.13 Sistem pengujian ball bearing. Sumber: (SKF Group, 2017)
+Dari sini disimpulkan perlu dilakukan penelitian baru terhadap perbaikan sistem
+perawatan prediktif yang sudah ada dengan menambahkan parameter baru dari hasil
+proses pengetesan produk. Data-data kualitas dari hasil pengetesan seperti vibration
+dan clearance check bisa menjadi perbaikan sistem perawatan prediktif
+penggantian perkakas untuk proses permesinan yang dilakukan untuk komponen
+ring. Lebih jauh lagi penelitian ini bisa mengembangkan sistem perawatan yang
+konvensional dengan fokus pada level komponen atau satu mesin menjadi
+perawatan untuk satu lini produksi dengan menerapkan hasil penelitian (Chiu,
+Cheng, & Huang, 2017). Untuk itu diperlukan arsitektur sistem perawatan prediktif
+yang lebih efektif untuk memonitor status kesehatan dari satu mesin menjadi status
+kesehatan seluruh mesin (satu lini produksi atau satu pabrik).
+
+                                                     14
+I.2 Perumusan Masalah
+Dengan mempertimbangkan aspek-aspek di atas yang terkait dengan penerapan
+teknologi industri 4.0 dalam industri manufaktur yang berbasis lean manufacturing
+pada proposal studi doktoral ini diajukan perumusan permasalahan sebagai berikut:
+
+     1. Bagaimana pengembangan model perawatan prediktif menggunakan
+          integrasi data sensor heterogen (data sensor mesin dan informasi kualitas
+          produk secara waktu nyata) dengan pendekatan machine learning dan deep
+          learning dapat mengurangi waktu henti yang tidak terencana dan
+          meningkatkan Overall Equipment Effectiveness (OEE) pada produksi ball
+          bearing?
+
+     2. Bagaimana model hybrid machine learning dan deep learning (kombinasi
+          metode statistik, ML tradisional, dan DL) dapat mengoptimalkan deteksi
+          anomali dan prediksi Remaining Useful Life (RUL) dengan tetap
+          mempertahankan tingkat kualitas produk (vibration checking dan radial
+          clearance checking) pada standar spesifikasi?
+
+     3. Bagaimana penerapan metode explainable artificial intelligence (XAI),
+          khususnya SHAP (SHapley Additive exPlanations), dapat digunakan untuk
+          mengidentifikasi kepentingan fitur dan memberikan transparansi terhadap
+          proses pengambilan keputusan model, sehingga hasil model lebih mudah
+          dipahami dan berpotensi diadopsi oleh perekayasa dan praktisi di
+          lingkungan industri manufaktur?
+
+I.3 Tujuan Penelitian
+Dengan perkembangan teknologi di bidang lean manufacturing terutama dengan
+penggunaan teknologi industri 4.0 serta penerapan analisis big data dan kecerdasan
+buatan, penelitian ini diharapkan menghasilkan:
+
+    1. Mengembangkan model perawatan prediktif berbasis data sensor vibrasi,
+         menggunakan enam algoritma machine learning dan deep learning
+         (XGBoost, CNN-LSTM, TCN, BiLSTM-Attention, GRU, ARIMA-LSTM
+         hybrid) untuk deteksi anomali dan prediksi Remaining Useful Life (RUL)
+         pada proses produksi ball bearing dengan target akurasi 95% dan inference
+         latency <10ms untuk implementasi waktu nyata.
+
+                                                     15
+    2. Mengintegrasikan data kondisi mesin (sinyal vibrasi, suhu, putaran mesin)
+         dengan informasi kualitas produk (vibration checking dan radial clearance
+         checking) secara waktu nyata untuk meningkatkan akurasi prediksi
+         dibandingkan dengan model saat ini yang hanya menggunakan satu sumber
+         data, dengan target peningkatan akurasi 15-20% sesuai dengan penelitian
+         Yan et al. (2017).
+
+    3. Memberikan analisis explainability menggunakan SHAP (SHapley Additive
+         exPlanations) untuk mengidentifikasi kepentingan fitur dan transparansi
+         pengambilan keputusan dari model yang dikembangkan, sehingga
+         meningkatkan kepercayaan dan tingkat adopsi di lingkungan industri
+         manufaktur.
+
+                        Gambar I.14 Skema pendekatan penelitian
+Gambar I.14 menunjukkan skema pendekatan yang akan dilakukan pada penelitian
+ini. Dimana tujuan khusus dari penelitian ini adalah mengembangkan sistem
+perawatan prediktif yang pintar dan tangguh dalam produksi yang memakai proses
+permesinan seperti produksi ball bearing dengan mengombinasikan analisis sensor
+data menggunakan big data dan anomali data kualitas hasil pengecekan produk
+untuk mengurangi kerusakan produk karena perkakas yang aus (tool wear) dan
+mengurangi produksi yang berhenti kerusakan mesin yang tiba-tiba sebelum
+perawatan yang terjadwal.
+
+                                                     16
+I.4 Manfaat Penelitian
+Berikut merupakan kontribusi yang diharapkan dari penelitian ini.
+
+    1. Memberikan contoh kasus implementasi analisis big data dan kecerdasan
+         buatan dalam sistem produksi dalam meningkatkan produktivitas dan daya
+         saing.
+
+    2. Hasil dari penelitian ini yang berupa sistem dengan menggunakan perangkat
+         lunak dan perangkat keras dapat menjadi contoh bagi implementasi analisis
+         big data dan kecerdasan buatan dalam memperbaiki sistem perawatan
+         prediktif yang sudah ada.
+
+    3. Sistem perawatan yang prediktif dalam produksi yang menggunakan proses
+         permesinan dapat menjadi dasar untuk sistem perawatan prediktif dalam
+         proses produksi yang berbeda (tidak hanya untuk produksi berbasis
+         permesinan).
+
+I.5 Batasan dan Asumsi Penelitian
+Penelitian ini dibatasi dengan hanya mencakup hal-hal yang berhubungan dengan.
+
+    1. Sistem produksi yang menggunakan proses permesinan seperti proses
+         grinding dalam produksi ball bearing.
+
+    2. Penelitian tidak untuk menghasilkan perangkat lunak atau keras yang baru.
+         Sebagian besar perangkat yang akan digunakan merupakan perangkat yang
+         sudah ada. Dalam proses penelitian, perangkat lunak dan keras akan
+         diintegrasikan sesuai kebutuhan.
+
+    3. Model analisis menggunakan metode-metode analisis big data yang sudah
+         ada, maupun pendekatan kecerdasan buatan machine learning dan deep
+         learning yang sudah dipakai di bidang lain.
+
+Sedangkan, asumsi yang digunakan dalam penelitian ini adalah sebagai berikut:
+    1. Sensor vibrasi, suhu, dan putaran mesin dipasang dengan baik dan sudah
+         dikalibrasi pada mesin produksi ball bearing (OR1 dan OR2).
+    2. Data quality check (vibration checking dan radial clearance checking)
+         tersedia secara waktu nyata dan dapat diakses melalui sistem informasi
+         manufaktur.
+
+                                                     17
+    3. Mesin produksi beroperasi dalam jangkauan operasi normal sesuai dengan
+         spesifikasi teknis yang ditetapkan oleh perusahaan (SKF system).
+
+    4. Data historis dari perawatan terjadwal dan waktu henti yang tidak terencana
+         tersedia untuk keperluan validasi dan analisis manfaat-biaya.
+
+    5. Infrastruktur komputasi (GPU cloud atau on-premise server) tersedia untuk
+         pelatihan dan peluncuran model machine learning dan deep learning.
+
+    6. Proses permesinan grinding pada ball bearing memiliki karakteristik
+         degradasi yang dapat dimodelkan menggunakan pendekatan machine
+         learning berbasis data.
+
+I.6 Kontribusi dan Posisi Penelitian
+    1. Pengembangan sistem perawatan prediktif yang menggunakan informasi
+         dari sumber yang heterogen, dalam hal ini dari data-data sensor di mesin
+         dan data kualitas hasil produksi yang bisa diakses secara waktu nyata.
+    2. Pengolahan data menggunakan analisis big data dan kecerdasan buatan
+         dengan metode machine learning untuk mendapatkan sistem perawatan
+         yang lebih akurat.
+    3. Sistem perawatan prediktif yang dapat memberikan transparansi terhadap
+         proses pengambilan keputusan model, sehingga hasil model lebih mudah
+         dipahami dan berpotensi diadopsi oleh perekayasa dan praktisi di
+         lingkungan industri manufaktur
+
+Untuk mendapatkan hasil penelitian yang terstruktur, diperlukan metode penelitian
+yang mendukung. Dalam melakukan penelitian ini metode penelitian akan
+direncanakan menggunakan:
+
+    1. Studi literatur mengenai perkembangan teknologi di bidang industri 4.0,
+         yang terdiri atas analisis big data, lean manufacturing, dan masa depan
+         industri manufaktur.
+
+    2. Observasi lapangan di industri manufaktur sebagai contoh sektor otomotif
+         untuk mendapatkan data-data dan melakukan analisis dengan konsep-
+         konsep yang nantinya akan dikembangkan untuk mewujudkan sistem
+         perawatan prediktif yang lebih baik.
+
+                                                     18
+    3. Meneliti sistem perawatan prediktif yang sudah diterapkan di industri
+         manufaktur dan melakukan integrasi dengan sistem penjaminan mutu.
+
+    4. Melakukan pengembangan model perawatan prediktif yang mendeteksi
+         anomali dengan metode machine learning.
+
+    5. Melakukan implementasi model perawatan prediktif dengan menggunakan
+         kecerdasan buatan pada studi kasus produksi ball bearing dengan
+         mengintegrasikan data-data kualitas hasil produksi.
+
+I.6.1 Tahap Perencanaan
+Tahap perencanaan dimulai dengan melakukan identifikasi permasalahan melalui
+studi literatur, melakukan perumusan metode state of the art dari penelitian
+sebelumnya, melakukan perumusan masalah dan tujuan penelitian, menetapkan
+ruang lingkup (batasan dan asumsi penelitian) dan metode penelitian yang sesuai,
+serta mendapatkan pemahaman mengenai objek kajian penelitian dengan
+melakukan observasi lapangan. Identifikasi masalah dan perumusan state of the art
+penelitian dilakukan dengan melakukan studi literatur penelitian terbaru mengenai
+penerapan big data, machine learning, dan kecerdasaran buatan pada perawatan
+prediktif.
+
+Perkembangan terbaru penelitian secara detail dapat dilihat pada Tabel III-1.
+Rumusan masalah penelitian didapatkan dari celah teori (theory gap) berdasarkan
+penelitian sebelumnya. Berdasarkan studi literatur yang dilakukan, maka dapat
+dipetakan taksonomi penelitian yang dapat dilihat pada Gambar I.4. Posisi
+penelitian mengenai perawatan prediktif dapat dilihat pada Tabel I-1 dan Gambar
+I.15. Berdasarkan pemetaan penelitian yang dilakukan, maka belum ada penelitian
+mengenai perawatan prediktif yang menggunakan data kondisi mesin dan informasi
+kualitas dengan pendekatan analisis big data dan kecerdasan buatan serta dilakukan
+secara waktu nyata. Maka, penelitian ini akan mengembangkan model dan sistem
+perawatan prediktif yang berbasis hasil penelitian (SharCa), (Ran, Zhou, Lin, Wen,
+& Deng, 2019), (Chiu, Cheng, & Huang, 2017), dan (Yan, Meng, Lu, & Li, 2017).
+Dalam penelitian ini model akan diberikan input tambahan seperti data produk yang
+diproduksi serta informasi data kualitas dari produk yang didapatkan secara waktu
+
+                                                     19
+nyata dan dianalisis menggunakan teknologi big data dan kecerdasan buatan.
+Metoda kecerdasan buatan yang akan digunakan adalah metode machine learning
+dan deep learning seperti yang diuraikan oleh (Serradilla, Zugasti, & Zurutuza,
+2022).
+
+                            Gambar I.15 Taksonomi penelitian
+
+                                                     20
+Aspek         Penelitian Terdahulu              Tabel I-1 Posisi penelitian    Kontribusi Penelitian Ini
+Penelitian                                    Gap/Keterbatasan
+Sumber Data
+              Data satu sumber (hanya sensor  Belum mengintegrasikan data      Data heterogen multi-sumber: Integrasi
+Mode Operasi  vibrasi) -- Einabadi et al.     kualitas produk sebagai input    data sensor mesin (vibrasi, sensor, putaran
+              (2019), Traini et al. (2019),   model prediktif, sehingga        mesin) dengan data kualitas produk
+Pendekatan    Marani et al. (2020), Ayvaz &   informasi dari kontrol kualitas  (vibration checking, radial clearance
+Model         Alpay (2021), Cardona et al.    tidak dimanfaatkan untuk         checking) secara waktu nyata untuk
+              (2021)                          deteksi kerusakan preventif      meningkatkan akurasi prediksi 15-20%
+                                                                               (Yan et al., 2017)
+
+              Batch/offline processing        Implementasi waktu nyata         Implementasi waktu nyata dengan target
+              dengan data historis -- Yan et  untuk keputusan perawatan        waktu inferensi <10ms untuk peluncuran
+              al. (2017), Carvalho et al.     masih terbatas; sebagian besar   di perangkat tertanam, memungkinkan aksi
+              (2019), Lee et al. (2019),      sistem masih menggunakan         perawatan langsung berdasarkan kondisi
+              Lindström et al. (2017), Ben    analisis data historis tanpa     aktual mesin
+              Ali et al. (2015)               kapabilitas untuk pengambilan
+                                              keputusan langsung
+
+              Model tunggal atau komparasi    Belum ada evaluasi               Pendekatan model gabungan : Evaluasi
+              terbatas (2-3 algoritma) --     komprehensif berbagai model      komparatif 6 algoritma: (1) XGBoost
+              Ayvaz & Alpay (2021):           (ML tradisional vs deep          (basis ML tradisional), (2) CNN-LSTM
+              ANN+SVM; Cui et al. (2022):     learning vs gabungan) pada       (Khorram et al., 2020), (3) TCN dan
+              ANN+SVM+k-NN; Ahmed et          satu studi kasus yang sama,      Graph Fusion (Li et al., 2025), (4)
+              al. (2023): SVM+k-NN+Auto-      sehingga pemilihan model         BiLSTM-Attention (Huang et al., 2025), (5)
+              encoder; Marani et al. (2020):  kurang optimal                   GRU, (6) ARIMA-LSTM hybrid (Hamiane
+              ANFIS saja                                                       et al., 2024), untuk menemukan model
+
+                                              21
+Aspek             Penelitian Terdahulu              Gap/Keterbatasan                  Kontribusi Penelitian Ini
+Penelitian
+
+                                                                                      optimal dengan perbandingan yang
+                                                                                      komprehensif
+
+Explainability    Model black-box tanpa             Personil perawatan kesulitan      Analisis SHAP (SHapley Additive
+dan               explainability. Sebagian besar    memahami dan mempercayai          exPlanations) (Bengherbia et al., 2024;
+Interpretability  penelitian ML/DL tidak            keputusan model,                  Mosca et al., 2022; Bao et al., 2025) untuk:
+                  menyediakan analisis              mengakibatkan tingkat adopsi      (1) Urutan kepentingan fitur global, (2)
+                  kepentingan fitur atau            rendah dan perlawanan             Analisis kontribusi fitur pada kerusakan
+                  transparansi keputusan            terhadap sistem PdM berbasis      spesifik, (3) Identifikasi penyebab
+                  (Serradilla et al., 2022; Hafeez  AI                                kesalahan klasifikasi, sehingga
+                  et al., 2021; Nguyen et al.,                                        meningkatkan kepercayaan dan
+                  2019)                                                               transparansi
+
+Integrasi PdM     PdM dan kontrol kualitas          Belum ada umpan balik             Integrasi sirkuit tertutup: Data kualitas
+dengan kontrol    dianggap sebagai sistem           tertutup dari hasil pemeriksaan   (vibration checking, radial clearance
+kualitas          terpisah. Lindström et al.        kualitas (vibration test,         checking) sebagai tambahan fitur prediktif
+                  (2017, 2019): membahas            clearance test) ke pengambilan    untuk deteksi dini kerusakan sebelum
+                  kebutuhan integrasi tetapi tidak  keputusan perawatan; masalah      kerusakan produk terjadi, menghasilkan
+                  mengimplementasikan; Chiu et      kualitas yang terketeksi setelah  sinergi antara PdM dan sistem kontrol
+                  al. (2017): fokus pada tingkatan  produksi tidak digunakan          kualitas
+                  indeks kesehatan tanpa            untuk perawatan prediktif
+                  integrasi data kualitas
+
+Dataset &         Dataset publik (CWRU, IMS, Validasi pada industri                   Implementasi industri langsung pada
+Validasi                                                                              produksi ball bearing riil (mesin OR1 dan
+                  PRONOSTIA, PHM) --                manufaktur riil dengan
+
+                                                    22
+Aspek             Penelitian Terdahulu              Gap/Keterbatasan                Kontribusi Penelitian Ini
+Penelitian
+
+                  Serradilla et al. (2022), Ran et  batasan-batasan produksi        OR2) dengan: (1) Validasi antar mesin
+                  al. (2019): studi literatur       masih terbatas; Celah antara    untuk generalisasi, (2) Pengujian
+                  menggunakan dataset publik;       performa akademik dan           ketahanan dengan kondisi operasi yang
+                  Khorram et al. (2020): CWRU       pemakaian di industri masih     bervariasi, (3) Analisis manfaat-biaya
+                  dataset; Li et al. (2025): IMS    besar                           dibandingkan perawatan terencana
+                  bearing dataset
+
+Gabungan          Statistik murni (ARIMA,           Metode statistik tradisional    Gabungan ARIMA-LSTM(Hamiane et al.,
+pendekatan        Kalman Filter) atau deep          tidak dapat menangkap pola      2024) yang menggabungkan: (1) ARIMA
+statistik dan AI  learning murni(CNN, LSTM,         nonlinear; DL murni             untuk tren linear dan komponen musiman,
+                  GRU) -- Ben Ali et al. (2015):    memerlukan data yang besar      (2) LSTM untuk variabel waktu yang non-
+                  ANN murni; Cheng et al.           dan kurang dapat                linear dan kompleks, untuk mencapai
+                  (2019): ARIMA/LSTM murni;         diterjemahkan keluarannya;      R²=0,99 dengan MSE=0,0018
+                  Traini et al. (2019): ANN/DT      tidak ada sinergi antara
+                  murni                             statistik fundamental dan
+                                                    kekuatan DL.
+
+Analisis          Analisis domain waktu skala       Pola degradasi bearing terjadi  TCN dengan Graph Fusion (Li et al.,
+domain waktu      tunggal. Sebagian besar           pada beberapa skala waktu       2025; Bai et al., 2025): (1) Dilated
+multi-skala       penelitian menggunakan ukuran     (transien jangka pendek dan     convolution untuk menjangkau area
+                  jendela tetap atau area deteksi   tren jangka panjang), namun     deteksi multi-skala, (2) Graph fusion untuk
+                  tunggal (Ayvaz & Alpay, 2021;     model yang ada saat ini hanya   merepresentasikan dependensi spasial-
+                  Ahmed et al., 2023; Cui et al.,   mampu menangkap satu            temporal, (3) Jalur multi-resolusi paralel
+                  2022)                             resolusi temporal.              untuk menangkap pola secara lebih
+                                                                                    komprehensif.
+
+                                                    23
+Aspek            Penelitian Terdahulu              Gap/Keterbatasan                  Kontribusi Penelitian Ini
+Penelitian
+
+Attention        Rekayasa fitur manual atau        Rekayasa fitur manual             BiLSTM dengan Hierarchical Improved
+Mechanism        tanpa attention. Metode ML        memerlukan banyak tenaga          Fusion Attention (Huang et al., 2025) yang
+untuk            tradisional (XGBoost, SVM, k-     dan keahlian domain; model        secara otomatis mempelajari: (1) Posisi
+pemilihan fitur  NN) membutuhkan fitur hasil       tanpa attention                   temporal yang paling kritis, (2) Fitur yang
+                 ekstraksi manual (RMS,            memperlakukan semua               paling berkontribusi pada deteksi
+                 kurtosis, crest factor); model    langkah waktu secara sama,        kerusakan, (3) Pembobotan fitur yang
+                 CNN-LSTM murni tanpa              sehingga ciri kerusakan           adaptif sesuai kondisi operasi.
+                 mekanisme attention (Khorram      penting dapat terlewat.
+                 et al., 2020).
+
+Konsiderasi      Hanya berbasis cloud. Cheng et    Model deep learning (CNN-         Arsitektur GRU yang lebih ringan untuk
+Edge             al. (2019): koordinasi edge­      LSTM, BiLSTM-Attention)           deployment di edge, dengan: (1) Parameter
+Deployment       cloud tetapi masih berfokus       memiliki biaya komputasi dan      33% lebih sedikit dibanding LSTM, (2)
+                 pada pemrosesan di cloud;         penggunaan memori yang            Waktu inferensi lebih cepat, (3) Teknik
+                 Hafeez et al. (2021): edge        tinggi, sehingga kurang sesuai    kompresi model (pruning, quantization)
+                 intelligence namun belum          untuk perangkat edge dengan       untuk deployment pada Raspberry
+                 mengatasi keterbatasan sumber     sumber daya terbatas.             Pi/Jetson Nano.
+                 daya untuk model DL.
+
+Analisis         Hanya dari sisi kinerja teknis.   Tanpa analisis manfaat-biaya,     Analisis manfaat­biaya yang
+Manfaat-Biaya    Mayoritas penelitian hanya        sulit untuk justifikasi ROI dari  komprehensif: (1) Penurunan total biaya
+                 melaporkan accuracy,              implementasi PdM; Keputusan       perawatan sebesar 20­30% (Chiu et al.,
+                 precision, recall tanpa           manajemen membutuhkan             2017; Einabadi et al., 2019), (2)
+                 justifikasi ekonomi. (Serradilla  metrik ekonomi, tidak hanya       Pengurangan waktu henti tidak terencana,
+                 et al., 2022; Khorram et al.,     akurasi teknis.
+
+                                                   24
+Aspek       Penelitian Terdahulu             Gap/Keterbatasan  Kontribusi Penelitian Ini
+Penelitian
+                                                               (3) Optimalisasi penggunaan suku cadang,
+            2020; Li et al., 2025; Huang et                    (4) Pengukuran peningkatan OEE.
+            al., 2025)
+
+                                             25
+Berdasarkan Tabel I-1, kebaruan utama penelitian ini terletak pada lima aspek
+fundamental yang membedakannya dari penelitian-penelitian sebelumnya.
+
+Pertama, integrasi data heterogen dari berbagai sumber yang menggabungkan data
+kondisi mesin (sinyal getaran, suhu, putaran mesin) dengan informasi kualitas
+produk (pemeriksaan getaran dan pemeriksaan kelonggaran radial) secara waktu
+nyata. Pendekatan ini berbeda dengan penelitian sebelumnya yang umumnya hanya
+menggunakan data sensor tunggal (Einabadi dkk., 2019; Traini dkk., 2019; Marani
+dkk., 2020; Ayvaz & Alpay, 2021). Integrasi ini memungkinkan umpan balik
+tertutup antara sistem kendali mutu dan perawatan prediktif, sehingga anomali
+dapat dideteksi lebih awal sebelum mengakibatkan produk cacat.
+
+Kedua, implementasi pendekatan multi-model hibrid dengan evaluasi komparatif
+enam arsitektur pembelajaran mesin dan pembelajaran mendalam (XGBoost, CNN-
+LSTM, TCN, BiLSTM-Attention, GRU, ARIMA-LSTM hibrid) untuk menemukan
+model optimal bagi industri bantalan bola. Evaluasi dilengkapi dengan
+pembandingan ketat terhadap berbagai metrik (akurasi, presisi, recall, skor F1,
+latensi inferensi, kebutuhan memori). Penelitian sebelumnya umumnya hanya
+menggunakan satu hingga tiga algoritma tanpa perbandingan yang komprehensif
+(Ayvaz & Alpay, 2021; Cui dkk., 2022; Ahmed dkk., 2023).
+
+Ketiga, penerapan analisis SHAP (SHapley Additive exPlanations) untuk
+kecerdasan buatan yang dapat dijelaskan. Analisis ini memberikan transparansi
+terhadap keputusan model melalui pemeringkatan kepentingan fitur secara global,
+analisis kontribusi fitur spesifik terhadap jenis kerusakan, serta identifikasi akar
+penyebab kesalahan klasifikasi (Bengherbia dkk., 2024; Mosca dkk., 2022; Bao
+dkk., 2025). Aspek kemampuan penjelasan ini krusial untuk meningkatkan
+kepercayaan dan tingkat adopsi di lingkungan industri manufaktur, mengingat
+sebagian besar penelitian yang ada menghasilkan model kotak hitam yang sulit
+dipahami oleh tenaga perawatan (Serradilla dkk., 2022).
+
+                                                     26
+Keempat, implementasi langsung pada industri manufaktur bantalan bola riil
+dengan data waktu nyata dari mesin produksi (OR1 dan OR2). Implementasi
+dilengkapi dengan validasi lintas mesin, pengujian ketahanan pada berbagai kondisi
+operasi, serta analisis manfaat-biaya untuk menunjukkan dampak ekonomi konkret
+(target pengurangan biaya 20-30% dibandingkan perawatan terencana). Penelitian
+sebelumnya umumnya menggunakan kumpulan data acuan publik (CWRU, IMS,
+PRONOSTIA) yang tidak mencerminkan kompleksitas lingkungan produksi
+sebenarnya (Serradilla dkk., 2022; Khorram dkk., 2020; Li dkk., 2025).
+
+Kelima, pengembangan pendekatan hibrid ARIMA-LSTM yang menggabungkan
+fondasi statistik (ARIMA) untuk pemodelan tren linier dengan kemampuan
+pembelajaran mendalam (LSTM) untuk pengenalan pola non-linier, sehingga
+mencapai sinergi antara kemampuan interpretasi dan akurasi tinggi (Hamiane dkk.,
+2024). Model ini mengatasi keterbatasan metode statistik murni yang tidak dapat
+menangkap pola degradasi non-linier, sekaligus mengatasi kekurangan
+pembelajaran mendalam murni yang memerlukan data besar dan kurang dapat
+diinterpretasi.
+
+I.6.2 Rancangan dan Persiapan Penelitian
+Pada tahap ini akan dilakukan percancangan dan persiapan penelitian. Hal pertama
+yang dilakukan adalah melakukan pengumpulan data-data penelitian. Metode
+pengumpulan data yang digunakan dalam penelitian ini berasal dari data
+implementasi teknologi industri 4.0, terutama yang terkait dengan perawatan
+korektif atau perawatan preventif yang sudah dilakukan. Selain itu dibutuhkan juga
+data-data dari sistem produksi terkait, data-data dari manajemen kualitas produksi,
+dan data-data investasi di bidang perawatan. Berdasarkan data-data yang
+didapatkan, diharapkan penelitian sesuai dengan target yang sudah ditetapkan.
+
+Hal kedua yang dilakukan adalah menyusun kerangka penelitian. Berikut ini
+merupakan kerangka penelitian yang akan digunakan untuk memprediksi tingkat
+keausan alat produksi berdasarkan data yang berasal dari sensor (Traini, Guilia,
+D'Antonio, & Lombardi, 2019).
+
+                                                     27
+
