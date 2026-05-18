@@ -1,0 +1,3 @@
+# Treat .docx as binary so Git does not attempt line-ending normalization
+# or text-merge on Word documents.
+*.docx binary

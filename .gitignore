@@ -114,3 +114,8 @@ Thumbs.db
 # Cursor IDE workspace files (agent transcripts, project caches, local config)
 # =============================================================================
 .cursor/
+
+# =============================================================================
+# JETS docs Word track — seed scaffolding (run once then delete)
+# =============================================================================
+writings/journal-q2/jets-docs/_seed/
