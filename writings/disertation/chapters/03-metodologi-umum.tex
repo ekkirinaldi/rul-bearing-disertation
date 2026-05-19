@@ -24,7 +24,7 @@ Metodologi spesifik tiap jalur dikembangkan lebih lanjut di awal Bab~IV
 
 Penelitian ini disusun dalam dua jalur paralel yang mencerminkan dua moda
 operasi utama sistem perawatan prediktif berbasis vibrasi:
-\textbf{Jalur~A~— Diagnostik} dan \textbf{Jalur~B~— Prognostik}.
+\textbf{Jalur~A (Diagnostik)} dan \textbf{Jalur~B (Prognostik)}.
 Kedua jalur berbagi fondasi data, praproses, dan infrastruktur yang diuraikan
 pada bab ini, kemudian masing-masing mengembangkan metodologi dan hasilnya
 pada Bab~IV dan Bab~V, sebelum akhirnya berkonvergensi pada kerangka
@@ -32,20 +32,21 @@ pada Bab~IV dan Bab~V, sebelum akhirnya berkonvergensi pada kerangka
 \emph{multi-tier} tiga lapis yang disintesiskan pada Bab~VI.
 
 Jalur~A berfokus pada \textbf{identifikasi jenis dan keparahan kerusakan
-bantalan} menggunakan dataset CWRU dengan pendekatan progresif dari keluarga
-algoritma kernel (SVM/LR), tree (DT/RF/XGBoost), hingga jaringan dalam
-(WDCNN). Setiap keluarga dilengkapi modul \emph{Explainable AI} (SHAP) yang
-sesuai dengan arsitekturnya. Keluaran utama Jalur~A adalah
-\emph{Fault Signature Maps} (FSM) — representasi \emph{fingerprint} per
-kelas kerusakan pada resolusi sinyal mentah 2.048 titik.
+bantalan} menggunakan dataset CWRU dengan pendekatan progresif dari
+model berbasis kernel (SVM/LR), algoritma berbasis pohon keputusan
+(DT/RF/XGBoost), hingga jaringan dalam (WDCNN). Setiap pendekatan
+dilengkapi modul \emph{Explainable AI} (SHAP) yang sesuai dengan
+arsitekturnya. Keluaran utama Jalur~A adalah
+\emph{Fault Signature Maps} (FSM), yaitu representasi \emph{fingerprint}
+per kelas kerusakan pada resolusi sinyal mentah 2.048 titik.
 
-Jalur~B berfokus pada \textbf{estimasi sisa umur pakai} (\emph{Remaining
-Useful Life}, RUL) menggunakan tiga dataset prognostik (PHM2012, XJTU-SY,
-IMS) dengan tiga arsitektur \emph{backbone}: Mamba-xLSTM-Net,
-N-BEATS-xLSTM-RUL, dan SparseGate-TCN-RUL. Interpretabilitas Jalur~B
-dicapai melalui \emph{Top-k Sparse Autoencoder} (SAE) yang memetakan
-representasi laten model ke frekuensi karakteristik bantalan (BPFx) secara
-statistik terverifikasi.
+Di sisi lain, Jalur~B berfokus pada \textbf{estimasi sisa umur pakai}
+(\emph{Remaining Useful Life}, RUL) menggunakan tiga dataset prognostik
+(PHM2012, XJTU-SY, IMS) dengan tiga arsitektur \emph{backbone}:
+Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL, dan SparseGate-TCN-RUL.
+Interpretabilitas Jalur~B dicapai melalui \emph{Top-k Sparse Autoencoder}
+(SAE) yang memetakan representasi laten model ke frekuensi karakteristik
+bantalan (BPFx) secara statistik terverifikasi.
 
 Gambar~\ref{fig:bab3_kerangka_terintegrasi} mengilustrasikan alur keseluruhan
 kedua jalur beserta titik konvergensi di Bab~VI.
@@ -80,7 +81,7 @@ kedua jalur beserta titik konvergensi di Bab~VI.
        {\emph{Fault Signature}\\{\scriptsize \emph{Maps} (FSM)}};
 
   \node[font=\scriptsize\bfseries, text=blue!70!black, above=0.2cm of cwru]
-       {Jalur A — Diagnostik (Bab~IV)};
+       {Jalur A (Diagnostik, Bab~IV)};
 
   \draw[arr] (cwru)  -- (bench);
   \draw[arr] (bench) -- (shap);
@@ -97,7 +98,7 @@ kedua jalur beserta titik konvergensi di Bab~VI.
        {Pemetaan BPFx\\{\scriptsize Pearson + \emph{bootstrap}}};
 
   \node[font=\scriptsize\bfseries, text=green!60!black, below=0.2cm of progds]
-       {Jalur B — Prognostik (Bab~V)};
+       {Jalur B (Prognostik, Bab~V)};
 
   \draw[arr] (progds) -- (rul);
   \draw[arr] (rul)    -- node[midway, above, font=\scriptsize]{laten $\mathbf{h}$} (sae);
@@ -115,8 +116,9 @@ kedua jalur beserta titik konvergensi di Bab~VI.
 \end{tikzpicture}%
 }
 \caption{Kerangka konseptual terintegrasi: Jalur~A (biru) menggunakan dataset
-         CWRU untuk \emph{benchmark} lintas keluarga algoritma (kernel/tree/deep)
-         dan menghasilkan FSM sebagai XAI level sinyal; Jalur~B (hijau)
+         CWRU untuk \emph{benchmark} lintas golongan algoritma
+         (kernel/pohon keputusan/jaringan dalam) dan menghasilkan FSM sebagai
+         XAI level sinyal; Jalur~B (hijau)
          menggunakan tiga dataset prognostik untuk estimasi RUL dan pemetaan
          BPFx melalui Top-$k$ SAE. Kedua jalur berkonvergensi pada kerangka
          PdM \emph{multi-tier} di Bab~VI.}
@@ -153,15 +155,15 @@ keempat dataset.
 \toprule
 \textbf{Dataset} & \textbf{Jalur} & \textbf{Bantalan/Kelas} & \textbf{Fs (kHz)} & \textbf{Tugas} \\
 \midrule
-CWRU    & A — Diagnostik  & 1 \emph{rig}, 10 kelas & 48   & Klasifikasi kerusakan \\
-PHM2012 & B — Prognostik  & 17 bantalan            & 25,6 & Estimasi RUL \\
-XJTU-SY & B — Prognostik  & 10 bantalan            & 25,6 & Estimasi RUL \\
-IMS     & B — Prognostik  & 4 bantalan × 3 run     & 20   & Estimasi RUL \\
+CWRU    & A (Diagnostik)  & 1 \emph{rig}, 10 kelas & 48   & Klasifikasi kerusakan \\
+PHM2012 & B (Prognostik)  & 17 bantalan            & 25,6 & Estimasi RUL \\
+XJTU-SY & B (Prognostik)  & 10 bantalan            & 25,6 & Estimasi RUL \\
+IMS     & B (Prognostik)  & 4 bantalan × 3 run     & 20   & Estimasi RUL \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{CWRU — Jalur A}
+\subsection{CWRU (Jalur A)}
 \label{subsec:bab3_cwru}
 
 Dataset CWRU (\emph{Case Western Reserve University Bearing Data Center})
@@ -188,7 +190,7 @@ Tabel~\ref{tab:bab3_cwru_kelas}.
 \textbf{Kelas} & \textbf{Kondisi} & \textbf{Lokasi} &
 \textbf{Kerusakan (inci)} & \textbf{Latih} & \textbf{Uji} \\
 \midrule
-0 & Normal            & —  & —     & 124 & 75 \\
+0 & Normal            & --  & --     & 124 & 75 \\
 1 & \emph{Inner Race} & DE & 0,007 & 124 & 75 \\
 2 & \emph{Inner Race} & DE & 0,014 & 124 & 75 \\
 3 & \emph{Inner Race} & DE & 0,021 & 124 & 75 \\
@@ -212,13 +214,13 @@ untuk menghindari kebocoran informasi waktu: 54\% pertama dialokasikan untuk
 Z-score dihitung hanya dari \emph{training set} dan diterapkan ke dua set
 lainnya tanpa modifikasi lebih lanjut.
 
-Dataset CWRU merupakan sumber utama pada Bab~IV untuk \emph{benchmark}
-lintas keluarga algoritma. Pada Bab~V, CWRU juga digunakan untuk validasi
-\emph{cross-dataset} SAE; namun hanya tersedia $n = 10$ rekaman sehingga
-daya statistik terbatas ($p > 0{,}05$) — kondisi ini ditandai secara
+Pada Bab~IV, dataset ini menjadi sumber utama untuk \emph{benchmark}
+lintas golongan algoritma. Pada Bab~V, CWRU juga digunakan untuk validasi
+\emph{cross-dataset} SAE; namun hanya tersedia $n = 10$ rekaman, sehingga
+daya statistik terbatas ($p > 0{,}05$). Keterbatasan ini ditandai secara
 eksplisit pada §V.8.
 
-\subsection{PHM2012 (FEMTO-PRONOSTIA) — Jalur B}
+\subsection{PHM2012 / FEMTO-PRONOSTIA (Jalur B)}
 \label{subsec:bab3_phm2012}
 
 Dataset PHM2012 merupakan hasil kompetisi \emph{Prognostics and Health
@@ -294,7 +296,7 @@ Pembagian yang mengikuti konvensi kompetisi memungkinkan perbandingan
 langsung hasil penelitian ini dengan literatur \emph{benchmark} yang
 dipublikasikan sebelumnya.
 
-\subsection{XJTU-SY — Jalur B}
+\subsection{XJTU-SY (Jalur B)}
 \label{subsec:bab3_xjtusy}
 
 Dataset XJTU-SY dikembangkan oleh Xi'an Jiaotong University bersama
@@ -347,7 +349,7 @@ penting untuk validasi interpretabilitas Jalur~B: apabila SAE memetakan
 fitur ke BPFO, konsistensi dengan dominansi \emph{outer-race spalling} yang
 terdokumentasi oleh pemilik dataset memberikan uji silang fisis yang kuat.
 
-\subsection{IMS (\emph{Intelligent Maintenance Systems}) — Jalur B}
+\subsection{IMS / \emph{Intelligent Maintenance Systems} (Jalur B)}
 \label{subsec:bab3_ims}
 
 Dataset IMS dikembangkan oleh \emph{Center for Intelligent Maintenance
@@ -390,7 +392,7 @@ IMS dipilih sebagai dataset prognostik ketiga karena karakteristiknya yang
 berbeda dari PHM2012 dan XJTU-SY: bantalan tipe \emph{tapered roller}
 (bukan \emph{ball bearing}), operasi \emph{run-to-failure} multi-bantalan
 simultan, dan distribusi mode kegagalan yang mencakup \emph{rolling element}
-dan sangkar (\emph{cage}) — tidak hanya \emph{outer race}. Keberagaman jenis
+dan sangkar (\emph{cage}), tidak hanya \emph{outer race}. Keberagaman jenis
 bantalan, mode kegagalan, dan karakteristik sinyal ini memperkuat uji
 universalitas pada Bab~V.
 
@@ -403,13 +405,14 @@ Meskipun Jalur~A dan Jalur~B menggunakan representasi input yang berbeda
 untuk model akhirnya, keduanya berbagi tiga tahap praproses awal:
 (1) segmentasi jendela geser, (2) normalisasi Z-score berbasis
 \emph{training set}, dan (3) ekstraksi fitur atau penggunaan langsung sinyal
-tersegmentasi. Pemisahan tahap ketiga berdasarkan keluarga model.
+tersegmentasi. Pemisahan pada tahap ketiga bergantung pada pendekatan
+masing-masing model.
 
 \subsection{Segmentasi Jendela Geser dan Normalisasi}
 \label{subsec:bab3_segmentasi}
 
 Segmentasi membagi rekaman sinyal panjang menjadi segmen pendek menggunakan
-jendela geser dengan ukuran yang disesuaikan per dataset dan keluarga model:
+jendela geser dengan ukuran yang disesuaikan per dataset dan pendekatan model:
 \begin{itemize}
   \item \textbf{CWRU (Jalur A):} jendela 2.048 titik, \emph{stride} penuh
         (tidak tumpang-tindih) untuk \emph{training} dan evaluasi. Panjang
@@ -433,13 +436,14 @@ deviasi standar yang dihitung hanya dari \emph{training set}, kemudian
 diterapkan secara seragam pada \emph{validation} dan \emph{test set} untuk
 mencegah kebocoran informasi statistik.
 
-\subsection{Health Indicator 36-D untuk Keluarga Kernel dan Tree}
+\subsection{Health Indicator 36-D untuk Model Berbasis Kernel dan Pohon Keputusan}
 \label{subsec:bab3_hi36d}
 
-Keluarga kernel (SVM/LR) dan tree (DT/RF/XGBoost) pada Bab~IV tidak
-beroperasi langsung pada sinyal mentah. Dari setiap segmen sinyal CWRU,
-diekstraksi \textbf{vektor HI 36-D} yang terdiri atas 18 fitur per kanal
-akselerometer (drive-end dan fan-end), masing-masing mencakup:
+Model berbasis kernel (SVM/LR) dan algoritma berbasis pohon keputusan
+(DT/RF/XGBoost) pada Bab~IV tidak beroperasi langsung pada sinyal mentah.
+Dari setiap segmen sinyal CWRU, diekstraksi \textbf{vektor HI 36-D} yang
+terdiri atas 18 fitur per kanal akselerometer (\emph{drive-end} dan
+\emph{fan-end}), masing-masing mencakup:
 
 \begin{itemize}
   \item \textbf{9 fitur domain waktu:} nilai RMS, kurtosis,
@@ -615,11 +619,11 @@ moderat dengan amplitudo BPFx $\varphi$ ($\varphi \in
 
 \noindent di mana $r_{i,\varphi}$ adalah korelasi Pearson antara vektor
 aktivasi fitur SAE ke-$i$ dan amplitudo \emph{envelope spectrum} pada pita
-frekuensi $\varphi$, dan $d_{\rm lat} = 1.024$ adalah dimensi laten SAE.
+frekuensi $\varphi$, dan $d_{\rm lat} = 1024$ adalah dimensi laten SAE.
 Ambang batas 0,30 mengikuti konvensi korelasi moderat yang lazim dalam
 literatur analisis sinyal.
 
-\textbf{Bootstrap 95\% CI} dihitung dengan $B = 1.000$ resampel rekaman dari
+\textbf{Bootstrap 95\% CI} dihitung dengan $B = 1000$ resampel rekaman dari
 dataset untuk memperoleh selang kepercayaan empiris pada $H_\varphi$:
 
 \begin{equation}\label{eq:bab3_bootstrap_ci}
@@ -630,7 +634,7 @@ dataset untuk memperoleh selang kepercayaan empiris pada $H_\varphi$:
 atas $B$ resampel dengan penggantian. Selang ini mencerminkan ketidakpastian
 akibat variabilitas sampel lintas rekaman.
 
-\textbf{\emph{Permutation p-value}} dihitung dengan $B = 1.000$ permutasi
+\textbf{\emph{Permutation p-value}} dihitung dengan $B = 1000$ permutasi
 label rekaman terhadap nilai amplitudo BPFx; hit-rate pada setiap permutasi
 dibandingkan terhadap hit-rate yang teramati (uji dua-sisi):
 
@@ -640,8 +644,8 @@ dibandingkan terhadap hit-rate yang teramati (uji dua-sisi):
 \end{equation}
 
 Nilai $p < 0{,}05$ menunjukkan bahwa korespondensi SAE–BPFx yang teramati
-tidak dapat dijelaskan oleh kebetulan semata dan merupakan properti emergent
-dari representasi yang terlatih. Dua kelompok kontrol negatif juga digunakan:
+tidak dapat dijelaskan oleh kebetulan semata dan merupakan properti
+\emph{emergent} dari representasi yang terlatih. Dua kelompok kontrol negatif juga digunakan:
 model dengan inisialisasi acak Xavier (kontrol arsitektur) dan \emph{hidden
 states} berupa Gaussian \emph{noise} (kontrol prosedur SAE). Rincian
 eksperimen kontrol negatif dikembangkan pada Bab~V~§V.4.
@@ -685,10 +689,12 @@ Jalur~B, setiap konfigurasi model × dataset dijalankan dengan tiga
 \end{equation}
 
 Metrik kinerja dilaporkan sebagai rata-rata dan deviasi standar populasi
-atas tiga \emph{seed}: $\overline{M} \pm \sigma_M$.
-Pada Jalur~A (\emph{benchmark} kernel/tree/deep), \emph{seed} ditetapkan
-dari masing-masing notebook reproduksi karena pelatihan klasifikasi bersifat
-deterministik dan stabil pada kondisi yang sama.
+atas tiga \emph{seed}: $\overline{M} \pm \sigma_M$. Deviasi standar
+mencerminkan sensitivitas hasil terhadap inisialisasi bobot, yang merupakan
+sumber variabilitas utama pada \emph{backbone} berbasis memori sekuensial.
+Pada Jalur~A (\emph{benchmark} kernel/pohon keputusan/jaringan dalam),
+\emph{seed} ditetapkan dari masing-masing notebook reproduksi karena
+pelatihan klasifikasi bersifat deterministik dan stabil pada kondisi yang sama.
 
 \textbf{Strategi \emph{checkpoint}.} \emph{Checkpoint} terbaik disimpan
 berdasarkan metrik validasi minimum (\texttt{val/rmse} untuk \emph{backbone}
