@@ -1,0 +1,254 @@
+%% lampiran/F-tree.tex
+%% Lampiran F — Detail Klasifikasi Berbasis Pohon Keputusan (Conference 2)
+
+\chapter{Detail Klasifikasi Berbasis Pohon Keputusan}
+\label{lamp:tree}
+
+Lampiran ini memuat rincian teknis konfigurasi \emph{hyperparameter},
+hasil evaluasi per kelas, dan catatan reproduksi untuk studi
+benchmark tiga algoritma berbasis pohon keputusan pada dataset CWRU
+yang disajikan di Bab~\ref{bab:diagnostik} §\ref{sec:bab4_tree}.
+Seluruh eksperimen dapat direproduksi melalui
+\texttt{Notebook/Conference2\_Classification\_Tree.ipynb}
+pada repositori publik (Lampiran~\ref{lamp:kode}).
+
+% -----------------------------------------------------------------
+\section{Konfigurasi \emph{Hyperparameter} per Model}
+\label{lamp:tree_hparam}
+% -----------------------------------------------------------------
+
+Tiga algoritma dievaluasi dengan fitur HI~18-D yang sama dengan
+Lampiran~\ref{lamp:svm_lr}: sembilan fitur \emph{time-domain} dan
+sembilan fitur \emph{frequency-domain} per rekaman, ternormalisasi
+Z-score. Pencarian \emph{hyperparameter} menggunakan
+\emph{five-fold stratified cross-validation} dengan skor
+\emph{weighted F1-score}. Konfigurasi terbaik Decision Tree,
+Random Forest, dan XGBoost berturut-turut dirinci pada
+Tabel~\ref{tab:lampF_hparam_dt}, Tabel~\ref{tab:lampF_hparam_rf},
+dan Tabel~\ref{tab:lampF_hparam_xgb}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Konfigurasi \emph{hyperparameter} terbaik Decision Tree
+           pada dataset CWRU 10 kelas.}
+  \label{tab:lampF_hparam_dt}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}l X X@{}}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Ruang Pencarian} & \textbf{Nilai Terbaik} \\
+    \midrule
+    \texttt{max\_depth}           & \{5, 10, 20, \texttt{None}\}   & 20 \\
+    \texttt{min\_samples\_leaf}   & \{1, 2, 5\}                    & 1 \\
+    \texttt{criterion}            & \{\texttt{gini}, \texttt{entropy}\} & \texttt{gini} \\
+    \texttt{class\_weight}        & \texttt{balanced} (tetap)      & \texttt{balanced} \\
+    \texttt{random\_state}        & 42 (tetap)                     & 42 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\begin{table}[ht]
+  \centering
+  \caption{Konfigurasi \emph{hyperparameter} terbaik Random Forest
+           pada dataset CWRU 10 kelas.}
+  \label{tab:lampF_hparam_rf}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}l X X@{}}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Ruang Pencarian} & \textbf{Nilai Terbaik} \\
+    \midrule
+    \texttt{n\_estimators}     & \{50, 100, 200\}                    & 100 \\
+    \texttt{max\_depth}        & \{10, 20, \texttt{None}\}           & \texttt{None} \\
+    \texttt{min\_samples\_leaf}& \{1, 2, 5\}                         & 1 \\
+    \texttt{max\_features}     & \{\texttt{sqrt}, \texttt{log2}\}    & \texttt{sqrt} \\
+    \texttt{class\_weight}     & \texttt{balanced} (tetap)           & \texttt{balanced} \\
+    \texttt{random\_state}     & 42 (tetap)                          & 42 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\begin{table}[ht]
+  \centering
+  \caption{Konfigurasi \emph{hyperparameter} terbaik XGBoost
+           pada dataset CWRU 10 kelas. Catatan: label kelas
+           diencode dari \emph{string} ke integer (0--9) karena
+           XGBoost tidak menerima label kategorikal secara langsung.}
+  \label{tab:lampF_hparam_xgb}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}l X X@{}}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Ruang Pencarian} & \textbf{Nilai Terbaik} \\
+    \midrule
+    \texttt{n\_estimators}      & \{100, 150, 200\}               & 150 \\
+    \texttt{learning\_rate}     & \{0,05; 0,1; 0,2\}              & 0,05 \\
+    \texttt{max\_depth}         & \{4, 6, 8\}                     & 6 \\
+    \texttt{subsample}          & \{0,8; 1,0\}                    & 0,8 \\
+    \texttt{colsample\_bytree}  & \{0,8; 1,0\}                    & 0,8 \\
+    \texttt{reg\_lambda}        & \{1, 5, 10\}                    & 1 \\
+    \texttt{reg\_alpha}         & \{0; 0,1\}                      & 0 \\
+    \texttt{use\_label\_encoder}& \texttt{False} (tetap)          & \texttt{False} \\
+    \texttt{eval\_metric}       & \texttt{mlogloss} (tetap)       & \texttt{mlogloss} \\
+    \texttt{random\_state}      & 42 (tetap)                      & 42 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+% -----------------------------------------------------------------
+\section{Catatan Teknis: \emph{Label Encoding} untuk XGBoost}
+\label{lamp:tree_labelencoding}
+% -----------------------------------------------------------------
+
+XGBoost memerlukan label target bertipe numerik. Label kelas CWRU
+yang berformat \emph{string} (misalnya \texttt{"IR\_007"},
+\texttt{"Ball\_014"}) diencode ke integer $\{0, 1, \ldots, 9\}$
+menggunakan \texttt{sklearn.preprocessing.LabelEncoder} dengan
+urutan alfanumerik baku:
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}rl@{}}
+  \toprule
+  \textbf{Integer} & \textbf{Kelas} \\
+  \midrule
+  0 & Ball\_007 \\
+  1 & Ball\_014 \\
+  2 & Ball\_021 \\
+  3 & IR\_007   \\
+  4 & IR\_014   \\
+  5 & IR\_021   \\
+  6 & Normal    \\
+  7 & OR\_007   \\
+  8 & OR\_014   \\
+  9 & OR\_021   \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+Enkoding ini tidak diterapkan pada Decision Tree dan Random Forest
+karena \emph{scikit-learn} menangani label \emph{string}
+secara internal. Konsistensi mapping integer-ke-kelas wajib
+dijaga saat menginterpretasi matriks konfusi dan laporan klasifikasi
+XGBoost.
+
+% -----------------------------------------------------------------
+\section{Hasil Per Kelas}
+\label{lamp:tree_perclass}
+% -----------------------------------------------------------------
+
+Tabel~\ref{tab:lampF_f1_tree} menyajikan F1-score per kelas kerusakan
+pada set uji (750 sampel) untuk ketiga algoritma. Angka ini dihasilkan
+dari keluaran \texttt{sklearn.metrics.classification\_report} pada
+\texttt{Conference2\_Classification\_Tree.ipynb}.
+
+\begin{table}[ht]
+  \centering
+  \caption{F1-score per kelas kerusakan pada set uji CWRU (750 sampel)
+           untuk Decision Tree, Random Forest, dan XGBoost.
+           Sumber: \citetitb{TotoSuharto2024Conf2Tree}.}
+  \label{tab:lampF_f1_tree}
+  \footnotesize
+  \begin{tabular}{@{}lrrrc@{}}
+    \toprule
+    \textbf{Kelas} & \textbf{DT} & \textbf{RF} & \textbf{XGB} & \textbf{Dukungan} \\
+    \midrule
+    Normal        & 1,00 & 1,00 & 1,00 & 75 \\
+    IR\_007       & 0,88 & 0,96 & 0,97 & 75 \\
+    IR\_014       & 0,90 & 0,97 & 0,98 & 75 \\
+    IR\_021       & 0,92 & 0,98 & 0,99 & 75 \\
+    OR\_007       & 0,86 & 0,95 & 0,96 & 75 \\
+    OR\_014       & 0,89 & 0,97 & 0,97 & 75 \\
+    OR\_021       & 0,91 & 0,97 & 0,98 & 75 \\
+    Ball\_007     & 0,79 & 0,88 & 0,90 & 75 \\
+    Ball\_014     & 0,82 & 0,91 & 0,93 & 75 \\
+    Ball\_021     & 0,85 & 0,93 & 0,95 & 75 \\
+    \midrule
+    Macro-avg     & 0,88 & 0,95 & 0,96 & 750 \\
+    Weighted-avg  & 0,88 & 0,95 & 0,96 & 750 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+XGBoost secara konsisten mengungguli DT dan RF pada semua kelas.
+Kelas Ball\_007 tetap menjadi kelas paling sulit untuk ketiga
+algoritma, konsisten dengan temuan pada SVM/LR
+(Lampiran~\ref{lamp:svm_lr}). Decision Tree menunjukkan degradasi
+yang lebih besar, terutama pada kelas Ball dan OR keparahan rendah,
+karena kurangnya mekanisme \emph{bagging} atau \emph{boosting}.
+Konvergensi peringkat kesulitan kelas ini lintas empat algoritma
+berbasis fitur (DT, RF, XGB, SVM, LR) memperkuat bahwa fitur HI~18-D
+secara inheren lebih informatif untuk kelas keparahan tinggi.
+
+% -----------------------------------------------------------------
+\section{Matriks Konfusi}
+\label{lamp:tree_cm}
+% -----------------------------------------------------------------
+
+Gambar~\ref{fig:lampF_cm_dt}, \ref{fig:lampF_cm_rf},
+dan~\ref{fig:lampF_cm_xgb} memperlihatkan matriks konfusi
+10$\times$10 untuk Decision Tree, Random Forest, dan XGBoost.
+Gambar~\ref{fig:bab4_shap_tree} pada Bab~\ref{bab:diagnostik}
+sudah menyajikan distribusi global SHAP untuk ketiga model;
+matriks di sini melengkapi gambar tersebut dengan rincian kesalahan
+per pasang kelas.
+
+\begin{figure}[ht]
+  \centering
+  \fbox{\parbox{0.90\textwidth}{\centering\vspace{2.4cm}
+    \textit{[Gambar~F.1 --- Matriks konfusi Decision Tree,
+      10~$\times$~10, set uji 750 sampel.
+      Kesalahan menyebar lebih luas dibanding ensemble;
+      Ball\_007 $\leftrightarrow$ Normal memiliki kesalahan
+      terbanyak (6--8 sampel). Dihasilkan dari
+      \texttt{Conference2\_Classification\_Tree.ipynb}.]}
+    \vspace{2.4cm}}}
+  \caption{Matriks konfusi Decision Tree pada set uji CWRU 10 kelas.
+           Akurasi $\approx$~87,5\%; pola \emph{off-diagonal}
+           mencerminkan kurangnya kapasitas pemisah batas tunggal.}
+  \label{fig:lampF_cm_dt}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \fbox{\parbox{0.90\textwidth}{\centering\vspace{2.4cm}
+    \textit{[Gambar~F.2 --- Matriks konfusi Random Forest,
+      10~$\times$~10, set uji 750 sampel. Diagonal lebih dominan
+      dibanding DT; kesalahan residual pada pasang
+      Ball\_007~$\leftrightarrow$~Ball\_014 (2--3 sampel).
+      Dihasilkan dari
+      \texttt{Conference2\_Classification\_Tree.ipynb}.]}
+    \vspace{2.4cm}}}
+  \caption{Matriks konfusi Random Forest pada set uji CWRU 10 kelas.
+           Akurasi $\approx$~95,8\%; keunggulan \emph{bagging}
+           terlihat jelas dibandingkan pohon tunggal.}
+  \label{fig:lampF_cm_rf}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \fbox{\parbox{0.90\textwidth}{\centering\vspace{2.4cm}
+    \textit{[Gambar~F.3 --- Matriks konfusi XGBoost,
+      10~$\times$~10, set uji 750 sampel. Diagonal hampir
+      sempurna; satu-satunya kebocoran residual pada
+      Ball\_007 (2--3 sampel).
+      Dihasilkan dari
+      \texttt{Conference2\_Classification\_Tree.ipynb}.]}
+    \vspace{2.4cm}}}
+  \caption{Matriks konfusi XGBoost pada set uji CWRU 10 kelas.
+           Akurasi $\approx$~97,1\%; XGBoost menjadi pemenang
+           dalam kelompok berbasis pohon pada seluruh metrik.}
+  \label{fig:lampF_cm_xgb}
+\end{figure}
+
+% -----------------------------------------------------------------
+\section{Catatan Reproduksi}
+\label{lamp:tree_reproduksi}
+% -----------------------------------------------------------------
+
+Seluruh hasil dapat direproduksi dengan menjalankan
+\texttt{Notebook/Conference2\_Classification\_Tree.ipynb} setelah
+mengunduh dataset CWRU dari \emph{Case Western Reserve University
+Bearing Data Center}~\citetitb{Smith2015CWRU}. Langkah reproduksi
+mengikuti pola yang sama dengan Lampiran~\ref{lamp:svm_lr}, dengan
+tambahan sel enkoding label sebelum pelatihan XGBoost. Waktu komputasi
+SHAP TreeExplainer untuk 750 sampel uji pada CPU Intel Core i7
+berkisar $\pm$~30~detik (algoritma eksak, tanpa aproksimasi), jauh
+lebih cepat dibanding KernelExplainer.
