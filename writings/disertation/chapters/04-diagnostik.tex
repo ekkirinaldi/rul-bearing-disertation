@@ -69,7 +69,7 @@ sebagai \emph{fingerprint} per kelas kerusakan.
     xai/.style  = {rectangle, rounded corners=3pt, draw, thick, fill=yellow!15,
                    align=center, minimum height=0.80cm, minimum width=2.8cm,
                    font=\small},
-    out/.style  = {rectangle, rounded corners=3pt, draw, thick, fill=orange!15,
+    outnode/.style = {rectangle, rounded corners=3pt, draw, thick, fill=orange!15,
                    align=center, minimum height=0.80cm, minimum width=2.4cm,
                    font=\small},
     arr/.style  = {-{Stealth[length=5pt]}, thick},
@@ -84,7 +84,7 @@ sebagai \emph{fingerprint} per kelas kerusakan.
        {Kernel/Tree\\{\scriptsize SVM, LR, DT, RF, XGB}};
   \node[xai, right=0.9cm of kertree] (shapft)
        {SHAP\\{\scriptsize Kernel/TreeExplainer}};
-  \node[out, right=0.9cm of shapft] (rankf)
+  \node[outnode, right=0.9cm of shapft] (rankf)
        {Ranking fitur\\{\scriptsize global \& per kelas}};
 
   \draw[arr] (cwru.north east) |- (feat.west);
@@ -99,7 +99,7 @@ sebagai \emph{fingerprint} per kelas kerusakan.
        {WDCNN\\{\scriptsize kernel-1 = 64, BN, dropout}};
   \node[xai, right=0.9cm of wdcnn] (shapd)
        {SHAP\\{\scriptsize DeepExplainer}};
-  \node[out, right=0.9cm of shapd] (fsm)
+  \node[outnode, right=0.9cm of shapd] (fsm)
        {FSM\\{\scriptsize \emph{fingerprint} 2.048 posisi}};
 
   \draw[arr] (cwru.south east) |- (raw.west);

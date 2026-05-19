@@ -6,8 +6,7 @@
 
 Lampiran ini mendokumentasikan rincian teknis tambahan untuk Pilar~0 ---
 studi kasus klasifikasi tiga kelas pada lini produksi PT~SKF~Indonesia
-yang telah diuraikan pada Subbab~\ref{sec:bab4_studi_kasus_industri}
-dan Subbab~\ref{sec:bab5_studi_kasus_industri}. Materi yang dimuat di
+yang menjadi bagian dari Bab~\ref{bab:diagnostik}. Materi yang dimuat di
 sini bersifat penunjang reproducibility dan tidak menambahkan klaim
 ilmiah baru.
 
@@ -17,7 +16,7 @@ ilmiah baru.
 % -----------------------------------------------------------------
 
 Konfigurasi hyperparameter berikut digunakan untuk benchmarking enam
-algoritma kandidat pada Subbab~\ref{subsec:bab4_benchmarking}. Pelatihan
+algoritma kandidat pada Bab~\ref{bab:diagnostik}. Pelatihan
 dilakukan dengan AdamW (\emph{learning rate} awal $10^{-3}$,
 \emph{cosine annealing} hingga $10^{-5}$), \emph{batch size} $128$,
 $50$ \emph{epoch} maksimal, \emph{early stopping} pada
@@ -66,8 +65,7 @@ Tabel~\ref{tab:lampD_hparams_klasifikasi}.
 \label{lamp:shap_per_sampel}
 % -----------------------------------------------------------------
 
-Sebagai pelengkap \emph{summary plot} pada
-Gambar~\ref{fig:bab5_shap_global}, Gambar~\ref{fig:lampD_shap_waterfall}
+Sebagai ilustrasi analisis per sampel, Gambar~\ref{fig:lampD_shap_waterfall}
 menampilkan plot \emph{waterfall} SHAP untuk satu sampel
 misklasifikasi \emph{Critical} yang dipakai sebagai bahan
 \emph{root-cause analysis} bersama tim pemeliharaan PT~SKF~Indonesia.
@@ -94,8 +92,7 @@ mendorong prediksi ke kelas \emph{Critical}; negatif: menahan).
 Gambar~\ref{fig:lampD_quality_check} memperlihatkan tata-letak stasiun
 pemeriksaan kualitas (\emph{vibration checking} dan \emph{radial
 clearance checking}) di lini produksi yang menjadi sumber data
-kualitas untuk integrasi multi-sumber pada
-Subbab~\ref{subsec:bab4_akuisisi_data}. Setiap produk diuji oleh kedua
+kualitas untuk integrasi multi-sumber pada studi kasus ini. Setiap produk diuji oleh kedua
 stasiun ini sebelum dikirim ke pelanggan; hasil pengukuran disimpan
 dalam basis data MES dan disinkronisasi dengan sinyal getaran
 spindel pada lapisan \emph{data warehouse}.

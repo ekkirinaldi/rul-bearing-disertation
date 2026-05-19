@@ -5,7 +5,7 @@
 \label{lamp:fitur}
 
 Lampiran ini merinci definisi numerik vektor \emph{Health Indicator} (HI)
-yang memasuki model pada Bab~\ref{bab:metodologi}--\ref{bab:hasil-pembahasan}.
+yang memasuki model pada Bab~\ref{bab:metodologi-umum}--\ref{bab:prognostik}.
 Implementasi mengikuti modul \path{mxlstm/data/hi.py} pada repositori
 publik (Lampiran~\ref{lamp:kode}).
 
@@ -18,13 +18,13 @@ Welch, sehingga
   F = 2 \times (9 + 9) = 36.
 \end{equation}
 \noindent Konvensi penamaan fitur dalam kode dan pada tabel SHAP/IG
-Bab~\ref{bab:hasil-pembahasan} mengikuti pola
+Bab~\ref{bab:prognostik} mengikuti pola
 \texttt{td\_c\textit{c}\_}\textit{nama} dan
 \texttt{fd\_c\textit{c}\_}\textit{nama}, dengan indeks kanal
 $c=0$ untuk horizontal dan $c=1$ untuk vertikal.
 
 Ringkasan energi pada lima pita frekuensi seragam hingga Nyquist
-(Persamaan~\ref{eq:bab4_band_energy} pada Bab~\ref{bab:metodologi})
+(sebagaimana diuraikan pada Bab~\ref{bab:metodologi-umum})
 menggambarkan prinsip dekomposisi spektral; secara numerik, energi pita
 pada Lampiran ini dihitung sebagai jumlah kontribusi bin PSD Welch
 pada rentang frekuensi yang sama lebar, sehingga konsisten dengan
@@ -159,7 +159,7 @@ Setelah vektor $36$-dimensi terbentuk per rekaman, diterapkan
 normalisasi \emph{Min--Max} per fitur yang di-\emph{fit} hanya pada
 bantalan pelatihan, diikuti pemulusan eksponensial sepanjang indeks
 waktu dengan koefisien $\alpha_{\mathrm{smooth}} = 0{,}10$
-(sebagaimana pada Bab~\ref{bab:metodologi}).
+(sebagaimana pada Bab~\ref{bab:metodologi-umum}).
 Parameter normalisasi disimpan per fitur agar dapat diterapkan identik
 pada validasi dan uji tanpa penyimpangan statistik antar-set.
 Urutan operasi dan parameter persis tercatat pada kelas
