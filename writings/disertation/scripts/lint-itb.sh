@@ -274,6 +274,55 @@ else
   warn "File abstrak (00-abstrak-id.tex / 00-abstract-en.tex) tidak ditemukan — lewati cek #15."
 fi
 
+# --- 16. Penanda frasa mesin (AI-marker) -----------------------------------
+echo ""
+echo "--- 16. Penanda frasa mesin (AI-marker) ---"
+ai_warn=0
+_check_ai() {
+  local pattern="$1" label="$2"
+  hits=$(grep -inE "$pattern" $ALL_BODY 2>/dev/null | grep -vE ':[[:space:]]*%' || true)
+  if [ -n "$hits" ]; then
+    warn "Frasa mesin '$label' — restrukturisasi agar lebih organik:"
+    echo "$hits" | head -3
+    ai_warn=1
+  fi
+}
+_check_ai 'tidak dapat dipungkiri'                          'tidak dapat dipungkiri'
+_check_ai 'memainkan peran (yang )?penting'                 'memainkan peran penting'
+_check_ai '\bpenting untuk dicatat\b'                       'penting untuk dicatat'
+_check_ai '\bperlu dicatat bahwa\b'                         'perlu dicatat bahwa'
+_check_ai '\b(dalam|di) era (modern|digital|industri)\b'   'dalam/di era modern/digital/industri'
+_check_ai '\btentunya\b'                                    'tentunya (informal/klise mesin)'
+_check_ai '\bmerupakan hal yang (sangat )?(penting|krusial|vital|mendasar)\b' \
+                                                            'merupakan hal yang penting/krusial'
+_check_ai '\bsecara (komprehensif|holistik)\b'              'secara komprehensif/holistik'
+_check_ai '\bperlu dipahami bahwa\b'                        'perlu dipahami bahwa'
+_check_ai '\btidak dapat dipisahkan\b'                      'tidak dapat dipisahkan (klise)'
+_check_ai '\bkeluarga\b'  'keluarga (untuk algoritma/model — gunakan: jenis/varian/kelompok/kelas/model)'
+_check_ai '\bpada (dasarnya|intinya)\b'                     'pada dasarnya/intinya (filler mesin)'
+_check_ai '\bdapat dikatakan bahwa\b'                       'dapat dikatakan bahwa (hedging klise)'
+_check_ai '\bberbagai macam\b'                              'berbagai macam (kabur — sebutkan jumlah konkret)'
+_check_ai '\bperlu diperhatikan bahwa\b'                    'perlu diperhatikan bahwa'
+_check_ai '\b(sangat|amat) penting\b'                       'sangat/amat penting (vague intensifier)'
+# Pembuka kalimat "Lebih lanjut,"
+hits=$(grep -inE '^\s*(Lebih lanjut)[,.]' $ALL_BODY 2>/dev/null | grep -vE ':[[:space:]]*%' || true)
+if [ -n "$hits" ]; then
+  warn "Frasa mesin 'Lebih lanjut,' sebagai pembuka — gunakan 'Selain itu,' atau integrasikan:"
+  echo "$hits" | head -3
+  ai_warn=1
+fi
+# Em-dash: Unicode — atau LaTeX --- di luar konteks tabel/komentar
+em_hits=$(grep -inE '(—|---[^-])' $ALL_BODY 2>/dev/null \
+  | grep -vE ':[[:space:]]*%' \
+  | grep -vE '(\\hline|\\toprule|\\midrule|\\bottomrule|\\cline|\\rule\b)' \
+  || true)
+if [ -n "$em_hits" ]; then
+  warn "Em dash (— atau ---) di prosa — ganti dengan koma, titik koma, titik dua, atau pisah kalimat:"
+  echo "$em_hits" | head -3
+  ai_warn=1
+fi
+[ "$ai_warn" -eq 0 ] && ok "Tidak ada frasa mesin yang terdeteksi."
+
 # --- Summary -----------------------------------------------------------
 echo ""
 echo "============================================================"

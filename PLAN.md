@@ -38,6 +38,14 @@
 4. **Sitasi diri:** gunakan `\citetitb{TotoSuharto2024Conf1SVM}` dst., tidak pernah `\cite{}`.
 5. **Gambar:** Buat placeholder `\missingfigure{...}` (paket todonotes) atau `\fbox{\parbox{...}{[Figure: ...]}}` jika gambar belum tersedia. Jangan tunda penulisan karena menunggu gambar.
 6. **Verifikasi:** `make build` setelah setiap fase. `make lint` wajib lulus sebelum commit. `make pre-submit` wajib lulus di akhir.
+7. **Default build path: Docker.** Jalankan target Makefile melalui Docker (`danteev/texlive`) sebagai jalur referensi — distribusi TeX Live ter-pin, hasil reproducible lintas mesin. Local `make` boleh dipakai untuk iterasi cepat, tetapi sebelum commit yang dikirim ke Pak Toto **wajib** re-verify via Docker:
+   ```bash
+   cd writings/disertation
+   docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make build
+   docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make check
+   docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make pre-submit
+   ```
+   Verifikasi PowerShell di tiap fase dapat menggunakan local `make` jika tersedia — perintah Docker setara dengan mengganti `make X` → `docker run --rm -v "${PWD}:/workdir" -w /workdir danteev/texlive make X`.
 
 ---
 

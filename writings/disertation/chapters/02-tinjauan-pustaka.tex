@@ -37,9 +37,9 @@ interval waktu tetap, namun sering menghasilkan penggantian prematur saat
 komponen masih layak digunakan, sehingga menambah biaya tanpa manfaat nyata
 \citetitb{Mobley2002PlantMaintenance}.
 
-Perawatan prediktif (\emph{predictive maintenance}, PdM) --- yang
+Perawatan prediktif (\emph{predictive maintenance}, PdM), yang
 distandardisasikan dalam ISO~13374 untuk akuisisi dan pemrosesan data kondisi
-serta ISO~13381 untuk estimasi sisa umur --- mengeliminasi kedua kelemahan
+serta ISO~13381 untuk estimasi sisa umur, mengeliminasi kedua kelemahan
 tersebut dengan mengintervensi berdasarkan kondisi aktual komponen
 \citetitb{Carvalho2019PdMReview}. Dalam paradigma PdM, \emph{Condition-Based
 Maintenance} (CBM) mendefinisikan tindakan perawatan yang dipicu secara langsung
@@ -47,7 +47,7 @@ oleh informasi kondisi yang diperoleh dari sensor. \emph{Prognostics and
 Health Management} (PHM) memperluas CBM dengan menambahkan kemampuan prediksi:
 bukan hanya mendeteksi degradasi yang sedang berlangsung, tetapi juga
 memperkirakan kapan komponen akan mencapai batas kegagalan (\emph{remaining
-useful life} --- RUL). Kemampuan prediksi ini memungkinkan perencanaan
+useful life}, RUL). Kemampuan prediksi ini memungkinkan perencanaan
 perawatan yang lebih efisien, pengurangan \emph{unplanned downtime}, dan
 optimasi persediaan suku cadang \citetitb{Lei2018PrognosticsReview}.
 
@@ -77,7 +77,7 @@ sensor akselerometer, suhu, dan kecepatan dipasang langsung pada mesin dan
 dihubungkan ke \emph{gateway} industri seperti SKF~IMx-8 yang mampu melakukan
 pra-pemrosesan sinyal lokal sebelum mengirimkan data ke lapisan di atasnya
 \citetitb{SKF2017TechReport}. Pada lapis kedua (\emph{edge server}), komputasi
-yang lebih intensif --- klasifikasi kondisi, deteksi anomali --- dilakukan di
+yang lebih intensif, seperti klasifikasi kondisi dan deteksi anomali, dilakukan di
 \emph{server} lokal pabrik. Pada lapis ketiga (awan/\emph{cloud}), estimasi
 RUL dan analisis historis dilakukan dengan sumber daya GPU yang lebih besar
 \citetitb{Cheng2019EdgeCloud}. Arsitektur tiga-tier ini menjadi kerangka
@@ -106,8 +106,8 @@ representasi secara langsung dari sinyal mentah.
 \label{subsec:bab2_evolusi_arsitektur}
 
 Pendekatan konvensional mengandalkan fitur domain waktu dan frekuensi yang
-dihitung secara manual --- nilai efektif (RMS), kurtosis, faktor puncak,
-\emph{spectral centroid} --- yang kemudian diumpankan ke pengklasifikasi
+dihitung secara manual, yaitu nilai efektif (RMS), kurtosis, faktor puncak,
+dan \emph{spectral centroid}, yang kemudian diumpankan ke pengklasifikasi
 seperti \emph{Support Vector Machine} (SVM). Kelemahan utama pendekatan ini
 adalah ketergantungan pada keahlian domain dalam rekayasa fitur dan
 kesulitan dalam menangkap interaksi fitur yang kompleks \citetitb{Lei2018Machinery}.
@@ -135,7 +135,7 @@ Perkembangan lebih lanjut mencakup arsitektur berbasis Transformer dan
 mekanisme \emph{attention} untuk diagnostik, yang menawarkan fleksibilitas
 tangkap konteks global. Namun kecenderungan terkini menunjukkan bahwa akurasi
 diagnostik pada dataset benchmark sudah mendekati saturasi di atas 99\%; fokus
-penelitian bergeser ke aspek \emph{trustworthiness} --- kemampuan model untuk
+penelitian bergeser ke aspek \emph{trustworthiness}, yakni kemampuan model untuk
 menjelaskan keputusannya kepada teknisi perawatan
 \citetitb{Serradilla2022DLPdM}.
 
@@ -160,68 +160,68 @@ periode 84~ms → 4.032 sampel; satu \emph{window} cukup untuk dua impuls FTF).
 
 Isu \emph{temporal leakage} sering luput dari perhatian dalam literatur awal:
 pembagian acak (\emph{random split}) antara data latih dan uji menyebabkan
-sampel yang berdekatan secara temporal --- dan karenanya sangat berkorelasi ---
+sampel yang berdekatan secara temporal, yang sangat berkorelasi satu sama lain,
 terdistribusi di kedua himpunan. Hal ini menghasilkan estimasi akurasi yang
 berlebihan karena model "mengingat" pola yang telah dilihat, bukan benar-benar
 mengeneralisasi ke data baru \citetitb{Neupane2020CWRUReview}. Protokol
 \emph{temporal split} (54/13/33\% = 1.240/310/750 sampel, berturutan dalam
 waktu) digunakan dalam penelitian ini untuk menghindari kebocoran ini.
 
-\subsection{Klasifikasi Bantalan Multi-Keluarga: Kernel, Pohon, dan Dalam}
-\label{subsec:bab2_multi_keluarga}
+\subsection{Klasifikasi Bantalan Multi-Model: Kernel, Pohon, dan Dalam}
+\label{subsec:bab2_multi_model}
 
-Penelitian ini mengevaluasi tiga keluarga algoritma klasifikasi secara paralel
-pada dataset CWRU --- bukan sebagai ensembling ke satu prediktor tunggal,
-melainkan sebagai \emph{benchmark} lintas keluarga untuk memahami \emph{trade-off}
-antara akurasi, kompleksitas, keterdeplian di \emph{edge}, dan kedalaman
-interpretabilitas.
+Penelitian ini mengevaluasi tiga kelompok algoritma klasifikasi secara paralel
+pada dataset CWRU. Ketiganya tidak dikombinasikan menjadi satu prediktor tunggal,
+melainkan dijalankan sebagai \emph{benchmark} lintas kelompok untuk memahami
+\emph{trade-off} antara akurasi, kompleksitas, keterdeplian di \emph{edge},
+dan kedalaman interpretabilitas.
 
-\textbf{Keluarga kernel (SVM dan LR).} \emph{Support Vector Machine} dengan
+\textbf{Model berbasis kernel (SVM dan LR).} \emph{Support Vector Machine} dengan
 kernel RBF dan \emph{Logistic Regression} \emph{one-vs-rest} beroperasi pada
 18 fitur rekayasa manual: 9 fitur domain waktu (RMS, kurtosis, faktor puncak,
 \emph{peak-to-peak}, kemiringan, standar deviasi, rata-rata, variansi, MAD) dan
 9 fitur domain frekuensi (sentroid spektral, entropi spektral, energi pita
 BPFO/BPFI/BSF/FTF, dan turunannya). SHAP \emph{KernelExplainer} memungkinkan
-atribusi fitur yang bersifat model-agnostik pada keluarga ini
+atribusi fitur yang bersifat model-agnostik untuk kedua model ini
 \citetitb{TotoSuharto2024Conf1SVM}.
 
-\textbf{Keluarga pohon (\emph{tree-based}).} \emph{Decision Tree} (DT),
+\textbf{Model berbasis pohon keputusan.} \emph{Decision Tree} (DT),
 \emph{Random Forest} (RF), dan XGBoost mengoperasikan pada himpunan fitur yang
 sama. XGBoost dengan \emph{gradient boosting} dan regularisasi L1/L2
-menghasilkan akurasi tertinggi dalam keluarga ini; RF memberikan \emph{ensemble}
+menghasilkan akurasi tertinggi dalam kelompok ini; RF memberikan \emph{ensemble}
 bagging yang lebih stabil dibanding DT tunggal. SHAP \emph{TreeExplainer}
-memberikan nilai Shapley yang eksak dan efisien untuk seluruh keluarga pohon
+memberikan nilai Shapley yang eksak dan efisien untuk seluruh model berbasis pohon
 \citetitb{TotoSuharto2024Conf2Tree}.
 
-\textbf{Keluarga dalam (\emph{deep learning}).} WDCNN beroperasi langsung pada
+\textbf{Model berbasis jaringan dalam.} WDCNN beroperasi langsung pada
 sinyal mentah 2.048 sampel, tanpa rekayasa fitur manual. SHAP \emph{DeepExplainer}
 menghasilkan nilai atribusi per posisi waktu (2.048 nilai per sampel per kelas),
 yang kemudian diagregasi menjadi \emph{Fault Signature Maps} (FSM) sebagai
 \emph{fingerprint} kelas kerusakan \citetitb{TotoSuharto2025Journal1FSM}.
 
 Tabel~\ref{tab:bab2_klasifikasi_survey} merangkum kinerja dan kapabilitas
-interpretabilitas dari representasi tiap keluarga. Angka kunci dilaporkan dari
+interpretabilitas dari representasi tiap kelompok. Angka kunci dilaporkan dari
 \citetitb{TotoSuharto2024Conf1SVM}, \citetitb{TotoSuharto2024Conf2Tree},
 dan \citetitb{TotoSuharto2025Journal1FSM}; detail lengkap disajikan pada
 §IV.7--§IV.9.
 
 \begin{table}[ht]
   \centering
-  \caption{Ringkasan kinerja dan kapabilitas interpretabilitas tiga keluarga
+  \caption{Ringkasan kinerja dan kapabilitas interpretabilitas tiga kelompok
            algoritma klasifikasi bantalan pada dataset CWRU.}
   \label{tab:bab2_klasifikasi_survey}
   \footnotesize
   \begin{tabularx}{\textwidth}{@{}l l l c l c@{}}
     \toprule
-    \textbf{Algoritma} & \textbf{Keluarga} & \textbf{Dataset}
+    \textbf{Algoritma} & \textbf{Kelompok} & \textbf{Dataset}
       & \textbf{Akurasi (\%)} & \textbf{Varian SHAP} & \textbf{FSM} \\
     \midrule
-    SVM RBF      & Kernel  & CWRU & 96,4  & \emph{KernelExplainer} & — \\
-    LR (\emph{one-vs-rest}) & Kernel & CWRU & 94,3 & \emph{KernelExplainer} & — \\
-    RF            & Pohon   & CWRU & 95,8  & \emph{TreeExplainer}  & — \\
-    XGBoost       & Pohon   & CWRU & 97,1  & \emph{TreeExplainer}  & — \\
-    WDCNN (var A) & Dalam   & CWRU & 99,87 & \emph{DeepExplainer}  & \checkmark \\
-    WDCNN (var C, tanpa BN) & Dalam & CWRU & 96,27 & \emph{DeepExplainer} & \checkmark \\
+    SVM RBF      & Berbasis kernel  & CWRU & 96,4  & \emph{KernelExplainer} & — \\
+    LR (\emph{one-vs-rest}) & Berbasis kernel & CWRU & 94,3 & \emph{KernelExplainer} & — \\
+    RF            & Berbasis pohon  & CWRU & 95,8  & \emph{TreeExplainer}  & — \\
+    XGBoost       & Berbasis pohon  & CWRU & 97,1  & \emph{TreeExplainer}  & — \\
+    WDCNN (var A) & Jaringan dalam  & CWRU & 99,87 & \emph{DeepExplainer}  & \checkmark \\
+    WDCNN (var C, tanpa BN) & Jaringan dalam & CWRU & 96,27 & \emph{DeepExplainer} & \checkmark \\
     \bottomrule
   \end{tabularx}
 
@@ -234,7 +234,7 @@ dan \citetitb{TotoSuharto2025Journal1FSM}; detail lengkap disajikan pada
 \end{table}
 
 Tabel~\ref{tab:bab2_klasifikasi_survey} menunjukkan progresi yang jelas:
-keluarga kernel dan pohon memberikan akurasi yang layak untuk \emph{edge
+model kernel dan pohon memberikan akurasi yang layak untuk \emph{edge
 deployment} dengan interpretabilitas di tingkat fitur, sedangkan WDCNN
 melampaui semua \emph{baseline} dalam akurasi sekaligus memungkinkan
 interpretabilitas di tingkat sinyal mentah melalui FSM. Temuan bahwa
@@ -250,7 +250,7 @@ diagnostik bantalan (\emph{novelti N2}).
 \emph{Explainable AI} (XAI) bertujuan mengungkap alasan di balik keputusan
 model sehingga dapat diverifikasi oleh operator manusia. Dalam konteks diagnostik
 bantalan, XAI yang baik harus mampu menjelaskan \emph{mengapa} model menyimpulkan
-suatu jenis kerusakan --- dan idealnya mengkonfirmasi atau mengoreksi intuisi
+suatu jenis kerusakan, serta idealnya mengkonfirmasi atau mengoreksi intuisi
 rekayasawan yang berpengalaman dalam \emph{vibration analysis}.
 
 \subsection{Taksonomi Metode XAI}
@@ -278,10 +278,9 @@ Kategori ketiga adalah \textbf{metode berbasis perturbasi}: LIME
 \citetitb{Ribeiro2016LIME} memfit model linier lokal pada sekitar prediksi
 yang dijelaskan; SHAP \citetitb{Lundberg2017SHAP} menghitung nilai Shapley
 dari teori permainan kooperatif yang memenuhi serangkaian aksiom keadilan
-yang ketat. Untuk domain diagnostik bantalan, metode berbasis perturbasi ---
-khususnya SHAP --- paling luas diadopsi karena jaminan aksiomatiknya dan
-dukungan implementasi untuk berbagai keluarga model
-\citetitb{Bengherbia2024SHAPBearing}.
+yang ketat. Untuk domain diagnostik bantalan, metode berbasis perturbasi, khususnya SHAP,
+paling luas diadopsi karena jaminan aksiomatiknya dan dukungan implementasi
+untuk berbagai jenis model \citetitb{Bengherbia2024SHAPBearing}.
 
 \subsection{SHAP \emph{DeepExplainer}}
 \label{subsec:bab2_shap_deep}
@@ -290,8 +289,8 @@ SHAP \citetitb{Lundberg2017SHAP} memberikan kerangka interpretabilitas yang
 berlandaskan teori permainan kooperatif: nilai Shapley $\phi_i$ untuk fitur
 ke-$i$ mengukur kontribusi marginal rata-rata fitur tersebut terhadap prediksi
 model di atas semua kemungkinan koalisi fitur lainnya. Sifat-sifat aksiomatik
-yang dipenuhi --- \emph{local accuracy}, \emph{missingness}, dan
-\emph{consistency} --- menjamin bahwa atribusi SHAP koheren dan tidak
+yang dipenuhi, yaitu \emph{local accuracy}, \emph{missingness}, dan
+\emph{consistency}, menjamin bahwa atribusi SHAP koheren dan tidak
 menyesatkan secara matematis.
 
 \emph{DeepExplainer} mengimplementasikan SHAP untuk jaringan saraf dalam
@@ -306,10 +305,10 @@ Hasilnya adalah $500 \times 2048 \times 10$ nilai atribusi (500 sampel uji,
 2.048 posisi, 10 kelas), yang menjadi bahan baku pembentukan FSM
 \citetitb{TotoSuharto2025Journal1FSM}.
 
-\subsection{SHAP per Keluarga Model: Kapan Menggunakan yang Mana}
-\label{subsec:bab2_shap_per_keluarga}
+\subsection{SHAP per Jenis Model: Kapan Menggunakan yang Mana}
+\label{subsec:bab2_shap_per_jenis}
 
-Pemilihan varian SHAP yang tepat bergantung pada keluarga model yang
+Pemilihan varian SHAP yang tepat bergantung pada jenis model yang
 dijelaskan. Ketiga varian memiliki karakteristik komputasi, keakuratan, dan
 cakupan model yang berbeda secara fundamental, sehingga menggunakan varian
 yang tidak sesuai dapat menghasilkan atribusi yang tidak akurat atau tidak
@@ -318,8 +317,8 @@ efisien.
 \textbf{\emph{KernelExplainer}} bersifat model-agnostik: bekerja untuk model
 apa pun yang dapat dievaluasi pada input yang diberikan. Pendekatan ini
 memperkirakan nilai Shapley melalui perturbasi berbasis \emph{kernel}. Biayanya
-tinggi --- kompleksitas $\mathcal{O}(TK^2)$ terhadap ukuran \emph{background}
-$K$ dan jumlah fitur $T$ --- sehingga hanya praktis digunakan dengan
+tinggi, dengan kompleksitas $\mathcal{O}(TK^2)$ terhadap ukuran \emph{background}
+$K$ dan jumlah fitur $T$, sehingga hanya praktis digunakan dengan
 \emph{background} kecil. Dalam penelitian ini, \emph{KernelExplainer}
 digunakan untuk SVM dan LR karena kedua model tidak memiliki struktur internal
 yang dapat dieksploitasi oleh varian yang lebih spesifik
@@ -373,8 +372,8 @@ Tabel~\ref{tab:bab2_shap_variants} merangkum karakteristik ketiga varian.
 \citetitb{TotoSuharto2025Journal1FSM}: agregasi posisional nilai SHAP
 \emph{DeepExplainer} yang menghasilkan \emph{fingerprint} per kelas kerusakan
 dalam domain waktu resolusi penuh (2.048 posisi). Sementara SHAP \emph{pointwise}
-menghasilkan atribusi spesifik per sampel --- berguna untuk menjelaskan satu
-prediksi --- FSM meringkas perilaku model secara \emph{global} untuk seluruh
+menghasilkan atribusi spesifik per sampel (berguna untuk menjelaskan satu
+prediksi), FSM meringkas perilaku model secara \emph{global} untuk seluruh
 kelas kerusakan, menghasilkan peta yang stabil dan dapat dibandingkan
 antar kelas.
 
@@ -383,15 +382,15 @@ Tiga varian FSM didefinisikan berdasarkan cara agregasi nilai SHAP:
 arah aslinya, menunjukkan apakah posisi tertentu cenderung memberikan bukti
 positif atau negatif untuk kelas yang bersangkutan; \textbf{FSM Mutlak}
 (\emph{Absolute}) merata-ratakan nilai absolut, menghasilkan peta kepentingan
-tanpa informasi arah --- varian utama untuk membentuk \emph{fingerprint};
-\textbf{FSM Variansi} (\emph{Variance}) menghitung variansi nilai atribusi
+tanpa informasi arah; varian ini merupakan pilihan utama untuk membentuk
+\emph{fingerprint}; \textbf{FSM Variansi} (\emph{Variance}) menghitung variansi nilai atribusi
 antar sampel untuk mengukur stabilitas posisi sebagai indikator kelas.
 
 Validitas FSM diukur melalui tiga metrik formal (definisi kuantitatif
-disajikan pada §IV.6): (i)~\emph{discriminability index} --- sejauh mana
-FSM antar-kelas dapat dibedakan; (ii)~\emph{severity monotonicity fraction}
---- fraksi posisi yang kepentingannya meningkat monoton seiring tingkat
-keparahan cacat; (iii)~\emph{split-half stability coefficient} --- korelasi
+disajikan pada §IV.6): (i)~\emph{discriminability index}: sejauh mana
+FSM antar-kelas dapat dibedakan; (ii)~\emph{severity monotonicity fraction}:
+fraksi posisi yang kepentingannya meningkat monoton seiring tingkat
+keparahan cacat; (iii)~\emph{split-half stability coefficient}: korelasi
 Pearson antara FSM yang dihitung dari dua subset acak separuh data uji.
 Nilai stabilitas 0,940 yang dicapai pada WDCNN Varian~A mengkonfirmasi bahwa
 FSM bukan artefak \emph{sampling}, melainkan representasi yang stabil dari
@@ -444,9 +443,9 @@ panjang sekuens menjadi hambatan pada sinyal degradasi yang panjang
 \citetitb{Tay2022LRA}.
 
 Perkembangan terbaru berpusat pada dua lini paralel yang mengatasi keterbatasan
-Transformer dari sudut berbeda. \emph{State Space Models} (SSM) --- diwakili
+Transformer dari sudut berbeda. \emph{State Space Models} (SSM), diwakili
 oleh Mamba \citetitb{Gu2023Mamba} dengan parameter selektif bergantung input
-dan kompleksitas $\mathcal{O}(L)$ --- memberikan efisiensi komputasi superior
+dan kompleksitas $\mathcal{O}(L)$, memberikan efisiensi komputasi superior
 untuk sekuens panjang. xLSTM \citetitb{Beck2024xLSTM} merevitalisasi LSTM
 dengan \emph{exponential gating} yang menggantikan saturasi sigmoid dan memori
 matriks yang memperluas kapasitas representasi. Penelitian ini mengombinasikan
@@ -465,9 +464,9 @@ dijawab oleh Bab~V melalui pemetaan SAE → BPFx
 \label{subsec:bab2_dataset_rul}
 
 Tiga dataset publik digunakan sebagai \emph{benchmark} dalam penelitian ini.
-Ketiganya memiliki karakteristik berbeda --- jenis bantalan, kondisi operasi,
-mekanisme kegagalan dominan --- yang bersama-sama menguji universalitas
-pendekatan yang diusulkan.
+Ketiganya memiliki karakteristik berbeda, mencakup jenis bantalan, kondisi
+operasi, dan mekanisme kegagalan dominan, sehingga bersama-sama dapat menguji
+universalitas pendekatan yang diusulkan.
 
 \textbf{PHM2012 (FEMTO-PRONOSTIA).} Dataset hasil tantangan PHMAP~2012 yang
 dikurasi oleh \citenameitb{Nectoux2012PRONOSTIA}. Berisi 17 bantalan yang
@@ -527,8 +526,8 @@ korelasi Pearson (p-value > 0,05 meski nilai \emph{hit-rate} tinggi).
 
 Metode XAI yang dibahas pada §\ref{sec:bab2_xai} beroperasi di tingkat
 \emph{input}: mengidentifikasi fitur atau posisi sinyal yang paling berpengaruh
-terhadap prediksi. Pertanyaan yang lebih dalam --- \emph{konsep fisika apa yang
-direpresentasikan model pada lapisan tersembunyinya?} --- tidak dapat dijawab
+terhadap prediksi. Pertanyaan yang lebih dalam, yaitu \emph{konsep fisika apa yang
+direpresentasikan model pada lapisan tersembunyinya?}, tidak dapat dijawab
 oleh SHAP atau metode atribusi input lainnya karena keduanya tidak beroperasi
 pada ruang representasi laten. Interpretabilitas mekanistik mengisi celah ini
 dengan membedah representasi internal model.
@@ -540,8 +539,8 @@ dengan membedah representasi internal model.
 superposisi}: jaringan saraf merepresentasikan lebih banyak fitur daripada
 jumlah dimensi latennya dengan cara menyimpan fitur-fitur dalam pola superposisi
 yang tidak berinterferensi. Akibatnya, setiap neuron cenderung merespons
-terhadap banyak konsep yang tidak berkaitan (\emph{polysemantik}) --- perilaku
-yang menyulitkan interpretabilitas mekanistik.
+terhadap banyak konsep yang tidak berkaitan (\emph{polysemantik}); perilaku ini
+menyulitkan interpretabilitas mekanistik.
 
 \emph{Sparse Autoencoder} (SAE) \citetitb{Makhzani2014kSAE} menawarkan solusi:
 melatih autoencoder dengan kendala \emph{sparsity} pada representasi laten
@@ -565,8 +564,8 @@ yang dapat diinterpretasi dapat diekstrak.
 Seluruh penelitian interpretabilitas mekanistik berbasis SAE hingga saat ini
 berkonsentrasi pada model bahasa besar. Domain prognostik bantalan menawarkan
 kondisi yang justru lebih ideal sebagai \emph{test case}: konsep fisika yang
-harus direpresentasikan oleh model RUL yang baik --- frekuensi karakteristik
-BPFO, BPFI, BSF, dan FTF --- terdefinisi secara matematis dan terukur secara
+harus direpresentasikan oleh model RUL yang baik, yaitu frekuensi karakteristik
+BPFO, BPFI, BSF, dan FTF, terdefinisi secara matematis dan terukur secara
 langsung dari sinyal getaran. Kondisi ini sangat berbeda dari domain bahasa, yang interpretasi
 \emph{ground-truth}-nya bersifat subjektif dan sulit diverifikasi secara
 kuantitatif.
@@ -580,7 +579,7 @@ dengan kontrol terhadap artefak arsitektur dan prosedur.
 
 Penelitian yang dilaporkan pada \citetitb{TotoSuharto2025Journal2RUL}
 merupakan studi pertama yang: (i)~mengadaptasi Top-$k$ SAE ke domain
-prognostik bantalan (\emph{novelti N3} --- \emph{SAEBearing}), (ii)~memetakan
+prognostik bantalan (\emph{novelti N3: SAEBearing}), (ii)~memetakan
 fitur SAE ke BPFx menggunakan korelasi Pearson dan uji statistik \emph{bootstrap}
 CI + \emph{permutation test} dengan dua \emph{negative controls} (model
 Xavier-init dan \emph{hidden state} Gaussian acak), dan (iii)~mengkonfirmasi
@@ -693,8 +692,8 @@ dimensi-dimensi yang menutup kesenjangan tersebut.
   \centering
   \caption{Posisi empat karya penelitian ini relatif terhadap literatur umum
            pada lima dimensi kritis. Simbol \checkmark = terpenuhi,
-           \emph{sebagian} = terpenuhi parsial, --- = tidak relevan atau
-           tidak dilaporkan.}
+           \emph{sebagian} = terpenuhi parsial; kolom tidak relevan
+           atau tidak dilaporkan dikosongkan.}
   \label{tab:bab2_posisi_penelitian}
   \footnotesize
   \begin{tabularx}{\textwidth}{@{}X c c c c c@{}}

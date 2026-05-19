@@ -57,7 +57,27 @@ new_algorithm.md                # Algorithm brainstorming notes
 
 ## Dissertation Build
 
-All commands run from [writings/disertation/](writings/disertation/):
+**Default: Docker.** All commands run from [writings/disertation/](writings/disertation/). The Docker route is the canonical / reference build path — it pins the TeX Live distribution and produces reproducible output across machines. Use it before any commit you intend to send to Pak Toto or to verify lint/`pre-submit` status.
+
+One-shot build:
+
+```bash
+cd writings/disertation
+docker run --rm -v "$(pwd):/workdir" -w /workdir \
+  danteev/texlive \
+  latexmk -outdir=build -interaction=nonstopmode disertasi.tex
+```
+
+Makefile targets via Docker (preferred — covers lint + spell + wordcount + pre-submit):
+
+```bash
+cd writings/disertation
+docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make build
+docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make check
+docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make pre-submit
+```
+
+**Optional: Local TeX install.** If `latexmk` + LuaLaTeX + Biber + `hunspell` (`id_ID`) + `texcount` are installed locally, the same Makefile targets work directly. Faster on a warm cache, but **not** the reference build — always re-verify via Docker before submitting.
 
 ```bash
 make build        # LuaLaTeX + Biber compile → build/disertasi.pdf + disertasi.pdf
@@ -69,15 +89,6 @@ make lint         # Regex checks via scripts/lint-itb.sh (enforces ITB rules bel
 make spell        # Indonesian spell check via hunspell -d id_ID
 make wordcount    # Word count per chapter via texcount
 make pre-submit   # clean + build + wordcount + check (run before sending to promotor)
-```
-
-Docker fallback (no local TeX install):
-
-```bash
-cd writings/disertation
-docker run --rm -v "$(pwd):/workdir" -w /workdir \
-  danteev/texlive \
-  latexmk -outdir=build -interaction=nonstopmode disertasi.tex
 ```
 
 Engine: **LuaLaTeX** (preferred) or pdfLaTeX. Bibliography backend: **Biber**.
@@ -116,9 +127,62 @@ These rules come from the official *Pedoman Penulisan Disertasi Doktor ITB* (SPs
 - **No `&` for `dan`.** Reserve `&` for math/tabular alignment only. *Lint-enforced.*
 - **Avoid foreign terms** when an established Indonesian term exists. When a foreign term is necessary, italicize consistently using `\emph{...}` (e.g., `\emph{deep learning}`, `\emph{Sparse Autoencoder}`, `\emph{envelope spectrum}`). Genus/species names are always italic (e.g., `\emph{Sonchus arvensis}`).
 - **No foreign connecting words.** Indonesian text must never use foreign linker/preposition shorthands like `vs`, `via`, `etc.`, `i.e.`, `e.g.`, `cf.` as syntactic glue. Use Indonesian equivalents: `vs` → `dan` / `terhadap` / `dengan` / `dibandingkan dengan` (per context); `via` → `melalui`; `etc.` → `dll.`; `i.e.` → `yaitu`; `e.g.` → `misalnya`; `cf.` → `bandingkan dengan`. Italicized technical terms that *contain* such tokens (e.g., `\emph{one-vs-rest}`, scikit-learn `multi_class='ovr'`) are exempt — they are names, not connectors.
-- **Prefer `multi-model` over `multi-keluarga`** when describing benchmarks that span kernel/tree/deep families. Pak Toto's convention: `model` is the level of comparison; `keluarga` is reserved for in-prose elaboration ("keluarga kernel", "keluarga tree") and never compounded into `multi-keluarga`.
+- **Do not use `keluarga` to label a group of algorithms or models.** "Keluarga" carries a biological/genealogical connotation and reads unnaturally in Indonesian technical prose. Use instead: `jenis`, `varian`, `golongan`, `kelompok`, `kelas`, `algoritma`, or `model` — whichever fits the context. Examples: ~~"keluarga kernel"~~ → `model berbasis kernel`; ~~"keluarga tree"~~ → `algoritma berbasis pohon keputusan`; ~~"multi-keluarga"~~ → `multi-model`. *Lint-enforced (cek #16).*
+- **No em dashes (`—`) in prose.** Em dashes are a strong AI-writing marker absent from standard Indonesian academic style. Replace with: a comma (parenthetical insert), a semicolon (related clause), a colon (elaboration), or restructure into two sentences. In LaTeX source, avoid `---`, `\textemdash`, and the Unicode character `—` in body text. *Lint-enforced (cek #16).*
 - **One main idea per paragraph.** Never write a single-sentence paragraph.
 - **Spelling — baku KBBI** (lint-enforced sample): `objek` (not `obyek`), `analisis` (not `analisa`), `sintesis` (not `sintesa`), `aktivitas` (not `aktifitas`), `praktik` (not `praktek`), `nasihat` (not `nasehat`), `risiko` (not `resiko`), `frekuensi` (not `frekwensi`), `sistem` (not `sistim`), `jadwal` (not `jadual`), `manajemen` (not `managemen`), `teknologi` (not `technologi`), `efektif` (not `effektif`), `efisien` (not `effisien`), `asesmen` (not `assesment`), `asas` (not `azas`), `hipotesis` (not `hipotesa`).
+
+### Gaya Prosa Organik — Menghindari Ciri Tulisan Mesin
+
+Every paragraph must read as written by a researcher who thought carefully about their subject — not assembled from templates. Patterns drawn from Dito Eka Cahya, *Perancangan dan Implementasi Robot Pengikut Garis dengan Sensor Kamera Pihak Ketiga*, ITB 2009.
+
+**Variasi pembuka paragraf.** Never open two consecutive paragraphs with the same word or phrase. Rotate through these natural openers:
+- `Pada [frasa nominal],` — local context: `Pada sistem ini,` / `Pada percobaan berikut,`
+- `Untuk [frasa kerja],` — states purpose: `Untuk dapat mengontrol robot,`
+- `Dengan [frasa nominal/verbal],` — instrument/method: `Dengan menggunakan metode Harris,`
+- `Dalam [frasa nominal],` — scope framing: `Dalam penelitian ini,` / `Dalam hal ini,`
+- `Setelah [klausa],` — sequential: `Setelah proses pemetaan dilakukan,`
+- `Berdasarkan [nominal],` — grounds a claim: `Berdasarkan hasil percobaan,`
+- `Salah satu [nominal] adalah` — specific instance from a class
+- `[Subjek] merupakan/adalah [klaim].` — direct definitional opening
+- `[Fakta historis/empiris].` — concrete fact, not meta-statement
+
+**Penghubung yang diizinkan di awal kalimat:** `Oleh karena itu,` · `Dengan demikian,` · `Selain itu,` · `Namun,` · `Akan tetapi,` · `Adapun` · `Di sisi lain,` · `Sebaliknya,` · `Berdasarkan hal tersebut,`
+
+**Penghubung yang hanya boleh di TENGAH kalimat** (bukan awal): `sehingga` · `sedangkan` · `maka` (kecuali pola `jika…, maka…` atau `berdasarkan…, maka…`).
+
+**Pola kausal organik.** Use these natural causal frames; never use "memainkan peran penting":
+- `Hal ini disebabkan oleh [sebab].`
+- `Hal ini terjadi karena [alasan].`
+- `Hal ini mengakibatkan [akibat].`
+- `Karena [X], [Y pun terjadi/dilakukan].`
+
+**Frasa mesin yang dilarang** (*lint-enforced* — cek #16):
+
+| Terlarang | Alternatif |
+|---|---|
+| `tidak dapat dipungkiri` | nyatakan fakta langsung, atau `terbukti bahwa` |
+| `memainkan peran penting` | `berfungsi sebagai X` / `menentukan nilai Y` |
+| `penting untuk dicatat bahwa` / `perlu dicatat bahwa` | integrasikan langsung ke kalimat utama |
+| `dalam era modern` / `di era digital` | `sejak tahun 20XX` / `dengan berkembangnya X` |
+| `tentunya` | hapus; jika genuinely implied, tulis `dengan sendirinya` |
+| `secara komprehensif` / `secara holistik` | jelaskan cakupan secara konkret |
+| `merupakan hal yang (sangat) penting/krusial` | jelaskan secara konkret mengapa penting |
+| `perlu dipahami bahwa` / `perlu diperhatikan bahwa` | tulis pernyataan langsung tanpa preambel |
+| Em dash `—` / `---` dalam prosa | koma, titik koma, titik dua, atau pisah kalimat |
+| `pada dasarnya` / `pada intinya` | hapus atau nyatakan klaim secara langsung |
+| `dapat dikatakan bahwa` | hapus — tulis pernyataan tanpa hedging |
+| `berbagai macam` | sebutkan jumlah konkret atau gunakan `sejumlah` / `beberapa` |
+| `Lebih lanjut,` (pembuka kalimat) | `Selain itu,` / `Di samping itu,` / integrasikan ke kalimat sebelumnya |
+| `sangat penting` / `amat penting` | jelaskan secara konkret mengapa penting |
+
+**Tanda tulisan manusiawi yang wajib dijaga:**
+- **Angka spesifik:** selalu sebutkan hasil numerik aktual (`12,55 piksel`, `1706 milidetik`), bukan "nilai yang cukup besar".
+- **Akui kegagalan/keterbatasan** — jika pendekatan pertama tidak berhasil, dokumentasikan dan jelaskan solusi iteratifnya.
+- **Rationale eksplisit** — setiap pilihan desain disertai `Alasan dipilihnya X adalah karena…` atau setara.
+- **Panjang paragraf 3–5 kalimat** — hindari paragraf satu kalimat dan paragraf lebih dari 7 kalimat.
+- **Variasi panjang kalimat** — selingi kalimat pendek (10–15 kata) di antara kalimat panjang (25–35 kata).
+- **Tidak ada dua paragraf berurutan dengan penghubung pembuka yang sama** — jika paragraf sebelumnya dibuka `Selain itu,`, paragraf berikutnya tidak boleh sama.
 
 ### Numbers and Units (Pedoman §VIII.3)
 

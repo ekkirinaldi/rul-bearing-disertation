@@ -64,7 +64,26 @@ The dissertation structure, RQ/Tujuan/Novelti mapping, and per-chapter plan are 
 
 ## Compiling the Dissertation
 
-All commands run from [`writings/disertation/`](writings/disertation/). Engine: **LuaLaTeX** with **Biber**.
+**Default: Docker.** All commands run from [`writings/disertation/`](writings/disertation/). Engine: **LuaLaTeX** with **Biber**. The Docker route is the canonical build path — it pins the TeX Live distribution, requires no local TeX install, and produces byte-identical output on Windows, macOS, and Linux.
+
+```bash
+cd writings/disertation
+docker run --rm -v "$(pwd):/workdir" -w /workdir \
+  danteev/texlive \
+  latexmk -outdir=build -interaction=nonstopmode disertasi.tex
+```
+
+Output: `build/disertasi.pdf` (also copied to `disertasi.pdf`).
+
+For repeated builds, wrap the command in a shell alias or use the Makefile target via Docker:
+
+```bash
+docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make build
+docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make check
+docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make pre-submit
+```
+
+**Optional: Local TeX install.** If `latexmk` + LuaLaTeX + Biber + `hunspell` (Indonesian dictionary `id_ID`) + `texcount` are installed locally, the Makefile targets work directly without Docker:
 
 ```bash
 make build        # LuaLaTeX + Biber → build/disertasi.pdf
@@ -76,16 +95,7 @@ make wordcount    # Word count per chapter (texcount)
 make pre-submit   # clean + build + wordcount + check (run before sending to promotor)
 ```
 
-Docker fallback (no local TeX install):
-
-```bash
-cd writings/disertation
-docker run --rm -v "$(pwd):/workdir" -w /workdir \
-  danteev/texlive \
-  latexmk -outdir=build -interaction=nonstopmode disertasi.tex
-```
-
-Output: `build/disertasi.pdf` (also copied to `disertasi.pdf`).
+This path is faster on a warm cache but is not the reference build — use Docker before submitting to promotor or for cross-machine reproducibility.
 
 ---
 
