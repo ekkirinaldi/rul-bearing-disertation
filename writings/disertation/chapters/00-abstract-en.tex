@@ -1,81 +1,83 @@
 %% chapters/00-abstract-en.tex
-%% Abstract in English (~500-600 words, mirror of Indonesian abstract)
-%% Rules: .cursor/rules/disertation/12-abstrak-front-matter.mdc
+%% Abstract in English (~500–800 words, mirrors Indonesian abstract structure)
+%% Pedoman ITB §II.2: 4 paragraphs, no references, keywords ≤ 7 phrases
+%% Phase H — rewritten to reflect two-track narrative per outline §Abstract
 
 \begin{abstracten}
 
-Condition-based predictive maintenance is a critical strategy in the
-transformation of modern manufacturing toward Industry 4.0.
-The ability to accurately and timely predict the remaining useful life
-(RUL) of critical components enables efficient maintenance interventions,
-minimizes unplanned downtime, and enhances operational safety.
-Rolling element bearings are the most failure-prone components in
-industrial rotating machinery, contributing approximately 40--50\% of
-total machine failures.
+Rolling element bearings are the most failure-prone components in industrial
+rotating machinery, accounting for approximately 40--50\% of total machine
+failures.
+The transformation of Indonesian manufacturing toward Industry~4.0 drives
+adoption of condition-based predictive maintenance in place of conventional
+corrective and preventive strategies, owing to its ability to detect
+incipient faults and forecast remaining useful life (RUL) accurately.
+Two research gaps motivate this dissertation: first, explainable AI (XAI)
+methods for diagnostic deep learning still operate at the aggregated feature
+level, without reaching raw vibration signals at 2,048 points; second,
+deep learning-based RUL estimation models have not been proven to
+internalize bearing characteristic frequencies (BPFO, BPFI, BSF, FTF)
+in their latent representations in a statistically rigorous manner.
 
-This dissertation proposes the \emph{Mamba-xLSTM-Net} hybrid architecture
-for rolling bearing RUL prediction, which integrates a selective
-state-space model (Mamba-3) with matrix-memory Long Short-Term Memory
-(mLSTM).
-The fusion mechanism is designed based on the non-stationary properties
-of bearing vibration signals: Mamba handles long-range temporal
-dependencies during gradual degradation phases, while mLSTM preserves
-recurrent precision during abrupt changes near failure.
+The first research track benchmarks three algorithm groups for bearing
+fault classification on the CWRU dataset (10 fault classes, 2,048-point
+signals, 54/13/33\% temporal split): kernel-based models (SVM with RBF
+kernel and one-vs-rest Logistic Regression), tree-based algorithms (DT,
+RF, and XGBoost), and the Wide and Deep Convolutional Neural Network
+(WDCNN) architecture.
+WDCNN achieves 99.87\% accuracy (749 of 750 test samples, macro F1 = 0.997),
+surpassing SVM-RBF (96.4\%) and XGBoost (97.1\%).
+SHAP DeepExplainer attributions over raw signals are aggregated into
+per-class Fault Signature Maps (FSM), yielding a split-half stability
+coefficient of 0.940 and a discriminability index of 0.216.
+An ablation study across three WDCNN variants produces a finding unreported
+in the bearing classification literature: removing BatchNorm increases FSM
+discriminability by 133\% (from 0.216 to 0.735), at the cost of a 3.60
+percentage-point accuracy drop.
 
-Beyond prediction performance, this dissertation proposes an
-interpretability module based on a \emph{Top-$k$ Sparse Autoencoder}
-(SAE) applied post-hoc to the latent representations of Mamba-xLSTM-Net.
-A quantitative procedure is developed to map SAE features to bearing
-characteristic frequencies --- Ball Pass Frequency Outer Race (BPFO),
-Ball Pass Frequency Inner Race (BPFI), Ball Spin Frequency (BSF), and
-Fundamental Train Frequency (FTF) --- through Pearson correlation against
-Hilbert envelope spectrum amplitudes of raw vibration signals.
+The second track develops and evaluates three RUL estimation backbone
+architectures: Mamba-xLSTM-Net (898K parameters, combining a selective
+state-space model with matrix-memory recurrent LSTM), N-BEATS-xLSTM-RUL
+(459K parameters, exploiting structural priors on degradation curve shape),
+and SparseGate-TCN-RUL (249K parameters, a lightweight model suited for
+edge deployment).
+All three are trained under a shared protocol (75 epochs, bf16 precision,
+batch size 512, window 32, three random seeds) on PHM2012, XJTU-SY, and
+IMS.
+The winning model differs by dataset: SparseGate-TCN achieves
+RMSE $0.226 \pm 0.030$ on PHM2012, N-BEATS-xLSTM achieves
+$0.259 \pm 0.003$ on XJTU-SY, and Mamba-xLSTM achieves
+$0.407 \pm 0.040$ on IMS.
+After training, a Top-$k$ Sparse Autoencoder (SAE, $d_{\rm lat} = 1{,}024$,
+$k = 51$) is trained post-hoc on the frozen hidden states of each backbone.
+Mapping to characteristic frequencies via Pearson correlation and Hilbert
+envelope spectra shows that 2.3\% of SAE features exhibit moderate
+correlation ($|r| \geq 0.30$) with BPFI on PHM2012 ($p < 0.001$,
+$r_{\rm max} = 0.507$), while BPFO dominates on XJTU-SY (2.2\%,
+$p < 0.001$, $r_{\rm max} = 0.501$).
+Two negative controls, namely an untrained Xavier-initialized model and
+Gaussian-noise hidden states, confirm that this correspondence is an
+emergent property of trained representations, not an artifact of the
+architecture or the SAE procedure.
 
-Empirical validation is conducted on two public run-to-failure datasets:
-PHM2012 (FEMTO-PRONOSTIA), comprising 17 NSK 6804 bearings under three
-operating conditions, and XJTU-SY, comprising 10 LDK UER204 bearings
-(conditions 1 and 2).
-A multi-seed protocol with three distinct random initializations
-(seeds 42, 43, 44) is applied to ensure statistical rigor.
-Performance is evaluated using four simultaneous metrics: RMSE, MAE,
-the coefficient of determination R\textsuperscript{2}, and asymmetric
-PHM Score.
+This dissertation contributes five novelties: N1 (FSM, the first
+signal-level XAI for WDCNN in bearing diagnostics), N2 (the BatchNorm
+discriminability trade-off, a finding unreported in the bearing
+classification literature), N3 (SAEBearing, the first adaptation of
+mechanistic interpretability to bearing prognostics), N4 (cross-architecture
+universality of BPFx correspondence across three architectures and four
+datasets, verified with bootstrap CI and permutation tests), and N5 (a
+conceptual three-tier PdM framework: Edge IoT via kernel-based models,
+Edge Server via WDCNN+FSM, and Cloud/GPU via RUL backbone and SAE-BPFx).
+Taken together, these contributions form the first statistically verified
+bridge between data-driven deep learning and classical bearing vibration
+theory: the diagnostic track connects raw signals to FSM, while the
+prognostic track connects latent representations to BPFx characteristic
+frequencies.
 
-On PHM2012, \emph{Mamba-xLSTM-Net} achieves RMSE of
-$0.242 \pm 0.020$ and demonstrates the highest seed-to-seed stability
-among the three compared models.
-On XJTU-SY, \emph{Mamba-xLSTM-Net} achieves the highest PHM Score
-($0.907$), the metric most relevant to predictive maintenance practice
-as it accounts for the asymmetric consequences of prediction errors.
-Training curves that continue to improve until epoch 71/75 indicate
-that the architecture has not yet reached its full capacity within the
-allocated training budget.
-
-For the interpretability pillar, the SAE with 1024 latent dimensions
-and $k = 51$ active features ($\approx 5\%$ sparsity) successfully
-reconstructs latent representations with MSE loss below $10^{-3}$,
-indicating that Mamba-xLSTM-Net latent representations are naturally
-sparse.
-BPFx mapping reveals that 2.0--2.3\% of SAE features exhibit moderate
-correlation ($|r| \geq 0.30$) with envelope spectrum amplitudes near
-BPFO and BPFI --- the only characteristic frequencies with hit-rate
-$> 0$.
-The highest moderate correlations reach $r = 0.507$ (SAE feature
-f474~$\leftrightarrow$~BPFI on PHM2012) and $r = 0.501$
-(f959~$\leftrightarrow$~BPFO on XJTU-SY), both statistically significant
-($n = 300$, $p \ll 0.05$).
-These results constitute the first empirical evidence that a deep
-learning model trained for RUL prediction learns latent representations
-that correspond to classical bearing vibration diagnosis theory.
-
-This research makes three principal contributions:
-(1)~the \emph{Mamba-xLSTM-Net} hybrid architecture as a novel approach
-combining selective SSM with matrix-memory recurrence for bearing
-prognostics;
-(2)~an SAE-to-characteristic-frequency mapping procedure as a novel
-interpretability methodology for the predictive maintenance domain; and
-(3)~empirical evidence of correspondence between deep learning latent
-representations and classical vibration physics on two leading benchmark
-datasets.
+\bigskip\noindent
+\textbf{Keywords:} predictive maintenance, bearing diagnostics, Fault
+Signature Maps, remaining useful life, Sparse Autoencoder, mechanistic
+interpretability, bearing characteristic frequencies
 
 \end{abstracten}
