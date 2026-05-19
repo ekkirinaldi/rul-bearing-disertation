@@ -10,41 +10,41 @@
 \label{bab:diagnostik}
 
 Bab ini menyajikan Jalur~A secara \emph{end-to-end}: dari perancangan
-metodologi \emph{benchmark} lintas tiga keluarga algoritma hingga analisis
-hasil, validasi interpretabilitas, dan sintesis lintas keluarga.
+metodologi \emph{benchmark} lintas tiga kelompok algoritma hingga analisis
+hasil, validasi interpretabilitas, dan sintesis lintas kelompok.
 Sumber empiris utama terdiri atas tiga karya yang masing-masing merepresentasikan
-satu keluarga algoritma: \citetitb{TotoSuharto2024Conf1SVM} untuk keluarga
-kernel (SVM dan Regresi Logistik), \citetitb{TotoSuharto2024Conf2Tree} untuk
-keluarga \emph{tree} (DT, RF, XGBoost), dan
-\citetitb{TotoSuharto2025Journal1FSM} untuk keluarga jaringan dalam (WDCNN)
+satu kelompok algoritma: \citetitb{TotoSuharto2024Conf1SVM} untuk model
+berbasis kernel (SVM dan Regresi Logistik), \citetitb{TotoSuharto2024Conf2Tree}
+untuk algoritma berbasis pohon (DT, RF, XGBoost), dan
+\citetitb{TotoSuharto2025Journal1FSM} untuk arsitektur jaringan dalam (WDCNN)
 beserta formalisasi \emph{Fault Signature Maps} (FSM).
 
-Fondasi bersama bab ini — dataset CWRU, prosedur praproses sinyal, vektor
+Fondasi bersama bab ini, yaitu dataset CWRU, prosedur praproses sinyal, vektor
 fitur HI~36-D, metrik evaluasi diagnostik dan FSM, serta infrastruktur
-komputasi — telah diuraikan pada Bab~\ref{bab:metodologi-umum}.
+komputasi, telah diuraikan pada Bab~\ref{bab:metodologi-umum}.
 Bab ini tidak mengulang uraian tersebut, melainkan mengembangkan metodologi
-spesifik tiap keluarga dan menyajikan hasil eksperimen beserta interpretasinya.
-Subbab §IV.1 s.d. §IV.6 membahas metodologi; subbab §IV.7 s.d. §IV.14
+spesifik tiap kelompok dan menyajikan hasil eksperimen beserta interpretasinya.
+Subbab §IV.1 s.d.\ §IV.6 membahas metodologi; subbab §IV.7 s.d.\ §IV.14
 membahas hasil dan analisis.
 
 % =================================================================
-\section{Pipeline Diagnostik CWRU — Ikhtisar}
+\section{Pipeline Diagnostik CWRU: Ikhtisar}
 \label{sec:bab4_pipeline}
 % =================================================================
 
 Jalur diagnostik pada penelitian ini menggunakan dataset CWRU sebagai
-sumber data tunggal dan merancang dua alur paralel sesuai dengan representasi
-input yang sesuai per keluarga model.
+sumber data tunggal dan merancang dua alur paralel sesuai representasi
+input yang sesuai per kelompok model.
 Alur pertama mengekstraksi vektor fitur HI~36-D dari setiap segmen sinyal
-sebelum memasukkannya ke keluarga kernel dan \emph{tree}, karena kedua
-keluarga ini beroperasi pada ruang fitur berdimensi tetap.
+sebelum memasukkannya ke model berbasis kernel dan algoritma berbasis pohon,
+karena kedua kelompok model tersebut beroperasi pada ruang fitur berdimensi tetap.
 Alur kedua melewatkan sinyal mentah 2.048 titik secara langsung ke WDCNN,
 yang merancang lapisan konvolusi pertamanya sebagai ekstraktor frekuensi
-adaptif otomatis tanpa memerlukan rekayasa fitur manual.
+adaptif otomatis tanpa rekayasa fitur manual.
 
 Gambar~\ref{fig:bab4_pipeline_diagnostik} mengilustrasikan pipeline dua
 alur ini beserta modul \emph{Explainable AI} (SHAP) yang menyertai setiap
-keluarga.
+kelompok.
 Pada alur fitur, SHAP \emph{KernelExplainer} (untuk SVM/LR) dan SHAP
 \emph{TreeExplainer} (untuk DT/RF/XGBoost) menghasilkan atribusi pada
 ruang fitur HI~36-D.
@@ -124,30 +124,31 @@ sebagai \emph{fingerprint} per kelas kerusakan.
 \label{fig:bab4_pipeline_diagnostik}
 \end{figure}
 
-Pemilihan dua alur paralel — bukan satu alur tunggal — mencerminkan
-perbedaan mendasar dalam desain model.
-Keluarga kernel dan \emph{tree} dirancang untuk beroperasi pada perangkat
-dengan sumber daya terbatas (\emph{edge} IoT) karena membutuhkan lebih
-sedikit memori dan komputasi inferensi dibandingkan jaringan dalam.
-Sebaliknya, WDCNN dioptimalkan untuk akurasi maksimum dengan interpretabilitas
-level sinyal yang lebih kaya — kemampuan yang tidak dimiliki keluarga kernel
-dan \emph{tree} pada representasi sinyal mentah.
+Pemilihan dua alur paralel mencerminkan perbedaan mendasar dalam desain
+model, bukan sekadar perbedaan implementasi.
+Model berbasis kernel dan algoritma berbasis pohon dirancang untuk beroperasi
+pada perangkat dengan sumber daya terbatas (\emph{edge} IoT) karena membutuhkan
+lebih sedikit memori dan komputasi inferensi dibandingkan jaringan dalam.
+WDCNN, di sisi lain, dioptimalkan untuk akurasi maksimum dengan interpretabilitas
+level sinyal yang lebih kaya, yaitu kemampuan yang tidak tersedia pada model
+berbasis kernel maupun algoritma berbasis pohon ketika beroperasi pada
+representasi sinyal mentah.
 Perbandingan lintas kedua alur pada §IV.14 mengungkap implikasi desain
 sistem PdM multi-tier yang lebih luas.
 
 % =================================================================
-\section{Benchmark Keluarga Kernel: SVM dan Regresi Logistik}
+\section{Benchmark Model Berbasis Kernel: SVM dan Regresi Logistik}
 \label{sec:bab4_kernel}
 % =================================================================
 
-Keluarga kernel terdiri atas dua model: \emph{Support Vector Machine} (SVM)
+Dua model berbasis kernel dievaluasi: \emph{Support Vector Machine} (SVM)
 dengan kernel RBF dan Regresi Logistik (\emph{Logistic Regression}, LR)
 dengan skema \emph{one-vs-rest} untuk klasifikasi sepuluh kelas.
 Kedua model beroperasi pada vektor fitur HI~36-D yang diekstraksi dari
 sinyal CWRU sebagaimana diuraikan pada
 Subbab~\ref{subsec:bab3_hi36d} \citetitb{TotoSuharto2024Conf1SVM}.
 
-\subsection{Ekstraksi Fitur untuk Keluarga Kernel}
+\subsection{Ekstraksi Fitur untuk Model Berbasis Kernel}
 \label{subsec:bab4_kernel_fitur}
 
 Dari setiap segmen sinyal CWRU sepanjang 2.048 titik, diekstraksi
@@ -197,17 +198,17 @@ yang lebih sensitif terhadap regularisasi untuk mencegah \emph{overfitting}
 pada batas keputusan linear.
 
 % =================================================================
-\section{Benchmark Keluarga Tree: DT, RF, dan XGBoost}
+\section{Benchmark Algoritma Berbasis Pohon: DT, RF, dan XGBoost}
 \label{sec:bab4_tree}
 % =================================================================
 
-Keluarga \emph{tree} mencakup tiga algoritma yang merepresentasikan tiga
+Tiga algoritma berbasis pohon dievaluasi untuk merepresentasikan tiga
 tingkat kompleksitas yang berbeda: \emph{Decision Tree} (DT) sebagai model
 tunggal yang dapat divisualisasikan, \emph{Random Forest} (RF) sebagai
 agregasi \emph{bagging}, dan XGBoost sebagai \emph{gradient boosting} dengan
 regularisasi \citetitb{TotoSuharto2024Conf2Tree}.
-Ketiga model beroperasi pada vektor fitur HI~36-D yang sama dengan keluarga
-kernel, mengikuti protokol \emph{split} dan normalisasi identik.
+Ketiga model beroperasi pada vektor fitur HI~36-D yang sama dengan model
+berbasis kernel, mengikuti protokol \emph{split} dan normalisasi identik.
 
 \subsection{Konfigurasi Decision Tree}
 \label{subsec:bab4_dt_config}
@@ -289,19 +290,19 @@ Tiga varian arsitektur digunakan untuk studi ablasi yang menjadi fondasi
 Novelti~N2:
 
 \begin{enumerate}
-  \item \textbf{Varian A — Baseline:} WDCNN penuh dengan kernel pertama
+  \item \textbf{Varian A (Baseline):} WDCNN penuh dengan kernel pertama
         berukuran 64 dan \emph{Batch Normalization} aktif pada semua blok
         konvolusi. Varian ini merepresentasikan konfigurasi referensi
         \citetitb{Zhang2017WDCNN}.
-  \item \textbf{Varian B — Kernel sempit:} Ukuran kernel pertama diperkecil
+  \item \textbf{Varian B (Kernel Sempit):} Ukuran kernel pertama diperkecil
         dari 64 ke 3, menyamakan dengan kernel blok lainnya. Tujuan ablasi
         ini adalah menguji peran kernel lebar dalam pemrosesan frekuensi
         dan mengestimasi \emph{footprint} parameter setelah pengurangan
         sebesar faktor $7{,}3\times$.
-  \item \textbf{Varian C — Tanpa BatchNorm:} Arsitektur identik dengan
+  \item \textbf{Varian C (Tanpa BatchNorm):} Arsitektur identik dengan
         Varian A, tetapi semua lapisan \emph{Batch Normalization} dihapus.
         Tujuan ablasi ini adalah menguji hipotesis bahwa BN menekan
-        diskriminabilitas FSM — temuan yang menjadi inti Novelti~N2.
+        diskriminabilitas FSM, temuan yang menjadi inti Novelti~N2.
 \end{enumerate}
 
 \subsection{Protokol Pelatihan WDCNN}
@@ -318,17 +319,17 @@ akhir pada \emph{test set}.
 Detail hiperparameter lengkap tersedia di Lampiran~G.
 
 % =================================================================
-\section{Analisis SHAP per Keluarga Algoritma}
+\section{Analisis SHAP per Kelompok Algoritma}
 \label{sec:bab4_shap}
 % =================================================================
 
-Setiap keluarga algoritma menggunakan varian SHAP yang berbeda sesuai dengan
+Setiap kelompok algoritma menggunakan varian SHAP yang berbeda sesuai dengan
 struktur modelnya.
 Pemilihan varian ini bukan sekadar kesepakatan implementasi, melainkan
 berdampak langsung pada kompleksitas komputasi, konsistensi nilai atribusi,
 dan kemampuan SHAP menangkap interaksi fitur.
 
-\subsection{SHAP KernelExplainer untuk Keluarga Kernel}
+\subsection{SHAP KernelExplainer untuk Model Berbasis Kernel}
 \label{subsec:bab4_shap_kernel}
 
 SHAP \emph{KernelExplainer} merupakan varian model-agnostik yang mengestimasi
@@ -339,7 +340,7 @@ memberikan jaminan properti Shapley (efisiensi, simetri, \emph{null player},
 dan aditif) tanpa asumsi arsitektur \citetitb{TotoSuharto2024Conf1SVM}.
 
 Sebagai \emph{background dataset}, digunakan sampel acak stratifikasi
-sejumlah kecil dari \emph{training set} — satu strategi yang menyeimbangkan
+sejumlah kecil dari \emph{training set}, satu strategi yang menyeimbangkan
 akurasi estimasi dan waktu komputasi, karena kompleksitas \emph{KernelExplainer}
 berskala kuadratik terhadap ukuran \emph{background}.
 Untuk setiap sampel uji, algoritma mengevaluasi $2^{36}$ subhimpunan fitur
@@ -353,12 +354,12 @@ Nilai atribusi ini kemudian diagregasi per kelas untuk menghasilkan
 \emph{global feature ranking}: rata-rata nilai absolut SHAP per fitur
 $\overline{|\phi_j|}$ diurutkan menurun untuk mengidentifikasi fitur HI mana
 yang paling konsisten mempengaruhi prediksi di seluruh sampel kelas tersebut.
-Regresi Logistik menggunakan prosedur \emph{KernelExplainer} yang sama
-karena LR — meski memiliki keluaran log-probabilitas analitik — diperlakukan
+Regresi Logistik menggunakan prosedur \emph{KernelExplainer} yang sama,
+karena LR (meski memiliki keluaran log-probabilitas analitik) diperlakukan
 secara model-agnostik agar nilai atribusi antara SVM dan LR bersifat
 komparabel secara langsung.
 
-\subsection{SHAP TreeExplainer untuk Keluarga Tree}
+\subsection{SHAP TreeExplainer untuk Algoritma Berbasis Pohon}
 \label{subsec:bab4_shap_tree}
 
 SHAP \emph{TreeExplainer} mengeksploitasi struktur percabangan \emph{tree}
@@ -372,7 +373,7 @@ estimasi Monte Carlo sehingga nilai Shapley yang dihasilkan bersifat eksak
 set} dalam hitungan detik bahkan untuk RF dengan 100 pohon.
 
 Untuk DT, \emph{TreeExplainer} menghasilkan matriks atribusi $N_\text{test}
-\times 36 \times 10$ — satu vektor atribusi per dimensi fitur per kelas
+\times 36 \times 10$, satu vektor atribusi per dimensi fitur per kelas
 keluaran.
 Untuk RF dan XGBoost, atribusi per pohon diagregasi secara otomatis sehingga
 keluaran akhir berdimensi sama.
@@ -385,9 +386,10 @@ terletak pada distribusi \emph{baseline}: \emph{TreeExplainer}
 dengan \texttt{feature\_perturbation=\textquotesingle tree\_path\_dependent\textquotesingle}
 menggunakan distribusi kondisional yang secara alami mengikuti struktur data
 pelatihan, sementara \emph{KernelExplainer} menggunakan distribusi marginal.
-Perbedaan ini membuat nilai SHAP antara keluarga kernel dan \emph{tree}
-tidak secara langsung dikomparasi secara kuantitatif — hanya secara kualitatif
-pada tingkat ranking fitur.
+Perbedaan ini membuat nilai SHAP antara model berbasis kernel dan algoritma
+berbasis pohon tidak dapat dikomparasi secara kuantitatif; perbandingan
+dibatasi pada tingkat kualitatif (apakah fitur~$j$ masuk dalam sepuluh besar
+untuk kedua kelompok).
 
 \subsection{SHAP DeepExplainer untuk WDCNN}
 \label{subsec:bab4_shap_deep}
@@ -397,10 +399,10 @@ SHAP \emph{DeepExplainer} mengadaptasi algoritma \emph{DeepLIFT}
 jaringan saraf tiruan dengan operasi diferensiabel.
 Berbeda dengan dua varian sebelumnya yang beroperasi pada ruang fitur
 berdimensi rendah (36-D), \emph{DeepExplainer} menghasilkan atribusi pada
-ruang sinyal mentah berdimensi 2.048 — dimensi yang dua orde lebih besar.
+ruang sinyal mentah berdimensi 2.048, dua orde lebih besar dari ruang fitur.
 
 Sebagai \emph{background dataset}, digunakan 300 sampel yang dipilih secara
-stratifikasi dari \emph{training set} — 30 sampel per kelas dari 10 kelas
+stratifikasi dari \emph{training set}: 30 sampel per kelas dari 10 kelas
 CWRU.
 Ukuran \emph{background} ini merupakan keseimbangan antara kualitas estimasi
 baseline dan kebutuhan memori: untuk setiap sampel uji, GPU harus menyimpan
@@ -454,7 +456,7 @@ $\text{FSM}_c^{\text{signed}}$ menangkap arah dominan kontribusi: nilai positif
 pada posisi~$p$ berarti kehadiran energi di posisi tersebut mendorong
 prediksi ke kelas~$c$, sedangkan nilai negatif berarti sebaliknya.
 $\text{FSM}_c^{\text{abs}}$ mengukur besaran kontribusi tanpa memperhatikan
-arah — digunakan untuk mengidentifikasi posisi sinyal yang secara konsisten
+arah, digunakan untuk mengidentifikasi posisi sinyal yang secara konsisten
 aktif tanpa bergantung pada tanda atribusi.
 $\text{FSM}_c^{\text{var}}$ mengukur variabilitas atribusi lintas sampel:
 posisi dengan variansi rendah mengindikasikan pola yang konsisten dan dapat
@@ -466,18 +468,17 @@ respons model yang sensitif terhadap variasi sampel.
 
 Kualitas FSM sebagai \emph{fingerprint} kelas kerusakan divalidasi menggunakan
 tiga metrik yang telah didefinisikan pada
-Subbab~\ref{subsec:bab3_metrik_fsm}: diskriminabilitas
+Subbab~\ref{subsec:bab3_metrik_diagnostik}: diskriminabilitas
 (Persamaan~\ref{eq:bab3_discriminability}), monotonik
 (Persamaan~\ref{eq:bab3_monotonicity}), dan stabilitas
 (Persamaan~\ref{eq:bab3_stability}).
 
 Diskriminabilitas mengukur sejauh mana FSM suatu kelas dapat dibedakan dari
-FSM kelas lain — nilai tinggi menunjukkan pola spesifik kelas yang kuat dan
+FSM kelas lain; nilai tinggi menunjukkan pola spesifik kelas yang kuat dan
 tidak tumpang tindih antarkelas.
-Monotonik mengukur apakah puncak FSM secara positional konsisten dengan
-frekuensi karakteristik cacat yang diketahui dari fisika bantalan (BPFO,
-BPFI, BSF) — metrik ini menghubungkan output SHAP dengan domain pengetahuan
-fisika.
+Monotonik mengukur apakah amplitudo puncak FSM meningkat secara konsisten
+seiring bertambahnya keparahan cacat (7 mil, 14 mil, 21 mil); metrik ini
+menghubungkan output SHAP dengan sifat fisika degradasi bantalan.
 Stabilitas mengukur konsistensi FSM antar-\emph{fold} validasi silang —
 FSM yang stabil berarti pola interpretasi tidak bergantung pada variasi
 partisi data tertentu.
@@ -489,38 +490,38 @@ terhadap kualitas interpretabilitas.
 Hasil evaluasi disajikan pada §IV.11.
 
 % =================================================================
-\section{Hasil Keluarga Kernel: SVM dan Regresi Logistik}
+\section{Hasil Model Berbasis Kernel: SVM dan Regresi Logistik}
 \label{sec:bab4_hasil_kernel}
 % =================================================================
 
-Tabel~\ref{tab:bab4_hasil_kernel} merangkum akurasi uji keluarga kernel pada
-dataset CWRU sepuluh kelas.
+Tabel~\ref{tab:bab4_hasil_kernel} merangkum akurasi uji model berbasis kernel
+pada dataset CWRU sepuluh kelas.
 
 \begin{table}[ht]
-\caption{Akurasi uji keluarga kernel pada dataset CWRU sepuluh kelas.}
+\caption{Akurasi uji model berbasis kernel pada dataset CWRU sepuluh kelas.}
 \label{tab:bab4_hasil_kernel}
 \centering
 \begin{tabular}{lccc}
 \toprule
 \textbf{Model} & \textbf{Akurasi (\%)} & \textbf{Presisi Makro} & \textbf{Recall Makro}\\
 \midrule
-SVM-RBF      & 97,60 & 0,978 & 0,977\\
-LR (OvR)     & 95,33 & 0,955 & 0,953\\
+SVM-RBF      & 96,4 & 0,965 & 0,964\\
+LR (OvR)     & 94,3 & 0,944 & 0,942\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-SVM-RBF mencapai akurasi 97,60\% pada \emph{test set}, melampaui LR-OvR
-sebesar 2,27 poin persentase.
+SVM-RBF mencapai akurasi 96,4\% pada \emph{test set}, melampaui LR-OvR
+sebesar 2,1 poin persentase \citetitb{TotoSuharto2024Conf1SVM}.
 Kelebihan SVM-RBF dapat dijelaskan oleh kemampuan kernel RBF membangun
 batas keputusan non-linear di ruang fitur HI~36-D, sedangkan LR membatasi
 diri pada batas keputusan linear per pasangan kelas-OvR.
 Pada dataset CWRU, distribusi fitur tiap kelas kerusakan cenderung tidak
-linear di ruang HI — terutama ketika kelas Normal harus dipisahkan dari
-kelas cacat ringan — sehingga non-linearitas kernel RBF memberikan keunggulan
-yang signifikan.
+linear di ruang HI, terutama ketika kelas Normal harus dipisahkan dari
+kelas cacat ringan, sehingga non-linearitas kernel RBF memberikan keunggulan
+yang nyata.
 
-\subsection{Interpretasi SHAP Keluarga Kernel}
+\subsection{Interpretasi SHAP Model Berbasis Kernel}
 \label{subsec:bab4_shap_hasil_kernel}
 
 Gambar~\ref{fig:bab4_shap_kernel} menampilkan \emph{summary plot} SHAP untuk
@@ -554,7 +555,7 @@ kondisi beban, resonansi struktural memodulasi komponen BPFO lebih kuat
 di posisi sensor \emph{fan-end}.
 
 Untuk LR-OvR, pola kontribusi secara kualitatif serupa dengan SVM-RBF
-tetapi menunjukkan nilai SHAP yang lebih tersebar — konsekuensi dari batas
+tetapi menunjukkan nilai SHAP yang lebih tersebar, konsekuensi dari batas
 keputusan linear yang harus mengkompromikan pemisahan dengan meratakan
 kontribusi lebih luas di antara fitur-fitur yang berkorelasi.
 Perbandingan ini menegaskan bahwa peningkatan akurasi SVM-RBF berasal dari
@@ -562,15 +563,15 @@ kemampuannya mengeksploitasi non-linearitas fitur-fitur tertentu, khususnya
 kurtosis dan \emph{peak-to-peak}.
 
 % =================================================================
-\section{Hasil Keluarga Tree: DT, RF, dan XGBoost}
+\section{Hasil Algoritma Berbasis Pohon: DT, RF, dan XGBoost}
 \label{sec:bab4_hasil_tree}
 % =================================================================
 
-Tabel~\ref{tab:bab4_hasil_tree} menyajikan akurasi uji ketiga model keluarga
-\emph{tree}.
+Tabel~\ref{tab:bab4_hasil_tree} menyajikan akurasi uji tiga algoritma
+berbasis pohon.
 
 \begin{table}[ht]
-\caption{Akurasi uji keluarga \emph{tree} pada dataset CWRU sepuluh kelas.}
+\caption{Akurasi uji algoritma berbasis pohon pada dataset CWRU sepuluh kelas.}
 \label{tab:bab4_hasil_tree}
 \centering
 \begin{tabular}{lccc}
@@ -578,30 +579,31 @@ Tabel~\ref{tab:bab4_hasil_tree} menyajikan akurasi uji ketiga model keluarga
 \textbf{Model} & \textbf{Akurasi (\%)} & \textbf{Presisi Makro} & \textbf{Recall Makro}\\
 \midrule
 Decision Tree & 92,40 & 0,925 & 0,924\\
-Random Forest & 98,27 & 0,983 & 0,983\\
-XGBoost       & 98,80 & 0,988 & 0,988\\
+Random Forest & 95,8  & 0,959 & 0,958\\
+XGBoost       & 97,1  & 0,971 & 0,971\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-XGBoost mencapai akurasi tertinggi di antara keluarga \emph{tree} dengan
-98,80\%, disusul RF pada 98,27\% dan DT pada 92,40\%.
-Kesenjangan antara DT (92,40\%) dan RF (98,27\%) — selisih 5,87 poin
-persentase — mencerminkan reduksi variansi yang diperoleh \emph{bagging}
+XGBoost mencapai akurasi tertinggi di antara algoritma berbasis pohon dengan
+97,1\%, disusul RF pada 95,8\% dan DT pada 92,40\%
+\citetitb{TotoSuharto2024Conf2Tree}.
+Kesenjangan antara DT (92,40\%) dan RF (95,8\%), selisih 3,4 poin
+persentase, mencerminkan reduksi variansi yang diperoleh \emph{bagging}
 atas 100 pohon: setiap pohon DT tunggal \emph{overfit} terhadap detail
 tertentu dari \emph{training set}, sedangkan RF merata-rata kesalahan
 \emph{overfitting} tersebut.
-XGBoost melampaui RF sebesar 0,53 poin persentase, keunggulan yang berasal
+XGBoost melampaui RF sebesar 1,3 poin persentase, keunggulan yang berasal
 dari mekanisme \emph{boosting}: setiap pohon baru difokuskan pada sampel
 yang salah diklasifikasikan oleh pohon sebelumnya, sehingga secara iteratif
 mengurangi bias prediksi.
 
-\subsection{Interpretasi SHAP Keluarga Tree}
+\subsection{Interpretasi SHAP Algoritma Berbasis Pohon}
 \label{subsec:bab4_shap_hasil_tree}
 
 Gambar~\ref{fig:bab4_shap_tree} menampilkan \emph{summary plot} SHAP
-\emph{TreeExplainer} untuk XGBoost — model dengan akurasi tertinggi dalam
-keluarga \emph{tree}.
+\emph{TreeExplainer} untuk XGBoost, model dengan akurasi tertinggi di antara
+algoritma berbasis pohon.
 
 \begin{figure}[ht]
 \centering
@@ -623,71 +625,63 @@ terlihat pada plot SVM-RBF, karena \emph{TreeExplainer} mendukung
 secara eksplisit.
 
 Pola atribusi DT, meskipun interpretabilitasnya paling tinggi secara
-struktural, menunjukkan nilai SHAP yang paling bervariasi antar sampel —
-indikasi bahwa aturan \emph{if-then} yang dihasilkan DT lebih sensitif
-terhadap nilai fitur tertentu dan kurang stabil dibandingkan RF atau XGBoost.
-Temuan ini konsisten dengan akurasi DT yang lebih rendah: DT menggunakan
-batas keputusan yang lebih tajam dan rigid, sehingga kelas yang borderline
-— seperti kelas IR-14 dan OR-14 yang sering salah diklasifikasikan —
-mendapat atribusi SHAP yang lebih tidak konsisten.
+struktural, menunjukkan nilai SHAP yang paling bervariasi antar sampel.
+Hal ini mengindikasikan bahwa aturan \emph{if-then} yang dihasilkan DT lebih
+sensitif terhadap nilai fitur tertentu dan kurang stabil dibandingkan RF atau
+XGBoost.
+Temuan ini konsisten dengan akurasi DT yang lebih rendah: batas keputusan
+yang tajam dan rigid mengakibatkan kelas yang \emph{borderline}, seperti
+IR-14 dan OR-14, mendapat atribusi SHAP yang lebih tidak konsisten antar
+sampel.
 
-Perbandingan antara keluarga kernel dan \emph{tree} pada tingkat interpretasi
-SHAP menunjukkan bahwa meski fitur-fitur teratas serupa (kurtosis, RMS,
-energi pita), urutan dan besaran nilai SHAP berbeda karena perbedaan
-\emph{baseline} distribusi yang digunakan oleh \emph{KernelExplainer} dan
-\emph{TreeExplainer}.
-Oleh karena itu, perbandingan kuantitatif nilai SHAP lintas keluarga dibatasi
-pada tingkat kualitatif (apakah fitur~$j$ masuk dalam sepuluh besar untuk
-kedua keluarga), bukan perbandingan besaran angka secara langsung.
+Perbandingan antara model berbasis kernel dan algoritma berbasis pohon pada
+tingkat interpretasi SHAP menunjukkan bahwa meski fitur-fitur teratas serupa
+(kurtosis, RMS, energi pita), urutan dan besaran nilai SHAP berbeda karena
+perbedaan \emph{baseline} distribusi yang digunakan oleh \emph{KernelExplainer}
+dan \emph{TreeExplainer}.
+Oleh karena itu, perbandingan kuantitatif nilai SHAP lintas kedua kelompok
+dibatasi pada tingkat kualitatif, bukan perbandingan besaran angka secara
+langsung.
 
 % =================================================================
 \section{Kinerja Klasifikasi WDCNN}
 \label{sec:bab4_kinerja_wdcnn}
 % =================================================================
 
-Tabel~\ref{tab:bab4_hasil_wdcnn} merangkum akurasi uji ketiga varian WDCNN
-pada dataset CWRU sepuluh kelas.
+Tabel~\ref{tab:bab4_hasil_wdcnn} merangkum kinerja WDCNN Varian~A (konfigurasi
+referensi dengan BN penuh) pada dataset CWRU sepuluh kelas.
+Varian~B dan Varian~C dilaporkan secara komparatif pada studi ablasi di §IV.13.
 
 \begin{table}[ht]
-\caption{Akurasi uji tiga varian WDCNN pada dataset CWRU sepuluh kelas.
-         Selang kepercayaan 95\% dihitung dari 5-\emph{fold} validasi silang
-         berlapis.}
+\caption{Kinerja WDCNN Varian~A pada dataset CWRU sepuluh kelas
+         (\emph{test set} 750 sampel).}
 \label{tab:bab4_hasil_wdcnn}
 \centering
 \begin{tabular}{lcccc}
 \toprule
 \textbf{Varian} & \textbf{Akurasi (\%)} & \textbf{F1 Makro} & \textbf{Presisi} & \textbf{Recall}\\
 \midrule
-A — Baseline (BN aktif) & 99,87 & 0,999 & 0,999 & 0,999\\
-B — Kernel sempit (k=3) & 97,20 & 0,972 & 0,972 & 0,972\\
-C — Tanpa BatchNorm     & 98,40 & 0,984 & 0,984 & 0,984\\
+A (Baseline, BN aktif) & 99,87 & 0,997 & 0,999 & 0,998\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Varian~A (WDCNN lengkap dengan BN aktif) mencapai akurasi 99,87\% —
-hanya satu dari 750 sampel uji yang salah diklasifikasikan.
-Akurasi ini melampaui seluruh model keluarga kernel dan \emph{tree} sebesar
-minimal 1,07 poin persentase (dibandingkan XGBoost 98,80\%), sekaligus
-mengkonfirmasi keunggulan pemrosesan sinyal mentah secara \emph{end-to-end}
-dibandingkan rekayasa fitur manual untuk kondisi beban yang beragam.
+Varian~A mencapai akurasi 99,87\% pada \emph{test set} dengan hanya satu
+dari 750 sampel uji yang salah diklasifikasikan: Ball\_014 diklasifikasi
+sebagai IR\_014, dua kelas yang memiliki morfologi impuls paling mirip pada
+diameter cacat 0,014 inci \citetitb{TotoSuharto2025Journal1FSM}.
+Dibandingkan dengan SVM-RBF yang mencapai 96,4\%, WDCNN Varian~A mereduksi
+kesalahan klasifikasi sebesar 91\%: dari 27 kesalahan pada SVM-RBF menjadi
+hanya satu kesalahan.
 
-Varian~B (kernel pertama diperkecil ke $k=3$) mengalami penurunan akurasi
-menjadi 97,20\% — penurunan 2,67 poin persentase dari Varian~A.
-Penurunan ini terjadi karena kernel berukuran 3 pada lapisan pertama tidak
-mampu menangkap perioda impuls cacat bantalan yang lazimnya mencakup
-50–100 titik sampel pada frekuensi pengambilan sampel 48~kHz.
-Kernel lebar berukuran 64 dengan \emph{stride} 16 memungkinkan model
-mempelajari filter frekuensi rendah secara adaptif dari data — kemampuan
-yang hilang ketika digantikan kernel sempit.
-
-Varian~C (BN dihapus seluruhnya) mencapai akurasi 98,40\% — berada di
-antara Varian~A dan Varian~B.
-Fakta bahwa menghapus BN menghasilkan akurasi lebih rendah daripada Varian~A
-tetapi lebih tinggi daripada Varian~B menunjukkan bahwa BN tidak berfungsi
-semata-mata sebagai stabilisator pelatihan, melainkan juga sebagai komponen
-yang memengaruhi representasi fitur internal.
-Implikasi BN terhadap interpretabilitas FSM dianalisis lebih jauh pada §IV.13.
+Keunggulan ini berasal dari kemampuan WDCNN memproses sinyal mentah secara
+\emph{end-to-end} tanpa rekayasa fitur manual, sehingga lapisan konvolusi
+pertama dengan kernel berukuran 64 dapat mempelajari filter frekuensi
+adaptif yang mengoptimalkan pemisahan lintas sepuluh kelas kerusakan secara
+serentak.
+Model berbasis kernel dan algoritma berbasis pohon, yang beroperasi pada
+vektor fitur HI~36-D yang diekstraksi secara manual, tidak memiliki fleksibilitas
+representasi yang setara.
 
 \subsection{Kurva Pelatihan dan Konvergensi}
 \label{subsec:bab4_wdcnn_konvergensi}
@@ -707,7 +701,7 @@ tiga varian WDCNN sepanjang proses pelatihan.
 \end{figure}
 
 Varian~A konvergen pada \emph{epoch} ke-47 dan menunjukkan kurva pelatihan
-yang halus dan monoton meningkat — karakteristik model yang stabil secara
+yang halus dan monoton meningkat, karakteristik model yang stabil secara
 numerik berkat \emph{Batch Normalization}.
 Varian~C menunjukkan osilasi yang lebih besar pada akurasi validasi sepanjang
 30 \emph{epoch} pertama sebelum menstabilkan diri, konsisten dengan peran
@@ -725,12 +719,28 @@ waktu, melainkan karena batasan struktural arsitektur.
 SHAP \emph{DeepExplainer} diterapkan pada Varian~A (Baseline) dan Varian~C
 (tanpa BN) untuk menganalisis pengaruh \emph{Batch Normalization} terhadap
 pola atribusi level sinyal.
-Varian~B tidak disertakan dalam analisis SHAP karena penurunan akurasiny
-yang substansial menjadikan nilai atribusinya sulit diinterpretasi — atribusi
-dari model yang salah bukan mencerminkan pengetahuan domain yang bermakna.
+Varian~B tidak disertakan dalam analisis SHAP karena penurunan akurasinya
+yang substansial menjadikan nilai atribusinya sulit diinterpretasi: atribusi
+dari model yang kurang akurat tidak dapat diandalkan sebagai cerminan
+pengetahuan domain yang bermakna.
 
 \subsection{Distribusi Atribusi Level Sinyal}
 \label{subsec:bab4_shap_distribusi}
+
+Sebelum analisis per kelas, tiga karakteristik global atribusi SHAP ditemukan
+secara konsisten pada seluruh kelas CWRU.
+Pertama, terdapat \emph{edge suppression}: nilai atribusi $|\phi|$ pada
+posisi 0–100 dan 1.900–2.048 secara sistematis lebih rendah daripada posisi
+tengah, mencerminkan efek tepi \emph{zero-padding} implisit pada lapisan
+konvolusi yang mereduksi sensitivitas model terhadap bagian awal dan akhir
+segmen.
+Kedua, terdapat modulasi periodik dengan periode $\approx 16$ titik sampel
+yang bertepatan dengan nilai \emph{stride} lapisan pertama (stride = 16);
+artefak ini muncul karena resolusi efektif peta aktivasi lapisan pertama
+adalah satu nilai per 16 titik input.
+Ketiga, distribusi atribusi rata-rata per kelas mengikuti gradien yang
+lebih tinggi di posisi 200–1.800 dibandingkan tepi, selaras dengan kedua
+karakteristik di atas.
 
 Gambar~\ref{fig:bab4_shap_sinyal} menampilkan distribusi nilai atribusi SHAP
 \emph{DeepExplainer} pada 2.048 posisi sinyal untuk kelas IR-21 (kerusakan
@@ -751,13 +761,12 @@ Gambar~\ref{fig:bab4_shap_sinyal} menampilkan distribusi nilai atribusi SHAP
 Perbedaan visual yang paling mencolok antara Varian~A dan Varian~C adalah
 pada amplitudo dan distribusi spasial atribusi.
 Pada Varian~A (BN aktif), nilai atribusi tersebar relatif merata dengan
-puncak-puncak kecil yang terdistribusi di sepanjang sinyal — pola yang
+puncak-puncak kecil yang terdistribusi di sepanjang sinyal, pola yang
 mencerminkan fakta bahwa BN menormalisasi aktivasi internal sehingga model
 tidak bergantung terlalu kuat pada posisi tertentu.
 Sebaliknya, Varian~C (tanpa BN) menunjukkan puncak atribusi yang jauh lebih
-tajam dan terlokalisasi pada posisi-posisi yang bersesuaian dengan perioda
-impuls BPFI — model tanpa BN mengembangkan detektor impuls yang lebih
-spesifik.
+tajam dan terlokalisasi; model tanpa BN mengembangkan detektor impuls yang
+lebih spesifik secara positional.
 
 \subsection{FSM Tiga Varian: Perbandingan Visual}
 \label{subsec:bab4_fsm_visual}
@@ -783,9 +792,10 @@ Pertama, FSM kelas Normal pada kedua varian menunjukkan atribusi yang
 terdistribusi relatif datar tanpa puncak yang menonjol, konsisten dengan
 ketiadaan komponen impuls periodik pada sinyal normal.
 Kedua, FSM kelas IR-21 dan OR-21 pada Varian~C memperlihatkan puncak yang
-lebih tajam dan lebih selaras dengan frekuensi BPFI dan BPFO dibandingkan
-Varian~A — indikasi bahwa WDCNN tanpa BN mengembangkan representasi yang
-lebih spesifik terhadap periodisitas cacat.
+lebih tajam dibandingkan Varian~A; untuk kelas OR-21 secara khusus, puncak
+nilai $|\phi| \approx 0{,}08$ terkonsentrasi pada posisi 600–700 dari 2.048
+titik, pola terlokalisasi yang tidak muncul sejelas itu pada Varian~A
+\citetitb{TotoSuharto2025Journal1FSM}.
 Ketiga, $\text{FSM}^{\text{var}}$ Varian~A secara konsisten lebih tinggi
 daripada Varian~C untuk semua kelas, mengkonfirmasi hipotesis bahwa BN
 mereduksi variabilitas atribusi dengan menstabilkan distribusi aktivasi
@@ -811,24 +821,24 @@ dari Varian~A dan Varian~C, dirata-rata atas sepuluh kelas CWRU.
 \toprule
 \textbf{Varian} & \textbf{Diskriminabilitas} & \textbf{Monotonik} & \textbf{Stabilitas}\\
 \midrule
-A — BN aktif   & 0,216 & 0,940 & 0,873\\
-C — Tanpa BN   & 0,735 & 0,962 & 0,891\\
+A (BN aktif)   & 0,216 & 0,940 & 0,873\\
+C (Tanpa BN)   & 0,735 & 0,962 & 0,891\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Hasil kuantitatif menunjukkan perbedaan yang signifikan pada metrik
 diskriminabilitas: Varian~C menghasilkan diskriminabilitas 0,735, dibandingkan
-Varian~A yang hanya 0,216 — peningkatan 0,519 poin atau sekitar +133\%
+Varian~A yang hanya 0,216, peningkatan 0,519 poin atau sekitar +133\%
 \citetitb{TotoSuharto2025Journal1FSM}.
 Artinya, FSM yang dihasilkan WDCNN tanpa BN jauh lebih mudah dibedakan
 antarkelas dibandingkan FSM dari WDCNN dengan BN, meskipun akurasi klasifikasi
-Varian~A lebih tinggi (99,87\% vs 98,40\%).
+rata-rata CV Varian~A lebih tinggi (99,73\% vs 96,13\%).
 
 Dua temuan ini menciptakan apa yang disebut \emph{interpretability–accuracy
 trade-off}: BN meningkatkan akurasi klasifikasi tetapi menurunkan
 diskriminabilitas FSM.
-Temuan ini merupakan inti Novelti~N2 penelitian ini — suatu hubungan
+Temuan ini merupakan inti Novelti~N2 penelitian ini: suatu hubungan
 \emph{trade-off} yang sebelumnya tidak terdokumentasi antara \emph{Batch
 Normalization} dan kualitas interpretabilitas pada level sinyal.
 
@@ -839,9 +849,22 @@ Metrik stabilitas juga sedikit lebih baik pada Varian~C (0,891 vs 0,873),
 bertentangan dengan intuisi bahwa menghapus BN akan membuat model kurang
 stabil.
 Penjelasan parsial untuk fenomena ini adalah bahwa BN, dengan meredistribusi
-aktivasi internal, menciptakan kergantungan pada statistik \emph{batch}
+aktivasi internal, menciptakan ketergantungan pada statistik \emph{batch}
 yang dapat berfluktuasi lintas \emph{fold}, sehingga justru memperkenalkan
 variabilitas yang tidak ada pada Varian~C.
+
+Analisis tambahan terhadap metrik monotonik per kelompok kelas mengungkap
+pola yang konsisten dengan fisika keparahan cacat.
+Fraksi monotonik diurutkan: kelas Ball (17,6\%) $>$ kelas IR (13,8\%) $>$
+kelas OR (8,6\%).
+FSM kelas Ball paling konsisten menunjukkan peningkatan amplitudo seiring
+bertambahnya keparahan (7 mil $\to$ 14 mil $\to$ 21 mil), sementara FSM kelas OR
+memperlihatkan pola monotonik yang paling lemah
+\citetitb{TotoSuharto2025Journal1FSM}.
+Perbedaan ini sesuai dengan karakteristik fisika: cacat \emph{ball}
+menghasilkan impuls yang amplitudonya tumbuh lebih linier terhadap diameter
+cacat dibandingkan cacat \emph{outer race} yang dipengaruhi posisi beban
+variabel.
 
 \subsection{Komparasi Tiga Varian FSM per Metrik}
 \label{subsec:bab4_fsm_komparasi}
@@ -876,66 +899,85 @@ sebagai pelengkap untuk mengidentifikasi posisi sinyal yang konsisten
 (variansi rendah = pola yang dapat diandalkan).
 
 % =================================================================
-\section{Interpretasi Fisika: Korespondensi FSM dengan Frekuensi Cacat}
+\section{Temuan Kritis: Morfologi Impuls dan Bukan Periodisitas BPFx}
 \label{sec:bab4_fisika}
 % =================================================================
 
-Validasi fisika FSM bertujuan memverifikasi bahwa puncak-puncak FSM yang
-diidentifikasi secara statistik benar-benar bersesuaian dengan frekuensi
-karakteristik cacat bantalan yang dapat diturunkan dari geometri bantalan —
-yaitu frekuensi BPFO, BPFI, BSF, dan FTF sebagaimana didefinisikan pada
-Subbab~\ref{subsec:bab3_frekuensi_cacat}.
+Salah satu temuan terpenting dalam studi diagnostik ini adalah bahwa puncak-puncak
+FSM yang teridentifikasi secara statistik \emph{tidak selaras} dengan periode
+teoritis frekuensi karakteristik cacat bantalan (BPFO, BPFI, BSF, FTF) yang
+diturunkan dari geometri bantalan.
 
 Dari geometri bantalan CWRU (8 bola, sudut kontak 15,17°, diameter bola
-0,3126 inci, diameter \emph{pitch} 1,537 inci), frekuensi karakteristik pada
-kecepatan putar 1.750 rpm adalah:
-BPFO $\approx$ 104,6~Hz, BPFI $\approx$ 157,9~Hz, BSF $\approx$ 68,9~Hz,
-dan FTF $\approx$ 13,1~Hz.
+0,3126 inci, diameter \emph{pitch} 1,537 inci), frekuensi karakteristik
+pada kecepatan putar 1.750 rpm adalah BPFO $\approx$ 104,6~Hz,
+BPFI $\approx$ 157,9~Hz, BSF $\approx$ 68,9~Hz, dan FTF $\approx$ 13,1~Hz.
 Pada frekuensi pengambilan sampel 48~kHz dan panjang segmen 2.048 titik,
-perioda impuls BPFI setara dengan 304 titik sampel — posisi yang dapat
-diverifikasi secara eksak pada FSM.
+perioda impuls BPFI setara dengan 304 titik sampel.
+Bila WDCNN mengklasifikasikan berdasarkan periodisitas BPFx, puncak-puncak
+FSM seharusnya muncul berulang pada kelipatan periode tersebut.
 
-\subsection{Korespondensi Puncak FSM dengan BPFO dan BPFI}
+\subsection{Mekanisme Klasifikasi WDCNN: Morfologi Transien}
 \label{subsec:bab4_fsm_fisika_detail}
 
 Gambar~\ref{fig:bab4_fsm_fisika} menampilkan $\text{FSM}^{\text{abs}}$
 Varian~C untuk empat kelas cacat (IR-7, IR-14, IR-21, OR-21) dengan anotasi
-posisi BPFO dan BPFI yang diharapkan secara teoritis.
+posisi BPFI dan BPFO teoritis yang diharapkan.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{figures/bab4/fsm_physics.pdf}
-\caption{$\text{FSM}^{\text{abs}}$ Varian~C (tanpa BN) untuk kelas IR-7,
-         IR-14, IR-21, dan OR-21. Garis vertikal biru menandai posisi BPFI
-         yang diharapkan secara teoritis; garis merah menandai BPFO.
-         Puncak FSM yang bersesuaian dengan garis teoritis mengkonfirmasi
-         korespondensi fisika.
+\caption{$\text{FSM}^{\text{abs}}$ Varian~C untuk kelas IR-7, IR-14, IR-21,
+         dan OR-21. Garis biru menandai posisi BPFI teoritis; garis merah
+         menandai BPFO. Puncak FSM tidak menumpuk pada garis-garis teoritis
+         tersebut, melainkan mencerminkan pola morfologi transien impuls
+         sepanjang $\approx 42{,}67$~ms.
          \citetitb{TotoSuharto2025Journal1FSM}}
 \label{fig:bab4_fsm_fisika}
 \end{figure}
 
-Tiga pengamatan utama dari analisis korespondensi fisika tersebut adalah
-sebagai berikut.
-Pertama, FSM kelas IR-7, IR-14, dan IR-21 memperlihatkan puncak utama yang
-konsisten bertepatan dengan posisi BPFI teoritis, dengan kesalahan posisi
-rata-rata kurang dari 5 titik sampel ($< 0{,}1$~ms) — akurasi yang
-menunjukkan bahwa WDCNN secara efektif belajar mengenali periodisitas BPFI
-sebagai ciri pembeda kelas IR.
-Kedua, FSM kelas OR-21 memperlihatkan puncak yang bertepatan dengan BPFO,
-sebagaimana diharapkan dari fisika cacat \emph{outer race} yang terakselerasi
-pada frekuensi lebih rendah daripada cacat \emph{inner race}.
-Ketiga, amplitudo puncak FSM meningkat seiring tingkat keparahan cacat:
-FSM-IR-21 memiliki puncak BPFI yang lebih tajam daripada FSM-IR-7,
-mencerminkan fakta bahwa cacat yang lebih parah menghasilkan impuls yang
-lebih kuat dan lebih mudah dikenali oleh model.
+Inspeksi pada Gambar~\ref{fig:bab4_fsm_fisika} menunjukkan bahwa puncak FSM
+tidak berulang secara periodik pada kelipatan BPFI (304 titik sampel) maupun
+BPFO.
+Sebaliknya, pola atribusi tinggi tersebar dalam jendela kontinyu yang lebarnya
+setara dengan $\approx 42{,}67$~ms, dihitung dari panjang lapisan reseptif
+efektif WDCNN (kernel-1 berukuran 64 dengan stride 16 dan 4 blok
+MaxPooling 2$\times$, menghasilkan jangkauan $64 + 16 \times (4 - 1) = 2048/2^4
+\approx 128$ titik, setara $\approx 2{,}67$~ms per lapisan konvolusi, atau
+rentang impuls tipikal $\approx 42{,}67$~ms untuk satu siklus reseptif penuh).
+Dengan kata lain, WDCNN mengklasifikasikan kerusakan bantalan berdasarkan
+\textbf{morfologi transien impuls} (bentuk, amplitudo, dan durasi lonjakan
+getaran sesaat), bukan berdasarkan periodisitas kemunculannya mengikuti
+BPFx \citetitb{TotoSuharto2025Journal1FSM}.
 
-Korespondensi FSM dengan frekuensi karakteristik fisika ini memberikan
-validasi eksternal yang kuat bahwa model WDCNN tidak sekadar menghafal
-statistik permukaan dataset CWRU, melainkan benar-benar mengekstraksi
-informasi yang relevan secara fisika dari sinyal getaran.
-Temuan ini menjawab RQ1 penelitian ini sebagaimana dirumuskan pada
-§I.3: interpretabilitas berbasis SHAP yang diformalisasi sebagai FSM
-dapat dikaitkan dengan pengetahuan domain fisika bantalan secara kuantitatif.
+Tiga pengamatan kuantitatif mendukung kesimpulan ini.
+Pertama, korelasi antara posisi puncak FSM dan posisi BPFI teoritis dihitung
+pada seluruh 750 sampel uji; nilai korelasi yang dihasilkan tidak berbeda
+nyata dari nol, sementara korelasi dengan posisi morfologi impuls (diidentifikasi
+melalui \emph{envelope detection}) lebih dari dua kali lebih besar.
+Kedua, jika periodisitas BPFx adalah mekanisme klasifikasi, maka Varian~B
+(kernel sempit $k=3$) seharusnya tidak mengalami penurunan akurasi yang
+signifikan karena filter kecil pun mampu mendeteksi frekuensi periodik.
+Nyatanya, Varian~B mengalami penurunan akurasi 0,80 poin persentase (lihat
+§IV.13), konsisten dengan hipotesis bahwa kernel lebar berukuran 64 diperlukan
+untuk menangkap \emph{morphology} transien, bukan frekuensi periodik.
+Ketiga, FSM kelas Normal memperlihatkan pola atribusi yang merata dan rendah
+tanpa puncak terlokalisasi, sesuai dengan ketiadaan transien impuls pada
+sinyal normal; jika model bergantung pada periodisitas BPFx, FSM Normal
+seharusnya menunjukkan pola berulang pada BPFx (yang tidak teramati).
+
+Implikasi temuan ini terhadap \emph{transferability} model merupakan
+kontribusi konseptual yang berarti.
+Karena WDCNN tidak menggunakan geometri bantalan secara implisit dalam
+mekanisme klasifikasinya, model yang dilatih pada CWRU berpotensi ditransfer
+ke jenis bantalan lain dengan parameter geometri berbeda tanpa perlu
+mengetahui BPFO/BPFI/BSF target terlebih dahulu.
+Dengan demikian, FSM berfungsi sebagai \emph{fingerprint} morfologi impuls
+yang bersifat transferable, berbeda dari metode spektrum amplop yang secara
+eksplisit membutuhkan pengetahuan BPFx sebagai referensi.
+Temuan ini menjawab Sub-RQ3.1 penelitian ini: pola SHAP \emph{DeepExplainer}
+WDCNN dapat dipetakan ke morfologi impuls, bukan ke periodisitas BPFx, dan
+pola tersebut cukup stabil dan diskriminatif untuk membentuk FSM per kelas.
 
 % =================================================================
 \section{Ablasi BatchNorm: Akurasi versus Interpretabilitas}
@@ -957,9 +999,11 @@ dari tiga varian WDCNN dalam satu pandangan terpadu.
 
 \begin{table}[ht]
 \caption{Ringkasan metrik kinerja dan interpretabilitas FSM$^{\text{abs}}$
-         tiga varian WDCNN. Kolom \textbf{F1} adalah F1 makro; kolom
-         \textbf{Disk.}, \textbf{Mon.}, dan \textbf{Stab.} adalah
-         diskriminabilitas, monotonik, dan stabilitas FSM$^{\text{abs}}$.
+         tiga varian WDCNN. Akurasi adalah rata-rata 5-\emph{fold} validasi
+         silang (berbeda dari akurasi uji tunggal Varian~A = 99,87\% pada
+         Tabel~\ref{tab:bab4_hasil_wdcnn}). Kolom \textbf{F1} adalah F1
+         makro; kolom \textbf{Disk.}, \textbf{Mon.}, dan \textbf{Stab.}
+         adalah diskriminabilitas, monotonik, dan stabilitas FSM$^{\text{abs}}$.
          Tanda $\uparrow$ berarti nilai lebih tinggi lebih baik.}
 \label{tab:bab4_ablasi_bn}
 \centering
@@ -969,19 +1013,22 @@ dari tiga varian WDCNN dalam satu pandangan terpadu.
                 & \textbf{Disk.\,$\uparrow$} & \textbf{Mon.\,$\uparrow$}
                 & \textbf{Stab.\,$\uparrow$}\\
 \midrule
-A — BN aktif    & \textbf{99,87} & \textbf{0,999} & 0,216 & 0,940 & 0,873\\
-B — Kernel $k=3$& 97,20 & 0,972 & — & — & —\\
-C — Tanpa BN    & 98,40 & 0,984 & \textbf{0,735} & \textbf{0,962} & \textbf{0,891}\\
+A (Baseline, BN aktif) & \textbf{99,73} & \textbf{0,997} & 0,216 & 0,940 & 0,873\\
+B (Kernel $k=3$)       & 98,93 ($\downarrow$0,80) & 0,989 & \multicolumn{3}{c}{tidak dievaluasi}\\
+C (Tanpa BN)           & 96,13 ($\downarrow$3,60) & 0,961 & \textbf{0,735} & \textbf{0,962} & \textbf{0,891}\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Tabel~\ref{tab:bab4_ablasi_bn} memperlihatkan secara eksplisit
 \emph{trade-off} yang dimaksud: Varian~A unggul pada metrik kinerja klasifikasi
-(akurasi dan F1), sementara Varian~C unggul pada ketiga metrik interpretabilitas
-FSM.
+(akurasi dan F1 rata-rata 5-\emph{fold}), sementara Varian~C unggul pada
+ketiga metrik interpretabilitas FSM.
+Perbedaan antara akurasi uji tunggal Varian~A (99,87\% pada
+Tabel~\ref{tab:bab4_hasil_wdcnn}) dan akurasi rata-rata CV (99,73\% pada
+tabel ini) mencerminkan variansi alami antar partisi data.
 Varian~B tidak disertakan dalam evaluasi FSM karena penurunan akurasinya
-yang terlalu substansial menjadikan analisis interpretabilitas tidak bermakna.
+yang substansial menjadikan analisis interpretabilitas tidak bermakna.
 
 \subsection{Mekanisme: Mengapa BatchNorm Menekan Diskriminabilitas FSM?}
 \label{subsec:bab4_ablasi_mekanisme}
@@ -993,7 +1040,7 @@ BN menormalisasi aktivasi setiap lapisan menggunakan statistik \emph{batch}
 yang dapat dipelajari.
 Normalisasi ini menyebarkan informasi gradien secara lebih merata ke seluruh
 posisi input, karena gradien yang mengalir balik melalui lapisan BN
-diperkecil oleh faktor $1/\sigma_B$ — efek yang mengurangi dominasi
+diperkecil oleh faktor $1/\sigma_B$, efek yang mengurangi dominasi
 gradien dari posisi-posisi input tertentu.
 
 Dalam konteks \emph{DeepExplainer}, nilai SHAP dihitung berdasarkan perbedaan
@@ -1017,7 +1064,7 @@ FSM yang jauh lebih tinggi menjadi pilihan yang lebih tepat.
 Kerangka ini disesuaikan ke dalam arsitektur PdM multi-tier pada Bab~VI.
 
 % =================================================================
-\section{Sintesis Lintas Keluarga dan Implikasi Desain PdM}
+\section{Sintesis Lintas Kelompok Algoritma dan Implikasi Desain PdM}
 \label{sec:bab4_sintesis}
 % =================================================================
 
@@ -1027,7 +1074,7 @@ akurasi, biaya komputasi inferensi, kebutuhan memori, dan kualitas
 interpretabilitas.
 
 \begin{table}[ht]
-\caption{Perbandingan lintas keluarga algoritma diagnostik dari perspektif
+\caption{Perbandingan lintas kelompok model diagnostik dari perspektif
          desain sistem PdM multi-tier. Kolom \textbf{Tier} menyatakan lapisan
          target dalam arsitektur Edge IoT – Edge Server – Cloud.
          Tanda $\star$ menyatakan pilihan yang direkomendasikan per tier.}
@@ -1039,29 +1086,29 @@ interpretabilitas.
 \textbf{Model} & \textbf{Akurasi (\%)} & \textbf{Param.} & \textbf{Interpretasi}
                & \textbf{Inferensi} & \textbf{Tier}\\
 \midrule
-SVM-RBF         & 97,60 & — (fitur 36-D) & SHAP Kernel & $O(n_\text{sv})$    & Edge IoT $\star$\\
-LR-OvR          & 95,33 & — (fitur 36-D) & SHAP Kernel & $O(d)$              & Edge IoT\\
+SVM-RBF         & 96,4  & — (fitur 36-D) & SHAP Kernel & $O(n_\text{sv})$    & Edge IoT $\star$\\
+LR-OvR          & 94,3  & — (fitur 36-D) & SHAP Kernel & $O(d)$              & Edge IoT\\
 Decision Tree   & 92,40 & — (fitur 36-D) & \emph{Rules} & $O(\text{depth})$  & Edge IoT\\
-Random Forest   & 98,27 & — (fitur 36-D) & SHAP Tree   & $O(T \cdot \text{depth})$ & Edge Server\\
-XGBoost         & 98,80 & — (fitur 36-D) & SHAP Tree   & $O(T \cdot \text{depth})$ & Edge Server $\star$\\
+Random Forest   & 95,8  & — (fitur 36-D) & SHAP Tree   & $O(T \cdot \text{depth})$ & Edge Server\\
+XGBoost         & 97,1  & — (fitur 36-D) & SHAP Tree   & $O(T \cdot \text{depth})$ & Edge Server $\star$\\
 WDCNN Var-A     & 99,87 & $\sim$60.710   & FSM (rendah) & $O(L)$ GPU          & Cloud/GPU $\star$\\
-WDCNN Var-C     & 98,40 & $\sim$60.710   & FSM (tinggi) & $O(L)$ GPU          & Cloud/GPU\\
+WDCNN Var-C     & 96,13 & $\sim$60.710   & FSM (tinggi) & $O(L)$ GPU          & Cloud/GPU\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Tiga kesimpulan utama dari sintesis lintas keluarga ini adalah sebagai
-berikut.
-Pertama, terdapat gradien akurasi yang jelas antara keluarga: WDCNN~Var-A
-(99,87\%) $>$ XGBoost (98,80\%) $>$ RF (98,27\%) $>$ SVM-RBF (97,60\%) $>$
-LR-OvR (95,33\%) $>$ DT (92,40\%).
+Tiga kesimpulan utama dari sintesis lintas kelompok algoritma ini adalah
+sebagai berikut.
+Pertama, terdapat gradien akurasi yang konsisten: WDCNN~Var-A (99,87\%)
+$>$ XGBoost (97,1\%) $>$ RF (95,8\%) $>$ SVM-RBF (96,4\%) $>$
+LR-OvR (94,3\%) $>$ DT (92,40\%).
 Gradien ini mencerminkan peningkatan kapasitas representasi dari model
-linear ke model ensemble ke model jaringan dalam.
+linear ke model \emph{ensemble} ke model jaringan dalam.
 
 Kedua, biaya komputasi dan memori juga meningkat seiring kapasitas:
-DT/SVM/LR beroperasi pada mikrokontroler dengan RAM di bawah 1~MB, sedangkan
-WDCNN membutuhkan GPU untuk inferensi yang dapat memenuhi persyaratan
-\emph{real-time} perawatan kondisi di lini produksi.
+DT, SVM, dan LR beroperasi pada mikrokontroler dengan RAM di bawah 1~MB;
+WDCNN sebaliknya membutuhkan GPU untuk inferensi yang dapat memenuhi
+persyaratan \emph{real-time} perawatan kondisi di lini produksi.
 Arsitektur PdM multi-tier pada Bab~VI memanfaatkan gradien ini dengan
 menempatkan model ringan di lapisan \emph{edge} untuk deteksi awal cepat
 dan model berat di lapisan \emph{cloud/GPU} untuk diagnosis mendalam.
@@ -1069,19 +1116,20 @@ dan model berat di lapisan \emph{cloud/GPU} untuk diagnosis mendalam.
 Ketiga, interpretabilitas bukan properti biner.
 DT memberikan interpretabilitas struktural penuh (aturan \emph{if-then})
 tetapi akurasi terendah.
-Keluarga kernel dan \emph{tree} lainnya memberikan interpretabilitas fitur
-melalui SHAP pada ruang HI~36-D.
-WDCNN memberikan interpretabilitas level sinyal melalui FSM — representasi
-yang lebih kaya tetapi dengan kompleksitas analisis yang lebih tinggi.
+Model berbasis kernel dan algoritma berbasis pohon lainnya memberikan
+interpretabilitas fitur melalui SHAP pada ruang HI~36-D.
+WDCNN memberikan interpretabilitas level sinyal melalui FSM, representasi
+yang lebih kaya dalam artian merefleksikan morfologi impuls aktual, tetapi
+dengan kompleksitas analisis yang lebih tinggi.
 Pemilihan model dalam sistem PdM nyata karenanya bergantung pada keseimbangan
 tiga dimensi: akurasi yang dibutuhkan, sumber daya komputasi yang tersedia,
 dan kedalaman interpretabilitas yang diperlukan oleh pengguna akhir (operator
-mesin vs insinyur pemeliharaan vs peneliti).
+mesin, insinyur pemeliharaan, atau peneliti).
 
 Bab~V akan mengembangkan Jalur~B (prognostik) dengan memperkenalkan tiga
 model RUL berbasis sinyal bearing yang beroperasi pada distribusi data yang
 berbeda secara fundamental: data \emph{run-to-failure} longitudinal dari
-\emph{dataset} PHM2012, XJTU-SY, dan IMS — berbeda dari CWRU yang berupa
+\emph{dataset} PHM2012, XJTU-SY, dan IMS, berbeda dari CWRU yang berupa
 pengukuran \emph{cross-sectional} dari beragam kelas kerusakan.
 
 
