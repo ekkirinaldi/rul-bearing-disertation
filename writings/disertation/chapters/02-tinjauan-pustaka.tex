@@ -1,4 +1,4 @@
-% =====================================================================
+﻿% =====================================================================
 % Bab II — Tinjauan Pustaka
 % =====================================================================
 \chapter{Tinjauan Pustaka}
@@ -6,11 +6,11 @@
 
 Bab ini menyajikan tinjauan terhadap literatur yang mendasari penelitian,
 diorganisasi dalam tujuh kelompok tematik: (1)~perawatan prediktif dalam
-konteks Industri 4.0, (2)~diagnostik bantalan gelinding berbasis \emph{deep
+konteks Industri 4.0, (2)~diagnostik \emph{rolling element bearing} berbasis \emph{deep
 learning}, (3)~\emph{explainable AI} (XAI) pada tingkat atribusi input,
-(4)~prognostik bantalan gelinding dan estimasi sisa umur pakai, (5)~interpretabilitas
+(4)~prognostik \emph{rolling element bearing} dan estimasi sisa umur pakai, (5)~interpretabilitas
 mekanistik berbasis \emph{sparse autoencoder} (SAE), (6)~fisika getaran
-bantalan gelinding, dan (7)~peta kesenjangan literatur yang memposisikan
+\emph{rolling element bearing}, dan (7)~peta kesenjangan literatur yang memposisikan
 penelitian ini relatif terhadap karya terkait. Kesenjangan yang teridentifikasi
 pada §\ref{sec:bab2_gap_literatur} menjadi justifikasi langsung bagi ketiga
 pertanyaan penelitian yang dirumuskan pada §1.2.
@@ -51,10 +51,10 @@ useful life}, RUL). Kemampuan prediksi ini memungkinkan perencanaan
 perawatan yang lebih efisien, pengurangan \emph{unplanned downtime}, dan
 optimasi persediaan suku cadang \citetitb{Lei2018PrognosticsReview}.
 
-Bantalan gelinding merupakan objek utama penerapan PHM karena perannya yang
+\emph{Rolling element bearing} merupakan objek utama penerapan PHM karena perannya yang
 kritis dalam semua mesin berputar: lebih dari 40--50\% kegagalan mesin
-industri berakar pada kerusakan bantalan \citetitb{Lei2018Machinery}.
-Mekanisme kegagalan bantalan mencakup \emph{spalling} pada permukaan lintasan
+industri berakar pada kerusakan \emph{bearing} \citetitb{Lei2018Machinery}.
+Mekanisme kegagalan \emph{bearing} mencakup \emph{spalling} pada permukaan lintasan
 dalam (\emph{inner race}) atau luar (\emph{outer race}), keausan elemen
 bergulir (\emph{ball} atau \emph{roller}), dan retakan sangkar (\emph{cage}).
 Setiap mekanisme menghasilkan tanda getaran yang berbeda, yang menjadi dasar
@@ -92,11 +92,11 @@ sebagai input multi-modal merupakan \emph{roadmap} jangka panjang yang
 ditetapkan sebagai \emph{future work} pada §VI.5.
 
 % -----------------------------------------------------------------
-\section{Diagnostik Bantalan Gelinding Berbasis \emph{Deep Learning}}
+\section{Diagnostik \emph{Rolling Element Bearing} Berbasis \emph{Deep Learning}}
 \label{sec:bab2_diagnostik}
 % -----------------------------------------------------------------
 
-Diagnostik bantalan bertujuan mengklasifikasikan kondisi komponen ke dalam
+Diagnostik \emph{bearing} bertujuan mengklasifikasikan kondisi komponen ke dalam
 kategori kerusakan yang telah terdefinisi, berdasarkan fitur yang diekstrak
 dari sinyal getaran. Perkembangan pendekatan diagnostik berlangsung dari
 algoritma berbasis fitur rekayasa manual menuju arsitektur yang belajar
@@ -115,11 +115,11 @@ kesulitan dalam menangkap interaksi fitur yang kompleks \citetitb{Lei2018Machine
 Kebangkitan \emph{convolutional neural network} (CNN) membuka era baru: sinyal
 mentah menjadi input langsung, dan model belajar representasi hierarkis secara
 otomatis. \citenameitb{Guo2016ADCNN} menunjukkan bahwa CNN satu dimensi mampu
-mengklasifikasikan kondisi bantalan CWRU dengan akurasi tinggi tanpa rekayasa
+mengklasifikasikan kondisi \emph{bearing} CWRU dengan akurasi tinggi tanpa rekayasa
 fitur manual. \citenameitb{He2016ResNet} memperkenalkan koneksi residual yang
 memungkinkan jaringan sangat dalam dilatih tanpa masalah \emph{vanishing gradient},
 dan \citenameitb{Wen2020ResNet50} mengadaptasi ResNet-50 untuk diagnostik
-bantalan dengan preprocessing \emph{continuous wavelet transform} menjadi gambar
+\emph{bearing} dengan preprocessing \emph{continuous wavelet transform} menjadi gambar
 dua dimensi.
 
 Arsitektur \emph{Wide Deep CNN} (WDCNN) yang diperkenalkan oleh
@@ -127,7 +127,7 @@ Arsitektur \emph{Wide Deep CNN} (WDCNN) yang diperkenalkan oleh
 sinyal mentah. Kernel pertama yang berukuran lebar (64 sampel, \emph{stride} 16)
 dirancang secara eksplisit untuk ekstraksi fitur yang peka frekuensi, meniru
 karakteristik filter \emph{bandpass} yang selektif terhadap komponen frekuensi
-karakteristik bantalan. Kernel-kernel berikutnya (ukuran 3) menangkap pola
+karakteristik \emph{bearing}. Kernel-kernel berikutnya (ukuran 3) menangkap pola
 lokal yang lebih halus, menghasilkan kombinasi ekstraksi fitur \emph{global}
 dan \emph{lokal} yang efektif.
 
@@ -143,9 +143,9 @@ menjelaskan keputusannya kepada teknisi perawatan
 \label{subsec:bab2_cwru}
 
 Dataset \emph{Case Western Reserve University} (CWRU) merupakan \emph{benchmark}
-paling luas digunakan dalam riset diagnostik bantalan gelinding
+paling luas digunakan dalam riset diagnostik \emph{rolling element bearing}
 \citetitb{Smith2015CWRU}. \emph{Test rig} terdiri dari motor 2~HP, kopling
-torsi, dan bantalan SKF~6205-2RS~JEM yang dipasang pada sisi \emph{drive-end}
+torsi, dan \emph{bearing} SKF~6205-2RS~JEM yang dipasang pada sisi \emph{drive-end}
 (DE) dan sisi \emph{fan-end} (FE). Cacat buatan disisipkan menggunakan
 \emph{electro-discharge machining} (EDM) pada tiga komponen dengan tiga tingkat
 keparahan (0,007; 0,014; 0,021 inci diameter cacat), menghasilkan 10~kelas
@@ -167,7 +167,7 @@ mengeneralisasi ke data baru \citetitb{Neupane2020CWRUReview}. Protokol
 \emph{temporal split} (54/13/33\% = 1.240/310/750 sampel, berturutan dalam
 waktu) digunakan dalam penelitian ini untuk menghindari kebocoran ini.
 
-\subsection{Klasifikasi Bantalan Multi-Model: Kernel, Pohon, dan Dalam}
+\subsection{Klasifikasi \emph{Bearing} Multi-Model: Kernel, Pohon, dan Dalam}
 \label{subsec:bab2_multi_model}
 
 Penelitian ini mengevaluasi tiga kelompok algoritma klasifikasi secara paralel
@@ -208,7 +208,7 @@ dan \citetitb{TotoSuharto2025Journal1FSM}; detail lengkap disajikan pada
 \begin{table}[ht]
   \centering
   \caption{Ringkasan kinerja dan kapabilitas interpretabilitas tiga kelompok
-           algoritma klasifikasi bantalan pada dataset CWRU.}
+           algoritma klasifikasi \emph{bearing} pada dataset CWRU.}
   \label{tab:bab2_klasifikasi_survey}
   \footnotesize
   \begin{tabularx}{\textwidth}{@{}l l l c l c@{}}
@@ -240,7 +240,7 @@ melampaui semua \emph{baseline} dalam akurasi sekaligus memungkinkan
 interpretabilitas di tingkat sinyal mentah melalui FSM. Temuan bahwa
 \emph{BatchNorm} menekan \emph{discriminability} FSM sebesar 133\% (Var~C
 terhadap Var~A) merupakan kontribusi pertama yang dilaporkan dalam literatur
-diagnostik bantalan (\emph{novelti N2}).
+diagnostik \emph{bearing} (\emph{novelti N2}).
 
 % -----------------------------------------------------------------
 \section{\emph{Explainable AI}: Atribusi Input}
@@ -249,7 +249,7 @@ diagnostik bantalan (\emph{novelti N2}).
 
 \emph{Explainable AI} (XAI) bertujuan mengungkap alasan di balik keputusan
 model sehingga dapat diverifikasi oleh operator manusia. Dalam konteks diagnostik
-bantalan, XAI yang baik harus mampu menjelaskan \emph{mengapa} model menyimpulkan
+\emph{bearing}, XAI yang baik harus mampu menjelaskan \emph{mengapa} model menyimpulkan
 suatu jenis kerusakan, serta idealnya mengkonfirmasi atau mengoreksi intuisi
 rekayasawan yang berpengalaman dalam \emph{vibration analysis}.
 
@@ -278,7 +278,7 @@ Kategori ketiga adalah \textbf{metode berbasis perturbasi}: LIME
 \citetitb{Ribeiro2016LIME} memfit model linier lokal pada sekitar prediksi
 yang dijelaskan; SHAP \citetitb{Lundberg2017SHAP} menghitung nilai Shapley
 dari teori permainan kooperatif yang memenuhi serangkaian aksiom keadilan
-yang ketat. Untuk domain diagnostik bantalan, metode berbasis perturbasi, khususnya SHAP,
+yang ketat. Untuk domain diagnostik \emph{bearing}, metode berbasis perturbasi, khususnya SHAP,
 paling luas diadopsi karena jaminan aksiomatiknya dan dukungan implementasi
 untuk berbagai jenis model \citetitb{Bengherbia2024SHAPBearing}.
 
@@ -397,11 +397,11 @@ FSM bukan artefak \emph{sampling}, melainkan representasi yang stabil dari
 mekanisme keputusan model \citetitb{TotoSuharto2025Journal1FSM}.
 
 % -----------------------------------------------------------------
-\section{Prognostik Bantalan Gelinding: Estimasi Sisa Umur Pakai}
+\section{Prognostik \emph{Rolling Element Bearing}: Estimasi Sisa Umur Pakai}
 \label{sec:bab2_prognostik}
 % -----------------------------------------------------------------
 
-Prognostik bantalan bertujuan memperkirakan waktu yang tersisa sebelum
+Prognostik \emph{bearing} bertujuan memperkirakan waktu yang tersisa sebelum
 komponen mencapai kondisi kegagalan (\emph{remaining useful life}, RUL).
 Berbeda dengan diagnostik yang bersifat klasifikasi diskrit, estimasi RUL
 adalah masalah regresi kontinu yang membutuhkan pemodelan dinamika degradasi
@@ -414,8 +414,8 @@ Pendekatan berbasis fisika memodelkan mekanisme kerusakan melalui persamaan
 diferensial yang parameternya diidentifikasi dari data kondisi. Hukum Paris
 untuk perambatan retak dan model keausan Archard memberikan landasan teoretis
 yang kuat, namun memerlukan pengetahuan mekanisme fisika yang akurat dan
-spesifik per jenis komponen; model yang dikalibrasi untuk satu jenis bantalan
-tidak dapat langsung diterapkan ke bantalan dengan geometri berbeda
+spesifik per jenis komponen; model yang dikalibrasi untuk satu jenis \emph{bearing}
+tidak dapat langsung diterapkan ke \emph{bearing} dengan geometri berbeda
 \citetitb{Saxena2008Damage}. Varian hibrida seperti \emph{particle filter}
 menggabungkan model fisika dengan pembaruan statistik \emph{online}
 \citetitb{An2013ParticleFilter}, namun tetap membutuhkan model struktural yang
@@ -433,7 +433,7 @@ sebelum era \emph{deep learning}.
 
 Arsitektur \emph{deep learning} menggeser paradigma ke pembelajaran representasi
 hirarkis. LSTM \citetitb{Hochreiter1997LSTM} merupakan arsitektur rekuren
-dominan dalam prognostik bantalan karena mekanisme \emph{gating}-nya untuk
+dominan dalam prognostik \emph{bearing} karena mekanisme \emph{gating}-nya untuk
 mempertahankan dependensi jangka panjang; BiLSTM dengan mekanisme
 \emph{attention} \citetitb{Chen2022BiLSTMAttention} dan TCN dengan konvolusi
 kausal berlapis \citetitb{Bai2018TCN} memperluas kemampuan ini. Arsitektur
@@ -464,30 +464,30 @@ dijawab oleh Bab~V melalui pemetaan SAE → BPFx
 \label{subsec:bab2_dataset_rul}
 
 Tiga dataset publik digunakan sebagai \emph{benchmark} dalam penelitian ini.
-Ketiganya memiliki karakteristik berbeda, mencakup jenis bantalan, kondisi
+Ketiganya memiliki karakteristik berbeda, mencakup jenis \emph{bearing}, kondisi
 operasi, dan mekanisme kegagalan dominan, sehingga bersama-sama dapat menguji
 universalitas pendekatan yang diusulkan.
 
 \textbf{PHM2012 (FEMTO-PRONOSTIA).} Dataset hasil tantangan PHMAP~2012 yang
-dikurasi oleh \citenameitb{Nectoux2012PRONOSTIA}. Berisi 17 bantalan yang
+dikurasi oleh \citenameitb{Nectoux2012PRONOSTIA}. Berisi 17 \emph{bearing} yang
 diuji hingga kegagalan di bawah tiga kondisi beban (Kondisi~1: 1.800~rpm,
 4.000~N; Kondisi~2: 1.650~rpm, 4.200~N; Kondisi~3: 1.500~rpm, 5.000~N).
 Kriteria akhir hidup (EOL): amplitudo RMS getaran melampaui ambang 20~g.
-Label RUL linier dari 1 (awal operasi) ke 0 (EOL). Dataset dibagi 6 bantalan
-latih dan 11 bantalan uji (dengan RUL yang dipotong pada waktu tertentu).
+Label RUL linier dari 1 (awal operasi) ke 0 (EOL). Dataset dibagi 6 \emph{bearing}
+latih dan 11 \emph{bearing} uji (dengan RUL yang dipotong pada waktu tertentu).
 
 \textbf{XJTU-SY.} Dataset dari Xi'an Jiaotong University yang dikurasi oleh
-\citenameitb{Wang2020XJTU}. Berisi 10 bantalan LDK~UER204 yang diuji di bawah
+\citenameitb{Wang2020XJTU}. Berisi 10 \emph{bearing} LDK~UER204 yang diuji di bawah
 lima kondisi operasi (kombinasi kecepatan dan beban). Jenis kegagalan dominan
 adalah \emph{outer-race spalling}, menjadikan dataset ini ideal untuk menguji
 apakah representasi laten model menangkap sinyal BPFO.
 
 \textbf{IMS (Universitas Cincinnati).} Dataset yang diperkenalkan oleh
-\citenameitb{Qiu2006WaveletBearing}, berisi empat bantalan Rexnord yang
+\citenameitb{Qiu2006WaveletBearing}, berisi empat \emph{bearing} Rexnord yang
 dijalankan secara bersamaan pada kecepatan 2.000~rpm dengan akuisisi tiap
-10~menit. Bantalan~3 mengalami kegagalan \emph{outer-race}; Bantalan~4
+10~menit. \emph{Bearing}~3 mengalami kegagalan \emph{outer-race}; \emph{Bearing}~4
 mengalami kelelahan elemen bergulir (\emph{rolling-element fatigue}).
-Dengan hanya empat bantalan, dataset ini lebih menantang secara statistik
+Dengan hanya empat \emph{bearing}, dataset ini lebih menantang secara statistik
 dan menguji kemampuan generalisasi pada data berskala kecil.
 
 Tabel~\ref{tab:bab2_dataset_rul} merangkum karakteristik ketiga dataset.
@@ -499,12 +499,12 @@ korelasi Pearson (p-value > 0,05 meski nilai \emph{hit-rate} tinggi).
 \begin{table}[ht]
   \centering
   \caption{Karakteristik tiga dataset \emph{benchmark} prediksi sisa umur
-           pakai bantalan gelinding yang digunakan dalam penelitian ini.}
+           pakai \emph{rolling element bearing} yang digunakan dalam penelitian ini.}
   \label{tab:bab2_dataset_rul}
   \footnotesize
   \begin{tabularx}{\textwidth}{@{}l l l c l c@{}}
     \toprule
-    \textbf{Dataset} & \textbf{Institusi} & \textbf{Tipe bantalan}
+    \textbf{Dataset} & \textbf{Institusi} & \textbf{Tipe \emph{bearing}}
       & \textbf{Jumlah} & \textbf{Kondisi operasi} & \textbf{Kriteria EOL} \\
     \midrule
     PHM2012 & FEMTO-PRONOSTIA & SKF/NTN & 17 & 3 kondisi beban & RMS $>$ 20~g \\
@@ -558,11 +558,11 @@ dan pelatihan yang lebih stabil. \citenameitb{Templeton2024Scaling} mengvalidasi
 pendekatan ini pada model produksi skala besar, menunjukkan bahwa jutaan fitur
 yang dapat diinterpretasi dapat diekstrak.
 
-\subsection{Gap: Belum Ada SAE untuk Domain Prognostik Bantalan}
+\subsection{Gap: Belum Ada SAE untuk Domain Prognostik \emph{Bearing}}
 \label{subsec:bab2_gap_sae}
 
 Seluruh penelitian interpretabilitas mekanistik berbasis SAE hingga saat ini
-berkonsentrasi pada model bahasa besar. Domain prognostik bantalan menawarkan
+berkonsentrasi pada model bahasa besar. Domain prognostik \emph{bearing} menawarkan
 kondisi yang justru lebih ideal sebagai \emph{test case}: konsep fisika yang
 harus direpresentasikan oleh model RUL yang baik, yaitu frekuensi karakteristik
 BPFO, BPFI, BSF, dan FTF, terdefinisi secara matematis dan terukur secara
@@ -579,7 +579,7 @@ dengan kontrol terhadap artefak arsitektur dan prosedur.
 
 Penelitian yang dilaporkan pada \citetitb{TotoSuharto2025Journal2RUL}
 merupakan studi pertama yang: (i)~mengadaptasi Top-$k$ SAE ke domain
-prognostik bantalan (\emph{novelti N3: SAEBearing}), (ii)~memetakan
+prognostik \emph{bearing} (\emph{novelti N3: SAEBearing}), (ii)~memetakan
 fitur SAE ke BPFx menggunakan korelasi Pearson dan uji statistik \emph{bootstrap}
 CI + \emph{permutation test} dengan dua \emph{negative controls} (model
 Xavier-init dan \emph{hidden state} Gaussian acak), dan (iii)~mengkonfirmasi
@@ -587,22 +587,22 @@ bahwa korespondensi SAE $\leftrightarrow$ BPFx merupakan properti \emph{emergent
 dari representasi yang terlatih, bukan artefak arsitektur atau prosedur.
 
 % -----------------------------------------------------------------
-\section{Fisika Getaran Bantalan Gelinding}
+\section{Fisika Getaran \emph{Rolling Element Bearing}}
 \label{sec:bab2_fisika_getaran}
 % -----------------------------------------------------------------
 
-Pemahaman terhadap fisika getaran bantalan gelinding memberikan \emph{ground
+Pemahaman terhadap fisika getaran \emph{rolling element bearing} memberikan \emph{ground
 truth} yang diperlukan untuk memvalidasi pemetaan SAE $\to$ BPFx pada Bab~V.
-Bagian ini merangkum derivasi frekuensi karakteristik bantalan dan prosedur
+Bagian ini merangkum derivasi frekuensi karakteristik \emph{bearing} dan prosedur
 analisis \emph{envelope} yang digunakan untuk mengukur amplitudo spektrum pada
 tiap frekuensi target.
 
-\subsection{Frekuensi Karakteristik Bantalan}
+\subsection{Frekuensi Karakteristik \emph{Bearing}}
 \label{subsec:bab2_bpfx}
 
-Mekanisme kegagalan bantalan menghasilkan rangkaian impuls periodik dengan
-frekuensi yang bergantung pada geometri bantalan dan kecepatan poros. Untuk
-bantalan dengan $n$ elemen bergulir, diameter elemen $d_b$, diameter
+Mekanisme kegagalan \emph{bearing} menghasilkan rangkaian impuls periodik dengan
+frekuensi yang bergantung pada geometri \emph{bearing} dan kecepatan poros. Untuk
+\emph{bearing} dengan $n$ elemen bergulir, diameter elemen $d_b$, diameter
 \emph{pitch circle} $d_m$, sudut kontak $\alpha$, dan kecepatan poros $f_r$
 (dalam Hz), empat frekuensi karakteristik utama (\emph{Ball Pass Frequencies}
 dan turunannya) diturunkan dari geometri kinematik sebagai berikut
@@ -644,7 +644,7 @@ menghasilkan impuls pada frekuensi ini. \emph{Fundamental Train Frequency}
 sangkar (\emph{cage}); cacat pada sangkar terekspresikan pada harmonik FTF
 \citetitb{Randall2011CondMonitoring}.
 
-Untuk bantalan SKF~6205-2RS~JEM yang digunakan dalam dataset CWRU ($n = 9$,
+Untuk \emph{bearing} SKF~6205-2RS~JEM yang digunakan dalam dataset CWRU ($n = 9$,
 $d_b = 7,938$~mm, $d_m = 38,5$~mm, $\alpha = 0°$, $f_r = 29,95$~Hz pada
 beban~0), nilai teoritis adalah: $f_\text{BPFO} = 107,36$~Hz,
 $f_\text{BPFI} = 162,18$~Hz, $f_\text{BSF} = 70,87$~Hz,
@@ -655,7 +655,7 @@ memvalidasi pemetaan SAE pada §V.3.
 \subsection{Analisis \emph{Envelope} dan Kurtogram Spektral}
 \label{subsec:bab2_envelope}
 
-Sinyal getaran bantalan yang rusak $x(t)$ merupakan superposisi komponen
+Sinyal getaran \emph{bearing} yang rusak $x(t)$ merupakan superposisi komponen
 periodik deterministik, modulasi amplitudo akibat kegagalan, dan komponen
 acak. Analisis \emph{envelope} mengisolasi amplitudo modulasi untuk
 mengungkapkan frekuensi karakteristik yang tersembunyi dalam komponen
@@ -730,7 +730,7 @@ belum terisi oleh literatur yang ada, termasuk oleh keempat karya secara
 individual.
 
 \textbf{Kesenjangan~1 (Diagnostik level sinyal).} Hampir seluruh penelitian
-XAI pada klasifikasi bantalan beroperasi di tingkat fitur rekayasa manual:
+XAI pada klasifikasi \emph{bearing} beroperasi di tingkat fitur rekayasa manual:
 menjelaskan \emph{fitur mana} (kurtosis, crest factor, dst.) yang berkontribusi,
 bukan \emph{posisi mana dalam sinyal mentah 2.048 sampel} yang menjadi basis
 keputusan. Belum ada peta fingerprint kelas kerusakan berbasis atribusi sinyal
@@ -740,7 +740,7 @@ split-half stability). Kesenjangan ini dijawab oleh Journal~1 dan Bab~IV
 
 \textbf{Kesenjangan~2 (Interpretabilitas laten prognostik).} Belum ada studi
 yang memetakan fitur SAE dari representasi laten model RUL ke frekuensi
-karakteristik fisik bantalan secara statistik signifikan, dengan kontrol
+karakteristik fisik \emph{bearing} secara statistik signifikan, dengan kontrol
 terhadap artefak arsitektur (model Xavier-init) dan artefak prosedur (hidden
 state acak). Metode interpretabilitas yang ada beroperasi di tingkat input atau
 tidak dapat menjembatani representasi laten dengan teori fisika degradasi.

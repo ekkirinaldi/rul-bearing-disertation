@@ -1,11 +1,11 @@
-%% chapters/05-hasil-pembahasan.tex
+﻿%% chapters/05-hasil-pembahasan.tex
 %% Bab V — Hasil dan Pembahasan
 
 \chapter{Hasil dan Pembahasan}
 \label{bab:hasil-pembahasan}
 
 Bab ini memaparkan hasil evaluasi kuantitatif kinerja prediksi sisa umur
-pakai bantalan gelinding (Pilar~1) dan hasil analisis interpretabilitas
+pakai \emph{rolling element bearing} (Pilar~1) dan hasil analisis interpretabilitas
 representasi laten (Pilar~2), diikuti dengan pembahasan keterbatasan
 penelitian dan saran pengembangan lanjutan.
 Semua angka yang dilaporkan pada bab ini merupakan hasil evaluasi pada
@@ -28,7 +28,7 @@ Hasil dilaporkan sebagai mean~$\pm$~deviasi standar populasi atas tiga
 \label{subsec:bab5_phm2012}
 
 Tabel~\ref{tab:bab5_phm2012} merangkum metrik evaluasi pada \emph{test set}
-PHM2012, yang terdiri dari delapan bantalan yang belum pernah dilihat
+PHM2012, yang terdiri dari delapan \emph{bearing} yang belum pernah dilihat
 selama pelatihan.
 
 \begin{table}[ht]
@@ -87,7 +87,7 @@ Distribusi residual Mamba-xLSTM-Net ditampilkan pada
 Gambar~\ref{fig:bab5_residual_overall}. Mayoritas residual ($\hat{r}_t - r_t$)
 terkonsentrasi pada rentang $[-0{,}2,\, +0{,}2]$ dengan ekor kanan yang sedikit
 lebih panjang, menandakan model cenderung sedikit terlambat memprediksi
-kegagalan pada bantalan dengan degradasi akseleratif tiba-tiba --- pola yang
+kegagalan pada \emph{bearing} dengan degradasi akseleratif tiba-tiba --- pola yang
 menguntungkan karena fungsi skor PHM2012 menghukum prediksi terlalu dini lebih
 berat.
 
@@ -128,7 +128,7 @@ GPU \emph{single-card}.
 \label{subsec:bab5_xjtusy}
 
 Tabel~\ref{tab:bab5_xjtusy} merangkum metrik evaluasi pada \emph{test
-set} XJTU-SY, yang terdiri dari dua bantalan (kondisi 1 dan 2).
+set} XJTU-SY, yang terdiri dari dua \emph{bearing} (kondisi 1 dan 2).
 
 \begin{table}[ht]
 \centering
@@ -150,7 +150,7 @@ Mamba-xLSTM-Net             & 0{,}267~$\pm$~0{,}012 & \textbf{0{,}211}
 \end{table}
 
 Perbedaan RMSE antar model pada XJTU-SY sangat kecil (rentang 0{,}008) karena
-\emph{test set} hanya berisi dua bantalan sehingga variansi antar \emph{seed}
+\emph{test set} hanya berisi dua \emph{bearing} sehingga variansi antar \emph{seed}
 mendominasi dibanding perbedaan arsitektur. Mamba-xLSTM-Net mencatat
 PHM~Score tertinggi (0{,}907) meskipun RMSE-nya sedikit lebih tinggi ---
 menunjukkan bahwa arsitektur ini membuat prediksi yang lebih \emph{konservatif}
@@ -189,7 +189,7 @@ berbasis \emph{prior} fisik.
 
 Subbab ini menjawab pertanyaan utama Pilar~2: apakah representasi laten
 yang dipelajari model untuk prediksi RUL dapat dipetakan ke frekuensi
-karakteristik fisik bantalan melalui \emph{Sparse Autoencoder} secara
+karakteristik fisik \emph{bearing} melalui \emph{Sparse Autoencoder} secara
 \emph{post-hoc}?
 
 \subsection{Pelatihan Sparse Autoencoder}
@@ -223,7 +223,7 @@ bahwa representasi laten Mamba-xLSTM-Net \textbf{memiliki struktur yang
 sangat \emph{sparse} secara alami} --- sebagian besar informasi relevan
 untuk prediksi RUL terkonsentrasi pada sedikit fitur aktif.
 
-\subsection{Pemetaan ke Frekuensi Karakteristik Bantalan}
+\subsection{Pemetaan ke Frekuensi Karakteristik \emph{Bearing}}
 \label{subsec:bab5_bpfx}
 
 Fitur SAE dievaluasi korelasinya dengan amplitudo \emph{Hilbert envelope
@@ -322,7 +322,7 @@ Pola serupa namun dengan dominasi BPFO yang lebih kuat terlihat pada
 Gambar~\ref{fig:bab5_corr_xjtu} untuk XJTU-SY. Kolom BPFO menunjukkan
 aktivasi fitur yang lebih luas dibanding kolom lainnya, sementara kolom
 BPFI, BSF, dan FTF mendekati nol --- selaras dengan karakter kegagalan
-\emph{outer race} yang lebih dominan pada bantalan XJTU-SY.
+\emph{outer race} yang lebih dominan pada \emph{bearing} XJTU-SY.
 
 \begin{figure}[ht]
 \centering
@@ -364,12 +364,12 @@ bahwa Mamba berhasil menangkap tren degradasi jangka panjang.
 
 Pada XJTU-SY (Gambar~\ref{fig:bab5_umap_xjtu}), pemisahan klaster terlihat
 sedikit lebih tajam antara fase sehat dan fase degradasi. Hal ini sesuai
-dengan karakteristik XJTU-SY di mana bantalan mengalami transisi dari kondisi
+dengan karakteristik XJTU-SY di mana \emph{bearing} mengalami transisi dari kondisi
 sehat ke degradasi yang lebih tiba-tiba dibandingkan PHM2012. Beberapa titik
 yang terisolasi pada batas klaster kemungkinan berasal dari rekaman anomali
 atau perbedaan kondisi beban.
 % TODO(verify-with-pembimbing): konfirmasi interpretasi klaster UMAP di atas
-% dengan overlay label bantalan dan kondisi operasi per titik data.
+% dengan overlay label \emph{bearing} dan kondisi operasi per titik data.
 
 \begin{figure}[ht]
 \centering
@@ -385,7 +385,7 @@ Gambar~\ref{fig:bab5_shap_phm} menampilkan nilai SHAP global (rata-rata
 $|\text{SHAP}|$ per fitur) untuk PHM2012. Fitur \emph{frequency-domain}
 dari kanal horizontal (\texttt{fd\_c0\_rms\_freq}, \texttt{fd\_c0\_centroid})
 mendominasi peringkat teratas, mengindikasikan bahwa perubahan distribusi
-energi spektral merupakan sinyal degradasi paling informatif pada bantalan
+energi spektral merupakan sinyal degradasi paling informatif pada \emph{bearing}
 yang dioperasikan pada kecepatan 1500--1800~rpm.
 
 \begin{figure}[ht]
@@ -451,7 +451,7 @@ mengungkap bahwa kontribusi fitur tidak konstan sepanjang sekuens waktu.
 Fitur \emph{frequency-domain} lebih dominan pada rekaman awal (fase sehat),
 sedangkan fitur \emph{time-domain} seperti RMS dan kurtosis mengambil alih
 dominasi menjelang \emph{end of life}. Pola transisi ini sesuai dengan
-mekanisme degradasi bantalan yang bermula dari perubahan spektral halus
+mekanisme degradasi \emph{bearing} yang bermula dari perubahan spektral halus
 kemudian berkembang menjadi perubahan amplitudo yang kasar dan dapat diukur
 langsung.
 
@@ -623,13 +623,13 @@ bagian dari kekakuan ilmiah:
 
 \begin{enumerate}
   \item \textbf{\emph{Test split} XJTU-SY yang sangat kecil.}
-        \emph{Test set} hanya berisi dua bantalan, menyebabkan estimasi metrik
+        \emph{Test set} hanya berisi dua \emph{bearing}, menyebabkan estimasi metrik
         kurang stabil dan R\textsuperscript{2} negatif pada semua model.
-        Penelitian lanjutan sebaiknya menggunakan lebih banyak bantalan uji
-        atau teknik \emph{cross-validation} berbasis bantalan.
+        Penelitian lanjutan sebaiknya menggunakan lebih banyak \emph{bearing} uji
+        atau teknik \emph{cross-validation} berbasis \emph{bearing}.
 
   \item \textbf{Kondisi 3 XJTU-SY tidak diikutsertakan.}
-        Ketidaktersediaan data menyebabkan hanya kondisi 1 dan 2 (10 bantalan)
+        Ketidaktersediaan data menyebabkan hanya kondisi 1 dan 2 (10 \emph{bearing})
         yang digunakan, yang dapat memengaruhi generalisasi hasil pada kondisi
         beban dan kecepatan yang berbeda.
 

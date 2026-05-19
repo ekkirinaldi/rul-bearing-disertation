@@ -1,4 +1,4 @@
-%% chapters/01-pendahuluan.tex
+﻿%% chapters/01-pendahuluan.tex
 %% Bab I — Pendahuluan
 %% Fase A: restrukturisasi sesuai dissertation-outline.md §Bab I
 %% Target: 7 seksi (§I.1–I.7), selaras SK-Toto §I + outline 6-bab
@@ -6,7 +6,7 @@
 \chapter{Pendahuluan}
 \label{bab:pendahuluan}
 
-Perawatan prediktif bantalan gelinding memerlukan dua kemampuan yang
+Perawatan prediktif \emph{rolling element bearing} memerlukan dua kemampuan yang
 saling melengkapi: deteksi jenis kerusakan yang akurat dan dapat
 dijelaskan, serta estimasi sisa umur pakai yang andal secara statistik.
 Bab ini memaparkan konteks industri yang melatarbelakangi kedua tuntutan
@@ -42,21 +42,20 @@ terencana yang merugikan secara finansial, mengganggu rantai pasok, dan
 pada kasus ekstrem menimbulkan risiko keselamatan kerja
 \citetitb{Mobley2002PlantMaintenance}.
 
-Bantalan gelinding (\emph{rolling element bearings}) merupakan komponen
+\emph{Rolling element bearing} merupakan komponen
 mekanis yang paling kritis sekaligus paling rentan terhadap kegagalan
 dalam hampir seluruh mesin rotasi industri, mulai dari motor listrik,
 pompa, kompresor, hingga lini otomasi manufaktur
 \citetitb{Lei2018Machinery}.
-Studi empiris menunjukkan bahwa kegagalan bantalan menyumbang sekitar
+Studi empiris menunjukkan bahwa kegagalan \emph{bearing} menyumbang sekitar
 40--50\,\% dari total kegagalan mesin rotasi
 \citetitb{Nectoux2012PRONOSTIA}.
-Kemampuan mengidentifikasi \emph{jenis kerusakan} bantalan secara
+Kemampuan mengidentifikasi \emph{jenis kerusakan} \emph{bearing} secara
 tepat --- apakah pada \emph{inner race}, \emph{outer race}, atau bola
 --- maupun memprediksi \emph{sisa umur pakai} (\emph{remaining useful
 life}, RUL) secara akurat menjadi inti dari strategi perawatan prediktif
 berbasis kondisi yang efektif.
-Gambar~\ref{fig:bab1_objek_industri} memperlihatkan komponen bantalan
-gelinding beserta tahapan permesinan yang menjadi konteks fisik
+Gambar~\ref{fig:bab1_objek_industri} memperlihatkan komponen \emph{rolling element bearing} beserta tahapan permesinan yang menjadi konteks fisik
 penelitian ini.
 
 \begin{figure}[ht]
@@ -64,29 +63,28 @@ penelitian ini.
   \begin{minipage}[b]{0.42\textwidth}
     \centering
     \includegraphics[width=\linewidth]{ball_bearing_components.png}
-    \caption*{(a) Komponen bantalan gelinding}
+    \caption*{(a) Komponen \emph{rolling element bearing}}
   \end{minipage}\hfill
   \begin{minipage}[b]{0.55\textwidth}
     \centering
     \includegraphics[width=\linewidth]{ball_bearing_machining.png}
     \caption*{(b) Proses permesinan \emph{outer ring} dan \emph{inner ring}}
   \end{minipage}
-  \caption{Konteks fisik objek penelitian: (a)~komponen utama bantalan
-           gelinding (cincin luar, sangkar, bola, cincin dalam), dan
+  \caption{Konteks fisik objek penelitian: (a)~komponen utama \emph{rolling element bearing} (cincin luar, sangkar, bola, cincin dalam), dan
            (b)~tahapan \emph{grinding} dan \emph{honing} pada cincin luar
            dan dalam yang menjadi sumber sinyal getaran mesin produksi.
            Sumber: SKF Group~\citetitb{SKF2017TechReport}.}
   \label{fig:bab1_objek_industri}
 \end{figure}
 
-Pendekatan deteksi dan prediksi degradasi bantalan telah berkembang pesat,
+Pendekatan deteksi dan prediksi degradasi \emph{bearing} telah berkembang pesat,
 dari model fisika berbasis persamaan keausan Hertzian menuju metode
 berbasis data yang memanfaatkan rekaman degradasi berskala besar
 \citetitb{Lei2018Machinery}.
 Dalam dekade terakhir, arsitektur \emph{deep learning} --- khususnya
 \emph{Long Short-Term Memory} (LSTM), Transformer, dan jaringan konvolusi
 satu dimensi (CNN~1D) --- mendominasi literatur diagnostik dan prognostik
-bantalan \citetitb{Hochreiter1997LSTM,Vaswani2017Attention}.
+\emph{bearing} \citetitb{Hochreiter1997LSTM,Vaswani2017Attention}.
 Pada sisi diagnostik, arsitektur \emph{Wide Deep Convolutional Neural
 Network} (WDCNN) \citetitb{Zhang2017WDCNN} menunjukkan akurasi tinggi
 dalam mengklasifikasikan jenis kerusakan langsung dari sinyal mentah,
@@ -115,19 +113,19 @@ yang dapat diverifikasi.
 Dua \emph{research gap} kritis belum terisi dalam literatur.
 
 \textbf{Gap pertama — diagnostik:} hampir seluruh metode \emph{Explainable
-AI} (XAI) untuk klasifikasi bantalan berbasis \emph{deep learning}
+AI} (XAI) untuk klasifikasi \emph{bearing} berbasis \emph{deep learning}
 beroperasi di tingkat fitur agregat (misalnya kurtosis atau energi pita
 frekuensi), bukan di tingkat sinyal mentah.
 Interpretabilitas WDCNN secara langsung dalam domain waktu
 (2.048 titik per segmen) --- yang dapat dipetakan ke morfologi fisik
-impuls transien dan periodisitas frekuensi karakteristik bantalan ---
+impuls transien dan periodisitas frekuensi karakteristik \emph{bearing} ---
 belum pernah dilaporkan dengan validasi multi-metrik yang ketat.
 
 \textbf{Gap kedua — prognostik:} model RUL berbasis \emph{deep learning}
 menghasilkan prediksi yang akurat, namun representasi latennya masih
 merupakan "kotak hitam".
 Belum terbukti secara statistik bahwa model-model tersebut
-menginternalisasi fisika degradasi bantalan --- khususnya frekuensi
+menginternalisasi fisika degradasi \emph{bearing} --- khususnya frekuensi
 karakteristik BPFO (\emph{Ball Pass Frequency Outer race}), BPFI
 (\emph{Ball Pass Frequency Inner race}), BSF (\emph{Ball Spin
 Frequency}), dan FTF (\emph{Fundamental Train Frequency}) --- di dalam
@@ -135,7 +133,7 @@ ruang laten yang dipelajari.
 
 Pada konteks industri, PT~SKF~Indonesia mengoperasikan mesin
 \emph{grinding outer ring} (OR1 dan OR2) yang memproduksi cincin luar
-bantalan untuk sektor otomotif.
+\emph{bearing} untuk sektor otomotif.
 Sinyal getaran spindel diakuisisi melalui modul SKF~IMx-8 dan
 diteruskan ke AWS Cloud; data tersebut dapat diintegrasikan
 dengan informasi kualitas produk (\emph{radial clearance checking})
@@ -146,10 +144,10 @@ integrasi penuh data kualitas heterogen dijadikan rekomendasi
 penelitian lanjutan (Bab~VI, Rekomendasi~7).
 
 Disertasi ini merumuskan pendekatan penelitian pada dua jalur paralel:
-(A)~diagnostik bantalan berbasis benchmark multi-model dengan XAI
+(A)~diagnostik \emph{bearing} berbasis benchmark multi-model dengan XAI
 tingkat sinyal mentah, dan (B)~prognostik RUL dengan
 \emph{mechanistic interpretability} berbasis \emph{Sparse Autoencoder}
-yang dipetakan ke frekuensi karakteristik fisik bantalan.
+yang dipetakan ke frekuensi karakteristik fisik \emph{bearing}.
 Kedua jalur dikonvergensikan ke dalam kerangka PdM multi-tier yang
 dapat diaudit lapis demi lapis.
 
@@ -166,7 +164,7 @@ Bab~IV dan Bab~V.
 Bagaimana sistem perawatan prediktif berbasis sensor vibrasi yang
 melekat pada arsitektur multi-tier (Edge IoT → Edge Server → Cloud/GPU)
 dapat dirancang sebagai fondasi untuk mengurangi \emph{unplanned
-downtime} dan mendukung peningkatan OEE pada produksi bantalan, dengan
+downtime} dan mendukung peningkatan OEE pada produksi \emph{bearing}, dengan
 integrasi penuh data kualitas heterogen sebagai peta jalan penelitian
 lanjutan?
 
@@ -195,7 +193,7 @@ Apakah pendekatan hibrid yang menggabungkan golongan algoritma
 statistik-kernel (SVM, LR), \emph{tree-based} (DT, RF, XGBoost),
 dan \emph{deep learning} (WDCNN untuk diagnostik; Mamba-xLSTM-Net,
 N-BEATS-xLSTM-RUL, SparseGate-TCN-RUL untuk prognostik) dapat
-memberikan deteksi kerusakan dan estimasi RUL bantalan yang konsisten
+memberikan deteksi kerusakan dan estimasi RUL \emph{bearing} yang konsisten
 lintas golongan algoritma dan lintas dataset publik (CWRU, PHM2012,
 XJTU-SY, IMS)?
 
@@ -224,7 +222,7 @@ bukan \emph{ensembling} antar golongan ke satu prediktor tunggal.
 \textbf{RQ3 --- Transparansi Model melalui XAI untuk Adopsi Industri.}
 Bagaimana metode \emph{Explainable AI} --- SHAP (KernelExplainer,
 TreeExplainer, DeepExplainer) untuk diagnostik dan \emph{Top-k Sparse
-Autoencoder} dengan pemetaan ke frekuensi karakteristik bantalan (BPFx)
+Autoencoder} dengan pemetaan ke frekuensi karakteristik \emph{bearing} (BPFx)
 untuk prognostik --- dapat meningkatkan transparansi dan
 \emph{auditability} model PdM sehingga layak diadopsi oleh praktisi
 industri manufaktur?
@@ -376,10 +374,10 @@ Manfaat yang diharapkan mencakup tiga tataran yang saling memperkuat:
         Peneliti lain dapat mengadopsi kerangka FSM maupun SAE-BPFx
         untuk domain mesin rotasi yang berbeda.
 
-  \item \emph{Pipeline} yang dikembangkan untuk produksi bantalan dapat
+  \item \emph{Pipeline} yang dikembangkan untuk produksi \emph{bearing} dapat
         menjadi dasar metodologis bagi sistem PdM pada proses produksi
         lain yang menggunakan permesinan rotasi, tidak terbatas pada
-        bantalan jenis \emph{deep groove ball bearing}.
+        \emph{bearing} jenis \emph{deep groove ball bearing}.
 \end{enumerate}
 
 \textbf{Aspirasi jangka panjang:} integrasi penuh data kualitas
@@ -396,7 +394,7 @@ ini selesai (Bab~VI, Rekomendasi~7).
 
 \begin{enumerate}
   \item \textbf{Sistem produksi:} proses permesinan \emph{grinding}
-        pada produksi bantalan gelinding.
+        pada produksi \emph{rolling element bearing}.
   \item \textbf{Sinyal:} vibrasi mentah dari akselerometer; fitur
         domain frekuensi dan \emph{envelope spectrum} dihitung sebagai
         turunan, bukan masukan utama model.
@@ -404,8 +402,8 @@ ini selesai (Bab~VI, Rekomendasi~7).
         10~kelas Normal + IR/OR/Ball × 0.007/0.014/0.021 inci,
         segmen 2.048 titik, pembagian temporal 54/13/33\,\%).
   \item \textbf{Dataset prognostik:} PHM2012 (FEMTO-PRONOSTIA,
-        17~bantalan, 3~kondisi beban), XJTU-SY (LDK~UER204,
-        10~bantalan), IMS (Rexnord, 4~bantalan).
+        17~\emph{bearing}, 3~kondisi beban), XJTU-SY (LDK~UER204,
+        10~\emph{bearing}), IMS (Rexnord, 4~\emph{bearing}).
   \item \textbf{Arsitektur:} WDCNN untuk diagnostik;
         Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL, SparseGate-TCN-RUL
         untuk prognostik.
@@ -606,9 +604,9 @@ penelitian, serta sistematika penulisan.
 
 \textbf{Bab~\ref{bab:tinjauan-pustaka}} (Tinjauan Pustaka) memetakan
 \emph{state-of-the-art} perawatan prediktif dan Industri~4.0,
-diagnostik bantalan berbasis \emph{deep learning}, metode XAI tingkat
+diagnostik \emph{bearing} berbasis \emph{deep learning}, metode XAI tingkat
 atribusi masukan, prognostik RUL, \emph{mechanistic interpretability}
-dan \emph{Sparse Autoencoder}, fisika getaran bantalan, serta peta
+dan \emph{Sparse Autoencoder}, fisika getaran \emph{bearing}, serta peta
 gap literatur yang memotivasi penelitian ini.
 
 \textbf{Bab~III} (Metodologi Umum) memuat fondasi bersama yang

@@ -1,4 +1,4 @@
-%% chapters/03-metodologi-umum.tex
+﻿%% chapters/03-metodologi-umum.tex
 %% Bab III — Metodologi Umum (Fondasi Bersama Jalur A dan B)
 %% Sumber: writings/dissertation-outline.md §Bab III
 %% Fase C — dibuat dari 04-metodologi.tex + 03-dasar-teori.tex
@@ -32,7 +32,7 @@ pada Bab~IV dan Bab~V, sebelum akhirnya berkonvergensi pada kerangka
 \emph{multi-tier} tiga lapis yang disintesiskan pada Bab~VI.
 
 Jalur~A berfokus pada \textbf{identifikasi jenis dan keparahan kerusakan
-bantalan} menggunakan dataset CWRU dengan pendekatan progresif dari
+\emph{bearing}} menggunakan dataset CWRU dengan pendekatan progresif dari
 model berbasis kernel (SVM/LR), algoritma berbasis pohon keputusan
 (DT/RF/XGBoost), hingga jaringan dalam (WDCNN). Setiap pendekatan
 dilengkapi modul \emph{Explainable AI} (SHAP) yang sesuai dengan
@@ -46,7 +46,7 @@ Di sisi lain, Jalur~B berfokus pada \textbf{estimasi sisa umur pakai}
 Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL, dan SparseGate-TCN-RUL.
 Interpretabilitas Jalur~B dicapai melalui \emph{Top-k Sparse Autoencoder}
 (SAE) yang memetakan representasi laten model ke frekuensi karakteristik
-bantalan (BPFx) secara statistik terverifikasi.
+\emph{bearing} (BPFx) secara statistik terverifikasi.
 
 Gambar~\ref{fig:bab3_kerangka_terintegrasi} mengilustrasikan alur keseluruhan
 kedua jalur beserta titik konvergensi di Bab~VI.
@@ -142,7 +142,7 @@ interpretabilitas konsep laten lintas ratusan rekaman degradasi (Jalur~B).
 
 Empat dataset publik digunakan dalam penelitian ini: satu untuk Jalur~A
 dan tiga untuk Jalur~B. Semua merupakan dataset \emph{benchmark} yang banyak
-diacu dalam literatur perawatan prediktif bantalan.
+diacu dalam literatur perawatan prediktif \emph{bearing}.
 Tabel~\ref{tab:bab3_dataset_ringkasan} merangkum karakteristik utama
 keempat dataset.
 
@@ -153,12 +153,12 @@ keempat dataset.
 \small
 \begin{tabular}{@{}lllll@{}}
 \toprule
-\textbf{Dataset} & \textbf{Jalur} & \textbf{Bantalan/Kelas} & \textbf{Fs (kHz)} & \textbf{Tugas} \\
+\textbf{Dataset} & \textbf{Jalur} & \textbf{\emph{Bearing}/Kelas} & \textbf{Fs (kHz)} & \textbf{Tugas} \\
 \midrule
 CWRU    & A (Diagnostik)  & 1 \emph{rig}, 10 kelas & 48   & Klasifikasi kerusakan \\
-PHM2012 & B (Prognostik)  & 17 bantalan            & 25,6 & Estimasi RUL \\
-XJTU-SY & B (Prognostik)  & 10 bantalan            & 25,6 & Estimasi RUL \\
-IMS     & B (Prognostik)  & 4 bantalan × 3 run     & 20   & Estimasi RUL \\
+PHM2012 & B (Prognostik)  & 17 \emph{bearing}            & 25,6 & Estimasi RUL \\
+XJTU-SY & B (Prognostik)  & 10 \emph{bearing}            & 25,6 & Estimasi RUL \\
+IMS     & B (Prognostik)  & 4 \emph{bearing} × 3 run     & 20   & Estimasi RUL \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -167,12 +167,12 @@ IMS     & B (Prognostik)  & 4 bantalan × 3 run     & 20   & Estimasi RUL \\
 \label{subsec:bab3_cwru}
 
 Dataset CWRU (\emph{Case Western Reserve University Bearing Data Center})
-merupakan dataset diagnostik bantalan yang paling banyak diacu dalam literatur
+merupakan dataset diagnostik \emph{bearing} yang paling banyak diacu dalam literatur
 \citetitb{Smith2015CWRU}. \emph{Test rig} terdiri atas motor induksi 2~HP
-yang menggerakkan poros dengan bantalan uji SKF~6205-2RS~JEM. Kerusakan
+yang menggerakkan poros dengan \emph{bearing} uji SKF~6205-2RS~JEM. Kerusakan
 eksperimental diinduksi melalui \emph{electrical discharge machining} (EDM)
 pada tiga komponen: \emph{inner race} (IR), \emph{outer race} (OR), dan
-elemen gelinding (\emph{ball}). Akselerometer dipasang pada posisi
+\emph{rolling element} (\emph{ball}). Akselerometer dipasang pada posisi
 \emph{drive-end} (DE, 48~kHz) dan \emph{fan-end} (FE, 12~kHz); penelitian
 ini menggunakan sinyal DE 48~kHz sebagai sinyal utama. Empat kondisi beban
 diterapkan: 0, 1, 2, dan 3~HP. Dari kombinasi jenis, lokasi, dan tingkat
@@ -238,9 +238,9 @@ Tabel~\ref{tab:bab3_phm2012}.
 \toprule
 \textbf{Atribut} & \textbf{Nilai} \\
 \midrule
-Bantalan uji        & NSK~6804 (\emph{deep groove ball bearing}) \\
+\emph{Bearing} uji        & NSK~6804 (\emph{deep groove ball bearing}) \\
 Kondisi operasi     & 3 (1.800~rpm/4.000~N; 1.650~rpm/4.200~N; 1.500~rpm/5.000~N) \\
-Total bantalan      & 17 \\
+Total \emph{bearing}      & 17 \\
 Sensor              & Akselerometer horizontal + vertikal (25,6~kHz) \\
 Durasi rekaman      & 0,1 detik per rekaman; interval 10 detik \\
 Sampel per rekaman  & 2.560 \\
@@ -268,10 +268,10 @@ Skema ini lebih realistis secara fisik dibandingkan skema linear penuh
 karena mencerminkan fase sehat panjang yang diikuti fase degradasi akseleratif
 yang relatif singkat.
 
-Pembagian data mengikuti konvensi kompetisi PHM2012 secara berbasis bantalan
+Pembagian data mengikuti konvensi kompetisi PHM2012 secara berbasis \emph{bearing}
 (\emph{bearing-wise}) sebagaimana dirinci pada
-Tabel~\ref{tab:bab3_split_phm}. Pemisahan berbasis bantalan memastikan
-bahwa tidak ada sampel dari bantalan yang sama tersebar ke dua set berbeda,
+Tabel~\ref{tab:bab3_split_phm}. Pemisahan berbasis \emph{bearing} memastikan
+bahwa tidak ada sampel dari \emph{bearing} yang sama tersebar ke dua set berbeda,
 mencegah terjadinya kebocoran karakteristik degradasi individual.
 
 \begin{table}[ht]
@@ -281,7 +281,7 @@ mencegah terjadinya kebocoran karakteristik degradasi individual.
 \small
 \begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{Set} & \textbf{Bantalan} & \textbf{Jumlah} \\
+\textbf{Set} & \textbf{\emph{Bearing}} & \textbf{Jumlah} \\
 \midrule
 \emph{Training}   & 1\_1, 1\_2, 1\_4, 2\_1, 2\_3, 2\_5, 3\_1 & 7 \\
 \emph{Validation} & 1\_5, 2\_2 & 2 \\
@@ -301,7 +301,7 @@ dipublikasikan sebelumnya.
 
 Dataset XJTU-SY dikembangkan oleh Xi'an Jiaotong University bersama
 Sumyoung Technology menggunakan \emph{test rig} akselerasi umur pakai
-bantalan gelinding \citetitb{Wang2020XJTU}. Karakteristik dataset dirangkum
+\emph{rolling element bearing} \citetitb{Wang2020XJTU}. Karakteristik dataset dirangkum
 pada Tabel~\ref{tab:bab3_xjtusy}.
 
 \begin{table}[ht]
@@ -313,19 +313,19 @@ pada Tabel~\ref{tab:bab3_xjtusy}.
 \toprule
 \textbf{Atribut} & \textbf{Nilai} \\
 \midrule
-Bantalan uji           & LDK UER204 (\emph{deep groove ball bearing}) \\
+\emph{Bearing} uji           & LDK UER204 (\emph{deep groove ball bearing}) \\
 Kondisi operasi        & 3 (2.100~rpm/12~kN; 2.250~rpm/11~kN; 2.400~rpm/10~kN) \\
-Total bantalan         & 15 (5 per kondisi) \\
+Total \emph{bearing}         & 15 (5 per kondisi) \\
 Sensor                 & Akselerometer horizontal + vertikal (25,6~kHz) \\
 Durasi rekaman         & 1,28 detik; interval 1 menit \\
 Sampel per rekaman     & 32.768 \\
-Mode kegagalan dominan & \emph{Outer-race spalling} (mayoritas bantalan) \\
+Mode kegagalan dominan & \emph{Outer-race spalling} (mayoritas \emph{bearing}) \\
 Catatan                & Kondisi 3 tidak digunakan (keterbatasan akses data) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Hanya kondisi 1 dan 2 yang digunakan, menghasilkan 10 bantalan aktif.
+Hanya kondisi 1 dan 2 yang digunakan, menghasilkan 10 \emph{bearing} aktif.
 Pembagian set dirinci pada Tabel~\ref{tab:bab3_split_xjtu}.
 
 \begin{table}[ht]
@@ -335,7 +335,7 @@ Pembagian set dirinci pada Tabel~\ref{tab:bab3_split_xjtu}.
 \small
 \begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{Set} & \textbf{Bantalan} & \textbf{Jumlah} \\
+\textbf{Set} & \textbf{\emph{Bearing}} & \textbf{Jumlah} \\
 \midrule
 \emph{Training}   & 1\_1, 1\_2, 1\_3, 2\_1, 2\_2 & 5 \\
 \emph{Validation} & 1\_4 & 1 \\
@@ -344,7 +344,7 @@ Pembagian set dirinci pada Tabel~\ref{tab:bab3_split_xjtu}.
 \end{tabular}
 \end{table}
 
-Ketersediaan label mode kegagalan per bantalan pada XJTU-SY menjadi aset
+Ketersediaan label mode kegagalan per \emph{bearing} pada XJTU-SY menjadi aset
 penting untuk validasi interpretabilitas Jalur~B: apabila SAE memetakan
 fitur ke BPFO, konsistensi dengan dominansi \emph{outer-race spalling} yang
 terdokumentasi oleh pemilik dataset memberikan uji silang fisis yang kuat.
@@ -354,7 +354,7 @@ terdokumentasi oleh pemilik dataset memberikan uji silang fisis yang kuat.
 
 Dataset IMS dikembangkan oleh \emph{Center for Intelligent Maintenance
 Systems} (IMS), University of Cincinnati, menggunakan \emph{test rig} dengan
-empat bantalan Rexnord ZA-2115 yang beroperasi secara bersamaan pada kecepatan
+empat \emph{bearing} Rexnord ZA-2115 yang beroperasi secara bersamaan pada kecepatan
 tetap 2.000~rpm di bawah beban radial 26,7~kN
 \citetitb{Qiu2006WaveletBearing}. Karakteristik dataset dirangkum pada
 Tabel~\ref{tab:bab3_ims}.
@@ -368,7 +368,7 @@ Tabel~\ref{tab:bab3_ims}.
 \toprule
 \textbf{Atribut} & \textbf{Nilai} \\
 \midrule
-Bantalan uji       & Rexnord ZA-2115 (\emph{tapered roller bearing}) \\
+\emph{Bearing} uji       & Rexnord ZA-2115 (\emph{tapered roller bearing}) \\
 Kecepatan poros    & 2.000~rpm (33,3~Hz) \\
 Beban radial       & 26,7~kN \\
 Sensor             & Akselerometer (20~kHz) \\
@@ -380,20 +380,20 @@ Run tersedia       & 3 (\emph{Run}~1: ${\sim}43$~jam; \emph{Run}~2: ${\sim}160$~
 \end{tabular}
 \end{table}
 
-Setiap \emph{run} memantau keempat bantalan (Bantalan~1–4) secara bersamaan.
-Mode kegagalan yang terdokumentasi: pada \emph{Run}~1, Bantalan~3 mengalami
-\emph{outer-race fault} dan Bantalan~4 mengalami kegagalan elemen gelinding
-(\emph{rolling element}); pada \emph{Run}~2, Bantalan~1 mengalami
+Setiap \emph{run} memantau keempat \emph{bearing} (\emph{Bearing}~1–4) secara bersamaan.
+Mode kegagalan yang terdokumentasi: pada \emph{Run}~1, \emph{Bearing}~3 mengalami
+\emph{outer-race fault} dan \emph{Bearing}~4 mengalami kegagalan \emph{rolling element}
+(\emph{rolling element}); pada \emph{Run}~2, \emph{Bearing}~1 mengalami
 \emph{inner-race fault}. Pembagian data mengikuti protokol berbasis
 \emph{run}: \emph{Run}~1 dan \emph{Run}~2 digunakan untuk \emph{training}
 dan \emph{validation}, sedangkan \emph{Run}~3 untuk pengujian.
 
 IMS dipilih sebagai dataset prognostik ketiga karena karakteristiknya yang
-berbeda dari PHM2012 dan XJTU-SY: bantalan tipe \emph{tapered roller}
-(bukan \emph{ball bearing}), operasi \emph{run-to-failure} multi-bantalan
+berbeda dari PHM2012 dan XJTU-SY: \emph{bearing} tipe \emph{tapered roller}
+(bukan \emph{ball bearing}), operasi \emph{run-to-failure} multi-\emph{bearing}
 simultan, dan distribusi mode kegagalan yang mencakup \emph{rolling element}
 dan sangkar (\emph{cage}), tidak hanya \emph{outer race}. Keberagaman jenis
-bantalan, mode kegagalan, dan karakteristik sinyal ini memperkuat uji
+\emph{bearing}, mode kegagalan, dan karakteristik sinyal ini memperkuat uji
 universalitas pada Bab~V.
 
 % =================================================================
@@ -451,7 +451,7 @@ terdiri atas 18 fitur per kanal akselerometer (\emph{drive-end} dan
         standar, mean, variansi, dan \emph{median absolute deviation} (MAD).
   \item \textbf{9 fitur domain frekuensi:} sentroid spektral, entropi
         spektral, dan 7 fitur energi pita yang mencakup pita frekuensi
-        karakteristik bantalan (BPFO, BPFI, BSF, FTF) beserta harmonik
+        karakteristik \emph{bearing} (BPFO, BPFI, BSF, FTF) beserta harmonik
         terkait.
 \end{itemize}
 
@@ -606,7 +606,7 @@ lintas ketiga dataset prognostik.
 \label{subsec:bab3_metrik_interpretabilitas}
 
 Tiga metrik digunakan untuk mengevaluasi korespondensi fitur SAE terhadap
-frekuensi karakteristik bantalan (BPFx) pada Jalur~B.
+frekuensi karakteristik \emph{bearing} (BPFx) pada Jalur~B.
 
 \textbf{Hit-rate} $H_\varphi$ mengukur proporsi fitur SAE yang berkorelasi
 moderat dengan amplitudo BPFx $\varphi$ ($\varphi \in

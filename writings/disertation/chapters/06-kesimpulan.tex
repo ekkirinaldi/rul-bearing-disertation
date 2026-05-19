@@ -1,4 +1,4 @@
-% =====================================================================
+﻿% =====================================================================
 % Bab VI — Kesimpulan dan Rekomendasi
 % =====================================================================
 \chapter{Kesimpulan dan Rekomendasi}
@@ -26,13 +26,13 @@ tingkat sinyal mentah dengan cakrawala waktu sekitar 42,67 milidetik per jendela
 analisis. Jalur prognostik (Bab~\ref{bab:prognostik}) menghasilkan pemetaan
 SAE-BPFx sebagai lapisan kedua: konsep laten tingkat \emph{hidden state} yang
 dibangun dari ratusan rekaman degradasi lintas waktu. Keduanya mengeksploitasi
-tanda fisik yang sama dari bantalan yang rusak, namun pada resolusi temporal
+tanda fisik yang sama dari \emph{bearing} yang rusak, namun pada resolusi temporal
 yang berbeda.
 
 Pada Subbab~\ref{sec:bab4_fisika} ditunjukkan bahwa puncak FSM tidak sejajar
 dengan periode teoretis BPFO/BPFI/BSF, sehingga WDCNN menyimpulkan kerusakan
 melalui morfologi transien impuls, bukan melalui periodisitas frekuensi
-karakteristik bantalan. Sebaliknya, pada Subbab~\ref{sec:bab5_hitrate} terlihat
+karakteristik \emph{bearing}. Sebaliknya, pada Subbab~\ref{sec:bab5_hitrate} terlihat
 bahwa fitur SAE berkorelasi secara signifikan dengan amplitudo \emph{envelope
 spectrum} pada pita BPFx. Perbedaan ini bukan kontradiksi, melainkan
 mencerminkan perbedaan cakrawala waktu: WDCNN mengklasifikasikan satu jendela
@@ -234,7 +234,7 @@ Status: \textbf{empiris}.
 
 \textbf{Novelti~3: SAEBearing.} Adaptasi pertama \emph{mechanistic
 interpretability} berbasis \emph{Top-k Sparse Autoencoder} ke domain prognostik
-bantalan gelinding menghasilkan temuan yang dapat diverifikasi statistik.
+\emph{rolling element bearing} menghasilkan temuan yang dapat diverifikasi statistik.
 \emph{Hit-rate} BPFI pada PHM2012 mencapai 2,3\% (24 dari 1.024 fitur, p <
 0,001) dengan korelasi Pearson maksimum $r = 0{,}507$. Pada XJTU-SY, BPFO
 mencatat \emph{hit-rate} 2,2\% (23 fitur, p < 0,001) dengan $r = 0{,}501$.
@@ -250,7 +250,7 @@ silang) di bawah protokol pelatihan bersama yang identik, yaitu 75
 \emph{epoch}, tiga \emph{seed}, presisi bf16, \emph{batch} 512, dan
 \emph{window} 32. Konvergensi dominansi BPFx lintas arsitektur
 mengindikasikan bahwa kecenderungan merepresentasikan fisika frekuensi
-karakteristik bantalan bukan artefak satu arsitektur tertentu, melainkan
+karakteristik \emph{bearing} bukan artefak satu arsitektur tertentu, melainkan
 properti yang muncul dari proses pelatihan RUL itu sendiri. Validasi melalui
 \emph{bootstrap} CI dan uji permutasi (masing-masing B=1.000 ulangan),
 diperkuat dengan dua \emph{negative control} (model \emph{Xavier-init} dan
@@ -278,7 +278,7 @@ N4 untuk prognostik dan melalui Sub-RQ2.1 untuk diagnostik. Tujuan~3
 tiga novelti berlapis: N1 (atribusi masukan), N2 (ablasi arsitektur), dan N3
 (konsep laten). Kontribusi inti disertasi adalah membangun jembatan pertama
 yang dapat diverifikasi statistik antara \emph{deep learning} berbasis data
-dan teori getaran bantalan klasik, melalui prosedur yang reproduktibel dan
+dan teori getaran \emph{bearing} klasik, melalui prosedur yang reproduktibel dan
 pengujian statistik yang transparan.
 
 % -----------------------------------------------------------------
@@ -299,7 +299,7 @@ secara signifikan di lingkungan industri nyata.
 
 \textbf{Kerusakan buatan pada CWRU.} Dataset CWRU menggunakan metode
 \emph{electric discharge machining} (EDM) untuk membuat cacat pada komponen
-bantalan. Kerusakan EDM memiliki morfologi yang lebih teratur dibandingkan
+\emph{bearing}. Kerusakan EDM memiliki morfologi yang lebih teratur dibandingkan
 kerusakan fatigue alami yang berkembang bertahap, sehingga model yang dilatih
 pada CWRU berpotensi menunjukkan penurunan kinerja ketika dihadapkan pada
 kerusakan yang tumbuh secara progresif dalam kondisi operasi sesungguhnya.
@@ -402,7 +402,7 @@ secara otomatis.
 Multi-Modal.} Tujuan penelitian jangka panjang yang dirumuskan dalam SK-Toto,
 yaitu integrasi data kondisi mesin dan data kualitas produk secara waktu-nyata,
 belum terlaksana dalam lingkup empiris disertasi ini. Langkah pertama yang
-diperlukan adalah pengumpulan data \emph{radial clearance} bantalan dari
+diperlukan adalah pengumpulan data \emph{radial clearance} \emph{bearing} dari
 PT~SKF Indonesia dalam volume yang memadai untuk pelatihan model, disertai
 anotasi temporal yang memungkinkan penyelarasan dengan rekaman vibrasi.
 Berdasarkan data tersebut, model multi-modal yang menggabungkan aliran vibrasi

@@ -1,12 +1,12 @@
-%% chapters/04-diagnostik.tex
-%% Bab IV — Deteksi Kerusakan Bantalan: Metodologi dan Hasil
+﻿%% chapters/04-diagnostik.tex
+%% Bab IV — Deteksi Kerusakan \emph{Bearing}: Metodologi dan Hasil
 %% Sumber utama:
 %%   Conference 1 — SVM/LR + SHAP KernelExplainer (§IV.2, §IV.7)
 %%   Conference 2 — DT/RF/XGBoost + SHAP TreeExplainer (§IV.3, §IV.8)
 %%   Journal 1    — WDCNN + SHAP DeepExplainer + FSM (§IV.4–IV.6, §IV.9–IV.14)
 %% Fase D — dibuat sesuai writings/dissertation-outline.md §Bab IV
 
-\chapter{Deteksi Kerusakan Bantalan: Metodologi dan Hasil}
+\chapter{Deteksi Kerusakan \emph{Bearing}: Metodologi dan Hasil}
 \label{bab:diagnostik}
 
 Bab ini menyajikan Jalur~A secara \emph{end-to-end}: dari perancangan
@@ -254,7 +254,7 @@ kelas; panduan lengkap implementasi tersedia di Lampiran~F.
 
 \emph{Wide-Deep Convolutional Neural Network} (WDCNN) merupakan arsitektur
 jaringan konvolusi 1D yang dirancang khusus untuk klasifikasi kerusakan
-bantalan dari sinyal mentah \citetitb{Zhang2017WDCNN}.
+\emph{bearing} dari sinyal mentah \citetitb{Zhang2017WDCNN}.
 Arsitektur ini menggunakan lapisan konvolusi pertama berkernel lebar untuk
 menangkap informasi frekuensi secara adaptif tanpa ekstraksi fitur manual,
 diikuti blok konvolusi berkernel sempit untuk mempelajari representasi
@@ -269,7 +269,7 @@ Lapisan pertama menggunakan kernel berukuran 64 dengan \emph{stride} 16,
 menghasilkan peta aktivasi berdimensi $\lceil 2048/16 \rceil = 128$ dengan
 jumlah filter tertentu; pilihan ukuran kernel 64 dan \emph{stride} 16 dirancang
 agar satu jendela reseptif mencakup seluruh perioda impuls tipikal cacat
-bantalan pada 48~kHz.
+\emph{bearing} pada 48~kHz.
 Lapisan konvolusi kedua hingga kelima menggunakan kernel berukuran 3 dengan
 \emph{Batch Normalization} (BN), MaxPooling, dan fungsi aktivasi ReLU untuk
 membangun representasi hierarki yang progresif.
@@ -478,7 +478,7 @@ FSM kelas lain; nilai tinggi menunjukkan pola spesifik kelas yang kuat dan
 tidak tumpang tindih antarkelas.
 Monotonik mengukur apakah amplitudo puncak FSM meningkat secara konsisten
 seiring bertambahnya keparahan cacat (7 mil, 14 mil, 21 mil); metrik ini
-menghubungkan output SHAP dengan sifat fisika degradasi bantalan.
+menghubungkan output SHAP dengan sifat fisika degradasi \emph{bearing}.
 Stabilitas mengukur konsistensi FSM antar-\emph{fold} validasi silang —
 FSM yang stabil berarti pola interpretasi tidak bergantung pada variasi
 partisi data tertentu.
@@ -544,7 +544,7 @@ nilai aktual fitur (merah tinggi, biru rendah).
 Tiga fitur dengan kontribusi global tertinggi secara konsisten pada SVM-RBF
 adalah kurtosis kanal \emph{drive-end}, RMS kanal \emph{drive-end}, dan
 energi pita BPFO kanal \emph{fan-end}.
-Kurtosis mendominasi karena cacat bantalan menghasilkan impuls transien yang
+Kurtosis mendominasi karena cacat \emph{bearing} menghasilkan impuls transien yang
 meningkatkan kurtosis jauh di atas nilai sinyal normal (kurtosis Gaussian
 = 3); perbedaan kurtosis antara kelas Normal (3,1–3,4) dan kelas IR-21 (8,7–12,3)
 memberikan pemisahan yang besar di ruang fitur.
@@ -752,7 +752,7 @@ Gambar~\ref{fig:bab4_shap_sinyal} menampilkan distribusi nilai atribusi SHAP
 \caption{Nilai atribusi SHAP \emph{DeepExplainer} kelas IR-21 pada 2.048
          posisi sinyal untuk (a) Varian~A (BN aktif) dan (b) Varian~C
          (tanpa BN). Garis merah menandai posisi puncak BPFI yang diharapkan
-         dari fisika bantalan; lebar sumbu-$y$ mencerminkan nilai maksimum
+         dari fisika \emph{bearing}; lebar sumbu-$y$ mencerminkan nilai maksimum
          atribusi.
          \citetitb{TotoSuharto2025Journal1FSM}}
 \label{fig:bab4_shap_sinyal}
@@ -844,7 +844,7 @@ Normalization} dan kualitas interpretabilitas pada level sinyal.
 
 Metrik monotonik Varian~C (0,962) sedikit lebih tinggi daripada Varian~A
 (0,940), mengindikasikan bahwa WDCNN tanpa BN menghasilkan puncak FSM yang
-sedikit lebih selaras dengan frekuensi karakteristik fisika bantalan.
+sedikit lebih selaras dengan frekuensi karakteristik fisika \emph{bearing}.
 Metrik stabilitas juga sedikit lebih baik pada Varian~C (0,891 vs 0,873),
 bertentangan dengan intuisi bahwa menghapus BN akan membuat model kurang
 stabil.
@@ -905,10 +905,10 @@ sebagai pelengkap untuk mengidentifikasi posisi sinyal yang konsisten
 
 Salah satu temuan terpenting dalam studi diagnostik ini adalah bahwa puncak-puncak
 FSM yang teridentifikasi secara statistik \emph{tidak selaras} dengan periode
-teoritis frekuensi karakteristik cacat bantalan (BPFO, BPFI, BSF, FTF) yang
-diturunkan dari geometri bantalan.
+teoritis frekuensi karakteristik cacat \emph{bearing} (BPFO, BPFI, BSF, FTF) yang
+diturunkan dari geometri \emph{bearing}.
 
-Dari geometri bantalan CWRU (8 bola, sudut kontak 15,17°, diameter bola
+Dari geometri \emph{bearing} CWRU (8 bola, sudut kontak 15,17°, diameter bola
 0,3126 inci, diameter \emph{pitch} 1,537 inci), frekuensi karakteristik
 pada kecepatan putar 1.750 rpm adalah BPFO $\approx$ 104,6~Hz,
 BPFI $\approx$ 157,9~Hz, BSF $\approx$ 68,9~Hz, dan FTF $\approx$ 13,1~Hz.
@@ -945,7 +945,7 @@ efektif WDCNN (kernel-1 berukuran 64 dengan stride 16 dan 4 blok
 MaxPooling 2$\times$, menghasilkan jangkauan $64 + 16 \times (4 - 1) = 2048/2^4
 \approx 128$ titik, setara $\approx 2{,}67$~ms per lapisan konvolusi, atau
 rentang impuls tipikal $\approx 42{,}67$~ms untuk satu siklus reseptif penuh).
-Dengan kata lain, WDCNN mengklasifikasikan kerusakan bantalan berdasarkan
+Dengan kata lain, WDCNN mengklasifikasikan kerusakan \emph{bearing} berdasarkan
 \textbf{morfologi transien impuls} (bentuk, amplitudo, dan durasi lonjakan
 getaran sesaat), bukan berdasarkan periodisitas kemunculannya mengikuti
 BPFx \citetitb{TotoSuharto2025Journal1FSM}.
@@ -968,9 +968,9 @@ seharusnya menunjukkan pola berulang pada BPFx (yang tidak teramati).
 
 Implikasi temuan ini terhadap \emph{transferability} model merupakan
 kontribusi konseptual yang berarti.
-Karena WDCNN tidak menggunakan geometri bantalan secara implisit dalam
+Karena WDCNN tidak menggunakan geometri \emph{bearing} secara implisit dalam
 mekanisme klasifikasinya, model yang dilatih pada CWRU berpotensi ditransfer
-ke jenis bantalan lain dengan parameter geometri berbeda tanpa perlu
+ke jenis \emph{bearing} lain dengan parameter geometri berbeda tanpa perlu
 mengetahui BPFO/BPFI/BSF target terlebih dahulu.
 Dengan demikian, FSM berfungsi sebagai \emph{fingerprint} morfologi impuls
 yang bersifat transferable, berbeda dari metode spektrum amplop yang secara

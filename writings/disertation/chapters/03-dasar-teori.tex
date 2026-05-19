@@ -1,4 +1,4 @@
-% =====================================================================
+﻿% =====================================================================
 % Bab III — Dasar Teori
 % =====================================================================
 \chapter{Dasar Teori}
@@ -7,7 +7,7 @@
 Bab ini menyajikan fondasi teoretis dan matematis dari metode-metode yang
 digunakan dalam penelitian ini. Subbab~\ref{sec:bab3_formulasi_rul} memformulasikan
 masalah prediksi RUL dan \emph{health indicator} secara formal.
-Subbab~\ref{sec:bab3_bantalan_bpfx} merangkum teori bantalan gelinding dan
+Subbab~\ref{sec:bab3_bantalan_bpfx} merangkum teori \emph{rolling element bearing} dan
 frekuensi karakteristik yang menjadi landasan analisis interpretabilitas.
 Subbab~\ref{sec:bab3_analisis_sinyal} membahas teknik analisis sinyal getaran
 yang relevan. Subbab~\ref{sec:bab3_lstm_xlstm} menguraikan derivasi matematis
@@ -27,7 +27,7 @@ Prediksi RUL merupakan tugas regresi yang bertujuan memperkirakan sisa umur
 operasi komponen pada setiap titik waktu selama siklus hidupnya.
 Subbab ini mendefinisikan secara formal masalah prediksi RUL, skema pelabelan
 target, dan konsep \emph{health indicator} yang digunakan sebagai representasi
-kondisi bantalan.
+kondisi \emph{bearing}.
 
 \subsection{Definisi Formal Prediksi RUL}
 \label{subsec:bab3_definisi_rul}
@@ -60,9 +60,9 @@ rekaman pertama hingga 0 pada rekaman terakhir:
   r_t = \frac{T - t}{T - 1}, \quad t = 1, 2, \ldots, T,
 \end{equation}
 
-\noindent di mana $T$ adalah total jumlah rekaman dalam siklus hidup bantalan.
+\noindent di mana $T$ adalah total jumlah rekaman dalam siklus hidup \emph{bearing}.
 Skema ini sederhana namun memiliki kelemahan karena memaksa model belajar
-degradasi yang terjadi sejak awal masa pakai, padahal secara fisik bantalan
+degradasi yang terjadi sejak awal masa pakai, padahal secara fisik \emph{bearing}
 berada dalam kondisi sehat untuk periode yang panjang sebelum tanda-tanda
 degradasi muncul.
 
@@ -86,7 +86,7 @@ ini, skema \emph{piecewise} dipilih sebagai skema utama.
 \subsection{\emph{Health Indicator} dan Ekstraksi Fitur}
 \label{subsec:bab3_health_indicator}
 
-\emph{Health indicator} (HI) merupakan representasi ringkas dari kondisi bantalan
+\emph{Health indicator} (HI) merupakan representasi ringkas dari kondisi \emph{bearing}
 yang diekstraksi dari sinyal getaran mentah. Pada penelitian ini, HI dikonstruksi
 dari fitur statistik dan frekuensial yang dihitung pada setiap rekaman. Setelah
 ekstraksi, HI diperhalus menggunakan pemulusan eksponensial dengan parameter
@@ -117,7 +117,7 @@ subbab-subbab berikutnya.
     \toprule
     \textbf{Simbol} & \textbf{Dimensi} & \textbf{Keterangan} \\
     \midrule
-    $T$              & skalar          & Total rekaman dalam satu siklus hidup bantalan \\
+    $T$              & skalar          & Total rekaman dalam satu siklus hidup \emph{bearing} \\
     $L$              & skalar          & Panjang \emph{window} input sekuens \\
     $F$              & skalar          & Jumlah fitur input (dimensi vektor $\mathbf{x}_t$) \\
     $t$              & skalar          & Indeks waktu (rekaman ke-$t$) \\
@@ -138,19 +138,19 @@ subbab-subbab berikutnya.
 \end{table}
 
 % -----------------------------------------------------------------
-\section{Bantalan Gelinding dan Frekuensi Karakteristik}
+\section{\emph{Rolling Element Bearing} dan Frekuensi Karakteristik}
 \label{sec:bab3_bantalan_bpfx}
 % -----------------------------------------------------------------
 
-Bantalan gelinding (juga disebut \emph{rolling element bearing}) merupakan
+\emph{Rolling element bearing} merupakan
 komponen mekanik yang memungkinkan rotasi poros dengan gesekan minimal. Pada
-bantalan tipe bola alur dalam (\emph{deep groove ball bearing}), terdapat
+\emph{bearing} tipe bola alur dalam (\emph{deep groove ball bearing}), terdapat
 empat komponen utama: cincin luar (\emph{outer race}), cincin dalam
-(\emph{inner race}), elemen gelinding (\emph{rolling elements}), dan sangkar
-(\emph{cage}). Kegagalan bantalan umumnya dimulai sebagai spalling pada salah
+(\emph{inner race}), \emph{rolling elements}, dan sangkar
+(\emph{cage}). Kegagalan \emph{bearing} umumnya dimulai sebagai spalling pada salah
 satu komponen, yang menghasilkan impuls periodik dalam sinyal getaran
 \citetitb{Lei2018Machinery}. Gambar~\ref{fig:bab3_bearing_geom} mengilustrasikan
-penampang lintang bantalan bola alur dalam dengan parameter geometri yang
+penampang lintang \emph{bearing} bola alur dalam dengan parameter geometri yang
 menjadi dasar perhitungan frekuensi karakteristik.
 
 \begin{figure}[ht]
@@ -183,25 +183,24 @@ menjadi dasar perhitungan frekuensi karakteristik.
     \node[lbl, below=0.2cm]  at (180:1.25cm){\footnotesize Cincin dalam};
     \node[lbl, font=\scriptsize] at (90:1.9cm) {bola ($n=8$)};
   \end{tikzpicture}
-  \caption{Penampang lintang bantalan bola alur dalam (\emph{deep groove ball
+  \caption{Penampang lintang \emph{bearing} bola alur dalam (\emph{deep groove ball
            bearing}) dengan anotasi parameter geometri: $D$ = diameter lingkaran
-           \emph{pitch}, $d$ = diameter elemen gelinding, $n$ = jumlah elemen
-           gelinding. Nilai $D$, $d$, $n$, dan sudut kontak $\theta$ digunakan
+           \emph{pitch}, $d$ = diameter \emph{rolling element}, $n$ = jumlah \emph{rolling element}. Nilai $D$, $d$, $n$, dan sudut kontak $\theta$ digunakan
            untuk menghitung BPFO, BPFI, BSF, dan FTF
            (Persamaan~\ref{eq:bab3_bpfo}--\ref{eq:bab3_ftf}).}
   \label{fig:bab3_bearing_geom}
 \end{figure}
 
-\subsection{Frekuensi Karakteristik Bantalan}
+\subsection{Frekuensi Karakteristik \emph{Bearing}}
 \label{subsec:bab3_bpfx}
 
-Saat terjadi spalling pada komponen bantalan, impuls periodik yang ditimbulkan
-memiliki frekuensi yang dapat diprediksi dari geometri bantalan dan kecepatan
+Saat terjadi spalling pada komponen \emph{bearing}, impuls periodik yang ditimbulkan
+memiliki frekuensi yang dapat diprediksi dari geometri \emph{bearing} dan kecepatan
 rotasi poros. Empat frekuensi karakteristik utama didefinisikan sebagai
 berikut \citetitb{Lei2018Machinery}.
 
-Misalkan $f_r$ = frekuensi rotasi poros (Hz), $n$ = jumlah elemen gelinding,
-$d$ = diameter elemen gelinding (mm), $D$ = diameter lingkaran \emph{pitch}
+Misalkan $f_r$ = frekuensi rotasi poros (Hz), $n$ = jumlah \emph{rolling element},
+$d$ = diameter \emph{rolling element} (mm), $D$ = diameter lingkaran \emph{pitch}
 (mm), dan $\theta$ = sudut kontak (rad). Frekuensi lintasan bola pada cincin
 luar (\emph{Ball Pass Frequency Outer race}, BPFO) adalah:
 
@@ -216,7 +215,7 @@ race}, BPFI) adalah:
   \text{BPFI} = \frac{n}{2} f_r \left(1 + \frac{d}{D}\cos\theta\right).
 \end{equation}
 
-Frekuensi putar elemen gelinding (\emph{Ball Spin Frequency}, BSF) adalah:
+Frekuensi putar \emph{rolling element} (\emph{Ball Spin Frequency}, BSF) adalah:
 
 \begin{equation}\label{eq:bab3_bsf}
   \text{BSF} = \frac{D}{2d} f_r \left[1 - \left(\frac{d}{D}\cos\theta\right)^2\right].
@@ -229,26 +228,26 @@ Frekuensi fundamental sangkar (\emph{Fundamental Train Frequency} atau
   \text{FTF} = \frac{1}{2} f_r \left(1 - \frac{d}{D}\cos\theta\right).
 \end{equation}
 
-Pada bantalan \emph{deep groove ball bearing} dengan sudut kontak yang kecil,
+Pada \emph{bearing} \emph{deep groove ball bearing} dengan sudut kontak yang kecil,
 asumsi $\theta \approx 0$ ($\cos\theta \approx 1$) memberikan penyederhanaan
 yang cukup akurat untuk perhitungan estimasi.
 
-\subsection{Geometri Bantalan Benchmark}
+\subsection{Geometri \emph{Bearing} Benchmark}
 \label{subsec:bab3_geometri_benchmark}
 
 Tabel~\ref{tab:bab3_geometri_bearing} menyajikan parameter geometri dan
-frekuensi karakteristik teoretis untuk dua bantalan yang digunakan pada
+frekuensi karakteristik teoretis untuk dua \emph{bearing} yang digunakan pada
 dataset benchmark penelitian ini.
 
 \begin{table}[ht]
   \centering
-  \caption{Geometri bantalan benchmark dan frekuensi karakteristik teoretis
+  \caption{Geometri \emph{bearing} benchmark dan frekuensi karakteristik teoretis
            (asumsi $\theta \approx 0$).}
   \label{tab:bab3_geometri_bearing}
   \small
   \begin{tabular}{@{}lccccccc@{}}
     \toprule
-    Bantalan & Dataset & $n$ & $d$ (mm) & $D$ (mm) & $f_r$ (Hz)
+    \emph{Bearing} & Dataset & $n$ & $d$ (mm) & $D$ (mm) & $f_r$ (Hz)
       & BPFO (Hz) & BPFI (Hz) \\
     \midrule
     NSK 6804 & PHM2012 & 13 & 3{,}50 & 25{,}50 & 30{,}0 & 168{,}3 & 228{,}7 \\
@@ -275,9 +274,9 @@ berkorespondensi dengan frekuensi-frekuensi yang relevan secara fisik.
 \label{sec:bab3_analisis_sinyal}
 % -----------------------------------------------------------------
 
-Sinyal getaran bantalan merupakan superposis dari komponen yang berasal dari
+Sinyal getaran \emph{bearing} merupakan superposis dari komponen yang berasal dari
 proses fisika yang berbeda: rotasi poros, meshing roda gigi (bila ada), resonansi
-struktural, dan impuls periodik akibat cacat bantalan. Ekstraksi fitur yang
+struktural, dan impuls periodik akibat cacat \emph{bearing}. Ekstraksi fitur yang
 efektif memerlukan pemahaman tentang karakteristik sinyal ini.
 
 \subsection{Fitur Energi Band Frekuensi}
@@ -295,7 +294,7 @@ adalah:
 \noindent di mana $B = \{k : f_{\rm low} \leq k\Delta f \leq f_{\rm high}\}$ dan
 $\Delta f = f_s/N$ adalah resolusi frekuensi. Fitur band-energy pada rentang
 yang mencakup BPFO, BPFI, dan harmoniknya merupakan indikator yang sensitif
-terhadap perkembangan cacat bantalan.
+terhadap perkembangan cacat \emph{bearing}.
 
 \subsection{Analisis Spektrum \emph{Envelope} Hilbert}
 \label{subsec:bab3_hilbert}
@@ -419,7 +418,7 @@ Secara analitis, turunan sigmoid $\sigma'(z) = \sigma(z)(1 - \sigma(z))$
 memiliki nilai maksimum $0{,}25$ pada $z = 0$ dan menuju nol secara
 eksponensial untuk $|z| \gg 0$. Kondisi \emph{saturation} ini berarti bahwa
 ketika terjadi lonjakan amplitudo getaran yang besar dan tiba-tiba menjelang
-kegagalan akhir bantalan --- tepat kondisi ketika model harus merespons dengan
+kegagalan akhir \emph{bearing} --- tepat kondisi ketika model harus merespons dengan
 revisi besar terhadap estimasi RUL --- gerbang LSTM yang sudah tersaturasi
 menghasilkan gradien yang mendekati nol dan perubahan memori sel yang sangat
 kecil \citetitb{Bengio1994Vanishing,Beck2024xLSTM}. Dengan kata lain, LSTM
@@ -458,14 +457,14 @@ untuk stabilisasi numerik. Persamaan sLSTM pada waktu $t$ adalah:
 \emph{Exponential gating} pada Persamaan~\ref{eq:bab3_slstm_i} dan
 \ref{eq:bab3_slstm_f} merupakan keunggulan utama sLSTM: model dapat merespons
 perubahan tajam pada input dengan merevisi memori sel secara agresif, yang
-secara khusus relevan untuk fase akhir degradasi bantalan di mana amplitudo
+secara khusus relevan untuk fase akhir degradasi \emph{bearing} di mana amplitudo
 getaran meningkat secara dramatis dalam waktu singkat.
 
 \textbf{Justifikasi memori matriks.} Satu dimensi yang belum diatasi oleh
 sLSTM adalah kapasitas representasi memori itu sendiri. Memori sel $\mathbf{c}_t
 \in \mathbb{R}^d$ merupakan sebuah vektor dengan $d$ entri, yang membatasi
 jumlah asosiasi berbeda yang dapat disimpan secara bersamaan menjadi paling
-banyak $\mathcal{O}(d)$ entri independen. Dalam konteks prediksi RUL bantalan,
+banyak $\mathcal{O}(d)$ entri independen. Dalam konteks prediksi RUL \emph{bearing},
 model harus secara bersamaan mengingat pola dari banyak fitur kondisi yang
 berbeda (kurtosis, RMS, fitur frekuensi band-energy) dan korelasinya yang
 berubah sepanjang siklus degradasi. Vektor $d$-dimensi tunggal tidak cukup
@@ -604,7 +603,7 @@ SSM lebih terfokus pada input saat ini (perilaku mirip konvolusi), sedangkan
 $\Delta_t$ yang kecil menyebabkan SSM lebih bergantung pada \emph{state}
 sebelumnya (perilaku mirip rekurens). Fleksibilitas ini memungkinkan Mamba
 berperilaku adaptif terhadap karakteristik sinyal yang berubah sepanjang
-waktu, seperti sinyal degradasi bantalan yang bersifat non-stasioner.
+waktu, seperti sinyal degradasi \emph{bearing} yang bersifat non-stasioner.
 
 Mamba-2 \citetitb{Dao2024Mamba2} memperbaiki efisiensi komputasi Mamba
 melalui kerangka SSD (\emph{Structured State Space Duality}) yang menunjukkan
@@ -627,7 +626,7 @@ jendela mengakses konteks yang lebih sedikit dibandingkan posisi akhir.
 Penelitian pada BERT \citetitb{Devlin2019BERT} dan model bidireksional lainnya
 telah membuktikan bahwa konteks dua arah menghasilkan representasi yang
 lebih kaya untuk tugas yang bukan autoregresif. Untuk sinyal degradasi
-bantalan, fitur pada jendela awal mengandung informasi tentang kondisi dasar
+\emph{bearing}, fitur pada jendela awal mengandung informasi tentang kondisi dasar
 (\emph{baseline}) yang relevan untuk menginterpretasikan fitur pada jendela
 akhir; demikian pula sebaliknya. Oleh karena itu, penelitian ini menggunakan
 konfigurasi BiMamba yang memproses jendela dalam dua arah secara paralel,
@@ -864,18 +863,18 @@ lebih cepat:
 
 Nilai PHM Score maksimum adalah 1,0 (prediksi sempurna). Prediksi yang
 terlambat ($E_i < 0$, model mengestimasi RUL terlalu tinggi dibanding
-aktualnya) dihukum lebih berat karena dapat menyebabkan operasi bantalan
+aktualnya) dihukum lebih berat karena dapat menyebabkan operasi \emph{bearing}
 melewati titik kegagalan tanpa intervensi. Interpretasi lengkap dan analisis
 distribusi PHM Score per \emph{bearing} disajikan pada
 Bab~\ref{bab:hasil-pembahasan}.
 
 % -----------------------------------------------------------------
-\section{Klasifikasi Kondisi Bantalan dan Algoritma Kandidat (Pilar~0)}
+\section{Klasifikasi Kondisi \emph{Bearing} dan Algoritma Kandidat (Pilar~0)}
 \label{sec:bab3_klasifikasi}
 % -----------------------------------------------------------------
 
 Subbab ini memuat fondasi teoretis untuk Pilar~0 disertasi --- studi
-kasus industri yang melakukan klasifikasi tiga kelas kondisi bantalan
+kasus industri yang melakukan klasifikasi tiga kelas kondisi \emph{bearing}
 (\emph{Normal}, \emph{Warning}, \emph{Critical}) pada lini produksi
 PT~SKF~Indonesia. Dasar teori ini diletakkan terpisah dari materi RUL
 karena keluaran model, fungsi kerugian, dan metrik evaluasi berbeda

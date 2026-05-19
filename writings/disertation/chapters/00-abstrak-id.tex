@@ -1,11 +1,11 @@
-%% chapters/00-abstrak-id.tex
+﻿%% chapters/00-abstrak-id.tex
 %% Abstrak Bahasa Indonesia (~500–800 kata)
 %% Pedoman ITB §II.2: 4 paragraf, tanpa referensi, kata kunci ≤ 7 frasa
 %% Fase H — ditulis ulang sesuai struktur dua jalur outline §Abstrak
 
 \begin{abstractid}
 
-Bantalan gelinding merupakan komponen paling rentan pada mesin rotasi
+\emph{Rolling element bearing} merupakan komponen paling rentan pada mesin rotasi
 industri, dengan kontribusi sekitar 40--50\% dari total kegagalan mesin.
 Transformasi industri manufaktur Indonesia menuju Industri~4.0 mendorong
 adopsi perawatan prediktif berbasis kondisi sebagai pengganti strategi
@@ -16,11 +16,11 @@ Dua kesenjangan penelitian mendorong disertasi ini: metode
 beroperasi pada tingkat fitur agregat dan belum menjangkau sinyal mentah
 2.048 titik; model estimasi sisa umur pakai (\emph{remaining useful life},
 RUL) berbasis pembelajaran dalam belum terbukti menginternalisasi frekuensi
-karakteristik bantalan (BPFO, BPFI, BSF, FTF) dalam ruang latennya
+karakteristik \emph{bearing} (BPFO, BPFI, BSF, FTF) dalam ruang latennya
 secara statistik signifikan.
 
 Jalur pertama penelitian ini membandingkan tiga kelompok algoritma
-klasifikasi kerusakan bantalan pada dataset CWRU (10 kelas, sinyal 2.048
+klasifikasi kerusakan \emph{bearing} pada dataset CWRU (10 kelas, sinyal 2.048
 titik, pembagian temporal 54/13/33\%): model berbasis kernel (SVM dengan
 kernel RBF dan Regresi Logistik \emph{one-vs-rest}), algoritma berbasis
 pohon keputusan (DT, RF, dan XGBoost), serta arsitektur jaringan dalam
@@ -33,7 +33,7 @@ menjadi \emph{Fault Signature Maps} (FSM) per kelas, dengan koefisien
 stabilitas \emph{split-half} sebesar 0,940 dan indeks diskriminabilitas
 0,216.
 Studi ablasi tiga varian WDCNN mengungkap temuan yang belum pernah
-dilaporkan dalam literatur klasifikasi bantalan: penghapusan
+dilaporkan dalam literatur klasifikasi \emph{bearing}: penghapusan
 \emph{BatchNorm} meningkatkan diskriminabilitas FSM sebesar 133\% (dari
 0,216 menjadi 0,735), dengan konsekuensi penurunan akurasi sebesar
 3,60 poin persentase.
@@ -68,20 +68,20 @@ Penelitian ini menghasilkan lima novelti: N1 (FSM, XAI pertama pada
 tingkat sinyal mentah untuk WDCNN), N2 (\emph{trade-off BatchNorm}
 yang menekan diskriminabilitas FSM, temuan pertama dalam literatur), N3
 (SAEBearing, adaptasi pertama \emph{mechanistic interpretability} ke
-domain prognostik bantalan), N4 (universalitas korespondensi BPFx lintas
+domain prognostik \emph{bearing}), N4 (universalitas korespondensi BPFx lintas
 tiga arsitektur dan empat dataset dengan rigor statistik \emph{bootstrap}
 CI dan \emph{permutation test}), serta N5 (kerangka konseptual PdM
 tiga-tier: Edge IoT melalui model berbasis kernel, Edge Server melalui
 WDCNN+FSM, dan Cloud/GPU melalui \emph{backbone} RUL+SAE-BPFx).
 Kontribusi lintas kedua jalur ini membentuk jembatan pertama yang
 terverifikasi statistik antara pendekatan pembelajaran dalam berbasis data
-dan teori getaran klasik bantalan: jalur diagnostik menghubungkan sinyal
+dan teori getaran klasik \emph{bearing}: jalur diagnostik menghubungkan sinyal
 mentah dengan FSM, sementara jalur prognostik menghubungkan representasi
 laten dengan frekuensi karakteristik BPFx.
 
 \bigskip\noindent
-\textbf{Kata kunci:} perawatan prediktif, diagnostik bantalan,
+\textbf{Kata kunci:} perawatan prediktif, diagnostik \emph{bearing},
 \emph{Fault Signature Maps}, sisa umur pakai, \emph{Sparse Autoencoder},
-interpretabilitas mekanistik, frekuensi karakteristik bantalan
+interpretabilitas mekanistik, frekuensi karakteristik \emph{bearing}
 
 \end{abstractid}

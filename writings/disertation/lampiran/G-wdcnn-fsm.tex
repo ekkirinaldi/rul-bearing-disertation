@@ -1,4 +1,4 @@
-%% lampiran/G-wdcnn-fsm.tex
+﻿%% lampiran/G-wdcnn-fsm.tex
 %% Lampiran G — Detail Arsitektur WDCNN dan Fault Signature Maps (Journal 1)
 
 \chapter{Detail Arsitektur WDCNN dan \emph{Fault Signature Maps}}
@@ -78,7 +78,7 @@ Lapisan pertama (lapis~1) menggunakan \emph{kernel} lebar $k=64$
 dengan \emph{stride} $s=16$, yang berarti setiap filter mengamati
 rentang temporal 64/1500~Hz~$\approx$~42,67~ms pada frekuensi
 \emph{sampling} 48~kHz CWRU. Rentang ini cukup lebar untuk menangkap
-morfologi impuls transien yang karakteristik bagi kerusakan bantalan,
+morfologi impuls transien yang karakteristik bagi kerusakan \emph{bearing},
 sekaligus memberikan reduksi dimensi agresif dari 2.048 ke 124 titik
 pada keluaran lapis~1.
 
@@ -166,7 +166,7 @@ untuk tiga ukuran \emph{kernel}: 32, 64 (baseline), dan 128.
 Varian $k=64$ memberikan keseimbangan terbaik antara akurasi
 dan \emph{discriminability}. Nilai $k=32$ menghasilkan akurasi
 yang lebih rendah karena rentang temporalnya lebih pendek daripada
-durasi tipikal transien impuls pada kerusakan bantalan (~40--50~ms
+durasi tipikal transien impuls pada kerusakan \emph{bearing} (~40--50~ms
 pada 48~kHz), sehingga tidak menangkap morfologi penuh. Varian
 $k=128$ memberikan akurasi sedikit lebih rendah karena \emph{kernel}
 yang terlalu lebar cenderung menghaluskan detail impuls transien.

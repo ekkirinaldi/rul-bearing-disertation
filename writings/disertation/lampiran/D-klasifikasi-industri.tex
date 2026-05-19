@@ -1,10 +1,10 @@
-%% lampiran/D-klasifikasi-industri.tex
+﻿%% lampiran/D-klasifikasi-industri.tex
 %% Lampiran D — Validasi Industri PT~SKF Indonesia (Sanity Check Eksternal)
 %%
 %% PENTING: Lampiran ini hanya mendokumentasikan verifikasi kualitatif terbatas
 %% dengan subset kecil data sensor PT~SKF. Bukan validasi lintas mesin penuh.
 
-\chapter{Validasi Industri PT~SKF Indonesia: \emph{Sanity Check} Eksternal}
+\chapter{Validasi Industri PT~SKF Indonesia: Pengujian Eksternal}
 \label{lamp:klasifikasi_industri}
 
 Lampiran ini mendokumentasikan konteks akuisisi data di lini produksi
@@ -21,7 +21,7 @@ dan Bab~\ref{bab:prognostik}.
 % -----------------------------------------------------------------
 
 PT~SKF~Indonesia mengoperasikan dua mesin \emph{outer ring grinding}
-(OR1 dan OR2) pada lini produksi bantalan bola di Cikarang. Sensor
+(OR1 dan OR2) pada lini produksi \emph{bearing} bola di Cikarang. Sensor
 akselerometer terpasang pada setiap mesin dan terhubung ke unit
 akuisisi SKF~IMx-8, yang mengirimkan rekaman sinyal getaran secara
 periodik ke platform AWS Cloud melalui protokol OPC-UA. Setiap rekaman
@@ -29,7 +29,7 @@ memuat kanal akselerometer horizontal dan vertikal dengan frekuensi
 \emph{sampling} 25,6~kHz, dalam rentang operasi nominal spindel
 3.500--4.200 rpm.
 
-Di sisi lini produksi, setiap produk bantalan yang selesai diproses
+Di sisi lini produksi, setiap produk \emph{bearing} yang selesai diproses
 melewati dua stasiun pemeriksaan kualitas \emph{end-of-line}: stasiun
 \emph{vibration checking} (VC) dan stasiun \emph{radial clearance
 checking} (RCC). Stasiun VC mengukur level getaran produk jadi pada
@@ -50,7 +50,7 @@ data SKF hanya digunakan untuk inferensi dengan model yang telah
 dilatih pada CWRU.
 
 % -----------------------------------------------------------------
-\section{Skema \emph{Sanity Check}: Inferensi dengan Model CWRU}
+\section{Skema Pengujian Eksternal: Inferensi dengan Model CWRU}
 \label{lamp:skf_skema}
 % -----------------------------------------------------------------
 
@@ -60,7 +60,7 @@ Skema yang diterapkan adalah sebagai berikut. Model berbasis kernel
 label kondisi pada rekaman spindel OR1/OR2. Fitur input mengikuti
 definisi HI~18-D yang sama (sembilan fitur \emph{time-domain}~+
 sembilan fitur \emph{frequency-domain}) per rekaman, dihitung dengan
-parameter geometri bantalan SKF~6205 sebagai aproksimasi frekuensi
+parameter geometri \emph{bearing} SKF~6205 sebagai aproksimasi frekuensi
 karakteristik. Normalisasi Z-score menggunakan parameter
 \emph{fit-on-train} dari CWRU.
 

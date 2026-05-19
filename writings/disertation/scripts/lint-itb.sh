@@ -323,6 +323,23 @@ if [ -n "$em_hits" ]; then
 fi
 [ "$ai_warn" -eq 0 ] && ok "Tidak ada frasa mesin yang terdeteksi."
 
+# --- 17. Istilah teknis domain bearing ------------------------------------
+echo ""
+echo "--- 17. Istilah teknis domain bearing ---"
+term_warn=0
+_check_term() {
+  local pattern="$1" wrong="$2" right="$3"
+  hits=$(grep -inE "$pattern" $ALL_BODY 2>/dev/null | grep -vE ':[[:space:]]*%' || true)
+  if [ -n "$hits" ]; then
+    warn "Istilah tidak baku '$wrong' — gunakan '$right' (terminologi teknis baku):"
+    echo "$hits" | head -3
+    term_warn=1
+  fi
+}
+_check_term '\bbantalan\b'  'bantalan'  'bearing'
+_check_term '\bgelinding\b' 'gelinding' 'rolling'
+[ "$term_warn" -eq 0 ] && ok "Istilah teknis domain sudah konsisten."
+
 # --- Summary -----------------------------------------------------------
 echo ""
 echo "============================================================"

@@ -1,4 +1,4 @@
-%% chapters/05-prognostik.tex
+﻿%% chapters/05-prognostik.tex
 %% Bab V — Estimasi Sisa Umur Pakai: Metodologi dan Hasil
 %% Sumber utama: Journal 2 — Mamba-xLSTM + Top-k SAE + pemetaan BPFx
 %% Fase E — dibuat sesuai writings/dissertation-outline.md §Bab V
@@ -9,11 +9,11 @@
 Bab ini menyajikan Jalur~B secara \emph{end-to-end}: dari perancangan
 metodologi tiga arsitektur \emph{backbone} RUL, pembangunan \emph{Top-$k$
 Sparse Autoencoder} (SAE), prosedur pemetaan ke frekuensi karakteristik
-bantalan, hingga inferensi statistik dan analisis hasil lintas empat dataset.
+\emph{bearing}, hingga inferensi statistik dan analisis hasil lintas empat dataset.
 Sumber empiris utama adalah \citetitb{TotoSuharto2025Journal2RUL}, yang
 mengombinasikan tiga arsitektur berbeda sebagai substrat interpretabilitas
 mekanistik (\emph{mechanistic interpretability}) pertama untuk domain
-prognostik bantalan.
+prognostik \emph{bearing}.
 
 Fondasi bersama yang dibutuhkan bab ini, yaitu spesifikasi empat dataset
 publik (CWRU, PHM2012, XJTU-SY, IMS), prosedur praproses sinyal, vektor
@@ -187,7 +187,7 @@ konfigurasi yang tersimpan pada repositori publik \citetitb{TotoSuharto2025Journ
 \emph{Top-$k$ Sparse Autoencoder} (SAE) merupakan metode interpretabilitas
 mekanistik yang diadaptasi dari literatur pemodelan bahasa besar
 \citetitb{Bricken2023Monosemanticity}\citetitb{Cunningham2023TopkSAE}
-ke domain prognostik bantalan untuk pertama kalinya dalam penelitian ini.
+ke domain prognostik \emph{bearing} untuk pertama kalinya dalam penelitian ini.
 Prinsip utamanya adalah \emph{monosemantisitas}: setiap neuron SAE idealnya
 mengkodekan satu konsep fisika yang dapat diinterpretasi, berbeda dengan
 neuron jaringan dalam konvensional yang bersifat \emph{polysemantik} (satu
@@ -242,7 +242,7 @@ prediksi RUL terkonsentrasi pada sedikit neuron aktif.
 \label{sec:bab5_pemetaan_bpfx}
 % =================================================================
 
-Pemetaan fitur SAE ke frekuensi karakteristik bantalan (BPFx) dilakukan
+Pemetaan fitur SAE ke frekuensi karakteristik \emph{bearing} (BPFx) dilakukan
 melalui tiga tahap utama: komputasi spektrum amplop untuk setiap rekaman,
 perhitungan korelasi Pearson antara aktivasi fitur SAE dan amplitudo BPFx,
 dan kuantifikasi \emph{hit-rate} sebagai metrik agregat korespondensi.
@@ -276,7 +276,7 @@ spektrum amplop yang dihitung dari rekaman berdurasi 0,1 detik (PHM2012)
 dan 1,28 detik (XJTU-SY/IMS), mencakup puncak BPFx beserta satu harmonik
 langsung di kanan dan kirinya.
 Frekuensi karakteristik teoritis setiap dataset dihitung dari geometri
-bantalan masing-masing menggunakan formula BPFO/BPFI/BSF/FTF yang
+\emph{bearing} masing-masing menggunakan formula BPFO/BPFI/BSF/FTF yang
 diuraikan pada Bab~\ref{bab:metodologi-umum}~§\ref{sec:bab3_praproses}.
 
 \subsection*{Tahap 3 --- Korelasi dan Hit-Rate}
@@ -366,7 +366,7 @@ dataset, diikuti dengan analisis komparatif lintas dataset.
 \label{subsec:bab5_phm2012_rul}
 
 Tabel~\ref{tab:bab5_phm2012} merangkum kinerja ketiga \emph{backbone}
-pada \emph{test set} PHM2012, yang terdiri dari delapan bantalan yang tidak
+pada \emph{test set} PHM2012, yang terdiri dari delapan \emph{bearing} yang tidak
 pernah dilihat selama pelatihan maupun pemilihan \emph{checkpoint}.
 Semua nilai dilaporkan sebagai mean $\pm$ deviasi standar populasi atas
 tiga \emph{seed}.
@@ -427,7 +427,7 @@ konsisten di \emph{epoch} 71, 68, dan 69 dari 75, menunjukkan bahwa
 arsitektur ini memanfaatkan seluruh anggaran pelatihan tanpa
 \emph{overfitting}; sifat ini khas pada model berbasis SSM selektif yang
 memerlukan lebih banyak iterasi untuk menangkap pola jangka panjang pada
-sinyal getaran bantalan.
+sinyal getaran \emph{bearing}.
 N-BEATS-xLSTM-RUL memperlihatkan stabilitas tertinggi ($\sigma =
 \pm$0{,}007) berkat \emph{polynomial basis blocks} yang menyediakan
 \emph{prior} struktural kuat sehingga inisialisasi acak berdampak minimal.
@@ -435,7 +435,7 @@ N-BEATS-xLSTM-RUL memperlihatkan stabilitas tertinggi ($\sigma =
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/bab5/rul_curves_phm2012.pdf}
-\caption{Kurva prediksi RUL terhadap nilai referensi untuk satu bantalan
+\caption{Kurva prediksi RUL terhadap nilai referensi untuk satu \emph{bearing}
          representatif dari \emph{test set} PHM2012 (SparseGate-TCN-RUL,
          \emph{seed}~42). Sumbu-$x$ menunjukkan indeks rekaman; sumbu-$y$
          menunjukkan nilai RUL ternormalisasi [0,\,1].
@@ -444,7 +444,7 @@ N-BEATS-xLSTM-RUL memperlihatkan stabilitas tertinggi ($\sigma =
 \end{figure}
 
 Gambar~\ref{fig:bab5_rul_phm2012} menampilkan contoh kurva prediksi RUL
-pada satu bantalan PHM2012.
+pada satu \emph{bearing} PHM2012.
 Kurva prediksi mengikuti tren penurunan aktual dengan baik pada fase
 degradasi akseleratif (rekaman ke-200 hingga akhir), meski terdapat
 sedikit \emph{overestimation} RUL pada fase awal saat degradasi masih
@@ -463,7 +463,7 @@ dibandingkan PHM2012 (Tabel~\ref{tab:bab5_xjtusy}).
 \centering
 \caption{Evaluasi kinerja pada dataset XJTU-SY (mean $\pm$ std, $n = 3$ \emph{seed}).
          Pemenang RMSE dicetak tebal. $R^2$ negatif merupakan artefak dari
-         \emph{test split} ekstrem (dua bantalan).}
+         \emph{test split} ekstrem (dua \emph{bearing}).}
 \label{tab:bab5_xjtusy}
 \small
 \begin{tabular}{@{}lcccc@{}}
@@ -483,7 +483,7 @@ Mamba-xLSTM-Net              & 0{,}267 $\pm$ 0{,}012 & \textbf{0{,}211}
 
 Selisih RMSE antar model pada XJTU-SY sangat kecil, hanya 0{,}008 dari
 terbaik ke terburuk.
-Hal ini disebabkan oleh \emph{test set} yang hanya berisi dua bantalan;
+Hal ini disebabkan oleh \emph{test set} yang hanya berisi dua \emph{bearing};
 variansi antar-\emph{seed} dengan demikian mendominasi variasi hasil
 dibandingkan perbedaan antar-arsitektur.
 N-BEATS-xLSTM-RUL unggul tipis pada RMSE (0{,}259) dan menunjukkan
@@ -492,7 +492,7 @@ mencatat PHM~Score tertinggi (0{,}907) yang mencerminkan kecenderungan
 arsitektur ini untuk memprediksi RUL secara konservatif.
 
 $R^2$ negatif pada hampir semua model merupakan artefak statistik dari
-\emph{test split} yang sangat terbatas: dengan hanya dua bantalan,
+\emph{test split} yang sangat terbatas: dengan hanya dua \emph{bearing},
 $SS_{\rm tot}$ menjadi sangat kecil sehingga $R^2$ kehilangan
 interpretabilitasnya.
 RMSE dipertahankan sebagai satu-satunya metrik yang dapat dibandingkan
@@ -502,8 +502,8 @@ secara adil lintas ketiga dataset prognostik.
 \label{subsec:bab5_ims_rul}
 
 Dataset IMS menghadirkan tantangan yang lebih besar dibandingkan PHM2012
-dan XJTU-SY: bantalan bertipe \emph{tapered roller} (berbeda dari
-\emph{ball bearing}), empat bantalan beroperasi secara simultan dalam satu
+dan XJTU-SY: \emph{bearing} bertipe \emph{tapered roller} (berbeda dari
+\emph{ball bearing}), empat \emph{bearing} beroperasi secara simultan dalam satu
 \emph{run}, dan distribusi mode kegagalan mencakup \emph{inner race},
 \emph{outer race}, maupun \emph{rolling element} \citetitb{Qiu2006WaveletBearing}.
 Keberagaman kondisi ini menjadikan IMS sebagai uji universalitas yang
@@ -512,7 +512,7 @@ lebih ketat dibandingkan dua dataset sebelumnya.
 Pada IMS, Mamba-xLSTM-Net mencapai RMSE terbaik sebesar
 $0{,}407 \pm 0{,}040$ (rata-rata dan std atas tiga \emph{seed}).
 Nilai ini lebih tinggi secara absolut dibandingkan PHM2012 dan XJTU-SY,
-konsisten dengan kompleksitas lebih besar dari IMS: sinyal multi-bantalan
+konsisten dengan kompleksitas lebih besar dari IMS: sinyal multi-\emph{bearing}
 yang saling berinterferensi dan pola degradasi \emph{rolling element}
 yang berbeda dari dominasi \emph{outer-race spalling} pada PHM2012/XJTU-SY.
 Rincian kinerja ketiga \emph{backbone} pada IMS tersedia pada
@@ -521,7 +521,7 @@ Rincian kinerja ketiga \emph{backbone} pada IMS tersedia pada
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/bab5/rul_curves_ims.pdf}
-\caption{Kurva prediksi RUL terhadap nilai referensi untuk Bantalan~1
+\caption{Kurva prediksi RUL terhadap nilai referensi untuk \emph{Bearing}~1
          pada \emph{Run}~3 dari dataset IMS (Mamba-xLSTM-Net,
          \emph{seed}~42). Sumbu-$x$ menunjukkan indeks rekaman
          (interval 10 menit); sumbu-$y$ menunjukkan RUL ternormalisasi.
@@ -618,10 +618,10 @@ Pada PHM2012, BPFI mendominasi \emph{hit-rate} (2{,}3\%) diikuti BPFO
 (2{,}0\%), sedangkan BSF dan FTF mendekati nol.
 Pola ini konsisten dengan literatur yang mendokumentasikan bahwa
 \emph{spalling} pada \emph{inner race} dan \emph{outer race} merupakan
-mode kegagalan dominan pada bantalan NSK~6804 dalam kondisi beban dan
+mode kegagalan dominan pada \emph{bearing} NSK~6804 dalam kondisi beban dan
 kecepatan tinggi \citetitb{Nectoux2012PRONOSTIA}.
 Pada XJTU-SY, BPFO mendominasi (2{,}2\%) sesuai dengan karakter
-\emph{outer-race spalling} yang terdokumentasi pada bantalan LDK~UER204
+\emph{outer-race spalling} yang terdokumentasi pada \emph{bearing} LDK~UER204
 \citetitb{Wang2020XJTU}.
 
 \begin{figure}[ht]
@@ -639,8 +639,8 @@ Pada XJTU-SY, BPFO mendominasi (2{,}2\%) sesuai dengan karakter
 Gambar~\ref{fig:bab5_hitrate_panel} memvisualisasikan \emph{hit-rate}
 per dataset. Pola yang muncul pada IMS konsisten dengan sejarah kegagalan
 yang terdokumentasi: dominansi BPFI (1{,}76\%) selaras dengan kegagalan
-\emph{inner race} Bantalan~1 pada \emph{Run}~2, sementara munculnya BSF
-(0{,}49\%) mencerminkan kegagalan elemen gelinding Bantalan~4 pada
+\emph{inner race} \emph{Bearing}~1 pada \emph{Run}~2, sementara munculnya BSF
+(0{,}49\%) mencerminkan kegagalan \emph{rolling element} \emph{Bearing}~4 pada
 \emph{Run}~1.
 CWRU menunjukkan \emph{hit-rate} BPFI tertinggi secara numerik (5{,}08\%)
 namun tidak mencapai signifikansi statistik ($p > 0{,}05$) karena hanya
@@ -765,7 +765,7 @@ Temuan lintas-arsitektur ini memperkuat Novelti~N4 penelitian ini:
 dominan suatu dataset bersifat universal lintas tiga paradigma arsitektur
 yang berbeda}, tidak bergantung pada satu desain \emph{backbone} tertentu.
 Universalitas ini merupakan syarat penting agar klaim interpretabilitas
-mekanistik di domain prognostik bantalan dianggap \emph{robust} secara
+mekanistik di domain prognostik \emph{bearing} dianggap \emph{robust} secara
 ilmiah.
 
 % =================================================================

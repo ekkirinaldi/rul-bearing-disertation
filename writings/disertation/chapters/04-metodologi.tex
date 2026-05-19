@@ -1,4 +1,4 @@
-%% chapters/04-metodologi.tex
+﻿%% chapters/04-metodologi.tex
 %% Bab IV — Metodologi Penelitian
 %% Sumber: writings/experiment-design.md (§1–§12)
 %% Aturan: .cursor/rules/disertation/09-bab4-metodologi.mdc
@@ -23,7 +23,7 @@ Penelitian ini disusun dalam dua pilar yang saling melengkapi.
 \emph{Mamba-xLSTM-Net}.
 \textbf{Pilar~2} berfokus pada interpretabilitas representasi laten model
 melalui \emph{Sparse Autoencoder} (SAE) dan pemetaan ke frekuensi
-karakteristik fisik bantalan.
+karakteristik fisik \emph{bearing}.
 Kerangka penelitian secara keseluruhan ditunjukkan pada
 Gambar~\ref{fig:bab4_kerangka}.
 
@@ -69,7 +69,7 @@ Gambar~\ref{fig:bab4_kerangka}.
          fitur \emph{health indicator} (HI) dan sekuens berjendela, kemudian
          dimasukkan ke Mamba-xLSTM-Net untuk prediksi RUL (Pilar~1); representasi
          laten model secara \emph{post-hoc} diinterpretasi oleh Top-$k$ SAE dan
-         dipetakan ke frekuensi karakteristik fisik bantalan (Pilar~2).}
+         dipetakan ke frekuensi karakteristik fisik \emph{bearing} (Pilar~2).}
 \label{fig:bab4_kerangka}
 \end{figure}
 
@@ -77,9 +77,9 @@ Gambar~\ref{fig:bab4_kerangka}.
 \label{sec:bab4_dataset}
 
 Eksperimen menggunakan dua dataset publik \emph{run-to-failure} yang
-paling banyak dipakai dalam literatur prognostik bantalan.
+paling banyak dipakai dalam literatur prognostik \emph{bearing}.
 Penggunaan dua dataset sekaligus adalah keputusan disengaja: PHM2012
-menyediakan jumlah bantalan lebih besar dengan rekaman pendek dan padat,
+menyediakan jumlah \emph{bearing} lebih besar dengan rekaman pendek dan padat,
 sementara XJTU-SY menyediakan rekaman panjang dengan label mode kegagalan
 eksplisit.
 Kombinasi keduanya memberikan basis empiris yang lebih kuat dibandingkan
@@ -105,9 +105,9 @@ Rincian atribut dataset ditampilkan pada Tabel~\ref{tab:bab4_phm2012}.
 \midrule
 Sumber                  & FEMTO-ST Institute, Université de Franche-Comté \\
 \emph{Test rig}         & PRONOSTIA \\
-Bantalan uji            & NSK 6804 (\emph{deep groove ball bearing}) \\
+\emph{Bearing} uji            & NSK 6804 (\emph{deep groove ball bearing}) \\
 Kondisi operasi         & 3 (1800~rpm/4000~N; 1650~rpm/4200~N; 1500~rpm/5000~N) \\
-Total bantalan          & 17 (6 \emph{training set}, 11 \emph{test set}) \\
+Total \emph{bearing}          & 17 (6 \emph{training set}, 11 \emph{test set}) \\
 Sensor                  & Akselerometer horizontal + vertikal (25{,}6~kHz), termokopel \\
 Durasi rekaman          & 0{,}1 detik per rekaman; interval 10 detik \\
 Sampel per rekaman      & 2.560 \\
@@ -124,7 +124,7 @@ agar hasil dapat dibandingkan langsung dengan literatur \emph{benchmark}
 yang telah dipublikasikan.
 
 Gambar~\ref{fig:bab4_dataset_lifecycle} mengilustrasikan profil nilai RMS
-akselerometer sebuah bantalan PHM2012 (Bearing~1\_1) sepanjang siklus
+akselerometer sebuah \emph{bearing} PHM2012 (Bearing~1\_1) sepanjang siklus
 hidupnya, memperlihatkan fase sehat yang panjang diikuti fase degradasi
 akseleratif menjelang kegagalan. Profil ini secara visual mengonfirmasi
 asumsi \emph{piecewise} RUL (Persamaan~\ref{eq:bab3_label_piecewise}) yang
@@ -159,7 +159,7 @@ digunakan dalam penelitian ini, di mana penurunan RUL baru mulai pada titik
 
 Dataset XJTU-SY dikembangkan oleh Xi'an Jiaotong University bersama
 Sumyoung Technology menggunakan \emph{test rig} akselerasi umur pakai
-bantalan gelinding \citetitb{Wang2020XJTU}.
+\emph{rolling element bearing} \citetitb{Wang2020XJTU}.
 Rincian atribut dataset ditampilkan pada Tabel~\ref{tab:bab4_xjtusy}.
 
 \begin{table}[ht]
@@ -172,19 +172,19 @@ Rincian atribut dataset ditampilkan pada Tabel~\ref{tab:bab4_xjtusy}.
 \textbf{Atribut} & \textbf{Nilai} \\
 \midrule
 Sumber              & Xi'an Jiaotong University \& Sumyoung Technology \\
-Bantalan uji        & LDK UER204 (\emph{deep groove ball bearing}) \\
+\emph{Bearing} uji        & LDK UER204 (\emph{deep groove ball bearing}) \\
 Kondisi operasi     & 3 (2100~rpm/12~kN; 2250~rpm/11~kN; 2400~rpm/10~kN) \\
-Total bantalan      & 15 (kondisi 1: 5; kondisi 2: 5; kondisi 3: 5) \\
+Total \emph{bearing}      & 15 (kondisi 1: 5; kondisi 2: 5; kondisi 3: 5) \\
 Sensor              & Akselerometer horizontal + vertikal (25{,}6~kHz) \\
 Durasi rekaman      & 1{,}28 detik per rekaman; interval 1 menit \\
 Sampel per rekaman  & 32.768 \\
-Label mode kegagalan & \emph{Outer race}, \emph{inner race}, \emph{cage} (per bantalan) \\
+Label mode kegagalan & \emph{Outer race}, \emph{inner race}, \emph{cage} (per \emph{bearing}) \\
 Catatan             & Kondisi 3 tidak tersedia; hanya kondisi 1 dan 2 digunakan \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Ketersediaan label mode kegagalan per bantalan pada XJTU-SY menjadi aset
+Ketersediaan label mode kegagalan per \emph{bearing} pada XJTU-SY menjadi aset
 penting untuk validasi interpretabilitas pada Pilar~2: bila SAE memetakan
 fitur ke BPFO atau BPFI, label mode kegagalan eksplisit memungkinkan
 uji silang apakah pemetaan tersebut konsisten dengan jenis cacat aktual
@@ -213,7 +213,7 @@ E_{k} = \sqrt{\frac{1}{N}\sum_{i=1}^{N} x_{k,i}^{2}}, \quad k = 1, 2, \ldots, N_
 \noindent di mana $x_{k,i}$ adalah sampel sinyal pada sub-pita ke-$k$
 dan $N$ adalah jumlah sampel per sub-pita.
 Pendekatan ini meminjam dari teori \emph{envelope analysis} klasik yang
-menunjukkan bahwa cacat bantalan menghasilkan modulasi amplitudo yang
+menunjukkan bahwa cacat \emph{bearing} menghasilkan modulasi amplitudo yang
 terkonsentrasi pada pita frekuensi tertentu, umumnya di sekitar resonansi
 tinggi \citetitb{Lei2018Machinery}.
 
@@ -222,7 +222,7 @@ tinggi \citetitb{Lei2018Machinery}.
 
 Label HI \emph{ground truth} dihasilkan dengan skema linear dari 1{,}0
 (saat rekaman pertama) ke 0{,}0 (saat \emph{end-of-life}), ternormalisasi
-terhadap total panjang hidup tiap bantalan:
+terhadap total panjang hidup tiap \emph{bearing}:
 
 \begin{equation}\label{eq:bab4_rul_linear}
 r_{t} = \frac{T - t}{T}, \quad t = 0, 1, \ldots, T-1,
@@ -268,20 +268,20 @@ memerlukan setiap \emph{window} untuk diestimasi.
 \section{Pembagian Data}
 \label{sec:bab4_split}
 
-Pembagian data dilakukan secara berbasis bantalan (\emph{bearing-wise})
+Pembagian data dilakukan secara berbasis \emph{bearing} (\emph{bearing-wise})
 untuk mencegah kebocoran data (\emph{data leakage}).
-Sampel dari satu bantalan yang sama tidak diizinkan tersebar ke set
+Sampel dari satu \emph{bearing} yang sama tidak diizinkan tersebar ke set
 pelatihan dan pengujian, karena karakteristik degradasi unik tiap
-bantalan dapat dipelajari secara dangkal oleh model.
+\emph{bearing} dapat dipelajari secara dangkal oleh model.
 Statistik normalisasi (mean, deviasi standar) dihitung \emph{hanya}
 pada \emph{training set} dan diterapkan ke \emph{validation} serta
 \emph{test set} tanpa modifikasi lebih lanjut.
 
 Gambar~\ref{fig:bab4_split_diagram} memperlihatkan skema pembagian
 \emph{bearing-wise} untuk kedua dataset secara berdampingan. Prinsip
-utama yang dijaga adalah bahwa identitas bantalan tidak pernah
+utama yang dijaga adalah bahwa identitas \emph{bearing} tidak pernah
 bersilang antar-set, sehingga metrik evaluasi pada \emph{test set}
-mencerminkan kemampuan generalisasi model terhadap bantalan yang
+mencerminkan kemampuan generalisasi model terhadap \emph{bearing} yang
 belum pernah dilihat selama pelatihan.
 
 \begin{figure}[ht]
@@ -334,9 +334,9 @@ belum pernah dilihat selama pelatihan.
   \end{tikzpicture}%
   }
   \caption{Skema pembagian \emph{bearing-wise} pada PHM2012 (atas) dan
-           XJTU-SY (bawah). Setiap kotak mewakili satu bantalan; warna
+           XJTU-SY (bawah). Setiap kotak mewakili satu \emph{bearing}; warna
            menunjukkan set: biru = latih, oranye = validasi, merah = uji.
-           Tidak ada bantalan yang bersilang antar-set, memastikan evaluasi
+           Tidak ada \emph{bearing} yang bersilang antar-set, memastikan evaluasi
            bebas kebocoran data.}
   \label{fig:bab4_split_diagram}
 \end{figure}
@@ -345,7 +345,7 @@ belum pernah dilihat selama pelatihan.
 \label{subsec:bab4_split_phm}
 
 Pembagian \emph{bearing-wise} yang diterapkan pada dataset PHM2012 dirinci
-pada Tabel~\ref{tab:bab4_split_phm}. Pemilihan bantalan untuk masing-masing
+pada Tabel~\ref{tab:bab4_split_phm}. Pemilihan \emph{bearing} untuk masing-masing
 set mengikuti konvensi kompetisi PHM2012 sehingga memungkinkan perbandingan
 langsung dengan literatur.
 
@@ -356,11 +356,11 @@ langsung dengan literatur.
 \small
 \begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{Set}       & \textbf{Bantalan}                              & \textbf{Jumlah} \\
+\textbf{Set}       & \textbf{\emph{Bearing}}                              & \textbf{Jumlah} \\
 \midrule
-\emph{Training}    & 1\_1, 1\_2, 1\_4, 2\_1, 2\_3, 2\_5, 3\_1      & 7 bantalan \\
-\emph{Validation}  & 1\_5, 2\_2                                     & 2 bantalan \\
-\emph{Test}        & 1\_3, 1\_6, 1\_7, 2\_4, 2\_6, 2\_7, 3\_2, 3\_3 & 8 bantalan \\
+\emph{Training}    & 1\_1, 1\_2, 1\_4, 2\_1, 2\_3, 2\_5, 3\_1      & 7 \emph{bearing} \\
+\emph{Validation}  & 1\_5, 2\_2                                     & 2 \emph{bearing} \\
+\emph{Test}        & 1\_3, 1\_6, 1\_7, 2\_4, 2\_6, 2\_7, 3\_2, 3\_3 & 8 \emph{bearing} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -374,7 +374,7 @@ yang dipublikasikan \citetitb{Nectoux2012PRONOSTIA}.
 
 Pembagian \emph{bearing-wise} untuk XJTU-SY ditampilkan pada
 Tabel~\ref{tab:bab4_split_xjtu}. Karena kondisi 3 tidak tersedia
-pada infrastruktur yang digunakan, hanya 10 bantalan dari kondisi 1
+pada infrastruktur yang digunakan, hanya 10 \emph{bearing} dari kondisi 1
 dan 2 yang diikutsertakan.
 
 \begin{table}[ht]
@@ -384,16 +384,16 @@ dan 2 yang diikutsertakan.
 \small
 \begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{Set}       & \textbf{Bantalan}           & \textbf{Jumlah} \\
+\textbf{Set}       & \textbf{\emph{Bearing}}           & \textbf{Jumlah} \\
 \midrule
-\emph{Training}    & 1\_1, 1\_2, 1\_3, 2\_1, 2\_2 & 5 bantalan \\
-\emph{Validation}  & 1\_4                          & 1 bantalan \\
-\emph{Test}        & 1\_5, 2\_3                    & 2 bantalan \\
+\emph{Training}    & 1\_1, 1\_2, 1\_3, 2\_1, 2\_2 & 5 \emph{bearing} \\
+\emph{Validation}  & 1\_4                          & 1 \emph{bearing} \\
+\emph{Test}        & 1\_5, 2\_3                    & 2 \emph{bearing} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\emph{Test set} XJTU-SY hanya berisi dua bantalan karena keterbatasan
+\emph{Test set} XJTU-SY hanya berisi dua \emph{bearing} karena keterbatasan
 ketersediaan data (kondisi 3 tidak dapat diakses).
 Konsekuensinya, variansi metrik antar-\emph{seed} pada XJTU-SY relatif
 tinggi dan R\textsuperscript{2} sering negatif karena \emph{sum of
@@ -418,10 +418,10 @@ Pertanyaan mendasar dalam desain arsitektur prediksi RUL adalah: \emph{mengapa
 arsitektur hibrida, bukan arsitektur tunggal yang semakin diperdalam?} Tinjauan
 kritis pada Bab~\ref{bab:tinjauan-pustaka}
 menunjukkan bahwa tidak ada satu keluarga arsitektur yang secara tunggal mengatasi
-semua tantangan yang relevan untuk sinyal degradasi bantalan. Bagian ini
+semua tantangan yang relevan untuk sinyal degradasi \emph{bearing}. Bagian ini
 memformalisasi justifikasi tersebut dalam kerangka komplementaritas dua komponen.
 
-Sinyal degradasi bantalan menunjukkan dua rezim temporal yang memiliki karakteristik
+Sinyal degradasi \emph{bearing} menunjukkan dua rezim temporal yang memiliki karakteristik
 yang kontras secara fundamental. Pada \textbf{fase degradasi gradual} (awal hingga
 sekitar $70\%$ siklus hidup), amplitudo getaran meningkat perlahan, korelasi
 temporal mencakup jangkauan panjang, dan pola global lebih informatif daripada
@@ -719,13 +719,13 @@ Fungsi \emph{loss} SAE:
 \noindent tanpa regularisasi $\ell_1$ tambahan karena sparsity sudah
 dipaksa secara struktural melalui operator $\text{Top}_{k}(\cdot)$.
 
-\subsection{Pemetaan Frekuensi Karakteristik Bantalan (BPFx)}
+\subsection{Pemetaan Frekuensi Karakteristik \emph{Bearing} (BPFx)}
 \label{subsec:bab4_bpfx}
 
 Setelah SAE dilatih, setiap fitur laten $f_j$ dievaluasi korelasinya
 dengan amplitudo \emph{Hilbert envelope spectrum} sinyal getaran mentah
 pada pita frekuensi $\pm 2$~Hz di sekitar frekuensi karakteristik
-bantalan.
+\emph{bearing}.
 Empat frekuensi karakteristik yang digunakan:
 
 \begin{equation}\label{eq:bab4_bpfo}
@@ -744,7 +744,7 @@ Empat frekuensi karakteristik yang digunakan:
 \text{FTF} = \frac{f_{r}}{2} \left(1 - \frac{d}{D}\cos\theta\right),
 \end{equation}
 
-\noindent di mana $n$ adalah jumlah elemen gelinding, $d$ adalah
+\noindent di mana $n$ adalah jumlah \emph{rolling element}, $d$ adalah
 diameter elemen, $D$ adalah \emph{pitch diameter}, $\theta$ adalah
 sudut kontak (diasumsikan 0\textdegree\ untuk \emph{deep groove ball
 bearing} tanpa beban aksial), dan $f_{r}$ adalah frekuensi rotasi
@@ -761,7 +761,7 @@ pada Tabel~\ref{tab:bab4_bpfx}.
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}l l c c c c r r r@{}}
 \toprule
-\textbf{Dataset} & \textbf{Bantalan} & $n$ & $d$ (mm) & $D$ (mm) & $f_r$ (Hz)
+\textbf{Dataset} & \textbf{\emph{Bearing}} & $n$ & $d$ (mm) & $D$ (mm) & $f_r$ (Hz)
   & \textbf{BPFO (Hz)} & \textbf{BPFI (Hz)} & \textbf{BSF (Hz)} \\
 \midrule
 PHM2012  & NSK 6804   & 13 & 3{,}5  & 25{,}5  & 30{,}0 & 168{,}24 & 221{,}76 & 107{,}23 \\
@@ -916,7 +916,7 @@ Nilai $R^{2} = 1$ menyatakan prediksi sempurna; nilai mendekati 0 setara
 dengan prediktor \emph{mean}; nilai negatif menunjukkan performa lebih
 buruk daripada prediktor \emph{mean}.
 R\textsuperscript{2} negatif pada XJTU-SY disebabkan oleh \emph{test
-split} yang sangat kecil (2 bantalan) yang menghasilkan variansi
+split} yang sangat kecil (2 \emph{bearing}) yang menghasilkan variansi
 SS\textsubscript{tot} kecil dan merupakan artefak statistik, bukan
 indikasi performa buruk secara substantif.
 
@@ -999,7 +999,7 @@ klaster, SHAP global, IG per \emph{window}.
 \label{subsec:bab4_e4}
 
 \textbf{Tujuan:} Menguji hipotesis H2 — apakah fitur SAE berkorelasi
-dengan frekuensi karakteristik fisik bantalan.
+dengan frekuensi karakteristik fisik \emph{bearing}.
 
 \textbf{Prosedur:} Korelasi Pearson dihitung antara vektor aktivasi
 tiap fitur SAE (1024 fitur) dan amplitudo \emph{Hilbert envelope
@@ -1029,12 +1029,12 @@ oleh tim pemeliharaan.
 \subsection{Konteks Industri dan Objek Studi}
 \label{subsec:bab4_industri_konteks}
 
-PT~SKF~Indonesia memproduksi bantalan gelinding untuk sektor otomotif
+PT~SKF~Indonesia memproduksi \emph{rolling element bearing} untuk sektor otomotif
 melalui beberapa tahapan permesinan: \emph{forging}, \emph{turning},
 \emph{outer ring grinding}, \emph{inner ring grinding}, dan
 \emph{honing} (lihat Gambar~\ref{fig:bab1_objek_industri}). Studi kasus
 ini fokus pada dua mesin \emph{outer ring grinding} (OR1 dan OR2)
-yang memproduksi cincin luar bantalan. Permasalahan utama adalah
+yang memproduksi cincin luar \emph{bearing}. Permasalahan utama adalah
 tingginya \emph{scrap rate} akibat keausan \emph{cutting tool}
 spindel yang menyebabkan parameter kualitas (\emph{vibration checking}
 dan \emph{radial clearance checking}) keluar dari rentang spesifikasi.
@@ -1087,7 +1087,7 @@ Label tiga kelas dihitung secara otomatis menggunakan ambang
 \emph{Progression Index} (PI) ternormalisasi yang sudah dijelaskan
 pada Subbab~\ref{subsec:bab3_kls_label}. PI dihitung per perekaman
 sebagai rasio kenaikan parameter \emph{velocity RMS} terhadap
-\emph{baseline} bantalan baru, dikoreksi oleh kemiringan tren
+\emph{baseline} \emph{bearing} baru, dikoreksi oleh kemiringan tren
 \emph{moving window} 1~jam. Ambang $\text{PI} \in [0,\,0{,}20)$
 menghasilkan label \emph{Normal}, $[0{,}20,\,0{,}50)$ menghasilkan
 \emph{Warning}, dan $\geq 0{,}50$ menghasilkan \emph{Critical}.
