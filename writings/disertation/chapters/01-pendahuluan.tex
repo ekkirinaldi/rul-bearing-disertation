@@ -6,10 +6,14 @@
 \chapter{Pendahuluan}
 \label{bab:pendahuluan}
 
-Bab ini memaparkan latar belakang penelitian, rumusan masalah beserta
-pertanyaan penelitian, tujuan penelitian dan novelti, manfaat penelitian,
-batasan dan asumsi penelitian, kontribusi dan posisi penelitian, serta
-sistematika penulisan disertasi yang terdiri dari enam bab.
+Perawatan prediktif bantalan gelinding memerlukan dua kemampuan yang
+saling melengkapi: deteksi jenis kerusakan yang akurat dan dapat
+dijelaskan, serta estimasi sisa umur pakai yang andal secara statistik.
+Bab ini memaparkan konteks industri yang melatarbelakangi kedua tuntutan
+tersebut, merumuskan pertanyaan penelitian yang memandu investigasi
+empiris, menetapkan novelti beserta status pembuktiannya yang eksplisit,
+serta menjabarkan kontribusi dan sistematika penulisan enam bab
+disertasi ini.
 
 \section{Latar Belakang}
 \label{sec:bab1_latar}
@@ -92,8 +96,8 @@ Pada sisi prognostik, arsitektur baru Mamba \citetitb{Gu2023Mamba}
 dan xLSTM \citetitb{Beck2024xLSTM} membuka peluang pemodelan sekuens
 panjang yang lebih efisien untuk estimasi RUL.
 
-Penerapan benchmark multi-model yang mencakup tiga keluarga algoritma
-secara paralel --- keluarga \emph{kernel} (SVM, LR), \emph{tree-based}
+Penerapan benchmark multi-model yang mencakup tiga golongan algoritma
+secara paralel --- golongan \emph{kernel} (SVM, LR), \emph{tree-based}
 (DT, RF, XGBoost), dan \emph{deep learning} (WDCNN) --- memberikan
 perspektif konsistensi yang penting bagi adopsi industri: model mana
 yang memenuhi keseimbangan optimal antara akurasi dan kompleksitas
@@ -187,12 +191,12 @@ RUL --- bukan klaim kuantitatif dari studi \emph{deployment} lapangan.
 
 \textbf{RQ2 --- Pendekatan Hibrid ML dan DL untuk Deteksi Kerusakan
 dan Estimasi RUL.}
-Apakah pendekatan hibrid yang menggabungkan keluarga algoritma
+Apakah pendekatan hibrid yang menggabungkan golongan algoritma
 statistik-kernel (SVM, LR), \emph{tree-based} (DT, RF, XGBoost),
 dan \emph{deep learning} (WDCNN untuk diagnostik; Mamba-xLSTM-Net,
 N-BEATS-xLSTM-RUL, SparseGate-TCN-RUL untuk prognostik) dapat
 memberikan deteksi kerusakan dan estimasi RUL bantalan yang konsisten
-lintas keluarga algoritma dan lintas dataset publik (CWRU, PHM2012,
+lintas golongan algoritma dan lintas dataset publik (CWRU, PHM2012,
 XJTU-SY, IMS)?
 
 \begin{itemize}
@@ -212,8 +216,8 @@ XJTU-SY, IMS)?
 \end{itemize}
 
 \noindent\textit{Catatan cakupan:} "Hibrid" dalam disertasi ini
-berarti lintas keluarga algoritma yang dievaluasi secara paralel,
-bukan \emph{ensembling} antar keluarga ke satu prediktor tunggal.
+berarti lintas golongan algoritma yang dievaluasi secara paralel,
+bukan \emph{ensembling} antar golongan ke satu prediktor tunggal.
 
 \medskip
 
@@ -245,10 +249,16 @@ industri manufaktur?
 \section{Tujuan Penelitian dan Novelti}
 \label{sec:bab1_tujuan}
 
-Tiga tujuan penelitian dipetakan satu-ke-satu ke tiga pertanyaan
-penelitian §\ref{sec:bab1_rumusan} dan ke lima novelti N1–N5.
-Setiap novelti dilengkapi status pembuktian eksplisit untuk menghindari
-klaim berlebih.
+Tiga tujuan penelitian dalam disertasi ini dipetakan satu-ke-satu
+ke tiga pertanyaan penelitian §\ref{sec:bab1_rumusan} dan ke lima
+novelti N1–N5.
+Pemetaan eksplisit ini penting agar setiap klaim kontribusi dapat
+dilacak ke bukti empiris yang terukur, bukan sekadar pernyataan
+aspirasional.
+Setiap novelti dilengkapi status pembuktian --- apakah
+\emph{empiris} (didukung angka kuantitatif) atau
+\emph{konseptual/sintesis} --- untuk menghindari klaim berlebih yang
+lazim dijumpai dalam literatur PdM berbasis \emph{deep learning}.
 
 \textbf{Tujuan~1 — Pengembangan Sistem PdM Multi-Tier (menjawab RQ1).}
 Merancang cetak biru (\emph{blueprint}) sistem perawatan prediktif
@@ -270,7 +280,7 @@ sesuai).
 
 \textbf{Tujuan~2 — Validasi Konsistensi Hibrid ML dan DL Lintas
 Dataset (menjawab RQ2).}
-Memvalidasi konsistensi tiga keluarga algoritma diagnostik
+Memvalidasi konsistensi tiga golongan algoritma diagnostik
 (kernel/tree/\emph{deep}) dan tiga arsitektur \emph{backbone}
 prognostik (Mamba-xLSTM, N-BEATS-xLSTM, SparseGate-TCN) lintas
 empat dataset publik (CWRU, PHM2012, XJTU-SY, IMS), dengan inferensi
@@ -285,9 +295,16 @@ konvergensi BPFx-\emph{dominant} lintas arsitektur; \emph{hit-rate}
 turun ke ${\approx}0$ pada kedua \emph{negative control}.
 \emph{Status: \textbf{empiris}.}
 
-Catatan: integrasi multi-modal \emph{radial clearance} yang disebutkan
-dalam SK-Toto Tujuan~2 tetap di luar lingkup empiris disertasi ini
-dan dijadikan rekomendasi lanjutan eksplisit (Bab~VI, §VI.5).
+Integrasi multi-modal data \emph{radial clearance} --- yang
+disebutkan dalam SK-Toto Tujuan~2 sebagai sasaran akhir pengembangan
+sistem PdM --- berada di luar lingkup empiris disertasi ini, meskipun
+relevansinya tidak diabaikan.
+Kendala utamanya adalah keterbatasan ketersediaan rekaman
+\emph{vibration-clearance} berpasangan dalam jumlah yang memadai
+untuk pelatihan model \emph{multi-modal}.
+Integrasi tersebut dijadikan rekomendasi lanjutan eksplisit pada
+Bab~VI, §VI.5, dengan prasyarat teknis dan jalur pengumpulan data
+yang dispesifikasikan.
 
 \medskip
 
@@ -338,7 +355,12 @@ multi-tier; bukan klaim hasil \emph{deployment} lapangan.
 \section{Manfaat Penelitian}
 \label{sec:bab1_manfaat}
 
-Penelitian ini memberikan manfaat pada tiga tataran:
+Keberhasilan pendekatan diagnostik dan prognostik yang dikembangkan
+dalam disertasi ini tidak terbatas pada sumbangan akademik semata,
+tetapi memiliki implikasi langsung bagi praktisi industri yang
+menghadapi tekanan konkret untuk meningkatkan keandalan mesin produksi
+sekaligus memangkas biaya perawatan tak terencana.
+Manfaat yang diharapkan mencakup tiga tataran yang saling memperkuat:
 
 \begin{enumerate}
   \item Memberikan contoh kasus implementasi analisis \emph{big data}
@@ -388,7 +410,7 @@ ini selesai (Bab~VI, Rekomendasi~7).
         Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL, SparseGate-TCN-RUL
         untuk prognostik.
         \emph{Baseline} tambahan: SVM-RBF, LR, DT, RF, XGBoost
-        (keluarga \emph{kernel} dan \emph{tree}).
+        (golongan \emph{kernel} dan \emph{tree}).
   \item \textbf{XAI:} SHAP (KernelExplainer, TreeExplainer,
         DeepExplainer) untuk diagnostik; \emph{Top-k} SAE dengan
         pemetaan \emph{Hilbert envelope} untuk prognostik.
@@ -447,7 +469,7 @@ Tabel~\ref{tab:bab1_kontribusi}.
     K3 & Integrasi PdM Multi-Tier & N5 & RQ1 / Sub-RQ1.1 & Konseptual \\
     K4 & Konsistensi hibrid ML dan DL & mendukung N4 &
        RQ2 / Sub-RQ2.1 & Empiris \\
-       & lintas keluarga & & + Sub-RQ2.2 & \\
+       & lintas golongan & & + Sub-RQ2.2 & \\
     \hline
   \end{tabular}
 \end{table}
@@ -597,8 +619,8 @@ infrastruktur dan protokol reproduksi.
 
 \textbf{Bab~IV} (\emph{Bearing Fault Detection}: Metodologi dan
 Hasil) menyajikan Jalur~A secara \emph{end-to-end}: benchmark tiga
-keluarga algoritma (kernel → tree → \emph{deep} WDCNN) dengan SHAP
-per keluarga, formalisasi FSM, hasil klasifikasi, studi ablasi
+golongan algoritma (kernel → tree → \emph{deep} WDCNN) dengan SHAP
+per golongan, formalisasi FSM, hasil klasifikasi, studi ablasi
 \emph{BatchNorm}, dan interpretasi fisika sinyal.
 Bab~IV disusun dengan urutan \textbf{metode → hasil} agar pembaca
 melihat dengan jelas perbedaan pendekatan diagnostik dengan prognostik.
