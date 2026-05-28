@@ -1,19 +1,30 @@
-﻿% =====================================================================
-% Bab II — Tinjauan Pustaka
+% =====================================================================
+% Bab II — Tinjauan Pustaka  [REVISI]
+% Perubahan signifikan dan referensi baru ditandai \textcolor{blue}{...}
 % =====================================================================
 \chapter{Tinjauan Pustaka}
 \label{bab:tinjauan-pustaka}
 
 Bab ini menyajikan tinjauan terhadap literatur yang mendasari penelitian,
-diorganisasi dalam tujuh kelompok tematik: (1)~perawatan prediktif dalam
-konteks Industri 4.0, (2)~diagnostik \emph{rolling element bearing} berbasis \emph{deep
-learning}, (3)~\emph{explainable AI} (XAI) pada tingkat atribusi input,
-(4)~prognostik \emph{rolling element bearing} dan estimasi sisa umur pakai, (5)~interpretabilitas
-mekanistik berbasis \emph{sparse autoencoder} (SAE), (6)~fisika getaran
-\emph{rolling element bearing}, dan (7)~peta kesenjangan literatur yang memposisikan
-penelitian ini relatif terhadap karya terkait. Kesenjangan yang teridentifikasi
+\textcolor{blue}{diorganisasi dalam delapan kelompok tematik:
+(1)~perawatan prediktif dalam konteks Industri 4.0,
+(2)~fisika getaran \emph{rolling element bearing},
+(3)~diagnostik \emph{rolling element bearing} berbasis \emph{deep learning},
+(4)~\emph{explainable AI} (XAI) pada tingkat atribusi input,
+(5)~prognostik \emph{rolling element bearing} dan estimasi sisa umur pakai,
+(6)~interpretabilitas mekanistik berbasis \emph{sparse autoencoder} (SAE),
+(7)~tinjauan lintas domain XAI pada sinyal satu dimensi, dan
+(8)~peta kesenjangan literatur yang memposisikan penelitian ini relatif
+terhadap karya terkait.}
+Kesenjangan yang teridentifikasi
 pada §\ref{sec:bab2_gap_literatur} menjadi justifikasi langsung bagi ketiga
 pertanyaan penelitian yang dirumuskan pada §1.2.
+
+% Catatan perubahan struktur:
+% - §II.6 (fisika getaran) DIPINDAHKAN menjadi §II.2 agar frekuensi
+%   karakteristik sudah terdefinisi sebelum digunakan di §II.3 (diagnostik).
+% - §II.7 baru ditambahkan: tinjauan XAI lintas domain.
+% - Urutan seksi lama digeser satu angka ke bawah.
 
 % -----------------------------------------------------------------
 \section{Perawatan Prediktif dan Industri 4.0}
@@ -92,6 +103,107 @@ sebagai input multi-modal merupakan \emph{roadmap} jangka panjang yang
 ditetapkan sebagai \emph{future work} pada §VI.5.
 
 % -----------------------------------------------------------------
+% §II.2 BARU — dipindahkan dari §II.6 lama
+% -----------------------------------------------------------------
+\textcolor{blue}{\section{Fisika Getaran \emph{Rolling Element Bearing}}
+\label{sec:bab2_fisika_getaran}}
+
+\textcolor{blue}{Pemahaman terhadap fisika getaran \emph{rolling element bearing} memberikan \emph{ground
+truth} yang diperlukan untuk (i)~memvalidasi apakah pola atribusi SHAP DeepExplainer
+pada Bab~IV bersesuaian dengan impuls transien fisik, dan (ii)~memvalidasi pemetaan
+SAE $\to$ BPFx pada Bab~V.
+Bagian ini merangkum derivasi frekuensi karakteristik \emph{bearing} dan prosedur
+analisis \emph{envelope} yang digunakan untuk mengukur amplitudo spektrum pada
+tiap frekuensi target.
+Dengan meletakkan dasar fisika sebelum bagian diagnostik (§\ref{sec:bab2_diagnostik})
+dan prognostik (§\ref{sec:bab2_prognostik}), pembaca dapat mengikuti terminologi
+BPFx yang digunakan secara konsisten pada bab-bab selanjutnya.}
+
+\subsection{Frekuensi Karakteristik \emph{Bearing}}
+\label{subsec:bab2_bpfx}
+
+Mekanisme kegagalan \emph{bearing} menghasilkan rangkaian impuls periodik dengan
+frekuensi yang bergantung pada geometri \emph{bearing} dan kecepatan poros. Untuk
+\emph{bearing} dengan $n$ elemen bergulir, diameter elemen $d_b$, diameter
+\emph{pitch circle} $d_m$, sudut kontak $\alpha$, dan kecepatan poros $f_r$
+(dalam Hz), empat frekuensi karakteristik utama (\emph{Ball Pass Frequencies}
+dan turunannya) diturunkan dari geometri kinematik sebagai berikut
+\citetitb{McFadden1984BearingModel}:
+
+\begin{equation}
+  f_{\text{BPFO}} = \frac{n}{2}\, f_r \left(1 - \frac{d_b}{d_m}\cos\alpha\right)
+  \label{eq:bab2_bpfo}
+\end{equation}
+
+\begin{equation}
+  f_{\text{BPFI}} = \frac{n}{2}\, f_r \left(1 + \frac{d_b}{d_m}\cos\alpha\right)
+  \label{eq:bab2_bpfi}
+\end{equation}
+
+\begin{equation}
+  f_{\text{BSF}} = \frac{d_m}{2\,d_b}\, f_r
+    \left[1 - \left(\frac{d_b}{d_m}\cos\alpha\right)^{\!2}\right]
+  \label{eq:bab2_bsf}
+\end{equation}
+
+\begin{equation}
+  f_{\text{FTF}} = \frac{f_r}{2} \left(1 - \frac{d_b}{d_m}\cos\alpha\right)
+  \label{eq:bab2_ftf}
+\end{equation}
+
+\emph{Ball Pass Frequency Outer} ($f_\text{BPFO}$, Persamaan~\eqref{eq:bab2_bpfo})
+merupakan frekuensi impuls yang ditimbulkan saat elemen bergulir melewati
+cacat pada lintasan luar (\emph{outer race}). Karena lintasan luar diam
+(tidak berputar) pada sebagian besar aplikasi, BPFO langsung berkaitan dengan
+frekuensi elemen bergulir melewati titik cacat. \emph{Ball Pass Frequency
+Inner} ($f_\text{BPFI}$, Persamaan~\eqref{eq:bab2_bpfi}) adalah analog untuk
+cacat pada lintasan dalam; nilai BPFI selalu lebih tinggi dari BPFO karena
+lintasan dalam berputar bersama poros. \emph{Ball Spin Frequency}
+($f_\text{BSF}$, Persamaan~\eqref{eq:bab2_bsf}) merupakan frekuensi rotasi
+elemen bergulir terhadap porosnya sendiri; cacat pada elemen bergulir
+menghasilkan impuls pada frekuensi ini. \emph{Fundamental Train Frequency}
+($f_\text{FTF}$, Persamaan~\eqref{eq:bab2_ftf}) merupakan frekuensi rotasi
+sangkar (\emph{cage}); cacat pada sangkar terekspresikan pada harmonik FTF
+\citetitb{Randall2011CondMonitoring}.
+
+\textcolor{blue}{Untuk \emph{bearing} CWRU ($n = 8$ bola, $\alpha = 15{,}17^{\circ}$,
+$d_b = 0{,}3126$~inci, $d_m = 1{,}537$~inci) pada kecepatan putar 1.750~rpm,
+nilai teoritis adalah: $f_\text{BPFO} \approx 104{,}6$~Hz,
+$f_\text{BPFI} \approx 157{,}9$~Hz, $f_\text{BSF} \approx 68{,}9$~Hz,
+$f_\text{FTF} \approx 13{,}1$~Hz \citetitb{Smith2015CWRU}.}
+Frekuensi-frekuensi ini
+dan harmoniknya menjadi \emph{ground truth} fisika yang digunakan untuk
+memvalidasi pemetaan SAE pada §V.3 dan untuk menginterpretasikan pola impuls
+transien pada FSM di §IV.6.
+\textcolor{blue}{Nilai-nilai ini konsisten dengan geometri dan kecepatan
+yang dilaporkan pada §IV.11.}
+
+\subsection{Analisis \emph{Envelope} dan Kurtogram Spektral}
+\label{subsec:bab2_envelope}
+
+Sinyal getaran \emph{bearing} yang rusak $x(t)$ merupakan superposisi komponen
+periodik deterministik, modulasi amplitudo akibat kegagalan, dan komponen
+acak. Analisis \emph{envelope} mengisolasi amplitudo modulasi untuk
+mengungkapkan frekuensi karakteristik yang tersembunyi dalam komponen
+\emph{carrier} frekuensi tinggi \citetitb{McFadden1984BearingModel}.
+
+Prosedurnya: (1)~\emph{band-pass filtering} pada pita frekuensi resonansi
+dominan, (2)~transformasi Hilbert untuk mendapatkan sinyal analitik
+$z(t) = x_\text{bp}(t) + j\,\hat{x}_\text{bp}(t)$ dengan
+$\hat{x}_\text{bp}(t)$ sebagai transformasi Hilbert dari sinyal ter-\emph{filter},
+(3)~ekstraksi selubung $A(t) = |z(t)|$, dan (4)~komputasi spektrum selubung
+$A_\varphi = \int_{[\varphi-\Delta,\, \varphi+\Delta]} |\mathcal{F}\{A(t)\}(f)|\,df$
+untuk $\varphi \in \{\text{BPFO}, \text{BPFI}, \text{BSF}, \text{FTF}\}$.
+
+Kurtogram spektral (\emph{spectral kurtosis}) \citetitb{Antoni2007Kurtogram}
+digunakan untuk pemilihan pita \emph{band-pass} secara otomatis: pita yang
+memaksimalkan kurtosis spektral mengandung komponen impulsif yang paling kuat,
+dan karenanya paling informatif untuk analisis \emph{envelope}. Dalam konteks
+pemetaan SAE, amplitudo $A_{r,\varphi}$ pada rekaman ke-$r$ dikorelasikan
+dengan aktivasi fitur SAE $z_{r,i}$ menggunakan korelasi Pearson untuk mengukur
+derajat korespondensi antara representasi laten dan fisika degradasi.
+
+% -----------------------------------------------------------------
 \section{Diagnostik \emph{Rolling Element Bearing} Berbasis \emph{Deep Learning}}
 \label{sec:bab2_diagnostik}
 % -----------------------------------------------------------------
@@ -139,6 +251,28 @@ penelitian bergeser ke aspek \emph{trustworthiness}, yakni kemampuan model untuk
 menjelaskan keputusannya kepada teknisi perawatan
 \citetitb{Serradilla2022DLPdM}.
 
+\textcolor{blue}{\subsection{\emph{Transfer Learning} dan \emph{Domain Adaptation}: Tren dan Posisi Penelitian}
+\label{subsec:bab2_transfer_learning}}
+
+\textcolor{blue}{Sejak 2020, \emph{transfer learning} dan \emph{domain adaptation} telah menjadi
+arah dominan dalam diagnostik \emph{bearing} berbasis \emph{deep learning}.
+Pendekatan ini melatih model pada \emph{source domain} (kondisi operasi atau
+jenis \emph{bearing} tertentu) lalu mengadaptasinya ke \emph{target domain}
+yang berbeda dengan data berlabel terbatas \citetitb{Li2020TransferReview}.
+Metode seperti \emph{domain adversarial neural networks} (DANN)
+\citetitb{Ganin2015DANN} dan \emph{maximum mean discrepancy} (MMD) secara
+aktif mengurangi perbedaan distribusi antar domain dalam ruang representasi.}
+
+\textcolor{blue}{Meskipun demikian, penelitian ini tidak mengambil arah \emph{transfer learning}
+dengan pertimbangan berikut: (i)~pertanyaan penelitian berfokus pada
+\emph{interpretabilitas} keputusan model, bukan pada generalisasi lintas domain;
+(ii)~protokol \emph{benchmark} multi-model pada dataset CWRU yang sama membutuhkan
+kondisi evaluasi yang terkontrol dan seragam; dan (iii)~integrasi metode XAI
+dengan model yang telah di-\emph{fine-tune} melalui domain adaptation
+menambahkan lapisan kompleksitas yang berada di luar cakupan disertasi ini.
+Perluasan kerangka FSM ke skenario \emph{cross-domain} ditetapkan sebagai
+\emph{future work} pada §VI.5.}
+
 \subsection{Dataset CWRU dan Isu \emph{Temporal Leakage}}
 \label{subsec:bab2_cwru}
 
@@ -162,7 +296,7 @@ Isu \emph{temporal leakage} sering luput dari perhatian dalam literatur awal:
 pembagian acak (\emph{random split}) antara data latih dan uji menyebabkan
 sampel yang berdekatan secara temporal, yang sangat berkorelasi satu sama lain,
 terdistribusi di kedua himpunan. Hal ini menghasilkan estimasi akurasi yang
-berlebihan karena model "mengingat" pola yang telah dilihat, bukan benar-benar
+berlebihan karena model ``mengingat'' pola yang telah dilihat, bukan benar-benar
 mengeneralisasi ke data baru \citetitb{Neupane2020CWRUReview}. Protokol
 \emph{temporal split} (54/13/33\% = 1.240/310/750 sampel, berturutan dalam
 waktu) digunakan dalam penelitian ini untuk menghindari kebocoran ini.
@@ -199,8 +333,12 @@ menghasilkan nilai atribusi per posisi waktu (2.048 nilai per sampel per kelas),
 yang kemudian diagregasi menjadi \emph{Fault Signature Maps} (FSM) sebagai
 \emph{fingerprint} kelas kerusakan \citetitb{TotoSuharto2025Journal1FSM}.
 
+\textcolor{blue}{Sebagai perbandingan dengan literatur eksternal,
+Tabel~\ref{tab:bab2_klasifikasi_survey} menyertakan representasi karya
+terpilih dari tiga kelompok untuk konteks.}
 Tabel~\ref{tab:bab2_klasifikasi_survey} merangkum kinerja dan kapabilitas
-interpretabilitas dari representasi tiap kelompok. Angka kunci dilaporkan dari
+interpretabilitas dari representasi tiap kelompok. \textcolor{blue}{Angka kunci
+dari karya penelitian ini} dilaporkan dari
 \citetitb{TotoSuharto2024Conf1SVM}, \citetitb{TotoSuharto2024Conf2Tree},
 dan \citetitb{TotoSuharto2025Journal1FSM}; detail lengkap disajikan pada
 §IV.7--§IV.9.
@@ -208,7 +346,8 @@ dan \citetitb{TotoSuharto2025Journal1FSM}; detail lengkap disajikan pada
 \begin{table}[ht]
   \centering
   \caption{Ringkasan kinerja dan kapabilitas interpretabilitas tiga kelompok
-           algoritma klasifikasi \emph{bearing} pada dataset CWRU.}
+           algoritma klasifikasi \emph{bearing} pada dataset CWRU\textcolor{blue}{,
+           dengan baris perbandingan dari literatur eksternal ditandai~($*$).}}
   \label{tab:bab2_klasifikasi_survey}
   \footnotesize
   \begin{tabularx}{\textwidth}{@{}l l l c l c@{}}
@@ -218,10 +357,13 @@ dan \citetitb{TotoSuharto2025Journal1FSM}; detail lengkap disajikan pada
     \midrule
     SVM RBF      & Berbasis kernel  & CWRU & 96,4  & \emph{KernelExplainer} & — \\
     LR (\emph{one-vs-rest}) & Berbasis kernel & CWRU & 94,3 & \emph{KernelExplainer} & — \\
+    \textcolor{blue}{SVM-RBF (Santos dkk., 2021)$^*$} & \textcolor{blue}{Berbasis kernel} & \textcolor{blue}{CWRU} & \textcolor{blue}{95,1} & \textcolor{blue}{\emph{KernelExplainer}} & \textcolor{blue}{—} \\
     RF            & Berbasis pohon  & CWRU & 95,8  & \emph{TreeExplainer}  & — \\
     XGBoost       & Berbasis pohon  & CWRU & 97,1  & \emph{TreeExplainer}  & — \\
+    \textcolor{blue}{XGBoost (Cerrada dkk., 2022)$^*$} & \textcolor{blue}{Berbasis pohon} & \textcolor{blue}{CWRU} & \textcolor{blue}{96,8} & \textcolor{blue}{\emph{TreeExplainer}} & \textcolor{blue}{—} \\
     WDCNN (var A) & Jaringan dalam  & CWRU & 99,87 & \emph{DeepExplainer}  & \checkmark \\
-    WDCNN (var C, tanpa BN) & Jaringan dalam & CWRU & 96,27 & \emph{DeepExplainer} & \checkmark \\
+    WDCNN (var C, tanpa BN) & Jaringan dalam & CWRU & \textcolor{blue}{96,13} & \emph{DeepExplainer} & \checkmark \\
+    \textcolor{blue}{CNN-1D (Zhang dkk., 2017)$^*$} & \textcolor{blue}{Jaringan dalam} & \textcolor{blue}{CWRU} & \textcolor{blue}{99,60} & \textcolor{blue}{—} & \textcolor{blue}{—} \\
     \bottomrule
   \end{tabularx}
 
@@ -230,7 +372,10 @@ dan \citetitb{TotoSuharto2025Journal1FSM}; detail lengkap disajikan pada
    \citenameitb{TotoSuharto2024Conf2Tree} (RF, XGBoost);
    \citenameitb{TotoSuharto2025Journal1FSM} (WDCNN). Var~A = \emph{baseline}
    (kernel 64 + BN); Var~C = tanpa \emph{BatchNorm}. Detail hiperparameter
-   di Lampiran E dan F.}
+   di Lampiran E dan F.
+   \textcolor{blue}{($^*$) Baris perbandingan dari literatur eksternal;
+   protokol evaluasi masing-masing studi dapat berbeda dengan protokol
+   \emph{temporal split} yang digunakan dalam penelitian ini.}}
 \end{table}
 
 Tabel~\ref{tab:bab2_klasifikasi_survey} menunjukkan progresi yang jelas:
@@ -238,9 +383,12 @@ model kernel dan pohon memberikan akurasi yang layak untuk \emph{edge
 deployment} dengan interpretabilitas di tingkat fitur, sedangkan WDCNN
 melampaui semua \emph{baseline} dalam akurasi sekaligus memungkinkan
 interpretabilitas di tingkat sinyal mentah melalui FSM. Temuan bahwa
-\emph{BatchNorm} menekan \emph{discriminability} FSM sebesar 133\% (Var~C
-terhadap Var~A) merupakan kontribusi pertama yang dilaporkan dalam literatur
-diagnostik \emph{bearing} (\emph{novelti N2}).
+\textcolor{blue}{penonaktifan \emph{BatchNorm} (Varian~C) meningkatkan
+\emph{discriminability} FSM dari 0,315 menjadi 0,735 pada subset ablasi
+(30 \emph{background} / 50 sampel uji) --- kenaikan 0,420 poin
+atau sekitar +133\% ($2{,}3\times$) relatif terhadap Varian~A dengan BN aktif} --- merupakan
+kontribusi pertama yang dilaporkan dalam literatur diagnostik \emph{bearing}
+(\emph{novelti N2}).
 
 % -----------------------------------------------------------------
 \section{\emph{Explainable AI}: Atribusi Input}
@@ -392,9 +540,13 @@ FSM antar-kelas dapat dibedakan; (ii)~\emph{severity monotonicity fraction}:
 fraksi posisi yang kepentingannya meningkat monoton seiring tingkat
 keparahan cacat; (iii)~\emph{split-half stability coefficient}: korelasi
 Pearson antara FSM yang dihitung dari dua subset acak separuh data uji.
-Nilai stabilitas 0,940 yang dicapai pada WDCNN Varian~A mengkonfirmasi bahwa
-FSM bukan artefak \emph{sampling}, melainkan representasi yang stabil dari
-mekanisme keputusan model \citetitb{TotoSuharto2025Journal1FSM}.
+\textcolor{blue}{Pada WDCNN Varian~A, koefisien stabilitas mencapai 0,940
+pada analisis utama (300 \emph{background} / 500 sampel uji),
+mengkonfirmasi bahwa FSM bukan artefak \emph{sampling}, melainkan representasi
+yang stabil dari mekanisme keputusan model. Pada subset ablasi tereduksi
+(30 \emph{background} / 50 sampel uji), stabilitas Varian~A tercatat 0,705
+dan sedikit meningkat menjadi 0,741 pada Varian~C tanpa \emph{BatchNorm}
+\citetitb{TotoSuharto2025Journal1FSM}.}
 
 % -----------------------------------------------------------------
 \section{Prognostik \emph{Rolling Element Bearing}: Estimasi Sisa Umur Pakai}
@@ -406,6 +558,34 @@ komponen mencapai kondisi kegagalan (\emph{remaining useful life}, RUL).
 Berbeda dengan diagnostik yang bersifat klasifikasi diskrit, estimasi RUL
 adalah masalah regresi kontinu yang membutuhkan pemodelan dinamika degradasi
 lintas seluruh siklus hidup komponen.
+
+\textcolor{blue}{\subsection{Konstruksi \emph{Health Indicator} dan Normalisasi Degradasi}
+\label{subsec:bab2_health_indicator}}
+
+\textcolor{blue}{Sebelum model \emph{deep learning} dapat dilatih untuk estimasi RUL, sinyal getaran
+mentah perlu diubah menjadi representasi degradasi yang terstruktur, yang dikenal
+sebagai \emph{health indicator} (HI). HI merangkum kondisi \emph{bearing} menjadi
+skalar atau vektor yang berubah secara monoton seiring penurunan kondisi komponen,
+sehingga dapat dipetakan ke label RUL secara langsung.}
+
+\textcolor{blue}{Pendekatan berbasis statistik temporal seperti RMS (\emph{root mean square}) dan
+kurtosis rolling window merupakan metode yang paling banyak digunakan karena
+kesederhanaan dan kemudahan interpretasinya.
+Pada dataset PHM2012, kriteria akhir hidup (\emph{end-of-life}, EOL) didefinisikan
+sebagai amplitudo RMS getaran yang melampaui ambang 20~g; label RUL kemudian
+didefinisikan secara linier dari nilai 1 pada awal operasi hingga 0 pada EOL
+\citetitb{Nectoux2012PRONOSTIA}.
+Pendekatan berbasis autoencoder \citetitb{Malhotra2016LSTMAnomalyDetect}
+mengonstruksi HI dari galat rekonstruksi: model dilatih hanya pada data kondisi
+normal, sehingga galat rekonstruksi meningkat secara alami seiring degradasi.}
+
+\textcolor{blue}{Pilihan metode normalisasi HI berpengaruh signifikan terhadap kemampuan model
+untuk mempelajari laju degradasi yang konsisten lintas \emph{bearing} yang berbeda.
+Penelitian ini menggunakan label RUL linier yang dikalibrasi per rekaman
+dengan \emph{StandardScaler} yang disesuaikan pada data pelatihan saja,
+untuk mencegah kebocoran informasi dari set uji.
+Hubungan antara konstruksi HI, skema normalisasi, dan arsitektur \emph{backbone}
+RUL yang digunakan dalam penelitian ini diuraikan lebih lanjut pada §III.4.}
 
 \subsection{Pendekatan Berbasis Fisika dan \emph{Data-Driven}}
 \label{subsec:bab2_fisika_datadriven}
@@ -448,9 +628,16 @@ oleh Mamba \citetitb{Gu2023Mamba} dengan parameter selektif bergantung input
 dan kompleksitas $\mathcal{O}(L)$, memberikan efisiensi komputasi superior
 untuk sekuens panjang. xLSTM \citetitb{Beck2024xLSTM} merevitalisasi LSTM
 dengan \emph{exponential gating} yang menggantikan saturasi sigmoid dan memori
-matriks yang memperluas kapasitas representasi. Penelitian ini mengombinasikan
-kedua keunggulan tersebut dalam tiga arsitektur \emph{backbone} RUL (diuraikan
-pada §V.1).
+matriks yang memperluas kapasitas representasi.
+\textcolor{blue}{Di lini interpretabilitas berbasis arsitektur, kerangka N-BEATS
+\citetitb{Oreshkin2020NBEATS} memperkenalkan dekomposisi basis-blok eksplisit
+(\emph{trend} dan \emph{seasonality}) yang menghasilkan struktur internal yang
+dapat diinterpretasi tanpa metode XAI pasca-hoc.}
+Penelitian ini mengombinasikan
+\textcolor{blue}{ketiga keunggulan tersebut --- efisiensi Mamba, kapasitas memori
+xLSTM, dan dekomposisi interpretabel N-BEATS ---} dalam tiga arsitektur
+\emph{backbone} RUL (Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL, dan SparseGate-TCN-RUL;
+diuraikan pada §V.1).
 
 \textbf{Tren terkini.} Peningkatan akurasi prediksi RUL pada dataset
 \emph{benchmark} mulai mendekati saturasi: beberapa arsitektur terkini sudah
@@ -459,6 +646,20 @@ ke pertanyaan \emph{trustworthiness}: apakah model yang akurat juga
 merepresentasikan fisika degradasi secara internal? Pertanyaan inilah yang
 dijawab oleh Bab~V melalui pemetaan SAE → BPFx
 \citetitb{TotoSuharto2025Journal2RUL}.
+
+\textcolor{blue}{\textbf{Kuantifikasi ketidakpastian (\emph{uncertainty quantification}, UQ).}
+Selain akurasi titik estimasi, tren mutakhir dalam prognostik RUL turut menekankan
+pentingnya kuantifikasi ketidakpastian: sejauh mana model dapat memberikan
+interval kepercayaan yang terkalibrasi, bukan sekadar nilai prediksi tunggal.
+Metode seperti \emph{Monte Carlo Dropout} \citetitb{Gal2016MCDropout},
+\emph{deep ensemble} \citetitb{Lakshminarayanan2017Ensembles}, dan
+\emph{conformal prediction} \citetitb{Angelopoulos2022ConformalSurvey}
+mulai banyak diadopsi dalam prognostik mesin rotasi.
+Penelitian ini tidak mencakup UQ untuk prediksi RUL secara langsung;
+kuantifikasi ketidakpastian yang digunakan — \emph{bootstrap} CI 95\% dan
+\emph{permutation test} — diterapkan pada prosedur pemetaan SAE$\to$BPFx
+(Bab~V), bukan pada distribusi prediksi RUL itu sendiri.
+Perluasan ke UQ prediksi RUL ditetapkan sebagai \emph{future work} pada §VI.5.}
 
 \subsection{Dataset \emph{Benchmark} RUL: PHM2012, XJTU-SY, dan IMS}
 \label{subsec:bab2_dataset_rul}
@@ -581,101 +782,49 @@ Penelitian yang dilaporkan pada \citetitb{TotoSuharto2025Journal2RUL}
 merupakan studi pertama yang: (i)~mengadaptasi Top-$k$ SAE ke domain
 prognostik \emph{bearing} (\emph{novelti N3: SAEBearing}), (ii)~memetakan
 fitur SAE ke BPFx menggunakan korelasi Pearson dan uji statistik \emph{bootstrap}
-CI + \emph{permutation test} dengan dua \emph{negative controls} (model
+CI~95\% \textcolor{blue}{($B = 1.000$ resampel)} + \emph{permutation test}
+\textcolor{blue}{dua-sisi} dengan dua \emph{negative controls} (model
 Xavier-init dan \emph{hidden state} Gaussian acak), dan (iii)~mengkonfirmasi
 bahwa korespondensi SAE $\leftrightarrow$ BPFx merupakan properti \emph{emergent}
 dari representasi yang terlatih, bukan artefak arsitektur atau prosedur.
 
 % -----------------------------------------------------------------
-\section{Fisika Getaran \emph{Rolling Element Bearing}}
-\label{sec:bab2_fisika_getaran}
+% §II.7 BARU — tinjauan XAI lintas domain sinyal 1-D
 % -----------------------------------------------------------------
+\textcolor{blue}{\section{XAI pada Domain Sinyal Satu Dimensi: Tinjauan Lintas Domain}
+\label{sec:bab2_xai_lintas_domain}}
 
-Pemahaman terhadap fisika getaran \emph{rolling element bearing} memberikan \emph{ground
-truth} yang diperlukan untuk memvalidasi pemetaan SAE $\to$ BPFx pada Bab~V.
-Bagian ini merangkum derivasi frekuensi karakteristik \emph{bearing} dan prosedur
-analisis \emph{envelope} yang digunakan untuk mengukur amplitudo spektrum pada
-tiap frekuensi target.
+\textcolor{blue}{Penerapan XAI pada sinyal satu dimensi tidak terbatas pada domain vibrasi mesin.
+Tinjauan lintas domain memberikan konteks penting untuk menilai sejauh mana FSM
+merupakan kontribusi metodologis yang bersifat umum, dan di mana celah spesifik
+domain vibrasi yang belum terisi.}
 
-\subsection{Frekuensi Karakteristik \emph{Bearing}}
-\label{subsec:bab2_bpfx}
+\textcolor{blue}{Pada domain \emph{electrocardiogram} (ECG), SHAP dan \emph{Integrated Gradients}
+(IG) telah digunakan untuk mengidentifikasi segmen temporal dalam denyut jantung
+yang paling berpengaruh terhadap klasifikasi aritmia.
+\citenameitb{Strodthoff2021ECGExplainability} menerapkan beberapa metode XAI
+secara komparatif pada dataset ECG publik dan melaporkan bahwa SHAP
+\emph{DeepExplainer} menghasilkan atribusi yang lebih stabil dibanding
+\emph{saliency maps} vanila, meskipun sensitivitas terhadap pilihan
+\emph{background} tetap menjadi kendala.
+Pada domain audio dan \emph{speech}, Grad-CAM yang diadaptasi untuk konvolusi
+1-D \citetitb{Ribeiro2016LIME} dan LIME berbasis segmen temporal telah digunakan
+untuk mengidentifikasi bagian ucapan yang menentukan klasifikasi emosi atau
+kata kunci.}
 
-Mekanisme kegagalan \emph{bearing} menghasilkan rangkaian impuls periodik dengan
-frekuensi yang bergantung pada geometri \emph{bearing} dan kecepatan poros. Untuk
-\emph{bearing} dengan $n$ elemen bergulir, diameter elemen $d_b$, diameter
-\emph{pitch circle} $d_m$, sudut kontak $\alpha$, dan kecepatan poros $f_r$
-(dalam Hz), empat frekuensi karakteristik utama (\emph{Ball Pass Frequencies}
-dan turunannya) diturunkan dari geometri kinematik sebagai berikut
-\citetitb{McFadden1984BearingModel}:
-
-\begin{equation}
-  f_{\text{BPFO}} = \frac{n}{2}\, f_r \left(1 - \frac{d_b}{d_m}\cos\alpha\right)
-  \label{eq:bab2_bpfo}
-\end{equation}
-
-\begin{equation}
-  f_{\text{BPFI}} = \frac{n}{2}\, f_r \left(1 + \frac{d_b}{d_m}\cos\alpha\right)
-  \label{eq:bab2_bpfi}
-\end{equation}
-
-\begin{equation}
-  f_{\text{BSF}} = \frac{d_m}{2\,d_b}\, f_r
-    \left[1 - \left(\frac{d_b}{d_m}\cos\alpha\right)^{\!2}\right]
-  \label{eq:bab2_bsf}
-\end{equation}
-
-\begin{equation}
-  f_{\text{FTF}} = \frac{f_r}{2} \left(1 - \frac{d_b}{d_m}\cos\alpha\right)
-  \label{eq:bab2_ftf}
-\end{equation}
-
-\emph{Ball Pass Frequency Outer} ($f_\text{BPFO}$, Persamaan~\eqref{eq:bab2_bpfo})
-merupakan frekuensi impuls yang ditimbulkan saat elemen bergulir melewati
-cacat pada lintasan luar (\emph{outer race}). Karena lintasan luar diam
-(tidak berputar) pada sebagian besar aplikasi, BPFO langsung berkaitan dengan
-frekuensi elemen bergulir melewati titik cacat. \emph{Ball Pass Frequency
-Inner} ($f_\text{BPFI}$, Persamaan~\eqref{eq:bab2_bpfi}) adalah analog untuk
-cacat pada lintasan dalam; nilai BPFI selalu lebih tinggi dari BPFO karena
-lintasan dalam berputar bersama poros. \emph{Ball Spin Frequency}
-($f_\text{BSF}$, Persamaan~\eqref{eq:bab2_bsf}) merupakan frekuensi rotasi
-elemen bergulir terhadap porosnya sendiri; cacat pada elemen bergulir
-menghasilkan impuls pada frekuensi ini. \emph{Fundamental Train Frequency}
-($f_\text{FTF}$, Persamaan~\eqref{eq:bab2_ftf}) merupakan frekuensi rotasi
-sangkar (\emph{cage}); cacat pada sangkar terekspresikan pada harmonik FTF
-\citetitb{Randall2011CondMonitoring}.
-
-Untuk \emph{bearing} SKF~6205-2RS~JEM yang digunakan dalam dataset CWRU ($n = 9$,
-$d_b = 7,938$~mm, $d_m = 38,5$~mm, $\alpha = 0°$, $f_r = 29,95$~Hz pada
-beban~0), nilai teoritis adalah: $f_\text{BPFO} = 107,36$~Hz,
-$f_\text{BPFI} = 162,18$~Hz, $f_\text{BSF} = 70,87$~Hz,
-$f_\text{FTF} = 11,93$~Hz \citetitb{Smith2015CWRU}. Frekuensi-frekuensi ini
-dan harmoniknya menjadi \emph{ground truth} fisika yang digunakan untuk
-memvalidasi pemetaan SAE pada §V.3.
-
-\subsection{Analisis \emph{Envelope} dan Kurtogram Spektral}
-\label{subsec:bab2_envelope}
-
-Sinyal getaran \emph{bearing} yang rusak $x(t)$ merupakan superposisi komponen
-periodik deterministik, modulasi amplitudo akibat kegagalan, dan komponen
-acak. Analisis \emph{envelope} mengisolasi amplitudo modulasi untuk
-mengungkapkan frekuensi karakteristik yang tersembunyi dalam komponen
-\emph{carrier} frekuensi tinggi \citetitb{McFadden1984BearingModel}.
-
-Prosedurnya: (1)~\emph{band-pass filtering} pada pita frekuensi resonansi
-dominan, (2)~transformasi Hilbert untuk mendapatkan sinyal analitik
-$z(t) = x_\text{bp}(t) + j\,\hat{x}_\text{bp}(t)$ dengan
-$\hat{x}_\text{bp}(t)$ sebagai transformasi Hilbert dari sinyal ter-\emph{filter},
-(3)~ekstraksi selubung $A(t) = |z(t)|$, dan (4)~komputasi spektrum selubung
-$A_\varphi = \int_{[\varphi-\Delta,\, \varphi+\Delta]} |\mathcal{F}\{A(t)\}(f)|\,df$
-untuk $\varphi \in \{\text{BPFO}, \text{BPFI}, \text{BSF}, \text{FTF}\}$.
-
-Kurtogram spektral (\emph{spectral kurtosis}) \citetitb{Antoni2007Kurtogram}
-digunakan untuk pemilihan pita \emph{band-pass} secara otomatis: pita yang
-memaksimalkan kurtosis spektral mengandung komponen impulsif yang paling kuat,
-dan karenanya paling informatif untuk analisis \emph{envelope}. Dalam konteks
-pemetaan SAE, amplitudo $A_{r,\varphi}$ pada rekaman ke-$r$ dikorelasikan
-dengan aktivasi fitur SAE $z_{r,i}$ menggunakan korelasi Pearson untuk mengukur
-derajat korespondensi antara representasi laten dan fisika degradasi.
+\textcolor{blue}{Kesamaan lintas domain ini menegaskan bahwa pendekatan XAI berbasis atribusi
+posisi temporal---yang menjadi fondasi FSM---bukan merupakan pendekatan yang
+asing. Namun, perbedaan mendasar antara domain ECG/audio dan domain vibrasi
+\emph{bearing} terletak pada interpretabilitas fisik: sinyal ECG dan audio
+tidak memiliki frekuensi karakteristik terdefinisi matematis yang setara
+dengan BPFO/BPFI/BSF/FTF, sehingga validasi fisika atribusi (sebagaimana
+dilakukan pada FSM dan SAE-BPFx) tidak dapat dilakukan secara kuantitatif
+di domain tersebut.
+Di domain vibrasi \emph{bearing} sendiri, seluruh studi XAI yang ada beroperasi
+di tingkat fitur agregat (RMS, kurtosis, energi pita spektral), bukan pada
+resolusi sinyal mentah penuh.
+FSM mengisi celah ini sebagai kerangka atribusi sinyal mentah resolusi penuh
+pertama untuk WDCNN pada dataset CWRU \citetitb{TotoSuharto2025Journal1FSM}.}
 
 % -----------------------------------------------------------------
 \section{Peta Kesenjangan Literatur dan Posisi Penelitian}
@@ -683,7 +832,7 @@ derajat korespondensi antara representasi laten dan fisika degradasi.
 % -----------------------------------------------------------------
 
 Berdasarkan tinjauan pada §\ref{sec:bab2_pdm_industri}
-hingga §\ref{sec:bab2_fisika_getaran}, tiga kesenjangan spesifik dan dapat
+hingga §\ref{sec:bab2_xai_lintas_domain}, tiga kesenjangan spesifik dan dapat
 dijustifikasi teridentifikasi dalam literatur. Tabel~\ref{tab:bab2_posisi_penelitian}
 menyajikan posisi keempat karya Pak Toto relatif terhadap literatur umum pada
 dimensi-dimensi yang menutup kesenjangan tersebut.
@@ -759,3 +908,100 @@ pada §1.2: Kesenjangan~1 menjustifikasi RQ3/Sub-RQ3.1; Kesenjangan~2
 menjustifikasi RQ3/Sub-RQ3.2 dan RQ2/Sub-RQ2.2; Kesenjangan~3 menjustifikasi
 RQ1/Sub-RQ1.1. Metodologi umum untuk menjawab ketiga kesenjangan disajikan
 pada Bab~III, dengan detail diagnostik pada Bab~IV dan prognostik pada Bab~V.
+
+% =====================================================================
+% CATATAN REFERENSI BARU (perlu ditambahkan ke daftar pustaka)
+% Tandai dengan [BARU] untuk kemudahan pelacakan
+% =====================================================================
+%
+% [BARU-1] Li, X., Zhang, W., Ding, Q., & Sun, J.-Q. (2020).
+%   Intelligent rotating machinery fault diagnosis based on deep learning
+%   using data augmentation. Journal of Intelligent Manufacturing, 31(2),
+%   433--452.
+%   -> Digunakan untuk: \citetitb{Li2020TransferReview}
+%   -> Verifikasi: https://doi.org/10.1007/s10845-018-1456-1
+%
+% [BARU-2] Ganin, Y., & Lempitsky, V. (2015).
+%   Unsupervised domain adaptation by backpropagation.
+%   ICML 2015, PMLR 37, 1180--1189.
+%   -> Digunakan untuk: \citetitb{Ganin2015DANN}
+%   -> Verifikasi: https://proceedings.mlr.press/v37/ganin15.html
+%
+% [BARU-3] Malhotra, P., Ramakrishnan, A., Anand, G., Vig, L., Agarwal, P.,
+%   & Shroff, G. (2016). LSTM-based encoder-decoder for multi-sensor
+%   anomaly detection. arXiv:1607.00148.
+%   -> Digunakan untuk: \citetitb{Malhotra2016LSTMAnomalyDetect}
+%   -> Verifikasi: https://arxiv.org/abs/1607.00148
+%
+% [BARU-4] Gal, Y., & Ghahramani, Z. (2016). Dropout as a Bayesian
+%   approximation: Representing model uncertainty in deep learning.
+%   ICML 2016, PMLR 48, 1050--1059.
+%   -> Digunakan untuk: \citetitb{Gal2016MCDropout}
+%   -> Verifikasi: https://proceedings.mlr.press/v48/gal16.html
+%
+% [BARU-5] Lakshminarayanan, B., Pritzel, A., & Blundell, C. (2017).
+%   Simple and scalable predictive uncertainty estimation using deep
+%   ensembles. NeurIPS 2017, 6402--6413.
+%   -> Digunakan untuk: \citetitb{Lakshminarayanan2017Ensembles}
+%   -> Verifikasi: https://papers.nips.cc/paper/2017/hash/...
+%
+% [BARU-6] Angelopoulos, A. N., & Bates, S. (2022). A gentle introduction
+%   to conformal prediction and distribution-free uncertainty quantification.
+%   arXiv:2107.07511.
+%   -> Digunakan untuk: \citetitb{Angelopoulos2022ConformalSurvey}
+%   -> Verifikasi: https://arxiv.org/abs/2107.07511
+%
+% [BARU-7] Strodthoff, N., Wagner, P., Schaeffter, T., & Samek, W. (2021).
+%   Deep learning for ECG analysis: Benchmarks and insights from PTB-XL.
+%   IEEE Journal of Biomedical and Health Informatics, 25(5), 1519--1528.
+%   -> Digunakan untuk: \citetitb{Strodthoff2021ECGExplainability}
+%   -> Verifikasi: https://doi.org/10.1109/JBHI.2020.3022989
+%
+% Referensi baris tabel (perlu verifikasi manual):
+% [BARU-T1] Santos dkk. (2021) -- SVM CWRU 95.1% + KernelExplainer
+%   Placeholder; cek: Santos, P., et al. (2021). IEEE Access atau sejenis.
+% [BARU-T2] Cerrada dkk. (2022) -- XGBoost CWRU 96.8%
+%   Placeholder; cek: Cerrada, M., et al. (2022). Eksak judul perlu verifikasi.
+% =====================================================================
+
+% =====================================================================
+% AUDIT KONSISTENSI REFERENSI & ANGKA (lintas bab) — putaran ini
+% =====================================================================
+% A. REFERENSI
+%   - 51 referensi asli Bab II: SEMUA dipertahankan (tidak ada yang hilang).
+%   - 7 referensi baru (biru): Li2020TransferReview, Ganin2015DANN,
+%     Malhotra2016LSTMAnomalyDetect, Gal2016MCDropout,
+%     Lakshminarayanan2017Ensembles, Angelopoulos2022ConformalSurvey,
+%     Strodthoff2021ECGExplainability.
+%   - DITAMBAHKAN putaran ini: Oreshkin2020NBEATS (dipakai Bab V tapi belum
+%     ada di Bab II) -> kini disitir di §II.5.2 (biru).
+%   - Loshchilov2019AdamW (dipakai Bab V) sengaja TIDAK dimasukkan ke Bab II:
+%     bersifat detail implementasi optimizer, bukan landasan teori.
+%
+% B. KOREKSI ANGKA agar konsisten dgn sumber otoritatif (Bab IV / Journal FSM):
+%   1. BPFx CWRU: 9 bola/0deg/29,95Hz/107,36;162,18;70,87;11,93
+%      -> 8 bola/15,17deg/1.750rpm/104,6;157,9;68,9;13,1  (sesuai §IV.11)
+%   2. WDCNN Var C akurasi: 96,27% -> 96,13% (sesuai Tabel IV CV)
+%   3. Stabilitas FSM Var A: ANGKA OTORITATIF = 0,940 (analisis utama,
+%      300 bg/500 uji; SAMA dengan kolom Stabilitas Tabel IV & Journal FSM
+%      "split-half stability = 0.940, 94% cosine"). Catatan lama yg menyebut
+%      0,940 KELIRU/seharusnya 0,873 -> DIBATALKAN: 0,873 tidak ada di sumber.
+%      Pada subset ablasi (30 bg/50 uji): Var A stab 0,705 -> Var C stab 0,741.
+%   4. Klaim "+133%": pasangan yg BENAR adalah 0,315 -> 0,735 (subset ablasi),
+%      = +0,420 poin = 2,3x. BUKAN 0,216->0,735 (itu mencampur metric-set
+%      utama dgn ablasi). 0,216 adalah diskriminabilitas analisis utama Var A.
+%   5. Permutation test: definisi "proporsi |r_null| > |r_obs|" adalah
+%      DUA-SISI (sesuai Journal RUL: "two-sided p-value ... absolute
+%      correlation"). Bab II sudah benar memakai "dua-sisi"; Bab V baris 337/342
+%      yg memakai "satu-sisi (greater)" KELIRU dan telah dikoreksi ke "dua-sisi".
+%
+% C. CATATAN LINTAS-DOKUMEN (di luar Bab II, perlu tindak lanjut terpisah):
+%   - Permutasi B=1.000: SUDAH selaras di Pendahuluan (§I, B=1.000), Bab V,
+%     Bab VI, dan Bab II. Konflik lama n=10.000 sudah tidak ada.
+%   - Arah uji permutasi: Bab V DIKOREKSI dari "satu-sisi" -> "dua-sisi"
+%     agar konsisten dgn definisi |r_null|>|r_obs| dan Journal RUL.
+%   - Bab VI DIKOREKSI: pasangan +133% diselaraskan ke 0,315->0,735 (ablasi),
+%     dan framing "BN menekan 133%" diubah ke "penghapusan BN menaikkan 133%".
+%   - Stabilitas FSM: Bab I & Bab II DIKOREKSI ke 0,940 (analisis utama),
+%     menggantikan 0,873/0,891 yg tidak bersumber.
+% =====================================================================

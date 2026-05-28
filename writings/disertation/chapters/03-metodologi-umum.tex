@@ -1,4 +1,4 @@
-﻿%% chapters/03-metodologi-umum.tex
+%% chapters/03-metodologi-umum.tex
 %% Bab III — Metodologi Umum (Fondasi Bersama Jalur A dan B)
 %% Sumber: writings/dissertation-outline.md §Bab III
 %% Fase C — dibuat dari 04-metodologi.tex + 03-dasar-teori.tex
@@ -7,7 +7,9 @@
 \label{bab:metodologi-umum}
 % Alias label agar referensi dari 04-metodologi.tex ke bab:dasar-teori tetap resolve
 % selama masa transisi Fase C; alias ini dihapus pada Fase D.
-\label{bab:dasar-teori}
+% TODO Fase D: hapus \label{bab:dasar-teori} di bawah ini setelah memverifikasi
+%              tidak ada \ref{bab:dasar-teori} tersisa di bab lain (audit silang wajib).
+\label{bab:dasar-teori}% [REVISI Isu#2] hapus pada Fase D
 
 Bab ini menyajikan fondasi bersama yang digunakan oleh Bab~IV (diagnostik)
 dan Bab~V (prognostik). Fondasi tersebut mencakup kerangka konseptual dua
@@ -39,6 +41,12 @@ dilengkapi modul \emph{Explainable AI} (SHAP) yang sesuai dengan
 arsitekturnya. Keluaran utama Jalur~A adalah
 \emph{Fault Signature Maps} (FSM), yaitu representasi \emph{fingerprint}
 per kelas kerusakan pada resolusi sinyal mentah 2.048 titik.
+\textcolor{blue}{Modul XAI yang digunakan pada setiap golongan algoritma
+disesuaikan dengan arsitekturnya: KernelExplainer untuk model berbasis kernel
+(SVM/LR), TreeExplainer untuk algoritma berbasis pohon keputusan
+(DT/RF/XGBoost), dan DeepExplainer untuk jaringan dalam (WDCNN).
+Rincian implementasi masing-masing modul SHAP dikembangkan pada
+Bab~IV~\S{}IV.2--IV.4.}% [Revisi §3.1 transisi SHAP]
 
 Di sisi lain, Jalur~B berfokus pada \textbf{estimasi sisa umur pakai}
 (\emph{Remaining Useful Life}, RUL) menggunakan tiga dataset prognostik
@@ -182,26 +190,27 @@ Tabel~\ref{tab:bab3_cwru_kelas}.
 \begin{table}[ht]
 \centering
 \caption{Sepuluh kelas kondisi dataset CWRU, lokasi, tingkat keparahan,
-         dan jumlah sampel setelah \emph{temporal split} 54/13/33\%.}
+         dan jumlah sampel setelah \emph{temporal split}
+         \textcolor{blue}{54/13/33\% (124/31/75 per kelas).}}% [REVISI ISU-06]
 \label{tab:bab3_cwru_kelas}
 \small
-\begin{tabular}{@{}clccrr@{}}
+\begin{tabular}{@{}clccrrrr@{}}
 \toprule
 \textbf{Kelas} & \textbf{Kondisi} & \textbf{Lokasi} &
-\textbf{Kerusakan (inci)} & \textbf{Latih} & \textbf{Uji} \\
+\textbf{Kerusakan (inci)} & \textbf{Latih} & \textcolor{blue}{\textbf{Val.}} & \textbf{Uji} \\
 \midrule
-0 & Normal            & --  & --     & 124 & 75 \\
-1 & \emph{Inner Race} & DE & 0,007 & 124 & 75 \\
-2 & \emph{Inner Race} & DE & 0,014 & 124 & 75 \\
-3 & \emph{Inner Race} & DE & 0,021 & 124 & 75 \\
-4 & \emph{Outer Race} & DE & 0,007 & 124 & 75 \\
-5 & \emph{Outer Race} & DE & 0,014 & 124 & 75 \\
-6 & \emph{Outer Race} & DE & 0,021 & 124 & 75 \\
-7 & \emph{Ball}       & DE & 0,007 & 124 & 75 \\
-8 & \emph{Ball}       & DE & 0,014 & 124 & 75 \\
-9 & \emph{Ball}       & DE & 0,021 & 124 & 75 \\
+0 & Normal            & --  & --     & 124 & \textcolor{blue}{31} & 75 \\
+1 & \emph{Inner Race} & DE & 0,007 & 124 & \textcolor{blue}{31} & 75 \\
+2 & \emph{Inner Race} & DE & 0,014 & 124 & \textcolor{blue}{31} & 75 \\
+3 & \emph{Inner Race} & DE & 0,021 & 124 & \textcolor{blue}{31} & 75 \\
+4 & \emph{Outer Race} & DE & 0,007 & 124 & \textcolor{blue}{31} & 75 \\
+5 & \emph{Outer Race} & DE & 0,014 & 124 & \textcolor{blue}{31} & 75 \\
+6 & \emph{Outer Race} & DE & 0,021 & 124 & \textcolor{blue}{31} & 75 \\
+7 & \emph{Ball}       & DE & 0,007 & 124 & \textcolor{blue}{31} & 75 \\
+8 & \emph{Ball}       & DE & 0,014 & 124 & \textcolor{blue}{31} & 75 \\
+9 & \emph{Ball}       & DE & 0,021 & 124 & \textcolor{blue}{31} & 75 \\
 \midrule
-  & \textbf{Total}    &    &       & \textbf{1.240} & \textbf{750} \\
+  & \textbf{Total}    &    &       & \textbf{1.240} & \textcolor{blue}{\textbf{310}} & \textbf{750} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -382,11 +391,19 @@ Run tersedia       & 3 (\emph{Run}~1: ${\sim}43$~jam; \emph{Run}~2: ${\sim}160$~
 
 Setiap \emph{run} memantau keempat \emph{bearing} (\emph{Bearing}~1–4) secara bersamaan.
 Mode kegagalan yang terdokumentasi: pada \emph{Run}~1, \emph{Bearing}~3 mengalami
-\emph{outer-race fault} dan \emph{Bearing}~4 mengalami kegagalan \emph{rolling element}
-(\emph{rolling element}); pada \emph{Run}~2, \emph{Bearing}~1 mengalami
-\emph{inner-race fault}. Pembagian data mengikuti protokol berbasis
-\emph{run}: \emph{Run}~1 dan \emph{Run}~2 digunakan untuk \emph{training}
-dan \emph{validation}, sedangkan \emph{Run}~3 untuk pengujian.
+\emph{outer-race fault} dan \emph{Bearing}~4 mengalami kegagalan
+\textcolor{blue}{elemen gelinding (\emph{rolling element fault})};% [Revisi: hilangkan redudansi frasa]
+pada \emph{Run}~2, \emph{Bearing}~1 mengalami
+\emph{inner-race fault}. \textcolor{blue}{Catatan: analisis SAE-BPFx pada Bab~V
+menggunakan kanal \emph{Bearing}~1 (\emph{Run}~1) sebagai kanal utama dan
+mendokumentasikan korespondensi FTF yang konsisten dengan kegagalan sangkar
+(\emph{cage fatigue}) pada \emph{Run}~1 \citetitb{Qiu2006WaveletBearing}.}% [INFO ISU-05]
+
+\textcolor{blue}{Pembagian data pada dataset IMS mengikuti protokol berbasis
+\emph{bearing} (\emph{bearing-wise}): \emph{Bearing}~1 dan \emph{Bearing}~2
+dialokasikan untuk \emph{training}, \emph{Bearing}~3 untuk \emph{validation},
+dan \emph{Bearing}~4 untuk pengujian; pembagian ini konsisten untuk seluruh
+tiga \emph{run} yang tersedia \\citetitb{TotoSuharto2025Journal2RUL}.}% [REVISI ISU-04 TINGGI: bearing-wise, bukan run-wise]
 
 IMS dipilih sebagai dataset prognostik ketiga karena karakteristiknya yang
 berbeda dari PHM2012 dan XJTU-SY: \emph{bearing} tipe \emph{tapered roller}
@@ -461,6 +478,10 @@ Lampiran~\ref{lamp:fitur}. Jendela FFT tipe \emph{Hann} digunakan
 untuk mengurangi \emph{spectral leakage} pada fitur domain frekuensi.
 Normalisasi Z-score tambahan diterapkan pada vektor HI 36-D setelah
 ekstraksi, dengan statistik juga bersumber dari \emph{training set}.
+\textcolor{blue}{Penting dicatat: penggunaan dua kanal (DE+FE) berlaku
+khusus untuk model berbasis kernel dan pohon. WDCNN (§\ref{subsec:bab3_input_deep})
+menggunakan hanya sinyal mentah kanal \emph{drive-end} (DE) tunggal,
+berdimensi $1 \times 2048$, tanpa ekstraksi fitur dua-kanal.}% [REVISI ISU-09]
 
 \subsection{Representasi Input untuk Model Berbasis Jaringan Dalam}
 \label{subsec:bab3_input_deep}
@@ -526,16 +547,28 @@ Tiga metrik tambahan digunakan khusus untuk validasi \emph{Fault Signature
 Maps} (FSM):
 
 \begin{enumerate}
-  \item \textbf{Indeks diskriminabilitas} ($D$): mengukur sejauh mana vektor
-        FSM antar-kelas berbeda secara geometris, dinyatakan sebagai jarak
-        \emph{pairwise} rata-rata relatif terhadap norma rata-rata:
+  \item \textbf{Indeks diskriminabilitas} ($D$): mengukur sejauh mana pola
+        FSM antar-kelas lebih berbeda dibandingkan pola dalam satu kelas,
+        \textcolor{blue}{dinyatakan sebagai rasio kemiripan kosinus rata-rata
+        antar-kelas terhadap kemiripan kosinus rata-rata dalam kelas
+        (\emph{inter}/\emph{intra} cosine ratio)}:% [REVISI ISU-03 KRITIS: ikuti definisi jurnal FSM]
         \begin{equation}\label{eq:bab3_discriminability}
-          D = \frac{1}{\binom{C}{2}} \sum_{c_1 < c_2}
-            \frac{\bigl\|\mathrm{FSM}_{c_1}^{\rm abs} - \mathrm{FSM}_{c_2}^{\rm abs}\bigr\|_2}
-                 {\tfrac{1}{2}\bigl(\bigl\|\mathrm{FSM}_{c_1}^{\rm abs}\bigr\|_2
-                  + \bigl\|\mathrm{FSM}_{c_2}^{\rm abs}\bigr\|_2\bigr)}.
+          D = \frac{\bar{\rho}_{\rm inter}}{\bar{\rho}_{\rm intra}},
+          \qquad
+          \textcolor{blue}{\bar{\rho}_{\rm inter} = \frac{1}{\binom{C}{2}}
+            \sum_{c_1 < c_2}
+            \frac{\mathrm{FSM}_{c_1}^{\rm abs} \cdot \mathrm{FSM}_{c_2}^{\rm abs}}
+                 {\bigl\|\mathrm{FSM}_{c_1}^{\rm abs}\bigr\|_2
+                  \bigl\|\mathrm{FSM}_{c_2}^{\rm abs}\bigr\|_2}},
         \end{equation}
-        Nilai $D$ lebih besar berarti FSM lebih mudah dibedakan antar kelas.
+        \textcolor{blue}{di mana $\bar{\rho}_{\rm intra}$ adalah kemiripan
+        kosinus rata-rata antar 20 pasang sampel acak dalam kelas yang sama,
+        dirata-rata atas $C$ kelas. Nilai $D > 1$ berarti FSM lebih mudah
+        dibedakan antar kelas daripada varian dalam kelas; nilai $D < 1$
+        (seperti yang teramati $D = 0{,}216$ pada analisis utama) menunjukkan
+        bahwa pola energi latar bersama mendominasi seluruh 2.048 dimensi dan
+        menutupi pola spesifik kelas, meski FSM tetap diskriminatif pada
+        subset posisi yang mengandung impuls cacat.}% [REVISI ISU-03]
 
   \item \textbf{Fraksi monotonik keparahan} ($M_c$): mengukur fraksi posisi
         sinyal di mana atribusi FSM meningkat secara monoton sejalan dengan
@@ -552,15 +585,20 @@ Maps} (FSM):
 
   \item \textbf{Koefisien stabilitas \emph{split-half}} ($\rho$): mengukur
         konsistensi FSM antara dua subset acak separuh dari data uji,
-        dihitung sebagai korelasi Pearson rata-rata lintas $C$ kelas:
+        \textcolor{blue}{dihitung sebagai kemiripan kosinus (\emph{cosine
+        similarity}) rata-rata lintas $C$ kelas}:% [REVISI ISU-01 KRITIS: cosine similarity, bukan Pearson]
         \begin{equation}\label{eq:bab3_stability}
           \rho = \frac{1}{C} \sum_{c=1}^{C}
-            r_{\rm Pearson}\!\bigl(\mathrm{FSM}_c^{\rm abs}\big|_{\rm subset_1},\;
-                                    \mathrm{FSM}_c^{\rm abs}\big|_{\rm subset_2}\bigr),
+            \textcolor{blue}{\frac{\mathrm{FSM}_c^{\rm abs}\big|_{\rm subset_1}
+                                    \;\cdot\;\mathrm{FSM}_c^{\rm abs}\big|_{\rm subset_2}}
+                            {\bigl\|\mathrm{FSM}_c^{\rm abs}\big|_{\rm subset_1}\bigr\|_2
+                             \bigl\|\mathrm{FSM}_c^{\rm abs}\big|_{\rm subset_2}\bigr\|_2}},
         \end{equation}
         di mana $\mathrm{subset}_1$ dan $\mathrm{subset}_2$ adalah dua bagian
         sama besar yang dipisah secara acak dari data uji. Nilai $\rho \geq 0{,}90$
-        menunjukkan FSM yang sangat stabil antar subsampel.
+        menunjukkan FSM yang sangat stabil antar subsampel
+        \textcolor{blue}{(nilai yang dicapai pada analisis utama: $\rho = 0{,}940$,
+        yaitu 94\,\% kemiripan kosinus rata-rata lintas 10 kelas CWRU).}% [REVISI ISU-01]
 \end{enumerate}
 
 \subsection{Metrik Prognostik}
@@ -634,18 +672,25 @@ dataset untuk memperoleh selang kepercayaan empiris pada $H_\varphi$:
 atas $B$ resampel dengan penggantian. Selang ini mencerminkan ketidakpastian
 akibat variabilitas sampel lintas rekaman.
 
-\textbf{\emph{Permutation p-value}} dihitung dengan $B = 1000$ permutasi
-label rekaman terhadap nilai amplitudo BPFx; hit-rate pada setiap permutasi
-dibandingkan terhadap hit-rate yang teramati (uji dua-sisi):
+\textbf{\emph{Permutation p-value}} dihitung dengan $B = 1{.}000$ permutasi
+label rekaman terhadap nilai amplitudo BPFx; \emph{hit-rate} pada setiap permutasi
+dibandingkan terhadap \emph{hit-rate} yang teramati \textcolor{blue}{(uji dua-sisi:
+proporsi permutasi \emph{null} yang nilai korelasi absolutnya melampaui nilai teramati)}:% [REVISI ISU-07: konsisten dua-sisi dengan jurnal RUL]
 
 \begin{equation}\label{eq:bab3_permutation_pvalue}
-  p = \frac{\bigl|\bigl\{b : H_\varphi^{(b)} \geq H_\varphi^{\rm obs}\bigr\}\bigr| + 1}
+  p = \frac{\bigl|{\bigl\{b : \bigl|H_\varphi^{(b)}\bigr| \geq H_\varphi^{\rm obs}\bigr\}}\bigr| + 1}
            {B + 1}.
 \end{equation}
 
 Nilai $p < 0{,}05$ menunjukkan bahwa korespondensi SAE–BPFx yang teramati
 tidak dapat dijelaskan oleh kebetulan semata dan merupakan properti
-\emph{emergent} dari representasi yang terlatih. Dua kelompok kontrol negatif juga digunakan:
+\emph{emergent} dari representasi yang terlatih. \textcolor{blue}{Untuk
+mengendalikan beban pengujian ganda (\emph{multiple testing}), satu BPFx
+dominan per pasangan (dataset, arsitektur) ditetapkan sebagai luaran primer---menghasilkan
+12 uji primer atas 3 dataset valid $\times$ 4 BPFx---dengan ambang signifikansi setara
+Bonferroni $p < 0{,}004$; nilai $p$ untuk BPFx sekunder dilaporkan sebagai
+eksploratif.}% [REVISI ISU-07]
+Dua kelompok kontrol negatif juga digunakan:
 model dengan inisialisasi acak Xavier (kontrol arsitektur) dan \emph{hidden
 states} berupa Gaussian \emph{noise} (kontrol prosedur SAE). Rincian
 eksperimen kontrol negatif dikembangkan pada Bab~V~§V.4.

@@ -1,4 +1,4 @@
-﻿% =====================================================================
+% =====================================================================
 % Bab VI — Kesimpulan dan Rekomendasi
 % =====================================================================
 \chapter{Kesimpulan dan Rekomendasi}
@@ -55,8 +55,10 @@ mengeksploitasi tanda fisik yang sama dari mekanisme degradasi yang sama.
 
 Temuan ablasi pada Subbab~\ref{sec:bab4_ablasi_bn} menambahkan dimensi desain
 yang tidak terduga pada kerangka ini. \emph{BatchNorm} meningkatkan akurasi
-klasifikasi WDCNN sebesar 3,60 poin persentase, tetapi menekan
-\emph{discriminability} FSM sebesar 133\%. Dalam perspektif sistem perawatan
+klasifikasi WDCNN sebesar 3,60 poin persentase, tetapi \textcolor{blue}{menurunkan
+\emph{discriminability} FSM; sebaliknya, penghapusan \emph{BatchNorm} menaikkan
+\emph{discriminability} FSM sebesar 133\% (dari 0,315 menjadi 0,735 pada subset
+ablasi)}. Dalam perspektif sistem perawatan
 prediktif terintegrasi, pengamatan ini memberikan panduan arsitektural konkret:
 varian WDCNN dengan \emph{BatchNorm} cocok untuk Tier~2 yang mengutamakan
 akurasi penjadwalan perawatan, sementara varian tanpa \emph{BatchNorm} lebih
@@ -224,8 +226,10 @@ Status: \textbf{empiris}.
 \textbf{Novelti~2: Trade-off \emph{BatchNorm} terhadap Discriminability FSM.}
 Penelitian ini melaporkan untuk pertama kalinya bahwa \emph{BatchNorm}
 meningkatkan akurasi klasifikasi WDCNN sebesar 3,60 poin persentase, namun
-menekan \emph{discriminability} FSM sebesar 133\%, dari nilai 0,216 (varian~A,
-dengan BN) menjadi 0,735 (varian~C, tanpa BN). Temuan ini memberikan panduan
+\textcolor{blue}{menurunkan \emph{discriminability} FSM; secara setara,
+penghapusan \emph{BatchNorm} menaikkan \emph{discriminability} FSM sebesar 133\%,
+dari nilai 0,315 (varian~A, dengan BN) menjadi 0,735 (varian~C, tanpa BN) pada
+subset ablasi}. Temuan ini memberikan panduan
 desain konkret bagi peneliti dan rekayasawan: varian dengan \emph{BatchNorm}
 dipilih untuk prioritas akurasi operasional pada Tier~2, sedangkan varian tanpa
 \emph{BatchNorm} dipilih ketika auditabilitas sinyal diutamakan, misalnya dalam
@@ -362,8 +366,10 @@ sinyal lemah. Tujuan utamanya adalah meningkatkan monosemantisitas representasi
 laten tanpa mengorbankan akurasi prediksi RUL yang sudah dicapai.
 
 \textbf{Rekomendasi 3: Jaringan Bebas Normalisasi sebagai Alternatif
-\emph{BatchNorm}.} Temuan N2 menunjukkan bahwa \emph{BatchNorm} menekan
-\emph{discriminability} FSM sebesar 133\%. Arsitektur \emph{Normalizer-Free
+\emph{BatchNorm}.} Temuan N2 menunjukkan bahwa \textcolor{blue}{penghapusan
+\emph{BatchNorm} menaikkan \emph{discriminability} FSM sebesar 133\% (0,315
+$\rightarrow$ 0,735), dengan kata lain \emph{BatchNorm} membatasi
+\emph{discriminability} FSM}. Arsitektur \emph{Normalizer-Free
 Network} (NF-Net) yang menggantikan \emph{BatchNorm} dengan penskalaan adaptif
 berpotensi mempertahankan akurasi klasifikasi sambil memungkinkan FSM yang lebih
 diskriminatif. Eksperimen ablasi sistematis dengan tiga jenis pengganti

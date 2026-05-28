@@ -1,4 +1,4 @@
-﻿%% chapters/04-diagnostik.tex
+%% chapters/04-diagnostik.tex
 %% Bab IV — Deteksi Kerusakan \emph{Bearing}: Metodologi dan Hasil
 %% Sumber utama:
 %%   Conference 1 — SVM/LR + SHAP KernelExplainer (§IV.2, §IV.7)
@@ -295,10 +295,13 @@ Novelti~N2:
         konvolusi. Varian ini merepresentasikan konfigurasi referensi
         \citetitb{Zhang2017WDCNN}.
   \item \textbf{Varian B (Kernel Sempit):} Ukuran kernel pertama diperkecil
-        dari 64 ke 3, menyamakan dengan kernel blok lainnya. Tujuan ablasi
-        ini adalah menguji peran kernel lebar dalam pemrosesan frekuensi
-        dan mengestimasi \emph{footprint} parameter setelah pengurangan
-        sebesar faktor $7{,}3\times$.
+        dari 64 ke 3 \textcolor{blue}{(\emph{stride} 16 menjadi 1)},
+        menyamakan dengan kernel blok lainnya. Tujuan ablasi
+        ini adalah menguji peran kernel lebar dalam pemrosesan frekuensi.
+        \textcolor{blue}{Justru jumlah parameter melonjak sebesar faktor
+        $7{,}3\times$ (dari 60.710 menjadi 443.734) karena hilangnya
+        reduksi dimensi implisit oleh \emph{stride} lebar membuat peta fitur
+        beresolusi penuh dan memerlukan bank filter yang jauh lebih besar.}
   \item \textbf{Varian C (Tanpa BatchNorm):} Arsitektur identik dengan
         Varian A, tetapi semua lapisan \emph{Batch Normalization} dihapus.
         Tujuan ablasi ini adalah menguji hipotesis bahwa BN menekan
@@ -479,9 +482,11 @@ tidak tumpang tindih antarkelas.
 Monotonik mengukur apakah amplitudo puncak FSM meningkat secara konsisten
 seiring bertambahnya keparahan cacat (7 mil, 14 mil, 21 mil); metrik ini
 menghubungkan output SHAP dengan sifat fisika degradasi \emph{bearing}.
-Stabilitas mengukur konsistensi FSM antar-\emph{fold} validasi silang —
+Stabilitas mengukur konsistensi FSM \textcolor{blue}{antara dua paruh acak
+yang saling lepas dari sampel uji tiap kelas (\emph{split-half}) melalui
+kemiripan kosinus} —
 FSM yang stabil berarti pola interpretasi tidak bergantung pada variasi
-partisi data tertentu.
+\textcolor{blue}{pemilihan sampel} tertentu.
 
 Ketiga metrik ini dievaluasi secara terpisah untuk $\text{FSM}^{\text{signed}}$,
 $\text{FSM}^{\text{abs}}$, dan $\text{FSM}^{\text{var}}$, serta dibandingkan
@@ -650,6 +655,10 @@ langsung.
 
 Tabel~\ref{tab:bab4_hasil_wdcnn} merangkum kinerja WDCNN Varian~A (konfigurasi
 referensi dengan BN penuh) pada dataset CWRU sepuluh kelas.
+\textcolor{blue}{WDCNN dilatih dan dievaluasi mengikuti pembagian temporal
+ketat 1.240/310/750 sampel (\emph{training}/\emph{validation}/\emph{test})
+sebagaimana diuraikan pada Bab~\ref{bab:metodologi-umum}, untuk mencegah
+inflasi akurasi akibat kebocoran data antar-segmen.}
 Varian~B dan Varian~C dilaporkan secara komparatif pada studi ablasi di §IV.13.
 
 \begin{table}[ht]
@@ -807,54 +816,49 @@ internal antar-\emph{batch}.
 % =================================================================
 
 Tabel~\ref{tab:bab4_validasi_fsm} menyajikan nilai tiga metrik validasi FSM
-(diskriminabilitas, monotonik, stabilitas) untuk $\text{FSM}^{\text{abs}}$
-dari Varian~A dan Varian~C, dirata-rata atas sepuluh kelas CWRU.
+\textcolor{blue}{(diskriminabilitas, monotonik, stabilitas) untuk
+$\text{FSM}^{\text{abs}}$ Varian~A (konfigurasi referensi WDCNN dengan BN
+penuh), dirata-rata atas sepuluh kelas CWRU. Metrik ini dihitung pada
+analisis FSM utama dengan 300 sampel \emph{background} dan 500 sampel uji;
+perbandingan terhadap Varian~C dibahas tersendiri pada studi ablasi §IV.13.}
 
 \begin{table}[ht]
-\caption{Metrik validasi FSM$^{\text{abs}}$ rata-rata sepuluh kelas CWRU
-         untuk Varian~A (BN aktif) dan Varian~C (tanpa BN).
-         Nilai lebih tinggi lebih baik untuk diskriminabilitas dan monotonik;
-         nilai lebih tinggi lebih baik untuk stabilitas (konsistensi).}
+\caption{\textcolor{blue}{Metrik validasi FSM$^{\text{abs}}$ Varian~A
+         (BN aktif) rata-rata sepuluh kelas CWRU pada analisis utama
+         (300 \emph{background} / 500 sampel uji).}
+         Nilai lebih tinggi lebih baik untuk ketiga metrik.}
 \label{tab:bab4_validasi_fsm}
 \centering
 \begin{tabular}{lccc}
 \toprule
 \textbf{Varian} & \textbf{Diskriminabilitas} & \textbf{Monotonik} & \textbf{Stabilitas}\\
 \midrule
-A (BN aktif)   & 0,216 & 0,940 & 0,873\\
-C (Tanpa BN)   & 0,735 & 0,962 & 0,891\\
+\textcolor{blue}{A (BN aktif)} & \textcolor{blue}{0,216} & \textcolor{blue}{0,940} & \textcolor{blue}{0,940}\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Hasil kuantitatif menunjukkan perbedaan yang signifikan pada metrik
-diskriminabilitas: Varian~C menghasilkan diskriminabilitas 0,735, dibandingkan
-Varian~A yang hanya 0,216, peningkatan 0,519 poin atau sekitar +133\%
-\citetitb{TotoSuharto2025Journal1FSM}.
-Artinya, FSM yang dihasilkan WDCNN tanpa BN jauh lebih mudah dibedakan
-antarkelas dibandingkan FSM dari WDCNN dengan BN, meskipun akurasi klasifikasi
-rata-rata CV Varian~A lebih tinggi (99,73\% vs 96,13\%).
+\textcolor{blue}{Hasil analisis utama menunjukkan bahwa FSM$^{\text{abs}}$
+Varian~A memiliki \emph{split-half stability} 0,940, yang berarti pola FSM
+sangat dapat direproduksi (kemiripan kosinus 94\%) dan tidak bergantung pada
+pemilihan sampel acak.} Sebaliknya, indeks diskriminabilitas hanya 0,216,
+mengindikasikan bahwa \textcolor{blue}{FSM rata-rata antarkelas justru relatif
+mirip satu sama lain pada ruang atribusi 2.048 dimensi penuh. Hal ini terjadi
+karena sinyal diskriminatif terkonsentrasi pada sebagian kecil posisi temporal
+yang tertutupi oleh komponen energi latar yang besar dan bersama
+\citetitb{TotoSuharto2025Journal1FSM}.}
 
-Dua temuan ini menciptakan apa yang disebut \emph{interpretability–accuracy
-trade-off}: BN meningkatkan akurasi klasifikasi tetapi menurunkan
-diskriminabilitas FSM.
-Temuan ini merupakan inti Novelti~N2 penelitian ini: suatu hubungan
-\emph{trade-off} yang sebelumnya tidak terdokumentasi antara \emph{Batch
-Normalization} dan kualitas interpretabilitas pada level sinyal.
+\textcolor{blue}{Karena itu, kekhasan FSM lebih efektif dinilai secara visual
+melalui \emph{heatmap} yang menyoroti konsentrasi temporal spesifik, bukan
+semata melalui metrik kemiripan kosinus 2.048-D. Studi ablasi §IV.13
+menunjukkan bahwa diskriminabilitas ini dapat ditingkatkan secara substansial
+melalui modifikasi arsitektur, khususnya penghapusan \emph{Batch
+Normalization}.}
 
-Metrik monotonik Varian~C (0,962) sedikit lebih tinggi daripada Varian~A
-(0,940), mengindikasikan bahwa WDCNN tanpa BN menghasilkan puncak FSM yang
-sedikit lebih selaras dengan frekuensi karakteristik fisika \emph{bearing}.
-Metrik stabilitas juga sedikit lebih baik pada Varian~C (0,891 vs 0,873),
-bertentangan dengan intuisi bahwa menghapus BN akan membuat model kurang
-stabil.
-Penjelasan parsial untuk fenomena ini adalah bahwa BN, dengan meredistribusi
-aktivasi internal, menciptakan ketergantungan pada statistik \emph{batch}
-yang dapat berfluktuasi lintas \emph{fold}, sehingga justru memperkenalkan
-variabilitas yang tidak ada pada Varian~C.
-
-Analisis tambahan terhadap metrik monotonik per kelompok kelas mengungkap
-pola yang konsisten dengan fisika keparahan cacat.
+Metrik monotonik \textcolor{blue}{Varian~A (0,940 untuk FSM$^{\text{abs}}$
+agregat)} menghubungkan output SHAP dengan fisika degradasi \emph{bearing}.
+\textcolor{blue}{Analisis monotonik per kelompok kelas mengungkap pola yang
+konsisten dengan fisika keparahan cacat.}
 Fraksi monotonik diurutkan: kelas Ball (17,6\%) $>$ kelas IR (13,8\%) $>$
 kelas OR (8,6\%).
 FSM kelas Ball paling konsisten menunjukkan peningkatan amplitudo seiring
@@ -910,10 +914,11 @@ diturunkan dari geometri \emph{bearing}.
 
 Dari geometri \emph{bearing} CWRU (8 bola, sudut kontak 15,17°, diameter bola
 0,3126 inci, diameter \emph{pitch} 1,537 inci), frekuensi karakteristik
-pada kecepatan putar 1.750 rpm adalah BPFO $\approx$ 104,6~Hz,
-BPFI $\approx$ 157,9~Hz, BSF $\approx$ 68,9~Hz, dan FTF $\approx$ 13,1~Hz.
+pada kecepatan putar \textcolor{blue}{1.772~rpm (CWRU Load~1)} adalah
+\textcolor{blue}{BPFO $\approx$ 105,9~Hz, BPFI $\approx$ 159,9~Hz, dan
+BSF $\approx$ 69,6~Hz}.
 Pada frekuensi pengambilan sampel 48~kHz dan panjang segmen 2.048 titik,
-perioda impuls BPFI setara dengan 304 titik sampel.
+perioda impuls BPFI setara dengan \textcolor{blue}{$\approx 300$ titik sampel}.
 Bila WDCNN mengklasifikasikan berdasarkan periodisitas BPFx, puncak-puncak
 FSM seharusnya muncul berulang pada kelipatan periode tersebut.
 
@@ -937,8 +942,8 @@ posisi BPFI dan BPFO teoritis yang diharapkan.
 \end{figure}
 
 Inspeksi pada Gambar~\ref{fig:bab4_fsm_fisika} menunjukkan bahwa puncak FSM
-tidak berulang secara periodik pada kelipatan BPFI (304 titik sampel) maupun
-BPFO.
+tidak berulang secara periodik pada kelipatan BPFI
+(\textcolor{blue}{$\approx 300$ titik sampel}) maupun BPFO.
 Sebaliknya, pola atribusi tinggi tersebar dalam jendela kontinyu yang lebarnya
 setara dengan $\approx 42{,}67$~ms, dihitung dari panjang lapisan reseptif
 efektif WDCNN (kernel-1 berukuran 64 dengan stride 16 dan 4 blok
@@ -999,36 +1004,55 @@ dari tiga varian WDCNN dalam satu pandangan terpadu.
 
 \begin{table}[ht]
 \caption{Ringkasan metrik kinerja dan interpretabilitas FSM$^{\text{abs}}$
-         tiga varian WDCNN. Akurasi adalah rata-rata 5-\emph{fold} validasi
-         silang (berbeda dari akurasi uji tunggal Varian~A = 99,87\% pada
-         Tabel~\ref{tab:bab4_hasil_wdcnn}). Kolom \textbf{F1} adalah F1
-         makro; kolom \textbf{Disk.}, \textbf{Mon.}, dan \textbf{Stab.}
-         adalah diskriminabilitas, monotonik, dan stabilitas FSM$^{\text{abs}}$.
+         tiga varian WDCNN. \textcolor{blue}{Akurasi diperoleh dari protokol
+         ablasi terkontrol (pelatihan 50 \emph{epoch} tanpa \emph{early
+         stopping}, konfigurasi optimizer identik), sehingga sedikit berbeda
+         dari akurasi uji Varian~A = 99,87\% pada
+         Tabel~\ref{tab:bab4_hasil_wdcnn} yang menggunakan \emph{early
+         stopping}.} Kolom \textbf{F1} adalah F1
+         makro; \textcolor{blue}{kolom \textbf{Param.} adalah jumlah parameter
+         terlatih; kolom \textbf{Disk.} dan \textbf{Stab.} adalah
+         diskriminabilitas dan \emph{split-half stability} FSM$^{\text{abs}}$
+         yang dihitung pada subset SHAP tereduksi (30 \emph{background} /
+         50 sampel uji) untuk efisiensi, sehingga tidak langsung sebanding
+         dengan nilai analisis utama pada Tabel~\ref{tab:bab4_validasi_fsm}.}
          Tanda $\uparrow$ berarti nilai lebih tinggi lebih baik.}
 \label{tab:bab4_ablasi_bn}
 \centering
-\begin{tabular}{lcc|ccc}
+\begin{tabular}{lccc|cc}
 \toprule
 \textbf{Varian} & \textbf{Akurasi (\%)\,$\uparrow$} & \textbf{F1\,$\uparrow$}
-                & \textbf{Disk.\,$\uparrow$} & \textbf{Mon.\,$\uparrow$}
-                & \textbf{Stab.\,$\uparrow$}\\
+                & \textcolor{blue}{\textbf{Param.}}
+                & \textbf{Disk.\,$\uparrow$} & \textbf{Stab.\,$\uparrow$}\\
 \midrule
-A (Baseline, BN aktif) & \textbf{99,73} & \textbf{0,997} & 0,216 & 0,940 & 0,873\\
-B (Kernel $k=3$)       & 98,93 ($\downarrow$0,80) & 0,989 & \multicolumn{3}{c}{tidak dievaluasi}\\
-C (Tanpa BN)           & 96,13 ($\downarrow$3,60) & 0,961 & \textbf{0,735} & \textbf{0,962} & \textbf{0,891}\\
+A (Baseline, BN aktif) & \textbf{99,73} & \textbf{0,997} & \textcolor{blue}{60.710} & \textcolor{blue}{0,315} & \textcolor{blue}{0,705}\\
+B (Kernel $k=3$)       & 98,93 ($\downarrow$0,80) & 0,989 & \textcolor{blue}{443.734} & \textcolor{blue}{0,369} & \textcolor{blue}{0,690}\\
+C (Tanpa BN)           & 96,13 ($\downarrow$3,60) & 0,961 & \textcolor{blue}{60.230} & \textcolor{blue}{\textbf{0,735}} & \textcolor{blue}{\textbf{0,741}}\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Tabel~\ref{tab:bab4_ablasi_bn} memperlihatkan secara eksplisit
 \emph{trade-off} yang dimaksud: Varian~A unggul pada metrik kinerja klasifikasi
-(akurasi dan F1 rata-rata 5-\emph{fold}), sementara Varian~C unggul pada
-ketiga metrik interpretabilitas FSM.
-Perbedaan antara akurasi uji tunggal Varian~A (99,87\% pada
-Tabel~\ref{tab:bab4_hasil_wdcnn}) dan akurasi rata-rata CV (99,73\% pada
-tabel ini) mencerminkan variansi alami antar partisi data.
-Varian~B tidak disertakan dalam evaluasi FSM karena penurunan akurasinya
-yang substansial menjadikan analisis interpretabilitas tidak bermakna.
+(akurasi dan F1), sementara \textcolor{blue}{Varian~C unggul pada
+diskriminabilitas FSM}.
+\textcolor{blue}{Perbedaan antara akurasi uji Varian~A pada
+Tabel~\ref{tab:bab4_hasil_wdcnn} (99,87\%, dengan \emph{early stopping}) dan
+akurasi pada tabel ini (99,73\%, protokol ablasi 50 \emph{epoch} terkontrol)
+mencerminkan perbedaan protokol pelatihan, bukan partisi data yang berbeda.}
+\textcolor{blue}{Penghapusan \emph{Batch Normalization} pada Varian~C
+meningkatkan diskriminabilitas FSM dari 0,315 menjadi 0,735, yaitu kenaikan
+sekitar $2{,}3\times$ ($+133\%$), dengan \emph{trade-off} penurunan akurasi
+3,60 poin persentase. Inilah temuan inti Novelti~N2: hubungan
+\emph{interpretability--accuracy trade-off} antara \emph{Batch Normalization}
+dan kualitas interpretabilitas level sinyal yang sebelumnya tidak
+terdokumentasi \citetitb{TotoSuharto2025Journal1FSM}.}
+\textcolor{blue}{Penggantian kernel pertama lebar (64) dengan kernel sempit
+($k=3$) pada Varian~B justru melonjakkan jumlah parameter sebesar
+$7{,}3\times$ (dari 60.710 menjadi 443.734) karena peta fitur beresolusi
+penuh memerlukan bank filter yang jauh lebih besar; kenaikan
+diskriminabilitas FSM yang diperoleh hanya 17\% sehingga kernel lebar tetap
+merupakan pilihan desain yang lebih efisien.}
 
 \subsection{Mekanisme: Mengapa BatchNorm Menekan Diskriminabilitas FSM?}
 \label{subsec:bab4_ablasi_mekanisme}
