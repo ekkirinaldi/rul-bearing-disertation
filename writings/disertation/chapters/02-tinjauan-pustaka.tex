@@ -538,8 +538,8 @@ Validitas FSM diukur melalui tiga metrik formal (definisi kuantitatif
 disajikan pada §IV.6): (i)~\emph{discriminability index}: sejauh mana
 FSM antar-kelas dapat dibedakan; (ii)~\emph{severity monotonicity fraction}:
 fraksi posisi yang kepentingannya meningkat monoton seiring tingkat
-keparahan cacat; (iii)~\emph{split-half stability coefficient}: korelasi
-Pearson antara FSM yang dihitung dari dua subset acak separuh data uji.
+keparahan cacat; (iii)~\emph{split-half stability coefficient}: \textcolor{blue}{kemiripan
+kosinus (\emph{cosine similarity})} antara FSM yang dihitung dari dua subset acak separuh data uji.
 \textcolor{blue}{Pada WDCNN Varian~A, koefisien stabilitas mencapai 0,940
 pada analisis utama (300 \emph{background} / 500 sampel uji),
 mengkonfirmasi bahwa FSM bukan artefak \emph{sampling}, melainkan representasi
@@ -845,7 +845,7 @@ dimensi-dimensi yang menutup kesenjangan tersebut.
            atau tidak dilaporkan dikosongkan.}
   \label{tab:bab2_posisi_penelitian}
   \footnotesize
-  \begin{tabularx}{\textwidth}{@{}X c c c c c@{}}
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.1cm} *{5}{>{\raggedright\arraybackslash}X}@{}}
     \toprule
     \textbf{Aspek} & \textbf{Conf~1} & \textbf{Conf~2} & \textbf{J~1}
       & \textbf{J~2} & \textbf{Literatur umum} \\
