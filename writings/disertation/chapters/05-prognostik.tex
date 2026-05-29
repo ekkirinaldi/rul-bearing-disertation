@@ -3,10 +3,10 @@
 %% Sumber utama: Journal 2 — Mamba-xLSTM + Top-k SAE + pemetaan BPFx
 %% Fase E — dibuat sesuai writings/dissertation-outline.md §Bab V
 
-\chapter{Estimasi Sisa Umur Pakai}
+\chapter{Estimasi Sisa Umur Pakai: Metodologi dan Hasil}
 \label{bab:prognostik}
 
-Bab ini menyajikan Jalur~B secara \emph{end-to-end}: dari perancangan
+Bab ini menyajikan \textcolor{blue}{komponen prognostik} secara \emph{end-to-end}: dari perancangan
 metodologi tiga arsitektur \emph{backbone} RUL, pembangunan \emph{Top-$k$
 Sparse Autoencoder} (SAE), prosedur pemetaan ke frekuensi karakteristik
 \emph{bearing}, hingga inferensi statistik dan analisis hasil lintas empat dataset.
@@ -40,7 +40,7 @@ N-BEATS-xLSTM-RUL mengintegrasikan basis-blok terstruktur (\emph{trend}/
 SparseGate-TCN-RUL menggunakan konvolusi kausal terdilatasi dengan
 mekanisme \emph{sparse gating}, dirancang sebagai model ringan yang sesuai
 untuk \emph{deployment} di lapisan \emph{edge}.
-Keragaman inductive bias ketiga arsitektur ini sengaja dipilih agar uji
+Keragaman \textcolor{blue}{bias induktif} ketiga arsitektur ini sengaja dipilih agar uji
 universalitas interpretabilitas SAE-BPFx tidak bergantung pada satu
 paradigma arsitektur tunggal.
 
@@ -65,7 +65,7 @@ Mamba-xLSTM-Net adalah arsitektur hibrida yang menyatukan dua komponen
 sekuensial komplementer: blok Mamba selektif untuk menangkap ketergantungan
 jangka panjang secara efisien, dan blok mLSTM untuk mempertahankan memori
 rekuren yang presisi
-\citetitb{Gu2023Mamba}\citetitb{Beck2024xLSTM}.
+\textcolor{blue}{\citetitb{Gu2023Mamba,Beck2024xLSTM}}.
 Lapisan pertama memproyeksikan vektor input dari dimensi lima ke dimensi model
 $d_{\rm model}$, kemudian blok-blok Mamba dan mLSTM disusun secara bergantian
 dalam tiga pasang.
@@ -131,7 +131,7 @@ secara kolektif menghasilkan jangkauan temporal reseptif yang mencakup
 keseluruhan jendela $L_{\rm win} = 32$ rekaman.
 \textcolor{blue}{Sebelum tumpukan TCN, sebuah \emph{sparse feature gate}
 dan cabang \emph{cross-feature attention} digabungkan menjadi masukan
-terdugat; mekanisme \emph{sparse gating} inilah yang menyeleksi kanal-kanal
+yang telah digerbangi (\emph{gated}); mekanisme \emph{sparse gating} inilah yang menyeleksi kanal-kanal
 dengan kandungan informasi tertinggi untuk diteruskan, sehingga biaya
 komputasi inferensi berkurang secara signifikan.}
 Keluaran TCN dikumpulkan pada langkah waktu terakhir lalu diproyeksikan
@@ -156,8 +156,7 @@ Optimizer AdamW \citetitb{Loshchilov2019AdamW} dengan laju pembelajaran awal
 $3 \times 10^{-4}$ dan jadwal kosinus (\emph{cosine annealing}) digunakan
 tanpa \emph{warm restart}.
 Presisi \texttt{bf16-mixed} diaktifkan untuk mengurangi penggunaan memori GPU
-pada NVIDIA~A40 tanpa menurunkan akurasi numerik secara signifikan pada
-aritmetika titik apung 32-bit yang menentukan.
+pada NVIDIA~A40 \textcolor{blue}{dengan tetap mempertahankan akurasi numerik setara komputasi titik apung 32-bit pada operasi yang menentukan}.
 Pelatihan berlangsung selama 75 \emph{epoch} penuh pada setiap konfigurasi
 model~$\times$~dataset~$\times$~\emph{seed} tanpa \emph{early stopping},
 agar kurva konvergensi antar arsitektur dapat dibandingkan dengan jumlah
@@ -202,7 +201,7 @@ konfigurasi yang tersimpan pada repositori publik \citetitb{TotoSuharto2025Journ
 
 \emph{Top-$k$ Sparse Autoencoder} (SAE) merupakan metode interpretabilitas
 mekanistik yang diadaptasi dari literatur pemodelan bahasa besar
-\citetitb{Bricken2023Monosemanticity}\citetitb{Cunningham2023TopkSAE}
+\textcolor{blue}{\citetitb{Bricken2023Monosemanticity,Cunningham2023TopkSAE}}
 ke domain prognostik \emph{bearing} untuk pertama kalinya dalam penelitian ini.
 Prinsip utamanya adalah \emph{monosemantisitas}: setiap neuron SAE idealnya
 mengkodekan satu konsep fisika yang dapat diinterpretasi, berbeda dengan
@@ -594,7 +593,7 @@ unggul pada PHM2012, N-BEATS pada XJTU-SY, dan Mamba pada IMS.
 Ketiadaan pemenang universal ini mengkonfirmasi bahwa ketiga arsitektur
 merupakan model prognostik yang \emph{viable} dan layak sebagai substrat
 analisis SAE-BPFx.
-Kedua, Mamba-xLSTM-Net secara konsisten memberikan \emph{tradeoff} terbaik
+Kedua, Mamba-xLSTM-Net secara konsisten memberikan \textcolor{blue}{\emph{trade-off}} terbaik
 antara kinerja prognostik (kompetitif pada semua dataset) dan stabilitas
 lintas \emph{seed} (deviasi standar rendah), menjadikannya pilihan
 \emph{backbone} utama untuk analisis interpretabilitas.
@@ -790,7 +789,7 @@ dari Tabel~\ref{tab:bab5_hitrate_utama}.}
 Pada PHM2012, Mamba-xLSTM-Net menghasilkan \emph{hit-rate} BPFI
 tertinggi di antara ketiga arsitektur \textcolor{blue}{(BPFI~3{,}42\%,
 BPFO~3{,}03\%)}.
-Hal ini konsisten dengan inductive bias SSM selektif yang secara alami
+Hal ini konsisten dengan \textcolor{blue}{bias induktif} SSM selektif yang secara alami
 merespons pola temporal berfrekuensi spesifik: mekanisme selektif Mamba
 mengontrol eksplisit berapa banyak informasi dari setiap titik rekaman
 yang dipertahankan dalam status, sehingga komponen frekuensi yang berkorelasi
@@ -811,17 +810,17 @@ spalling} pada LDK~UER204 baru pulih ketika SAE \emph{post-hoc} dilatih
 dengan anggaran lebih panjang (Tabel~\ref{tab:bab5_hitrate_utama},
 BPFO~2{,}2\%).}
 Hal ini mengisyaratkan bahwa pada XJTU-SY, di mana sinyal dataset tidak
-membatasi urutan BPFx secara kuat, \emph{inductive bias} encoder ikut
+membatasi urutan BPFx secara kuat, \textcolor{blue}{bias induktif} encoder ikut
 memodulasi BPFx mana yang dominan---\emph{gating} ruang-keadaan selektif
 Mamba menguatkan komponen \emph{outer-race} dominan, sedangkan
-\emph{backbone} basis-blok dan konvolusi terdugat menyebarkan respons
+\emph{backbone} basis-blok dan konvolusi bergerbang menyebarkan respons
 secara lebih luas.
 
 Pada validasi lintas-dataset dengan CWRU (data dengan $n = 10$ rekaman
 \textcolor{blue}{tingkat berkas}, menjadikannya \emph{underpowered}),
 ketiga arsitektur secara serentak
 konvergen pada pola \emph{hit-rate} BPFI-dominan dengan rentang 4{,}69--5{,}08\%.
-Konvergensi ini mengisyaratkan bahwa distribusi data, bukan inductive bias
+Konvergensi ini mengisyaratkan bahwa distribusi data, bukan \textcolor{blue}{bias induktif}
 arsitektur, yang menentukan BPFx mana yang muncul dominan \textcolor{blue}{ketika
 fisika dataset bersifat tegas}: pada CWRU, kerusakan \emph{inner race}
 merupakan kelas kegagalan terbanyak, sehingga sinyal BPFI mendominasi
@@ -905,7 +904,7 @@ verifikasi lebih lanjut dengan $k > 205$ atau kamus yang lebih besar
 ($d_{\rm lat} = 4.096$) diperlukan untuk memastikan ada-tidaknya puncak
 \emph{hit-rate}.}
 
-Bab~VI akan mensintesiskan hasil Jalur~A (Bab~IV) dan Jalur~B (Bab ini)
+Bab~VI akan mensintesiskan hasil \textcolor{blue}{komponen diagnostik} (Bab~IV) dan \textcolor{blue}{komponen prognostik} (Bab ini)
 ke dalam kerangka \emph{Perawatan Prediktif multi-tier} yang dapat
 dioperasikan dan diaudit lapis demi lapis, sekaligus merumuskan
 kesimpulan kuantitatif atas kelima novelti penelitian dan rekomendasi

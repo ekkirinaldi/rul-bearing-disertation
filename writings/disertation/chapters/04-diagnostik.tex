@@ -6,10 +6,10 @@
 %%   Journal 1    — WDCNN + SHAP DeepExplainer + FSM (§IV.4–IV.6, §IV.9–IV.14)
 %% Fase D — dibuat sesuai writings/dissertation-outline.md §Bab IV
 
-\chapter{Deteksi Kerusakan \emph{Bearing}}
+\chapter{Deteksi Kerusakan \emph{Bearing}: Metodologi dan Hasil}
 \label{bab:diagnostik}
 
-Bab ini menyajikan Jalur~A secara \emph{end-to-end}: dari perancangan
+Bab ini menyajikan \textcolor{blue}{komponen diagnostik} secara \emph{end-to-end}: dari perancangan
 metodologi \emph{benchmark} lintas tiga kelompok algoritma hingga analisis
 hasil, validasi interpretabilitas, dan sintesis lintas kelompok.
 Sumber empiris utama terdiri atas tiga karya yang masing-masing merepresentasikan
@@ -626,7 +626,7 @@ peringkat global.
 Namun, \emph{dependence plot} mengungkap perbedaan penting: XGBoost mampu
 menangkap interaksi antara kurtosis dan \emph{crest factor} yang tidak
 terlihat pada plot SVM-RBF, karena \emph{TreeExplainer} mendukung
-\emph{shap interaction values} yang merekam kontribusi sendi dua fitur
+\emph{shap interaction values} yang merekam \textcolor{blue}{kontribusi gabungan dua fitur}
 secara eksplisit.
 
 Pola atribusi DT, meskipun interpretabilitasnya paling tinggi secara
@@ -775,7 +775,7 @@ mencerminkan fakta bahwa BN menormalisasi aktivasi internal sehingga model
 tidak bergantung terlalu kuat pada posisi tertentu.
 Sebaliknya, Varian~C (tanpa BN) menunjukkan puncak atribusi yang jauh lebih
 tajam dan terlokalisasi; model tanpa BN mengembangkan detektor impuls yang
-lebih spesifik secara positional.
+lebih spesifik \textcolor{blue}{secara posisional}.
 
 \subsection{FSM Tiga Varian: Perbandingan Visual}
 \label{subsec:bab4_fsm_visual}
@@ -1150,7 +1150,7 @@ tiga dimensi: akurasi yang dibutuhkan, sumber daya komputasi yang tersedia,
 dan kedalaman interpretabilitas yang diperlukan oleh pengguna akhir (operator
 mesin, insinyur pemeliharaan, atau peneliti).
 
-Bab~V akan mengembangkan Jalur~B (prognostik) dengan memperkenalkan tiga
+Bab~V akan mengembangkan \textcolor{blue}{komponen prognostik} dengan memperkenalkan tiga
 model RUL berbasis sinyal bearing yang beroperasi pada distribusi data yang
 berbeda secara fundamental: data \emph{run-to-failure} longitudinal dari
 \emph{dataset} PHM2012, XJTU-SY, dan IMS, berbeda dari CWRU yang berupa
