@@ -18,6 +18,7 @@ data-bearing/
 │   └── 40Hz10kN/
 ├── IMS/                  # IMS Bearing Dataset (optional)
 ├── MFPT Fault Data Sets/ # MFPT (optional)
+├── skf-ch15-or1/         # PT SKF Observer exports — CH-15 OR-1 (local/industrial)
 └── processed/            # Derived parquet caches (regenerable from raw)
 ```
 
