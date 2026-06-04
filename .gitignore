@@ -91,6 +91,23 @@ disertasi-itb/
 disertasi/
 spec/
 
+# Bulky v1_initial result bundle (regenerable comparison reports)
+Mamba-xLSTM/results/v1_initial/
+
+# =============================================================================
+# Local manuscripts and Word working copies (LaTeX/Markdown remain tracked)
+# =============================================================================
+paper*.pdf
+**/*.docx.bak
+**/*.docx.bak*
+writings/**/*.pdf
+writings/**/*.docx
+writings/**/paper.txt
+writings/journal-q2/jets-mechanistic-interp/
+
+# Adopted dashboard design folder (prototype removed after merge into web/)
+inference-engine/Remaining Useful Life Dashboard/
+
 # =============================================================================
 # OS / IDE / temporary files
 # =============================================================================
