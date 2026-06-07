@@ -248,6 +248,25 @@
   references    = {Daftar Pustaka}
 }
 
+% =====================================================================
+% PATCH: Direct macro override for "et al." -> "dkk." and final "and" -> "dan"
+% \DefineBibliographyStrings di atas TIDAK aktif untuk citation strings
+% karena issue timing antara babel-bahasa dan biblatex. Patch ini
+% override langsung internal macros biblatex.
+% =====================================================================
+\DeclareDelimFormat{andothersdelim}{\addspace}
+\DeclareDelimFormat{finalnamedelim}{\addspace dan\space}
+\DeclareDelimFormat{multinamedelim}{\addcomma\space}
+
+\renewbibmacro*{name:andothers}{%
+  \ifboolexpr{ test {\ifnumequal{\value{listcount}}{\value{liststop}}}
+               and test \ifmorenames }
+    {\ifnumgreater{\value{liststop}}{1}
+       {\printdelim{andothersdelim}}
+       {\addspace}%
+     dkk\adddot}
+    {}}
+
 % Bibliography format: hanging indent 1.27cm, single spacing
 \setlength{\bibhang}{1.27cm}
 \renewcommand*{\bibfont}{\small\singlespacing}
