@@ -520,16 +520,6 @@
 % Indonesian-language references (contoh format ITB)
 % =====================================================================
 
-@article{Penulis2023ContohID,
-  author    = {Penulis, Nama and Rekan, Nama and Pengarang, Tiga},
-  title     = {Contoh Sitasi Berbahasa Indonesia untuk Disertasi ITB},
-  journal   = {Jurnal Teknik Mesin Indonesia},
-  volume    = {15},
-  number    = {2},
-  pages     = {123--140},
-  year      = {2023},
-  langid    = {indonesian}
-}
 
 % =====================================================================
 % Klasifikasi & Studi Kasus Industri (V5 — diintegrasikan ke
@@ -1261,7 +1251,7 @@
 % Title confirmed from PDF: "Mechanistic Interpretability of Bearing
 %   Remaining Useful Life Models via Top-k Sparse Autoencoders:
 %   Bridging Deep Learning and Vibration Theory"
-% Primary author confirmed: Toto Suharto (33420002@mahasiswa.itb.ac.id)
+% Primary author confirmed: Toto Suharto (kontak: 33420002 at mahasiswa.itb.ac.id)
 % TODO(verify): nama promotor/ko-promotor sebagai co-authors,
 %   nama jurnal target, volume, halaman, DOI, tahun.
 @article{TotoSuharto2025Journal2RUL,
@@ -1346,3 +1336,211 @@
   year    = {2015},
   doi     = {10.1016/j.ymssp.2015.04.021}
 }
+% =====================================================================
+%  references-additions.bib
+%  Tambahan untuk references.bib disertasi (9 entri yang disitir di
+%  bab-bab revisi tetapi belum ada di references.bib utama).
+%
+%  Pemakaian: salin seluruh isi file ini ke akhir references.bib, ATAU
+%  gunakan \bibliography{references,references-additions} di template.
+%
+%  Setiap entri telah diverifikasi via pencarian web (Mei 2026).
+%  DOI/arXiv ID dicantumkan agar bisa dicocokkan ulang.
+% =====================================================================
+
+% ---------------------------------------------------------------------
+% Disitir di Bab II §II.3.2 (Transfer Learning / Domain Adaptation).
+% Catatan: cite-key 'Li2020TransferReview' bersifat label internal;
+% paper ini sebenarnya berfokus pada data-augmentation untuk diagnosis
+% mesin rotasi, bukan review transfer-learning. Tetap relevan untuk
+% konteks domain-scarcity yang dirujuk di Bab II.
+% Verified: J Intell Manuf 31(2): 433--452 (2020).
+% DOI: 10.1007/s10845-018-1456-1
+% ---------------------------------------------------------------------
+@article{Li2020TransferReview,
+  author    = {Li, Xiang and Zhang, Wei and Ding, Qian and Sun, Jian-Qiao},
+  title     = {Intelligent rotating machinery fault diagnosis based on
+               deep learning using data augmentation},
+  journal   = {Journal of Intelligent Manufacturing},
+  volume    = {31},
+  number    = {2},
+  pages     = {433--452},
+  year      = {2020},
+  doi       = {10.1007/s10845-018-1456-1}
+}
+
+% ---------------------------------------------------------------------
+% Disitir di Bab II §II.3.2 (DANN sebagai contoh domain adaptation).
+% Verified: ICML 2015, PMLR 37: 1180--1189.
+% URL: https://proceedings.mlr.press/v37/ganin15.html
+% ---------------------------------------------------------------------
+@inproceedings{Ganin2015DANN,
+  author    = {Ganin, Yaroslav and Lempitsky, Victor},
+  title     = {Unsupervised Domain Adaptation by Backpropagation},
+  booktitle = {Proceedings of the 32nd International Conference on
+               Machine Learning (ICML)},
+  series    = {PMLR},
+  volume    = {37},
+  pages     = {1180--1189},
+  year      = {2015}
+}
+
+% ---------------------------------------------------------------------
+% Disitir di Bab II §II.5.1 (konstruksi Health Indicator dgn autoencoder).
+% Verified: arXiv:1607.00148, IRDM workshop at ICML 2016.
+% ---------------------------------------------------------------------
+@misc{Malhotra2016LSTMAnomalyDetect,
+  author        = {Malhotra, Pankaj and Ramakrishnan, Anusha and Anand, Gaurangi
+                   and Vig, Lovekesh and Agarwal, Puneet and Shroff, Gautam},
+  title         = {{LSTM}-based Encoder-Decoder for Multi-sensor
+                   Anomaly Detection},
+  year          = {2016},
+  eprint        = {1607.00148},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  note          = {Presented at the ICML 2016 Anomaly Detection Workshop}
+}
+
+% ---------------------------------------------------------------------
+% Disitir di Bab II §II.5 (UQ -- Monte Carlo Dropout).
+% Verified: ICML 2016, PMLR 48: 1050--1059.
+% URL: https://proceedings.mlr.press/v48/gal16.html
+% ---------------------------------------------------------------------
+@inproceedings{Gal2016MCDropout,
+  author    = {Gal, Yarin and Ghahramani, Zoubin},
+  title     = {Dropout as a {B}ayesian Approximation: Representing Model
+               Uncertainty in Deep Learning},
+  booktitle = {Proceedings of the 33rd International Conference on
+               Machine Learning (ICML)},
+  series    = {PMLR},
+  volume    = {48},
+  pages     = {1050--1059},
+  year      = {2016}
+}
+
+% ---------------------------------------------------------------------
+% Disitir di Bab II §II.5 (UQ -- deep ensembles).
+% Verified: NeurIPS 2017, vol. 30.
+% URL: https://papers.nips.cc/paper_files/paper/2017/hash/9ef2ed4b7fd2c810847ffa5fa85bce38-Abstract.html
+% ---------------------------------------------------------------------
+@inproceedings{Lakshminarayanan2017Ensembles,
+  author    = {Lakshminarayanan, Balaji and Pritzel, Alexander and Blundell, Charles},
+  title     = {Simple and Scalable Predictive Uncertainty Estimation using
+               Deep Ensembles},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume    = {30},
+  pages     = {6402--6413},
+  year      = {2017}
+}
+
+% ---------------------------------------------------------------------
+% Disitir di Bab II §II.5 (UQ -- conformal prediction).
+% Verified: arXiv:2107.07511 (v6, 2022); diterbitkan ulang sebagai
+% Foundations and Trends in Machine Learning 16(4): 494--591 (2023).
+% Tahun '2022' dipertahankan agar konsisten dgn cite-key.
+% ---------------------------------------------------------------------
+@misc{Angelopoulos2022ConformalSurvey,
+  author        = {Angelopoulos, Anastasios N. and Bates, Stephen},
+  title         = {A Gentle Introduction to Conformal Prediction and
+                   Distribution-Free Uncertainty Quantification},
+  year          = {2022},
+  eprint        = {2107.07511},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG},
+  note          = {Foundations and Trends in Machine Learning,
+                   vol. 16, no. 4 (2023)}
+}
+
+% ---------------------------------------------------------------------
+% Disitir di Bab II §II.7 (XAI lintas domain, ECG).
+% Verified: IEEE J Biomed Health Inform 25(5): 1519--1528, May 2021.
+% DOI: 10.1109/JBHI.2020.3022989
+% ---------------------------------------------------------------------
+@article{Strodthoff2021ECGExplainability,
+  author    = {Strodthoff, Nils and Wagner, Patrick and Schaeffter, Tobias
+               and Samek, Wojciech},
+  title     = {Deep Learning for {ECG} Analysis: Benchmarks and Insights
+               from {PTB-XL}},
+  journal   = {IEEE Journal of Biomedical and Health Informatics},
+  volume    = {25},
+  number    = {5},
+  pages     = {1519--1528},
+  year      = {2021},
+  doi       = {10.1109/JBHI.2020.3022989}
+}
+
+% ---------------------------------------------------------------------
+% Disitir di Bab I §I.1 (perbandingan dgn studi XAI berbasis SVM).
+% Verified: Machine Learning and Knowledge Extraction 6(1): 316--341 (2024).
+% DOI: 10.3390/make6010016
+% ---------------------------------------------------------------------
+@article{Santos2024SHAPSVM,
+  author    = {Santos, Mailson Ribeiro and Guedes, Affonso and
+               Sanchez-Gendriz, Ignacio},
+  title     = {{SHapley Additive exPlanations} ({SHAP}) for Efficient
+               Feature Selection in Rolling Bearing Fault Diagnosis},
+  journal   = {Machine Learning and Knowledge Extraction},
+  volume    = {6},
+  number    = {1},
+  pages     = {316--341},
+  year      = {2024},
+  doi       = {10.3390/make6010016}
+}
+
+% ---------------------------------------------------------------------
+% Disitir di Bab I §I.1 (perbandingan dgn studi CAM berbasis STFT).
+% PERHATIAN: Cite-key 'Jeon2023CAMBearing' adalah label internal yg
+% sudah dipakai di Bab I. Paper Jeon dkk. yg tersedia secara publik
+% adalah edisi 2025 (J Mech Sci Technol, DOI 10.1007/s12206-025-2510-5)
+% pada dataset MFPT, BUKAN 2023. Saya pertahankan cite-key dan
+% mencantumkan tahun yang benar (2025) di bibliography.
+% Verified: https://link.springer.com/article/10.1007/s12206-025-2510-5
+% ---------------------------------------------------------------------
+@article{Jeon2023CAMBearing,
+  author    = {Jeon, Yongjae and Yang, Secheol and Lee, Sang Won},
+  title     = {Explainable bearing fault diagnosis based on class activation
+               mapping with physical domain knowledge},
+  journal   = {Journal of Mechanical Science and Technology},
+  year      = {2025},
+  doi       = {10.1007/s12206-025-2510-5},
+  note      = {Online first; cite-key dipertahankan sebagai 2023
+               untuk konsistensi dgn naskah disertasi}
+}
+
+% =====================================================================
+% END references-additions.bib
+% =====================================================================
+
+% =====================================================================
+% TAMBAHAN ENTRI BARU (ditambahkan untuk melengkapi citation di Bab 1 & 2)
+% Diverifikasi via pencarian web pada Juni 2026.
+% =====================================================================
+
+@article{Marani2020ANFIS,
+  author    = {Marani, M. and Zeinali, M. and Songmene, V. and Mechefske, C. K.},
+  title     = {Application of intelligent fault detection and diagnosis
+               of rolling bearings based on the adaptive neuro-fuzzy
+               inference system (ANFIS) and dimensional analysis},
+  journal   = {Measurement},
+  volume    = {164},
+  pages     = {108055},
+  year      = {2020},
+  doi       = {10.1016/j.measurement.2020.108055},
+  note      = {Diverifikasi: https://www.sciencedirect.com/science/article/abs/pii/S0263224120308058}
+}
+
+@article{Hafeez2021EdgePdM,
+  author    = {Hafeez, Taimur and Xu, Lina and McArdle, Gavin},
+  title     = {Edge intelligence for data handling and predictive maintenance
+               in {IIoT}},
+  journal   = {IEEE Access},
+  volume    = {9},
+  pages     = {49355--49371},
+  year      = {2021},
+  doi       = {10.1109/ACCESS.2021.3069137},
+  note      = {Diverifikasi: https://doi.org/10.1109/ACCESS.2021.3069137}
+}
+
+% =====================================================================
+% END references-additions.bib (rev2)
+% =====================================================================
