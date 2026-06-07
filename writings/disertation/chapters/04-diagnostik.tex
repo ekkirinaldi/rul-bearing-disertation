@@ -6,7 +6,7 @@
 %%   Journal 1    — WDCNN + SHAP DeepExplainer + FSM (§IV.4–IV.6, §IV.9–IV.14)
 %% Fase D — dibuat sesuai writings/dissertation-outline.md §Bab IV
 
-\chapter{Deteksi Kerusakan \emph{Bearing}: Metodologi dan Hasil}
+\chapter{Deteksi Kerusakan \emph{Bearing}}
 \label{bab:diagnostik}
 
 Bab ini menyajikan \textcolor{blue}{komponen diagnostik} secara \emph{end-to-end}: dari perancangan
@@ -367,7 +367,7 @@ komparabel secara langsung.
 
 SHAP \emph{TreeExplainer} mengeksploitasi struktur percabangan \emph{tree}
 secara eksak menggunakan algoritma \emph{path-dependent} yang diusulkan
-Lundberg dkk.\ (2018), dengan kompleksitas waktu $O(TLD^2)$ di mana $T$
+\textcolor{blue}{\citenameitb{Lundberg2017SHAP}}, dengan kompleksitas waktu $O(TLD^2)$ di mana $T$
 adalah jumlah pohon, $L$ jumlah daun, dan $D$ kedalaman maksimum
 \citetitb{TotoSuharto2024Conf2Tree}.
 Berbeda dengan \emph{KernelExplainer}, \emph{TreeExplainer} tidak menggunakan

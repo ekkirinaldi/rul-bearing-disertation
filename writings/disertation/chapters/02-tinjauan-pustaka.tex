@@ -17,8 +17,8 @@ Bab ini membahas tinjauan terhadap literatur yang mendasari penelitian,
 (8)~Kesenjangan literatur yang memposisikan penelitian ini relatif
 terhadap penelitian sebelumnya.}
 Hasil kesenjangan yang teridentifikasi
-pada §\ref{sec:bab2_gap_literatur} menjadi alasan untuk
-pertanyaan penelitian yang dirumuskan pada §1.2.
+pada §\ref{sec:bab2_gap_literatur} menjadi \textcolor{blue}{justifikasi langsung bagi
+ketiga rumusan masalah} yang dirumuskan pada \textcolor{blue}{§\ref{sec:bab1_rumusan}}.
 
 % Catatan perubahan struktur:
 % - §II.6 (fisika vibrasi) DIPINDAHKAN menjadi §II.2 agar frekuensi
@@ -362,7 +362,7 @@ dan \citetitb{TotoSuharto2025Journal1FSM}; detail lengkap dijelaskan pada
     \textcolor{blue}{XGBoost (Cerrada dkk., 2022)$^*$} & \textcolor{blue}{Berbasis pohon} & \textcolor{blue}{CWRU} & \textcolor{blue}{96,8} & \textcolor{blue}{\emph{TreeExplainer}} & \textcolor{blue}{—} \\
     WDCNN (var A) & Deep Learning & CWRU & 99,87 & \emph{DeepExplainer}  & \checkmark \\
     WDCNN (var C, tanpa BN) & Deep Learning& CWRU & \textcolor{blue}{96,13} & \emph{DeepExplainer} & \checkmark \\
-    \textcolor{blue}{CNN-1D (Zhang dkk., 2017)$^*$} & \textcolor{blue}{Jaringan dalam} & \textcolor{blue}{CWRU} & \textcolor{blue}{99,60} & \textcolor{blue}{—} & \textcolor{blue}{—} \\
+    \textcolor{blue}{CNN-1D \citetitb{Zhang2017WDCNN}$^*$} & \textcolor{blue}{Jaringan dalam} & \textcolor{blue}{CWRU} & \textcolor{blue}{99,60} & \textcolor{blue}{—} & \textcolor{blue}{—} \\
     \bottomrule
   \end{tabularx}
 
@@ -830,36 +830,305 @@ pertama untuk WDCNN pada dataset CWRU \citetitb{TotoSuharto2025Journal1FSM}.}
 \label{sec:bab2_gap_literatur}
 % -----------------------------------------------------------------
 
-Berdasarkan tinjauan pada §\ref{sec:bab2_pdm_industri}
-hingga §\ref{sec:bab2_xai_lintas_domain}, tiga kesenjangan spesifik dan dapat
-dijustifikasi teridentifikasi dalam literatur. Tabel~\ref{tab:bab2_posisi_penelitian}
-menyajikan posisi keempat karya Pak Toto relatif terhadap literatur umum pada
+\textcolor{blue}{Berdasarkan tinjauan pada §\ref{sec:bab2_pdm_industri}
+hingga §\ref{sec:bab2_xai_lintas_domain}, bagian ini memetakan
+\emph{state of the art} penelitian perawatan prediktif secara komprehensif
+dan mengidentifikasi kesenjangan yang menjadi justifikasi langsung bagi
+ketiga rumusan masalah pada §\ref{sec:bab1_rumusan}.}
+
+\textcolor{blue}{Tabel~\ref{tab:bab2_sota_pdm} menyajikan pemaparan detail
+\emph{state of the art} perawatan prediktif \emph{bearing} dari 17 studi
+representatif yang dikelompokkan berdasarkan lima tema utama, plus empat
+karya internal disertasi ini. Setiap baris memuat metode, dataset, hasil
+utama, dan keterbatasan masing-masing studi.}
+
+%% =====================================================================
+%% TABEL III-1: SotA PdM (longtable, 5 grup tematik + posisi disertasi)
+%% =====================================================================
+\begin{small}
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.0cm}
+                     >{\raggedright\arraybackslash}p{3.0cm}
+                     >{\raggedright\arraybackslash}p{2.4cm}
+                     >{\raggedright\arraybackslash}p{7.8cm}@{}}
+\caption{\textcolor{blue}{Pemaparan \emph{state of the art} (SotA) penelitian
+         perawatan prediktif (PdM) \emph{bearing} dan posisi penelitian
+         disertasi ini, dikelompokkan dalam lima grup tematik (A--E) ditambah
+         karya internal (Grup F).}}
+\label{tab:bab2_sota_pdm} \\
+\toprule
+\textbf{Studi} & \textbf{Metode} & \textbf{Dataset} &
+\textbf{Hasil Utama dan Keterbatasan} \\
+\midrule
+\endfirsthead
+
+\multicolumn{4}{l}{\footnotesize\itshape \tablename~\thetable\ (lanjutan)} \\
+\toprule
+\textbf{Studi} & \textbf{Metode} & \textbf{Dataset} &
+\textbf{Hasil Utama dan Keterbatasan} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{4}{r}{\footnotesize\itshape (bersambung pada halaman berikutnya)} \\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+\multicolumn{4}{@{}l}{\textbf{\textcolor{blue}{Grup A. Diagnostik
+\emph{bearing} berbasis pembelajaran mesin dan pembelajaran mendalam}}} \\
+\midrule
+
+\citenameitb{Smith2015CWRU} &
+Diagnosa \emph{bearing} CWRU dengan ekstraksi fitur klasik (RMS, kurtosis,
+\emph{envelope spectrum}) &
+CWRU (12~kHz/48~kHz, 10 kelas) &
+Memvalidasi CWRU sebagai \emph{benchmark} standar diagnostik
+\emph{bearing}; namun bergantung pada fitur rekayasa manual sehingga
+sulit digeneralisasi ke kondisi operasi baru. \\[3pt]
+
+\citenameitb{Zhang2017WDCNN} &
+\emph{Wide Deep CNN} (WDCNN) dengan kernel konvolusi lebar
+(lebar 64, \emph{stride} 16) langsung pada sinyal mentah &
+CWRU (segmen 2.048 titik) &
+Akurasi $>$~99\,\% pada CWRU tanpa ekstraksi fitur manual.
+Keterbatasan: tidak menyertakan analisis interpretabilitas;
+\emph{black-box} bagi insinyur perawatan. \\[3pt]
+
+\citenameitb{Ayvaz2021PdMML} &
+Gabungan ANN + SVM untuk klasifikasi kondisi mesin &
+Data sensor produksi otomotif &
+Mendemonstrasikan kelayakan ML pada lingkungan produksi; namun
+hanya membandingkan dua algoritma dan tidak menggunakan protokol
+evaluasi temporal. \\[3pt]
+
+\citenameitb{Cui2022AnomalyML} &
+SVM + k-NN untuk deteksi anomali multi-mode &
+\emph{Bearing} eksperimental (\emph{rig} laboratorium) &
+\emph{Recall} tinggi pada deteksi anomali jarang; tetapi
+tidak ada studi ablasi atau \emph{cross-dataset validation}. \\[3pt]
+
+\citenameitb{Marani2020ANFIS} &
+ANFIS (\emph{Adaptive Neuro-Fuzzy Inference System}) berbasis fitur
+statistik &
+Dataset \emph{bearing} laboratorium &
+Interpretabilitas linguistik melalui aturan fuzzy; namun
+\emph{scaling} ke ribuan kelas dan sinyal panjang masih bermasalah
+dan akurasi tertinggal dibandingkan DL modern. \\
+
+\midrule
+\multicolumn{4}{@{}l}{\textbf{\textcolor{blue}{Grup B. \emph{Explainable AI}
+(XAI) pada diagnostik \emph{bearing}}}} \\
+\midrule
+
+\citenameitb{Santos2024SHAPSVM} &
+SHAP \emph{KernelExplainer} pada 9--15 fitur statistik dengan model SVM &
+\emph{Bearing} CWRU (subset) &
+Memberikan peringkat kepentingan fitur secara global; tetapi
+beroperasi pada level fitur agregat (kurtosis, \emph{crest factor},
+energi pita), bukan pada sinyal mentah. \\[3pt]
+
+\citenameitb{Jeon2023CAMBearing} &
+\emph{Class Activation Mapping} (CAM) pada spektrogram STFT &
+\emph{Bearing} laboratorium &
+Visualisasi area frekuensi--waktu yang menentukan klasifikasi;
+namun beroperasi pada representasi spektrogram, bukan pada
+sinyal mentah resolusi penuh; resolusi spektrogram membatasi
+lokalisasi temporal halus. \\[3pt]
+
+\citenameitb{Bengherbia2024SHAPBearing} &
+SHAP untuk diagnostik \emph{bearing} pada model XGBoost dan ANN &
+\emph{Bearing} CWRU + dataset internal &
+Validasi tingkat fitur agregat; tidak meninjau apakah model
+benar-benar belajar mekanisme fisik impuls transien BPFx. \\[3pt]
+
+\citenameitb{Serradilla2022DLPdM} &
+Survei XAI untuk PdM berbasis DL: SHAP, IG, \emph{attention rollout} &
+Meta-analisis 60+ studi &
+Memetakan lanskap XAI untuk PdM; menemukan bahwa hampir semua
+studi beroperasi pada tingkat masukan dan tidak pada
+representasi laten model. \\
+
+\midrule
+\multicolumn{4}{@{}l}{\textbf{\textcolor{blue}{Grup C. Prognostik
+\emph{bearing} dan estimasi sisa umur pakai (RUL)}}} \\
+\midrule
+
+\citenameitb{Hochreiter1997LSTM} &
+\emph{Long Short-Term Memory} (LSTM) untuk pemodelan sekuens
+temporal panjang &
+Tugas sekuens sintetis &
+Fondasi prediksi temporal jangka panjang; namun rentan
+\emph{vanishing gradient} pada sekuens sangat panjang
+($>$~10.000 titik) yang lazim pada degradasi \emph{bearing}. \\[3pt]
+
+\citenameitb{Vaswani2017Attention} &
+\emph{Transformer} dengan \emph{self-attention} murni &
+WMT (NLP) &
+Pemodelan dependensi jangka panjang tanpa rekurens; namun
+kompleksitas $O(n^2)$ menjadi mahal untuk sinyal vibrasi panjang. \\[3pt]
+
+\citenameitb{Gu2023Mamba} &
+\emph{State Space Model} (SSM) selektif dengan parameter bergantung
+masukan &
+Long-Range Arena, NLP, audio &
+Kompleksitas linear $O(n)$ dengan kinerja menyamai Transformer;
+diadaptasi dalam disertasi ini sebagai \emph{backbone} prognostik. \\[3pt]
+
+\citenameitb{Beck2024xLSTM} &
+\emph{Extended LSTM} dengan \emph{exponential gating} dan
+\emph{matrix memory} &
+Bahasa, audio, sekuens panjang &
+Mengatasi keterbatasan LSTM klasik; namun belum pernah diterapkan
+pada prognostik \emph{bearing} sebelum disertasi ini. \\[3pt]
+
+\citenameitb{Khorram2020CNNLSTM} &
+CNN-LSTM \emph{hybrid} untuk estimasi RUL &
+PHM2012 (FEMTO-PRONOSTIA) &
+RMSE kompetitif pada PHM2012; namun tanpa XAI dan tanpa validasi
+lintas \emph{rig} eksperimental. \\[3pt]
+
+\citenameitb{Lei2018PrognosticsReview} &
+Tinjauan komprehensif metode prognostik berbasis data dan berbasis
+fisika &
+Meta-analisis &
+Memetakan dua paradigma; menyoroti bahwa model \emph{data-driven}
+yang akurat sering kali tidak dapat diinterpretasikan secara fisika. \\
+
+\midrule
+\multicolumn{4}{@{}l}{\textbf{\textcolor{blue}{Grup D. Interpretabilitas
+mekanistik dengan \emph{Sparse Autoencoder} (SAE)}}} \\
+\midrule
+
+\citenameitb{Bricken2023Monosemanticity} &
+SAE pada lapisan MLP \emph{transformer} untuk ekstraksi fitur
+monosemantik &
+Model bahasa kecil (Anthropic) &
+Membuktikan bahwa SAE mengekstrak konsep yang dapat dipetakan
+ke konsep semantik; namun domain bahasa, belum domain sinyal fisik. \\[3pt]
+
+\citenameitb{Cunningham2023TopkSAE} &
+\emph{Top-k Sparse Autoencoder} dengan \emph{sparsity constraint}
+yang dapat dikendalikan &
+Model bahasa &
+Memberikan kontrol langsung atas sparsitas; diadaptasi dalam
+disertasi ini ke domain prognostik \emph{bearing}. \\[3pt]
+
+\citenameitb{Templeton2024Scaling} &
+\emph{Scaling} SAE pada \emph{Claude 3 Sonnet} hingga jutaan fitur &
+LLM produksi &
+Membuktikan SAE dapat diperluas; namun belum diadaptasi ke domain
+non-bahasa dengan validasi fisika sebelum disertasi ini. \\
+
+\midrule
+\multicolumn{4}{@{}l}{\textbf{\textcolor{blue}{Grup E. Arsitektur
+sistem PdM \emph{edge}/\emph{cloud}}}} \\
+\midrule
+
+\citenameitb{Cheng2019EdgeCloud} &
+Koordinasi \emph{edge}--\emph{cloud} untuk pemrosesan data PdM &
+Studi kasus industri manufaktur &
+Membahas pembagian beban komputasi; namun masih
+\emph{cloud-centric} dan tanpa lapisan XAI per \emph{tier}. \\[3pt]
+
+\citenameitb{Hafeez2021EdgePdM} &
+\emph{Edge intelligence} untuk PdM dengan model ringan &
+Sensor IoT industri &
+Mendemonstrasikan kelayakan \emph{edge deployment}; namun
+tidak menyertakan lapisan interpretabilitas yang dapat diaudit. \\
+
+\midrule
+\multicolumn{4}{@{}l}{\textbf{\textcolor{blue}{Grup F. Karya internal
+disertasi ini}}} \\
+\midrule
+
+\citenameitb{TotoSuharto2024Conf1SVM} &
+SVM-RBF + Regresi Logistik dengan SHAP \emph{KernelExplainer} pada
+vektor fitur HI 36-D &
+CWRU (\emph{temporal split} 54/13/33\,\%) &
+SVM-RBF mencapai akurasi 96,4\,\%; XAI level fitur (Conf~1).
+Mendukung Tier Edge IoT pada arsitektur multi-tier. \\[3pt]
+
+\citenameitb{TotoSuharto2024Conf2Tree} &
+Decision Tree, Random Forest, XGBoost dengan SHAP \emph{TreeExplainer}
+pada vektor fitur HI 36-D &
+CWRU (\emph{temporal split} 54/13/33\,\%) &
+XGBoost mencapai akurasi 97,1\,\%; XAI level fitur dengan
+\emph{tree-path} eksak (Conf~2). Mendukung Tier Edge Server. \\[3pt]
+
+\citenameitb{TotoSuharto2025Journal1FSM} &
+WDCNN + SHAP \emph{DeepExplainer} pada sinyal mentah 2.048 titik
+$\to$ \emph{Fault Signature Maps} (FSM, 3 varian: Signed, Absolute,
+Variance) &
+CWRU (1.240/310/750 segmen) &
+Akurasi 99,87\,\% (Var-A); \emph{discriminability} $D = 0{,}216$,
+\emph{split-half stability} $r = 0{,}940$; ablasi \emph{BatchNorm}
+menyingkap \emph{trade-off}: $+133$\,\% diskriminabilitas dengan
+$-3{,}60$~pp akurasi (J~1). \\[3pt]
+
+\citenameitb{TotoSuharto2025Journal2RUL} &
+Tiga \emph{backbone} RUL (Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL,
+SparseGate-TCN-RUL) + \emph{Top-k SAE} dipetakan ke BPFx melalui
+korelasi dengan \emph{Hilbert envelope} &
+PHM2012, XJTU-SY, IMS, CWRU &
+\emph{Hit-rate} BPFI 2,3\,\% (PHM2012, $p < 0{,}001$), BPFO
+2,2\,\% (XJTU-SY, $p < 0{,}001$); konsistensi urutan dominansi BPFx
+lintas tiga arsitektur; validasi dengan \emph{bootstrap} CI 95\,\%,
+\emph{permutation test}, dan dua \emph{negative controls} (J~2). \\
+
+\end{longtable}
+\end{small}
+
+\textcolor{blue}{Berdasarkan Tabel~\ref{tab:bab2_sota_pdm}, dapat
+diidentifikasi bahwa sebagian besar studi diagnostik \emph{bearing}
+(Grup~A) hanya membandingkan satu hingga tiga algoritma tanpa XAI dan tanpa
+protokol evaluasi temporal yang ketat. Studi XAI yang ada (Grup~B) beroperasi
+pada tingkat fitur agregat atau spektrogram, bukan pada resolusi sinyal
+mentah. Di bidang prognostik (Grup~C), arsitektur modern seperti Mamba dan
+xLSTM belum diterapkan pada \emph{bearing}, dan interpretabilitas mekanistik
+berbasis SAE (Grup~D) baru dikembangkan untuk model bahasa besar dan belum
+pernah diadaptasi ke domain mesin rotasi. Arsitektur sistem PdM
+\emph{edge}/\emph{cloud} (Grup~E) belum mengintegrasikan XAI per lapis
+secara terstruktur. Empat karya internal pada Grup~F mengisi celah-celah
+tersebut dengan dukungan empiris dan inferensi statistik.}
+
+Tabel~\ref{tab:bab2_posisi_penelitian} selanjutnya
+menyajikan posisi keempat karya penelitian ini relatif terhadap literatur umum pada
 dimensi-dimensi yang menutup kesenjangan tersebut.
 
 \begin{table}[ht]
   \centering
   \caption{Posisi empat karya penelitian ini relatif terhadap literatur umum
-           pada lima dimensi kritis. Simbol \checkmark = terpenuhi,
+           pada \textcolor{blue}{enam} dimensi kritis. Simbol \checkmark = terpenuhi,
            \emph{sebagian} = terpenuhi parsial; kolom tidak relevan
            atau tidak dilaporkan dikosongkan.}
   \label{tab:bab2_posisi_penelitian}
   \footnotesize
-  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.1cm} *{5}{>{\raggedright\arraybackslash}X}@{}}
+  \setlength{\tabcolsep}{4pt}
+  \renewcommand{\arraystretch}{1.15}
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.0cm} *{5}{>{\raggedright\arraybackslash}X}@{}}
     \toprule
     \textbf{Aspek} & \textbf{Conf~1} & \textbf{Conf~2} & \textbf{J~1}
       & \textbf{J~2} & \textbf{Literatur umum} \\
     \midrule
     Level XAI
-      & Fitur & Fitur & Sinyal & Laten & Fitur atau tidak ada \\[4pt]
+      & Fitur & Fitur & Sinyal & Laten & Fitur atau tidak ada \\[3pt]
     Dataset diagnostik (CWRU)
-      & \checkmark & \checkmark & \checkmark & \emph{sebagian} & Beragam \\[4pt]
+      & \checkmark & \checkmark & \checkmark & \emph{sebagian} & Beragam \\[3pt]
     Dataset prognostik (PHM/XJTU/IMS)
-      & — & — & — & \checkmark & PHM dan XJTU dominan \\[4pt]
+      & --- & --- & --- & \checkmark & PHM dan XJTU dominan \\[3pt]
     Validasi statistik
       & Akurasi, F1 & Akurasi, F1 & Akurasi, F1 + 3 metrik FSM
-      & RMSE + \emph{bootstrap} CI + uji permutasi & Akurasi saja \\[4pt]
+      & RMSE + \emph{bootstrap} CI + uji permutasi & Akurasi saja \\[3pt]
+    \textcolor{blue}{Validasi industri (data real)}
+      & \textcolor{blue}{$\times$} & \textcolor{blue}{$\times$}
+      & \textcolor{blue}{$\times$}
+      & \textcolor{blue}{\emph{sebagian} (SKF)}
+      & \textcolor{blue}{Sangat terbatas} \\[3pt]
     Integrasi diagnostik–prognostik
-      & $\times$ & $\times$ & $\times$ & $\times$ & $\times$ \\[4pt]
+      & $\times$ & $\times$ & $\times$ & $\times$ & $\times$ \\[3pt]
     Interpretabilitas dua lapis (masukan + laten)
       & $\times$ & $\times$ & $\times$ (hanya masukan) & $\times$ (hanya laten)
       & $\times$ \\
@@ -873,7 +1142,8 @@ dimensi-dimensi yang menutup kesenjangan tersebut.
    J~2 = \citenameitb{TotoSuharto2025Journal2RUL} (RUL+SAE-BPFx).}
 \end{table}
 
-Tabel~\ref{tab:bab2_posisi_penelitian} mengungkapkan tiga kesenjangan yang
+Tabel~\ref{tab:bab2_posisi_penelitian} mengungkapkan
+\textcolor{blue}{empat} kesenjangan yang
 belum terisi oleh literatur yang ada, termasuk oleh keempat karya secara
 individual.
 
@@ -884,7 +1154,7 @@ bukan \emph{posisi mana dalam sinyal mentah 2.048 sampel} yang menjadi basis
 keputusan. Belum ada peta fingerprint kelas kerusakan berbasis atribusi sinyal
 mentah dengan validasi multi-metrik (discriminability, severity monotonicity,
 split-half stability). Kesenjangan ini dijawab oleh Journal~1 dan Bab~IV
-(Sub-RQ3.1).
+\textcolor{blue}{(RM-2)}.
 
 \textbf{Kesenjangan~2 (Interpretabilitas laten prognostik).} Belum ada studi
 yang memetakan fitur SAE dari representasi laten model RUL ke frekuensi
@@ -892,7 +1162,8 @@ karakteristik fisik \emph{bearing} secara statistik signifikan, dengan kontrol
 terhadap artefak arsitektur (model Xavier-init) dan artefak prosedur (hidden
 state acak). Metode interpretabilitas yang ada beroperasi di tingkat masukan atau
 tidak dapat menjembatani representasi laten dengan teori fisika degradasi.
-Kesenjangan ini dijawab oleh Journal~2 dan Bab~V (Sub-RQ3.2 + Sub-RQ2.2).
+Kesenjangan ini dijawab oleh Journal~2 dan Bab~V
+\textcolor{blue}{(RM-2)}.
 
 \textbf{Kesenjangan~3 (Integrasi diagnostik–prognostik yang dapat diaudit).}
 Belum ada kerangka yang menyatukan interpretabilitas tingkat masukan (FSM untuk
@@ -900,13 +1171,27 @@ diagnostik) dan interpretabilitas tingkat laten (SAE-BPFx untuk prognostik)
 menjadi satu sistem PdM multi-tier yang dapat diaudit lapis demi lapis.
 Ketiadaan integrasi ini merupakan hambatan adopsi industri: teknisi tidak dapat
 menelusuri alasan keputusan dari sinyal mentah hingga konsep fisika laten.
-Kesenjangan ini dijawab oleh Bab~VI (Sub-RQ1.1).
+Kesenjangan ini dijawab oleh \textcolor{blue}{arsitektur multi-tier pada Bab~VI
+(RM-3)}.
 
-Ketiga kesenjangan tersebut terhubung langsung dengan pertanyaan penelitian
-pada §1.2: Kesenjangan~1 menjustifikasi RQ3/Sub-RQ3.1; Kesenjangan~2
-menjustifikasi RQ3/Sub-RQ3.2 dan RQ2/Sub-RQ2.2; Kesenjangan~3 menjustifikasi
-RQ1/Sub-RQ1.1. Metodologi umum untuk menjawab ketiga kesenjangan disajikan
-pada Bab~III, dengan detail diagnostik pada Bab~IV dan prognostik pada Bab~V.
+\textcolor{blue}{\textbf{Kesenjangan~4 (Validasi industri real).} Sebagian
+besar studi diagnostik dan prognostik \emph{bearing} dikembangkan dan
+divalidasi pada dataset publik yang dikumpulkan dalam kondisi laboratorium
+terkontrol. Validasi pada lingkungan industri nyata, khususnya pada proses
+produksi \emph{ball bearing} dengan kerusakan yang berkembang secara alami,
+masih sangat terbatas. Model yang akurat pada dataset benchmark belum tentu
+bekerja pada data industri real. Kesenjangan ini dijawab oleh validasi RUL
+pada data vibrasi PT~SKF Indonesia (RM-3).}
+
+\textcolor{blue}{Keempat} kesenjangan tersebut terhubung langsung dengan
+\textcolor{blue}{tiga} pertanyaan penelitian
+pada §\ref{sec:bab1_rumusan}: \textcolor{blue}{Kesenjangan~1 dan~2
+menjustifikasi RM-2 (XAI dua lapis); Kesenjangan~3 dan~4 menjustifikasi
+RM-3 (validasi industri dan arsitektur multi-tier). RM-1 (model PdM
+diagnostik dan prognostik yang akurat) merupakan prasyarat yang memungkinkan
+seluruh kesenjangan di atas ditangani.} Metodologi umum untuk menjawab
+\textcolor{blue}{keempat} kesenjangan disajikan pada Bab~III, dengan detail
+diagnostik pada Bab~IV dan prognostik pada Bab~V.
 
 % =====================================================================
 % CATATAN REFERENSI BARU (perlu ditambahkan ke daftar pustaka)
