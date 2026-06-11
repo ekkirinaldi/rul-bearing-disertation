@@ -184,6 +184,41 @@ def tag_captions(src: str) -> str:
     return src
 
 
+SYMBOL_MAP = {
+    r"\rightarrow": "→", r"\leftarrow": "←", r"\Rightarrow": "⇒",
+    r"\times": "×", r"\approx": "≈", r"\leq": "≤", r"\geq": "≥",
+    r"\pm": "±", r"\sim": "~", r"\cdot": "·", r"\infty": "∞",
+}
+
+SIMPLE_MATH_CHARS = re.compile(r"^[A-Za-z0-9=+\-<>(),.%\s]*$")
+
+
+def demote_simple_math(src: str) -> str:
+    """Turn trivial inline math into plain text.
+
+    OMML gives punctuation spacing to commas, so $r = 0{,}507$ renders as
+    "0 , 507" in Word/LO. Scalar expressions (letters, digits, decimal commas,
+    basic operators, lone symbols) do not need a math zone at all: emit text
+    with single-letter variables italicized. Anything with \\frac, sub/sup-
+    scripts etc. stays math.
+    """
+    def sub(m):
+        body = m.group(1).strip()
+        for tex, uni in SYMBOL_MAP.items():
+            if body == tex:
+                return uni
+            body = body.replace(tex + " ", uni + " ").replace(" " + tex, " " + uni)
+        body = body.replace("{,}", ",").replace("{.}", ".")
+        if not SIMPLE_MATH_CHARS.match(body.replace("→", "").replace("×", "")
+                                       .replace("≈", "").replace("≤", "")
+                                       .replace("≥", "").replace("±", "")):
+            return m.group(0)  # keep as math
+        body = re.sub(r"[A-Za-z]+", lambda w: rf"\emph{{{w.group(0)}}}", body)
+        return body.replace("%", r"\%")
+
+    return re.sub(r"\$([^$]+)\$", sub, src)
+
+
 def tag_equations(src: str) -> str:
     if "\\begin{align}" in src or "\\begin{align*}" in src:
         sys.exit("FATAL: align environment present - extend tag_equations first")
@@ -252,6 +287,7 @@ def main():
 
     src = replace_tikz(src, fmap, args.bab)
     src = replace_includegraphics(src, fmap)
+    src = demote_simple_math(src)
     src = tag_captions(src)
     src = tag_equations(src)
     src = replace_refs(src, labels)
