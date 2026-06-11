@@ -40,6 +40,7 @@ SHIM = r"""\documentclass[12pt]{report}
 \usepackage{subcaption}
 \newcommand{\citetitb}[2][]{\autocite[#1]{#2}}
 \newcommand{\citenameitb}[2][]{\textcite[#1]{#2}}
+\newcommand{\path}[1]{\texttt{#1}}
 \begin{document}
 """
 
@@ -211,6 +212,33 @@ def replace_multicolumn(src: str) -> str:
         out.append(src[pos:i])
         out.append(f"@@SPAN{n}@@" + content + " & " * (n - 1))
         pos = e
+    out.append(src[pos:])
+    return "".join(out)
+
+
+def replace_fbox_placeholder(src: str) -> str:
+    """\\fbox{\\parbox{w}{X}} (framed figure placeholders) -> X.
+
+    Pandoc renders the construct as an empty zero-column table; the inner
+    description text is what matters until the real figure exists.
+    """
+    out, pos = [], 0
+    while True:
+        i = src.find(r"\fbox{", pos)
+        if i == -1:
+            break
+        fb_end = match_braces(src, i + len(r"\fbox"))
+        pb = src.find(r"\parbox", i, fb_end)
+        if pb == -1:
+            pos = fb_end
+            continue
+        w_end = match_braces(src, pb + len(r"\parbox"))
+        b_end = match_braces(src, w_end)
+        body = src[w_end + 1:b_end - 1]
+        body = re.sub(r"\\vspace\{[^}]*\}|\\centering", "", body)
+        out.append(src[pos:i])
+        out.append(body)
+        pos = fb_end
     out.append(src[pos:])
     return "".join(out)
 
@@ -455,6 +483,9 @@ def extract_table_hints(src: str) -> list:
                         src[b:e])
         if len(mp) >= 2:
             positioned.append((b, [float(w) for w in mp]))
+        elif r"\fbox{\parbox" in src[b:e]:
+            # placeholder figure -> pandoc emits a 1x1 layout table
+            positioned.append((b, [1.0]))
     return [w for _, w in sorted(positioned)]
 
 
@@ -489,6 +520,7 @@ def main():
     src = demote_simple_math(src)
     src = simplify_longtables(src)
     src = replace_multicolumn(src)
+    src = replace_fbox_placeholder(src)
     src = replace_subcaptions(src)
     src = tag_captions(src)
     src = split_align(src)

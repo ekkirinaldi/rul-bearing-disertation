@@ -113,15 +113,27 @@ def para_text(p):
 
 
 class Restyler:
-    def __init__(self, tree, labels, bab):
+    def __init__(self, tree, labels, bab, lamp=None):
         self.doc = tree
         self.body = tree.find(W + "body")
         self.labels = labels
         self.bab = bab
+        self.lamp = lamp  # lampiran letter ("A".."G") or None
         ids = [int(b.get(W + "id")) for b in tree.iter(W + "bookmarkStart")]
         self.next_bm = max(ids, default=100) + 1
         self.seq = {"Gambar": 0, "Tabel": 0, "Persamaan": 0}
         self.bookmarks = {}
+
+    @property
+    def prefix(self):
+        return self.lamp if self.lamp else self.int_to_roman(self.bab)
+
+    def seq_instr(self, kind):
+        """Chapters share one SEQ per kind, restarting at Heading 1; each
+        lampiran gets its own named sequence (no Heading 1 to restart on)."""
+        if self.lamp:
+            return f" SEQ {kind}Lamp{self.lamp} \\* ARABIC "
+        return f" SEQ {kind} \\* ARABIC \\s 1 "
 
     def bookmark_pair(self, name):
         i = self.next_bm
@@ -134,6 +146,32 @@ class Restyler:
             val = ps.get(W + "val")
             if val in STYLE_MAP:
                 ps.set(W + "val", STYLE_MAP[val])
+
+    # -- step 1b (lampiran only) -----------------------------------------
+    def lampiranify(self):
+        """Heading1/2 -> Lampiran/Lampiransub1 with literal numbering text
+        ("Lampiran A Judul", "A.1 Judul"): the template lampiran styles carry
+        no automatic numbering."""
+        sub = 0
+        for p in self.doc.iter(W + "p"):
+            ps = p.find(f"{W}pPr/{W}pStyle")
+            if ps is None:
+                continue
+            style = ps.get(W + "val")
+            if style == "Heading1":
+                ps.set(W + "val", "Lampiran")
+                text = f"Lampiran {self.lamp} "
+            elif style == "Heading2":
+                sub += 1
+                ps.set(W + "val", "Lampiransub1")
+                text = f"{self.lamp}.{sub} "
+            elif style == "Heading3":
+                sys.exit("FATAL: Heading3 in lampiran - extend lampiranify")
+            else:
+                continue
+            run = make_run(text)
+            ppr = p.find(W + "pPr")
+            ppr.addnext(run)
 
     # -- step 2 ---------------------------------------------------------
     def number_for(self, label):
@@ -152,7 +190,7 @@ class Restyler:
             self.seq[kind] += 1
             aux_num = self.number_for(label)
             roman, seqno = aux_num.rsplit(".", 1)
-            expect = f"{'IVXLCDM'[0:0]}{self.int_to_roman(self.bab)}.{self.seq[kind]}"
+            expect = f"{self.prefix}.{self.seq[kind]}"
             assert aux_num == expect, f"caption number mismatch {label}: aux={aux_num} computed={expect}"
             first_t.text = first_t.text[m.end():]
             # ensure caption style
@@ -168,7 +206,7 @@ class Restyler:
                 make_run(f"{kind} "),
                 bm_s,
                 make_run(f"{roman}."),
-                make_field(f" SEQ {kind} \\* ARABIC \\s 1 ", seqno),
+                make_field(self.seq_instr(kind), seqno),
                 bm_e,
                 make_run(" "),
             ]
@@ -248,7 +286,7 @@ class Restyler:
             prev.append(tab_run2)
             self.seq["Persamaan"] += 1
             if label.startswith("eq:auto_"):
-                roman = self.int_to_roman(self.bab)
+                roman = self.prefix
                 seqno = str(self.seq["Persamaan"])
             else:
                 aux_num = self.number_for(label)
@@ -259,7 +297,7 @@ class Restyler:
             prev.append(make_run("("))
             prev.append(bm_s)
             prev.append(make_run(f"{roman}."))
-            prev.append(make_field(f" SEQ Persamaan \\* ARABIC \\s 1 ", seqno))
+            prev.append(make_field(self.seq_instr("Persamaan"), seqno))
             prev.append(bm_e)
             prev.append(make_run(")"))
             p.getparent().remove(p)
@@ -545,6 +583,8 @@ def main():
     ap.add_argument("--bab", type=int, required=True)
     ap.add_argument("--chapter-label", required=True)
     ap.add_argument("--tblhints", help="JSON column-weight hints from preprocess")
+    ap.add_argument("--lampiran", help="lampiran letter (A..G) - literal "
+                    "heading numbers, per-lampiran SEQ names")
     args = ap.parse_args()
 
     labels = parse_aux(args.aux)
@@ -566,9 +606,11 @@ def main():
     if args.tblhints and Path(args.tblhints).exists():
         hints = json.loads(Path(args.tblhints).read_text())
 
-    rs = Restyler(tree.getroot(), labels, args.bab)
+    rs = Restyler(tree.getroot(), labels, args.bab, lamp=args.lampiran)
     content_twips = rs.content_width_twips()
     rs.retag_styles()
+    if args.lampiran:
+        rs.lampiranify()
     rs.transform_captions()
     rs.transform_refs()
     rs.transform_equations(content_twips)
@@ -584,7 +626,8 @@ def main():
                standalone=True)
 
     add_extra_styles(Path(workdir) / "word" / "styles.xml")
-    fix_numbering(Path(workdir) / "word" / "numbering.xml", args.bab)
+    if not args.lampiran:
+        fix_numbering(Path(workdir) / "word" / "numbering.xml", args.bab)
     pack(workdir, args.out)
     shutil.rmtree(workdir)
     print(f"restyled {args.raw} -> {args.out} "

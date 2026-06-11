@@ -47,10 +47,47 @@ $(foreach n,1 2 3 4 5 6,$(eval $(call CHAPTER_RULE,$(n))))
 
 all-chapters: bab1 bab2 bab3 bab4 bab5 bab6
 
+# lampiran: letter, source tex, chapter label (page start from aux)
+LAMPA_SRC := $(TEXDIR)/lampiran/A-detail-fitur.tex
+LAMPB_SRC := $(TEXDIR)/lampiran/B-hyperparameter-baseline.tex
+LAMPC_SRC := $(TEXDIR)/lampiran/C-kode-implementasi.tex
+LAMPD_SRC := $(TEXDIR)/lampiran/D-klasifikasi-industri.tex
+LAMPE_SRC := $(TEXDIR)/lampiran/E-svm-lr.tex
+LAMPF_SRC := $(TEXDIR)/lampiran/F-tree.tex
+LAMPG_SRC := $(TEXDIR)/lampiran/G-wdcnn-fsm.tex
+LAMPA_LBL := lamp:fitur
+LAMPB_LBL := lamp:hparam
+LAMPC_LBL := lamp:kode
+LAMPD_LBL := lamp:klasifikasi_industri
+LAMPE_LBL := lamp:svm_lr
+LAMPF_LBL := lamp:tree
+LAMPG_LBL := lamp:wdcnn_fsm
+
+define LAMP_RULE
+lamp$(1): lampiran/lamp$(1).docx
+lampiran/lamp$(1).docx: $$(LAMP$(1)_SRC) tools/preprocess_tex.py tools/restyle.py $(FIGMAP)
+	@mkdir -p build/pre build/raw lampiran
+	python3 tools/preprocess_tex.py $$(LAMP$(1)_SRC) build/pre/lamp$(1).tex \
+	  --aux $(AUX) --figmap $(FIGMAP) --bab 0
+	pandoc build/pre/lamp$(1).tex $(PANDOC_FLAGS) -o build/raw/lamp$(1).docx
+	python3 tools/restyle.py build/raw/lamp$(1).docx lampiran/lamp$(1).docx \
+	  --aux $(AUX) --figmap $(FIGMAP) --bab 0 --lampiran $(1) \
+	  --chapter-label $$(LAMP$(1)_LBL) --tblhints build/pre/lamp$(1).tex.tblhints.json
+
+verify-lamp$(1): lampiran/lamp$(1).docx
+	bash tools/verify_chapter.sh lampiran/lamp$(1).docx $$(LAMP$(1)_SRC)
+endef
+
+$(foreach l,A B C D E F G,$(eval $(call LAMP_RULE,$(l))))
+
+all-lampiran: lampA lampB lampC lampD lampE lampF lampG
+
 lint:
 	bash tools/lint_docx.sh chapters/*.docx
 
 clean:
 	rm -rf build/pre build/raw build/verify
 
-.PHONY: all-chapters lint clean $(foreach n,1 2 3 4 5 6,bab$(n) verify-bab$(n))
+.PHONY: all-chapters all-lampiran lint clean \
+  $(foreach n,1 2 3 4 5 6,bab$(n) verify-bab$(n)) \
+  $(foreach l,A B C D E F G,lamp$(l) verify-lamp$(l))
