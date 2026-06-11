@@ -25,7 +25,7 @@ Gunakan **hanya** gaya berikut. Jangan membuat gaya baru atau memformat manual
 | Isi sel tabel | **IsiTabel** | TNR 12 pt, spasi tunggal (gaya tambahan pipeline). |
 | Paragraf berisi gambar | **Gambar** | Rata tengah (gaya tambahan pipeline). |
 | Entri daftar pustaka | **Daftarpustaka** | Hanging indent 1,27 cm, spasi tunggal. |
-| Judul lampiran | **Lampiran** / **Lampiransub1** | Penomoran `Lampiran %1` (huruf kapital) via abstractNum 10. |
+| Judul lampiran | **Lampiran** / **Lampiransub1** | Penomoran **literal** dalam teks ("Lampiran A Judul", "A.1 Judul") — gaya template tidak membawa penomoran otomatis. Caption di lampiran memakai prefiks literal "A." + field `SEQ GambarLampA` (sekuens terpisah per lampiran agar aman terhadap F9 setelah merge). |
 
 **Pemisah paragraf:** satu paragraf kosong ber-style `Paragraf` di antara dua
 blok isi (konvensi dokumen V5; ekuivalen "satu baris kosong 1,5 spasi" pada
