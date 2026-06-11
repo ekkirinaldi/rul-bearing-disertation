@@ -402,6 +402,21 @@ def tag_equations(src: str) -> str:
     return re.sub(r"\\begin\{equation\}(.*?)\\end\{equation\}", process, src, flags=re.S)
 
 
+def desugar_colspecs(src: str) -> str:
+    """siunitx S columns -> c: pandoc's reader drops tables it cannot parse."""
+    out, pos = [], 0
+    for m in re.finditer(r"\\begin\{(tabular|longtable|tabularx)\}", src):
+        i = m.end()
+        if m.group(1) == "tabularx":
+            i = match_braces(src, i)
+        j = match_braces(src, i)
+        out.append(src[pos:i])
+        out.append(src[i:j].replace("S", "c"))
+        pos = j
+    out.append(src[pos:])
+    return "".join(out)
+
+
 def extract_table_hints(src: str) -> list:
     """Column-width weights for each tabular/longtable, in document order.
 
@@ -464,6 +479,7 @@ def main():
 
     # table hints must see the original minipage/figure structure
     import json
+    src = desugar_colspecs(src)
     hints = extract_table_hints(src)
 
     src = replace_tikz(src, fmap, args.bab)
