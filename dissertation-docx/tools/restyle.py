@@ -468,14 +468,16 @@ class Restyler:
         """pandoc copies the caption text (with our token) into the table
         accessibility attribute w:tblCaption - strip the token there."""
         for cap in self.doc.iter(W + "tblCaption"):
-            cap.set(W + "val",
-                    re.sub(r"@@CAP:[^@]+@@", "", cap.get(W + "val", "")))
+            val = re.sub(r"@@CAP:[^@]+@@", "", cap.get(W + "val", ""))
+            val = re.sub(r"@@REF:([^@]+)@@",
+                         lambda m: self.number_for(m.group(1)), val)
+            cap.set(W + "val", re.sub(r"@@[A-Z]+\d*:?[^@]*@@", "", val))
 
     # -- step 8 ---------------------------------------------------------
     def assert_clean(self):
         xml = etree.tostring(self.doc).decode()
-        assert "@@" not in xml, \
-            f"leftover tokens: {re.findall(r'.{{30}}@@.{{30}}', xml)[:3]}"
+        leftover = re.findall(r"@@[A-Z]+:[^@]*@@|@@SPAN\d+@@", xml)
+        assert "@@" not in xml, f"leftover tokens: {leftover[:5]}"
 
 
 def add_extra_styles(styles_path):

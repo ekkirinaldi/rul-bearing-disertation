@@ -136,6 +136,10 @@ def replace_includegraphics(src: str, fmap: dict) -> str:
 
 def replace_refs(src: str, labels: dict) -> str:
     unresolved = []
+    # labels defined in THIS chapter can be live Word REF fields; targets in
+    # other chapters have no bookmark here -> bake the literal aux number
+    local = set(re.findall(r"\\label\{([^}]+)\}", src))
+    local |= set(re.findall(r"@@(?:EQNUM|CAP):([^@]+)@@", src))
 
     def lookup(label):
         if label not in labels:
@@ -146,14 +150,17 @@ def replace_refs(src: str, labels: dict) -> str:
     def sub_ref(m):
         label = m.group(1)
         if label.startswith(REF_FIELD_PREFIXES):
-            return f"@@REF:{label}@@"
+            return f"@@REF:{label}@@" if label in local else lookup(label)
         if label.startswith(REF_LITERAL_PREFIXES):
             return lookup(label)
         unresolved.append(label)
         return "??"
 
     def sub_eqref(m):
-        return f"(@@REF:{m.group(1)}@@)"
+        label = m.group(1)
+        if label in local:
+            return f"(@@REF:{label}@@)"
+        return f"({lookup(label)})"
 
     src = re.sub(r"\\eqref\{([^}]+)\}", sub_eqref, src)
     src = re.sub(r"\\ref\{([^}]+)\}", sub_ref, src)
