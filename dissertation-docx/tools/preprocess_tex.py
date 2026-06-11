@@ -162,6 +162,27 @@ def replace_refs(src: str, labels: dict) -> str:
     return src
 
 
+def replace_subcaptions(src: str) -> str:
+    """\\caption*{X} (minipage subcaptions) -> plain paragraph X.
+
+    Pandoc drops \\caption* inside minipages entirely; as a paragraph the
+    text survives in the layout-table cell below its image.
+    """
+    out = []
+    pos = 0
+    while True:
+        i = src.find(r"\caption*{", pos)
+        if i == -1:
+            break
+        end = match_braces(src, i + len(r"\caption*"))
+        content = src[i + len(r"\caption*{"):end - 1]
+        out.append(src[pos:i])
+        out.append(f"\\par {content}\\par")
+        pos = end
+    out.append(src[pos:])
+    return "".join(out)
+
+
 def tag_captions(src: str) -> str:
     """Inside figure/table envs, prefix the caption text with @@CAP:label@@."""
     for env in ("figure", "table"):
@@ -243,9 +264,11 @@ def extract_table_hints(src: str) -> list:
     """Column-width weights for each tabular/longtable, in document order.
 
     p{Xcm} columns weigh X; X (tabularx) weighs 3; l/c/r weigh 2.
+    Side-by-side minipages inside a figure become a pandoc layout table:
+    one hint per group, weighted by the minipage widths.
     restyle.py turns the weights into fixed DXA column widths.
     """
-    hints = []
+    positioned = []
     for m in re.finditer(r"\\begin\{(?:tabular|longtable|tabularx)\}", src):
         i = m.end()
         if src[i] == "{":  # tabularx first arg is the width - skip it
@@ -253,8 +276,14 @@ def extract_table_hints(src: str) -> list:
             if "\\" in src[i:nxt] or "textwidth" in src[i:nxt]:
                 i = nxt
         spec = src[i:match_braces(src, i)]
+        # strip >{...} <{...} @{...} !{...} column decorators before tokenizing
+        while True:
+            stripped = re.sub(r"[><@!]\{[^{}]*(\{[^{}]*\}[^{}]*)*\}", "", spec)
+            if stripped == spec:
+                break
+            spec = stripped
         weights = []
-        for cm in re.finditer(r"p\{([0-9.]+)cm\}|([lcrX])", spec):
+        for cm in re.finditer(r"[pmb]\{([0-9.]+)cm\}|([lcrX])", spec):
             if cm.group(1):
                 weights.append(float(cm.group(1)))
             elif cm.group(2) == "X":
@@ -262,8 +291,13 @@ def extract_table_hints(src: str) -> list:
             else:
                 weights.append(2.0)
         if weights:
-            hints.append(weights)
-    return hints
+            positioned.append((m.start(), weights))
+    for b, e in find_env(src, "figure"):
+        mp = re.findall(r"\\begin\{minipage\}(?:\[[^]]*\])?\{([0-9.]+)\\textwidth\}",
+                        src[b:e])
+        if len(mp) >= 2:
+            positioned.append((b, [float(w) for w in mp]))
+    return [w for _, w in sorted(positioned)]
 
 
 def main():
@@ -285,15 +319,18 @@ def main():
         if bad in src:
             sys.exit(f"FATAL: unsupported construct in source: {bad}")
 
+    # table hints must see the original minipage/figure structure
+    import json
+    hints = extract_table_hints(src)
+
     src = replace_tikz(src, fmap, args.bab)
     src = replace_includegraphics(src, fmap)
     src = demote_simple_math(src)
+    src = replace_subcaptions(src)
     src = tag_captions(src)
     src = tag_equations(src)
     src = replace_refs(src, labels)
 
-    import json
-    hints = extract_table_hints(src)
     Path(args.out + ".tblhints.json").write_text(json.dumps(hints))
     Path(args.out).write_text(SHIM + src + "\n\\end{document}\n")
     print(f"preprocessed {args.src} -> {args.out} ({len(hints)} table hints)")

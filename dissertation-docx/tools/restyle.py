@@ -70,7 +70,7 @@ EXTRA_STYLES = """
 <w:style w:type="paragraph" w:customStyle="1" w:styleId="Gambar"
     xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
   <w:name w:val="Gambar"/><w:qFormat/>
-  <w:pPr><w:spacing w:before="120" w:after="120" w:line="240" w:lineRule="auto"/><w:jc w:val="center"/></w:pPr>
+  <w:pPr><w:keepNext/><w:spacing w:before="120" w:after="120" w:line="240" w:lineRule="auto"/><w:jc w:val="center"/></w:pPr>
   <w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="24"/></w:rPr>
 </w:style>
 """
@@ -343,6 +343,43 @@ class Restyler:
                     tcw.set(W + "type", "dxa")
                     ci += span
 
+    # -- step 5b2 -------------------------------------------------------
+    def fix_layout_tables(self):
+        """Tables holding images (from side-by-side minipage figures): keep
+        the row on one page, bottom-align cells, and keep the block attached
+        to the caption paragraph that follows."""
+        for tbl in self.doc.iter(W + "tbl"):
+            if tbl.find(f".//{W}drawing") is None:
+                continue
+            for tr in tbl.findall(W + "tr"):
+                trpr = tr.find(W + "trPr")
+                if trpr is None:
+                    trpr = wel("trPr")
+                    tr.insert(0, trpr)
+                if trpr.find(W + "cantSplit") is None:
+                    trpr.append(wel("cantSplit"))
+            for tc in tbl.iter(W + "tc"):
+                tcpr = tc.find(W + "tcPr")
+                valign = tcpr.find(W + "vAlign")
+                if valign is None:
+                    valign = wel("vAlign")
+                    tcpr.append(valign)
+                valign.set(W + "val", "bottom")
+                for p in tc.findall(W + "p"):
+                    ppr = p.find(W + "pPr")
+                    if ppr is None:
+                        ppr = wel("pPr")
+                        p.insert(0, ppr)
+                    if ppr.find(W + "keepNext") is None:
+                        kn = wel("keepNext")
+                        ps = ppr.find(W + "pStyle")
+                        ppr.insert(1 if ps is not None else 0, kn)
+                    jc = ppr.find(W + "jc")
+                    if jc is None:
+                        jc = wel("jc")
+                        ppr.append(jc)
+                    jc.set(W + "val", "center")
+
     # -- step 5c --------------------------------------------------------
     def insert_separators(self):
         """One blank line between blocks, per Pedoman SIII.2 (same convention
@@ -359,7 +396,8 @@ class Restyler:
             ps = el.find(f"{W}pPr/{W}pStyle")
             return ps.get(W + "val") if ps is not None else "Normal"
 
-        NO_SEP_PAIRS = {("Gambar", "JudulGambar"), ("judulTabel", "tbl")}
+        NO_SEP_PAIRS = {("Gambar", "JudulGambar"), ("judulTabel", "tbl"),
+                        ("tbl", "JudulGambar")}
         # body-level bookmarkStart/End (pandoc section anchors) are
         # transparent: pair only real content blocks across them
         blocks = [el for el in self.body
@@ -496,6 +534,7 @@ def main():
     rs.transform_refs()
     rs.transform_equations(content_twips)
     rs.fix_tables(hints, content_twips)
+    rs.fix_layout_tables()
     rs.insert_separators()
     rs.resize_images(Path(workdir) / "word", figmap, content_twips * 635)
     rs.fix_section(pages.get(args.chapter_label, 1))
