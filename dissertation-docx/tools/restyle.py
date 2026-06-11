@@ -343,6 +343,37 @@ class Restyler:
                     tcw.set(W + "type", "dxa")
                     ci += span
 
+    # -- step 5a2 -------------------------------------------------------
+    def apply_spans(self):
+        """@@SPANn@@ tokens (from \\multicolumn) -> gridSpan=n, drop the
+        n-1 empty padding cells that follow in the same row."""
+        for tc in list(self.doc.iter(W + "tc")):
+            t = tc.find(f".//{W}t")
+            if t is None or not (t.text or "").startswith("@@SPAN"):
+                continue
+            m = re.match(r"@@SPAN(\d+)@@", t.text)
+            n = int(m.group(1))
+            t.text = t.text[m.end():]
+            tcpr = tc.find(W + "tcPr")
+            if tcpr is None:
+                tcpr = wel("tcPr")
+                tc.insert(0, tcpr)
+            span = tcpr.find(W + "gridSpan")
+            if span is None:
+                span = wel("gridSpan")
+                tcpr.append(span)
+            span.set(W + "val", str(n))
+            tr = tc.getparent()
+            cells = tr.findall(W + "tc")
+            idx = cells.index(tc)
+            extras = cells[idx + 1:idx + n]
+            assert len(extras) == n - 1, \
+                f"@@SPAN{n}@@ row has only {len(cells) - idx} cells"
+            for extra in extras:
+                assert not para_text(extra).strip(), \
+                    f"padding cell after @@SPAN{n}@@ is not empty"
+                tr.remove(extra)
+
     # -- step 5b2 -------------------------------------------------------
     def fix_layout_tables(self):
         """Tables holding images (from side-by-side minipage figures): keep
@@ -533,6 +564,7 @@ def main():
     rs.transform_captions()
     rs.transform_refs()
     rs.transform_equations(content_twips)
+    rs.apply_spans()
     rs.fix_tables(hints, content_twips)
     rs.fix_layout_tables()
     rs.insert_separators()

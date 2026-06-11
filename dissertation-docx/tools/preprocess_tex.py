@@ -162,6 +162,52 @@ def replace_refs(src: str, labels: dict) -> str:
     return src
 
 
+def simplify_longtables(src: str) -> str:
+    """Keep only the first header of a longtable.
+
+    Pandoc renders both the \\endfirsthead and \\endhead header definitions
+    as table rows. Word repeats the (single) header row itself via tblHeader,
+    so the continuation header and the foot blocks are dropped.
+    """
+    def fix(block: str) -> str:
+        for end in (r"\endlastfoot", r"\endfoot", r"\endhead"):
+            if r"\endfirsthead" in block and end in block:
+                pre, _, rest = block.partition("\\endfirsthead")
+                return pre + rest.split(end, 1)[1]
+        return block
+
+    out, pos = [], 0
+    for b, e in find_env(src, "longtable"):
+        out.append(src[pos:b])
+        out.append(fix(src[b:e]))
+        pos = e
+    out.append(src[pos:])
+    return "".join(out)
+
+
+def replace_multicolumn(src: str) -> str:
+    """\\multicolumn{n}{spec}{X} -> @@SPANn@@X plus n-1 empty cells.
+
+    Pandoc's LaTeX reader drops \\multicolumn cells entirely; the token tells
+    restyle.py to set gridSpan=n on the cell and drop the padding cells.
+    """
+    out, pos = [], 0
+    while True:
+        i = src.find(r"\multicolumn{", pos)
+        if i == -1:
+            break
+        j = match_braces(src, i + len(r"\multicolumn"))   # {n}
+        n = int(src[i + len(r"\multicolumn{"):j - 1])
+        k = match_braces(src, j)                           # {spec}
+        e = match_braces(src, k)                           # {content}
+        content = src[k + 1:e - 1]
+        out.append(src[pos:i])
+        out.append(f"@@SPAN{n}@@" + content + " & " * (n - 1))
+        pos = e
+    out.append(src[pos:])
+    return "".join(out)
+
+
 def replace_subcaptions(src: str) -> str:
     """\\caption*{X} (minipage subcaptions) -> plain paragraph X.
 
@@ -184,8 +230,8 @@ def replace_subcaptions(src: str) -> str:
 
 
 def tag_captions(src: str) -> str:
-    """Inside figure/table envs, prefix the caption text with @@CAP:label@@."""
-    for env in ("figure", "table"):
+    """Inside figure/table/longtable envs, prefix the caption with @@CAP:label@@."""
+    for env in ("figure", "table", "longtable"):
         while True:
             replaced = False
             for b, e in find_env(src, env):
@@ -269,16 +315,17 @@ def extract_table_hints(src: str) -> list:
     restyle.py turns the weights into fixed DXA column widths.
     """
     positioned = []
-    for m in re.finditer(r"\\begin\{(?:tabular|longtable|tabularx)\}", src):
+    for m in re.finditer(r"\\begin\{(tabular|longtable|tabularx)\}", src):
         i = m.end()
-        if src[i] == "{":  # tabularx first arg is the width - skip it
-            nxt = match_braces(src, i)
-            if "\\" in src[i:nxt] or "textwidth" in src[i:nxt]:
-                i = nxt
+        if m.group(1) == "tabularx":  # first arg is the width - skip it
+            i = match_braces(src, i)
         spec = src[i:match_braces(src, i)]
         # strip >{...} <{...} @{...} !{...} column decorators before tokenizing
         while True:
             stripped = re.sub(r"[><@!]\{[^{}]*(\{[^{}]*\}[^{}]*)*\}", "", spec)
+            # expand *{N}{cols} repetition syntax
+            stripped = re.sub(r"\*\{(\d+)\}\{((?:[^{}]|\{[^{}]*\})*)\}",
+                              lambda mm: int(mm.group(1)) * mm.group(2), stripped)
             if stripped == spec:
                 break
             spec = stripped
@@ -326,6 +373,8 @@ def main():
     src = replace_tikz(src, fmap, args.bab)
     src = replace_includegraphics(src, fmap)
     src = demote_simple_math(src)
+    src = simplify_longtables(src)
+    src = replace_multicolumn(src)
     src = replace_subcaptions(src)
     src = tag_captions(src)
     src = tag_equations(src)
