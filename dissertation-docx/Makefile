@@ -82,12 +82,22 @@ $(foreach l,A B C D E F G,$(eval $(call LAMP_RULE,$(l))))
 
 all-lampiran: lampA lampB lampC lampD lampE lampF lampG
 
+frontmatter: frontmatter/frontmatter.docx
+frontmatter/frontmatter.docx: tools/build_frontmatter.py $(TEMPLATE)
+	python3 tools/build_frontmatter.py
+
+master: disertasi.docx
+disertasi.docx: frontmatter/frontmatter.docx tools/merge_master.py \
+  $(foreach n,1 2 3 4 5 6,chapters/bab$(n).docx) \
+  $(foreach l,A B C D E F G,lampiran/lamp$(l).docx)
+	python3 tools/merge_master.py
+
 lint:
 	bash tools/lint_docx.sh chapters/*.docx
 
 clean:
 	rm -rf build/pre build/raw build/verify
 
-.PHONY: all-chapters all-lampiran lint clean \
+.PHONY: all-chapters all-lampiran frontmatter master lint clean \
   $(foreach n,1 2 3 4 5 6,bab$(n) verify-bab$(n)) \
   $(foreach l,A B C D E F G,lamp$(l) verify-lamp$(l))

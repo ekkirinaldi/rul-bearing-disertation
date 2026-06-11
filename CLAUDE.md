@@ -8,7 +8,16 @@ Doctoral dissertation by **Toto Suharto** at **ITB (Institut Teknologi Bandung)*
 
 **Working title:** *Perawatan Prediktif untuk Sistem Produksi dengan Pendekatan Analisis Big Data dan Kecerdasan Buatan Menggunakan Data Kondisi Mesin dan Informasi Kualitas yang Real Time*
 
-**Repository scope:** the **LaTeX dissertation manuscript** and supporting writings. The Python training code ([Mamba-xLSTM/](Mamba-xLSTM/)) and datasets ([data-bearing/](data-bearing/)) live locally only — excluded via `.gitignore`.
+**Repository scope:** the **dissertation manuscript** (DOCX primary in [dissertation-docx/](dissertation-docx/), LaTeX frozen in [writings/disertation/](writings/disertation/)) and supporting writings. The Python training code ([Mamba-xLSTM/](Mamba-xLSTM/)) and datasets ([data-bearing/](data-bearing/)) live locally only — excluded via `.gitignore`.
+
+## ★ DOCX Is the Primary Manuscript
+
+As of June 2026 the manuscript of record is **[dissertation-docx/disertasi.docx](dissertation-docx/)**, ported from LaTeX onto the official ITB template (`template-disertasi_Mei2019.docx`). The LaTeX tree in [writings/disertation/](writings/disertation/) is **frozen** — it remains the source for the porting pipeline and the authoritative `.aux` cross-reference numbers, but content edits go to the DOCX.
+
+- **Writing rules for DOCX work:** [dissertation-docx/RULES.md](dissertation-docx/RULES.md) — style map (Heading1–3, `Paragraf`, `JudulGambar`/`judulTabel`, `Daftarpustaka`), caption/REF/SEQ field recipes, citation convention (baked text via ITB-SPs CSL), and the full ITB prose rules carried over from this file.
+- **Lint:** `bash tools/lint_docx.sh chapters/*.docx disertasi.docx` from `dissertation-docx/` (or `make lint`). Fix `[FATAL]` before commit.
+- **Rebuild from LaTeX** (only while the port is still being revised): `make babN` / `make lampX` / `make frontmatter` / `make master` in `dissertation-docx/`; verify with `make verify-babN` and `tools/verify_chapter.sh`.
+- **After manual edits in Word:** run the lint; in the final master, update fields once (Ctrl+A, F9) to populate Daftar Isi/Gambar/Tabel.
 
 ## Main Goal — Modify and Finalize the Dissertation
 
