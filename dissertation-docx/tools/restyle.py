@@ -486,6 +486,12 @@ def add_extra_styles(styles_path):
     for style in frag:
         if style.get(W + "styleId") not in existing:
             root.append(style)
+    # template's Heading3 is centered; juknis wants subbab headings flush-left
+    for s in root.iter(W + "style"):
+        if s.get(W + "styleId") in ("Heading2", "Heading3"):
+            jc = s.find(f"{W}pPr/{W}jc")
+            if jc is not None:
+                jc.set(W + "val", "left")
     tree.write(str(styles_path), xml_declaration=True, encoding="UTF-8",
                standalone=True)
 

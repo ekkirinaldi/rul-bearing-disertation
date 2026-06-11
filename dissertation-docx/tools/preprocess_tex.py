@@ -286,9 +286,98 @@ def demote_simple_math(src: str) -> str:
     return re.sub(r"\$([^$]+)\$", sub, src)
 
 
+def _align_rows(body: str) -> list:
+    """Split an align body on top-level \\\\ (not inside nested envs)."""
+    rows, depth, i, start = [], 0, 0, 0
+    while i < len(body):
+        if body.startswith(r"\begin{", i):
+            depth += 1
+        elif body.startswith(r"\end{", i):
+            depth -= 1
+        elif body.startswith("\\\\", i) and depth == 0:
+            rows.append(body[start:i])
+            i += 2
+            m = re.match(r"\[[^\]]*\]", body[i:])
+            i += m.end() if m else 0
+            start = i
+            continue
+        i += 1
+    rows.append(body[start:])
+    return rows
+
+
+def _strip_toplevel_amp(row: str) -> str:
+    """Remove alignment & at nesting depth 0 (cases/matrix & survive)."""
+    out, depth, i = [], 0, 0
+    while i < len(row):
+        if row.startswith(r"\begin{", i):
+            depth += 1
+        elif row.startswith(r"\end{", i):
+            depth -= 1
+        if row[i] == "&" and depth == 0 and (i == 0 or row[i - 1] != "\\"):
+            i += 1
+            continue
+        out.append(row[i])
+        i += 1
+    return "".join(out)
+
+
+def modernize_math(src: str) -> str:
+    """{\\rm x} etc. -> {\\mathrm{x}}: texmath rejects old-style font switches."""
+    return re.sub(r"\{\\(rm|bf|it|sf|tt)\s+([^{}]*)\}",
+                  lambda m: "{\\math%s{%s}}" % (m.group(1), m.group(2)), src)
+
+
+def _fix_math_text(block: str) -> str:
+    """texmath rejects \\emph/\\textit nested in math \\text{} - unwrap them
+    (italics lost inside equations; cosmetic only)."""
+    return re.sub(r"\\(?:emph|textit)\{([^{}]*)\}", r"\1", block)
+
+
+def _strip_textcolor(block: str) -> str:
+    """Remove \\textcolor{c}{X} wrappers, keeping X (any nesting depth)."""
+    while True:
+        i = block.find(r"\textcolor{")
+        if i == -1:
+            return block
+        j = match_braces(block, i + len(r"\textcolor"))   # {color}
+        e = match_braces(block, j)                        # {content}
+        block = block[:i] + block[j + 1:e - 1] + block[e:]
+
+
+def strip_math_color(src: str) -> str:
+    """texmath cannot parse \\textcolor inside math - drop it in equations.
+
+    Body-text \\textcolor (revision highlight) is left for pandoc to keep.
+    """
+    out, pos = [], 0
+    spans = list(find_env(src, "equation")) + list(find_env(src, "align"))
+    for b, e in sorted(spans):
+        out.append(src[pos:b])
+        out.append(_fix_math_text(_strip_textcolor(src[b:e])))
+        pos = e
+    out.append(src[pos:])
+    return "".join(out)
+
+
+def split_align(src: str) -> str:
+    """align -> stacked equation envs, one per row (OMML has no align)."""
+    out, pos = [], 0
+    for b, e in find_env(src, "align"):
+        body = src[b + len(r"\begin{align}"):e - len(r"\end{align}")]
+        eqs = "\n".join(
+            "\\begin{equation}" + _strip_toplevel_amp(r) + "\\end{equation}"
+            for r in _align_rows(body) if r.strip())
+        out.append(src[pos:b])
+        out.append(eqs)
+        pos = e
+    out.append(src[pos:])
+    return "".join(out)
+
+
 def tag_equations(src: str) -> str:
-    if "\\begin{align}" in src or "\\begin{align*}" in src:
-        sys.exit("FATAL: align environment present - extend tag_equations first")
+    if "\\begin{align*}" in src:
+        sys.exit("FATAL: align* environment present - extend split_align first")
     auto = [0]
 
     def process(m):
@@ -372,11 +461,14 @@ def main():
 
     src = replace_tikz(src, fmap, args.bab)
     src = replace_includegraphics(src, fmap)
+    src = modernize_math(src)
+    src = strip_math_color(src)
     src = demote_simple_math(src)
     src = simplify_longtables(src)
     src = replace_multicolumn(src)
     src = replace_subcaptions(src)
     src = tag_captions(src)
+    src = split_align(src)
     src = tag_equations(src)
     src = replace_refs(src, labels)
 
