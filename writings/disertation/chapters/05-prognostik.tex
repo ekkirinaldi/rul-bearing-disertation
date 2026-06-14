@@ -6,22 +6,21 @@
 \chapter{Estimasi Sisa Umur Pakai}
 \label{bab:prognostik}
 
-Bab ini menyajikan \textcolor{blue}{komponen prognostik} secara \emph{end-to-end}: dari perancangan
-metodologi tiga arsitektur \emph{backbone} RUL, pembangunan \emph{Top-$k$
+Bab ini menyajikan \textcolor{blue}{komponen prognostik} dari penelitian ini secara \emph{end-to-end}, 
+mulai dari perancangan metodologi tiga arsitektur \emph{backbone} RUL, pengembangan \emph{Top-$k$
 Sparse Autoencoder} (SAE), prosedur pemetaan ke frekuensi karakteristik
-\emph{bearing}, hingga inferensi statistik dan analisis hasil lintas empat dataset.
-Sumber empiris utama adalah \citetitb{TotoSuharto2025Journal2RUL}, yang
+\emph{bearing}, hingga inferensi statistik dan analisis hasil antar empat dataset.
+Bab ini mendetailkan penelitian yang dipublikasikan pada \citetitb{TotoSuharto2025Journal2RUL}, yang
 mengombinasikan tiga arsitektur berbeda sebagai \textcolor{blue}{salah satu
 penerapan awal} interpretabilitas mekanistik (\emph{mechanistic
-interpretability}) \textcolor{blue}{pada domain prognostik \emph{bearing}
-yang dilaporkan dalam literatur sejauh pengetahuan penulis}.
+interpretability}) \textcolor{blue}{pada domain prognostik \emph{bearing}}.
 
-Fondasi bersama yang dibutuhkan bab ini, yaitu spesifikasi empat dataset
+Beberapa konsep yang menjadi landasan pembahasan bab ini, yaitu spesifikasi empat dataset
 publik (CWRU, PHM2012, XJTU-SY, IMS), prosedur praproses sinyal, vektor
 \emph{Health Indicator} lima dimensi, metrik evaluasi prognostik dan
-interpretabilitas SAE, serta infrastruktur komputasi, telah diuraikan pada
+interpretabilitas SAE, serta infrastruktur komputasi, telah dijelaskan pada
 Bab~\ref{bab:metodologi-umum}.
-Subbab §V.1 s.d.\ §V.4 membahas metodologi; subbab §V.5 s.d.\ §V.9
+Secara sistematika penulisan, subbab §V.1 s.d.\ §V.4 membahas metodologi, sementara subbab §V.5 s.d.\ §V.9
 membahas hasil dan analisis.
 
 % =================================================================
@@ -29,27 +28,27 @@ membahas hasil dan analisis.
 \label{sec:bab5_arsitektur_backbone}
 % =================================================================
 
-Tiga arsitektur \emph{backbone} dipilih untuk mewakili tiga tradisi desain
-yang berbeda secara mendasar dalam pemodelan deret waktu degradasi.
+Tiga arsitektur \emph{backbone} dipilih untuk mewakili tiga prinsip desain
+yang berbeda dalam pemodelan deret waktu.
 Mamba-xLSTM-Net menggabungkan \emph{selective state-space model} (SSM)
 berbasis Mamba dengan memori rekuren berbasis \emph{matrix LSTM} (mLSTM),
-menargetkan pemodelan konteks panjang dengan presisi rekuren tinggi.
+yang menargetkan pemodelan konteks panjang dengan presisi tinggi.
 N-BEATS-xLSTM-RUL mengintegrasikan basis-blok terstruktur (\emph{trend}/
 \emph{wear}/\emph{shock}) dari N-BEATS dengan residual xLSTM, memanfaatkan
 \emph{prior} struktural pada bentuk kurva degradasi.
 SparseGate-TCN-RUL menggunakan konvolusi kausal terdilatasi dengan
 mekanisme \emph{sparse gating}, dirancang sebagai model ringan yang sesuai
 untuk \emph{deployment} di lapisan \emph{edge}.
-Keragaman \textcolor{blue}{bias induktif} ketiga arsitektur ini sengaja dipilih agar uji
+Variasi pada \textcolor{blue}{bias induktif} ketiga arsitektur ini sengaja dipilih agar uji
 universalitas interpretabilitas SAE-BPFx tidak bergantung pada satu
 paradigma arsitektur tunggal.
 
-Semua arsitektur menerima input berupa sekuens vektor \emph{Health
+Semua arsitektur yang dipilih mendapatkan input berupa sekuens vektor \emph{Health
 Indicator} (HI) lima dimensi yang diekstraksi per rekaman.
 \textcolor{blue}{Sesuai definisi pada Bab~\ref{bab:metodologi-umum}~%
 \S\ref{sec:bab3_praproses}, kelima dimensi HI merupakan energi RMS dari
 lima pita frekuensi hasil dekomposisi spektral sinyal getaran, bukan
-campuran fitur statistik dan spektral; konsistensi definisi ini penting
+campuran fitur statistik dan spektral. Konsistensi definisi ini penting
 agar input ketiga \emph{backbone} pada Bab~V identik dengan spesifikasi
 praproses prognostik yang dirumuskan pada Bab~\ref{bab:metodologi-umum}.}
 Sekuens ini dibentuk sebagai jendela geser sepanjang $L_{\rm win} = 32$
@@ -61,7 +60,7 @@ Normalisasi Z-score per fitur diterapkan pada HI~5-D menggunakan statistik
 \subsection{Mamba-xLSTM-Net}
 \label{subsec:bab5_mamba_xlstm}
 
-Mamba-xLSTM-Net adalah arsitektur hibrida yang menyatukan dua komponen
+Mamba-xLSTM-Net adalah arsitektur hibrid yang menyatukan dua komponen
 sekuensial komplementer: blok Mamba selektif untuk menangkap ketergantungan
 jangka panjang secara efisien, dan blok mLSTM untuk mempertahankan memori
 rekuren yang presisi
@@ -70,20 +69,20 @@ Lapisan pertama memproyeksikan vektor input dari dimensi lima ke dimensi model
 $d_{\rm model}$, kemudian blok-blok Mamba dan mLSTM disusun secara bergantian
 dalam tiga pasang.
 Keluaran dari kedua jalur digabungkan melalui proyeksi linier berbobot yang
-dapat dipelajari (\emph{gated fusion}), menghasilkan representasi laten
-$\mathbf{h} \in \mathbb{R}^{d_{\rm model}}$ yang menjadi input kepala MLP
-dua-lapis untuk menghasilkan estimasi RUL skalar.
+dapat dilatih (\emph{gated fusion}), menghasilkan representasi laten
+$\mathbf{h} \in \mathbb{R}^{d_{\rm model}}$ yang menjadi input MLP
+dua-lapis untuk menghasilkan estimasi RUL.
 
 Pada Bab~V, $d_{\rm model}$ dikonfigurasi berbeda per dataset untuk
-menyeimbangkan kapasitas model dan risiko \emph{overfitting}: $d_{\rm model}
-= 128$ pada PHM2012 menghasilkan sekitar 898.000 parameter total, sedangkan
-$d_{\rm model} = 112$ pada XJTU-SY menghasilkan sekitar 811.000 parameter.
-IMS menggunakan konfigurasi yang sama dengan PHM2012 karena panjang sekuens
+menyeimbangkan kapasitas model dan risiko \emph{overfitting}, yaitu $d_{\rm model}
+= 128$ pada PHM2012 yang memiliki sekitar 898.000 parameter total, dan
+$d_{\rm model} = 112$ pada XJTU-SY yang menghasilkan sekitar 811.000 parameter.
+Model yang dijalankan pada dataset IMS menggunakan konfigurasi yang sama dengan PHM2012 karena panjang sekuens
 degradasi yang sebanding.
-Detail lengkap hyperparameter arsitektur dirujuk ke
+Detail lengkap hyperparameter arsitektur dapat dilihat pada
 Lampiran~\ref{lamp:hparam}.
 
-Mekanisme selektif Mamba mengevaluasi relevansi setiap titik dalam sekuens
+Mekanisme selektif arsitektur Mamba mampu mengevaluasi relevansi setiap titik dalam sekuens
 rekaman secara dinamis, sehingga perubahan kecil pada spektrum getaran yang
 terjadi jauh di awal lintasan degradasi tetap berkontribusi pada prediksi RUL
 tanpa harus dilacak secara eksplisit.
@@ -96,7 +95,7 @@ vektor memori skalar pada LSTM konvensional.
 \label{subsec:bab5_nbeats_xlstm}
 
 N-BEATS-xLSTM-RUL mengadaptasi kerangka N-BEATS \citetitb{Oreshkin2020NBEATS}
-untuk tugas prediksi RUL dengan \textcolor{blue}{menempatkan sebuah
+untuk memprediksi RUL dengan \textcolor{blue}{menempatkan sebuah
 \emph{front-end} xLSTM dua-blok di hadapan tumpukan basis-blok}.
 Tiga basis-blok struktural merepresentasikan komponen berbeda dari kurva
 degradasi: blok \emph{trend} \textcolor{blue}{berbasis polinomial Bernstein}
@@ -112,11 +111,11 @@ aditif dan dibatasi (\emph{clamped}) pada rentang $[0,\,1]$.}
 \textcolor{blue}{Keluaran \emph{front-end} xLSTM mengondisikan masukan
 sebelum dekomposisi basis berlangsung}, sehingga konteks sekuens yang
 telah terakumulasi ikut memodulasi keluaran basis.
-Total parameter arsitektur ini sekitar 459.000, lebih kecil dari
+Total parameter arsitektur ini sejumlah 459.000, lebih kecil dari
 Mamba-xLSTM-Net namun jauh lebih besar dari SparseGate-TCN-RUL.
 Keunggulan utama N-BEATS-xLSTM-RUL terletak pada stabilitas lintas
-\emph{seed}: karena \emph{prior} struktural basis-blok sudah menyematkan
-pengetahuan tentang bentuk kurva degradasi, ruang solusi yang perlu dijelajahi
+\emph{seed}. Karena \emph{prior} struktural basis-blok sudah memiliki
+pengetahuan tentang bentuk kurva degradasi, maka ruang solusi yang perlu dijelajahi
 optimizer menjadi lebih sempit dan inisialisasi acak memberikan dampak minimal
 terhadap solusi akhir.
 
@@ -131,20 +130,20 @@ secara kolektif menghasilkan jangkauan temporal reseptif yang mencakup
 keseluruhan jendela $L_{\rm win} = 32$ rekaman.
 \textcolor{blue}{Sebelum tumpukan TCN, sebuah \emph{sparse feature gate}
 dan cabang \emph{cross-feature attention} digabungkan menjadi masukan
-yang telah digerbangi (\emph{gated}); mekanisme \emph{sparse gating} inilah yang menyeleksi kanal-kanal
+yang telah digerbangi (\emph{gated}). Mekanisme \emph{sparse gating} inilah yang menyeleksi kanal-kanal
 dengan kandungan informasi tertinggi untuk diteruskan, sehingga biaya
 komputasi inferensi berkurang secara signifikan.}
 Keluaran TCN dikumpulkan pada langkah waktu terakhir lalu diproyeksikan
-oleh \emph{kepala kuantil} yang menjaga keterurutan, dengan nilai median
+oleh \emph{quantile head} yang menjaga keterurutan, dengan nilai median
 dilaporkan sebagai estimasi RUL.
 
-Arsitektur ini memiliki sekitar 249.000 parameter, paling ringan di antara
+Arsitektur ini memiliki sekitar 249.000 parameter, sehingga paling ringan di antara
 ketiga \emph{backbone}.
 Kecepatan inferensi yang tinggi menjadikan SparseGate-TCN-RUL kandidat
-yang sesuai untuk \emph{deployment} pada lapisan \emph{Edge Server}
+yang sesuai untuk \emph{deployment} pada \emph{Edge Server}
 dalam kerangka PdM \emph{multi-tier} yang dikembangkan pada Bab~VI.
 Meskipun kapasitas modelnya lebih kecil, arsitektur ini menunjukkan performa
-kompetitif pada PHM2012 karena TCN terdilatasi secara alami menangkap pola
+kompetitif pada PHM2012 karena TCN terdilatasi secara alami sehingga dapat menangkap pola
 periodisitas pada frekuensi rekaman yang tetap.
 
 \subsection{Protokol Pelatihan Bersama}
@@ -156,7 +155,8 @@ Optimizer AdamW \citetitb{Loshchilov2019AdamW} dengan laju pembelajaran awal
 $3 \times 10^{-4}$ dan jadwal kosinus (\emph{cosine annealing}) digunakan
 tanpa \emph{warm restart}.
 Presisi \texttt{bf16-mixed} diaktifkan untuk mengurangi penggunaan memori GPU
-pada NVIDIA~A40 \textcolor{blue}{dengan tetap mempertahankan akurasi numerik setara komputasi titik apung 32-bit pada operasi yang menentukan}.
+pada NVIDIA~A40 \textcolor{blue}{dengan tetap mempertahankan akurasi numerik setara komputasi 
+\emph{floating point} 32-bit}.
 Pelatihan berlangsung selama 75 \emph{epoch} penuh pada setiap konfigurasi
 model~$\times$~dataset~$\times$~\emph{seed} tanpa \emph{early stopping},
 agar kurva konvergensi antar arsitektur dapat dibandingkan dengan jumlah
@@ -165,7 +165,7 @@ langkah yang identik.
 \begin{table}[ht]
 \centering
 \caption{Konfigurasi pelatihan bersama untuk ketiga \emph{backbone} RUL.
-         Semua parameter berlaku tanpa kecuali pada PHM2012, XJTU-SY, dan IMS.}
+         Semua parameter berlaku pada dataset PHM2012, XJTU-SY, dan IMS.}
 \label{tab:bab5_protokol}
 \small
 \begin{tabular}{@{}ll@{}}
@@ -188,7 +188,7 @@ Metrik \emph{checkpoint}  & RMSE validasi terbaik (\texttt{val/rmse}) \\
 \end{table}
 
 Strategi \emph{checkpoint} menyimpan bobot dengan RMSE validasi terbaik
-selama proses pelatihan; bobot ini digunakan untuk evaluasi akhir pada
+selama proses pelatihan, yang digunakan untuk evaluasi akhir pada
 \emph{test set}.
 Tabel~\ref{tab:bab5_protokol} merangkum seluruh konfigurasi yang digunakan.
 Reproduksi seluruh eksperimen pelatihan pada Bab~V dapat dilakukan melalui
@@ -205,7 +205,7 @@ mekanistik yang diadaptasi dari literatur pemodelan bahasa besar
 ke domain prognostik \emph{bearing} untuk pertama kalinya dalam penelitian ini.
 Prinsip utamanya adalah \emph{monosemantisitas}: setiap neuron SAE idealnya
 mengkodekan satu konsep fisika yang dapat diinterpretasi, berbeda dengan
-neuron jaringan dalam konvensional yang bersifat \emph{polysemantik} (satu
+neuron \emph{deep network} konvensional yang bersifat \emph{polysemantik} (satu
 neuron mengkodekan campuran beberapa konsep secara bersamaan).
 
 Arsitektur SAE terdiri atas tiga komponen utama: bias pra-enkoder
@@ -219,8 +219,8 @@ Sparsitas dikontrol melalui mekanisme \emph{Top-$k$}: hanya $k = 51$
 ($\approx 5\%$) dari 1.024 neuron yang diizinkan aktif per sampel input.
 
 Prosedur komputasi SAE mengikuti alur berikut.
-Diberikan \emph{hidden state} backbone $\mathbf{h} \in \mathbb{R}^d$,
-representasi laten SAE $\mathbf{z} \in \mathbb{R}^{d_{\rm lat}}$ dihitung
+Dengan definisi \emph{hidden state} backbone $\mathbf{h} \in \mathbb{R}^d$,
+representasi laten SAE $\mathbf{z} \in \mathbb{R}^{d_{\rm lat}}$ dapat dihitung
 sebagai:
 
 \begin{equation}\label{eq:bab5_sae_topk}
@@ -322,20 +322,20 @@ Bab~\ref{bab:metodologi-umum} dengan Persamaan~\ref{eq:bab3_hitrate}.
 % =================================================================
 
 Dua prosedur inferensi statistik digunakan untuk memvalidasi bahwa
-\emph{hit-rate} yang teramati bukan merupakan artefak kebetulan: \emph{bootstrap
+\emph{hit-rate} yang teramati bukan merupakan artefak kebetulan, yaitu \emph{bootstrap
 confidence interval} dan \emph{permutation test}.
 
 \textbf{Bootstrap 95\% CI.} Sebanyak $B = 1.000$ resampel rekaman dilakukan
 dengan penggantian dari kumpulan rekaman \emph{training set}. Pada setiap
 resampel, nilai $H_\varphi$ dihitung ulang menggunakan aktivasi SAE yang
 dikumpulkan hanya dari rekaman yang termasuk dalam resampel tersebut.
-Selang kepercayaan 95\% diperoleh dari persentil ke-2,5 dan ke-97,5 distribusi
+Tingkat kepercayaan 95\% diperoleh dari persentil ke-2,5 dan ke-97,5 distribusi
 empiris $H_\varphi$ atas semua resampel, sebagaimana telah didefinisikan pada
 Persamaan~\ref{eq:bab3_bootstrap_ci}.
 
 \textbf{Permutation test\textcolor{blue}{ dua-sisi}.} Sebanyak $B = 1.000$
-permutasi label rekaman dilakukan: pada setiap permutasi, vektor amplitudo
-$A_{r,\varphi}$ dikocok acak terhadap indeks rekaman, memutus semua korelasi
+permutasi label rekaman dilakukan, dimana pada setiap permutasi, vektor amplitudo
+$A_{r,\varphi}$ diubah acak terhadap indeks rekaman, memutus semua korelasi
 temporal antara aktivasi SAE dan amplitudo BPFx.
 Nilai $H_\varphi^{(b)}$ dihitung untuk setiap permutasi $b$; \emph{p-value}
 \textcolor{blue}{dua-sisi} diperoleh dengan
@@ -345,9 +345,9 @@ Nilai $p < 0{,}05$ menunjukkan bahwa korespondensi yang teramati tidak dapat
 dijelaskan oleh kebetulan statistik semata.
 \textcolor{blue}{Untuk mengendalikan beban pengujian ganda (\emph{multiple
 testing}), satu BPFx dominan per pasangan (dataset, arsitektur) ditetapkan
-sebagai luaran primer---menghasilkan 12 uji primer atas 4 dataset $\times$
-3 arsitektur---dengan ambang signifikansi setara Bonferroni $p < 0{,}004$;
-nilai $p$ untuk BPFx sekunder dilaporkan sebagai eksploratif dan
+sebagai luaran primer, yang menghasilkan 12 uji primer atas 4 dataset $\times$
+3 arsitektur, dengan ambang signifikansi setara Bonferroni $p < 0{,}004$.
+Nilai $p$ untuk BPFx sekunder dilaporkan sebagai eksploratif dan
 diinterpretasikan dengan kehati-hatian yang sesuai.}
 
 \textbf{Kontrol Negatif 1 --- Model dengan Inisialisasi Xavier.} Prosedur
@@ -399,7 +399,7 @@ tiga \emph{seed}.
 \begin{table}[ht]
 \centering
 \caption{Evaluasi kinerja pada dataset PHM2012 (mean $\pm$ std, $n = 3$ \emph{seed}).
-         Nilai RMSE dan MAE lebih rendah lebih baik; PHM~Score lebih tinggi
+         Nilai RMSE dan MAE lebih rendah lebih baik. PHM~Score lebih tinggi
          lebih baik. Pemenang RMSE dicetak tebal.}
 \label{tab:bab5_phm2012}
 \small
@@ -450,7 +450,7 @@ Mamba-xLSTM-Net menunjukkan stabilitas lintas \emph{seed} tertinggi
 ($\sigma = \pm$0{,}020) dan memperoleh \emph{checkpoint} terbaik
 konsisten di \emph{epoch} 71, 68, dan 69 dari 75, menunjukkan bahwa
 arsitektur ini memanfaatkan seluruh anggaran pelatihan tanpa
-\emph{overfitting}; sifat ini khas pada model berbasis SSM selektif yang
+\emph{overfitting}. Sifat ini khas pada model berbasis SSM selektif yang
 memerlukan lebih banyak iterasi untuk menangkap pola jangka panjang pada
 sinyal getaran \emph{bearing}.
 N-BEATS-xLSTM-RUL memperlihatkan stabilitas tertinggi ($\sigma =
@@ -469,7 +469,7 @@ N-BEATS-xLSTM-RUL memperlihatkan stabilitas tertinggi ($\sigma =
 \end{figure}
 
 Gambar~\ref{fig:bab5_rul_phm2012} menampilkan contoh kurva prediksi RUL
-pada satu \emph{bearing} PHM2012.
+pada salah satu \emph{bearing} dalam dataset PHM2012.
 Kurva prediksi mengikuti tren penurunan aktual dengan baik pada fase
 degradasi akseleratif (rekaman ke-200 hingga akhir), meski terdapat
 sedikit \emph{overestimation} RUL pada fase awal saat degradasi masih
@@ -654,7 +654,7 @@ Pada XJTU-SY, BPFO mendominasi (2{,}2\%) sesuai dengan karakter
 \includegraphics[width=0.85\textwidth]{figures/bab5/hitrate_panel.pdf}
 \caption{\emph{Hit-rate} fitur SAE ke BPFx per dataset dengan anotasi
          nilai $p$ dari \emph{permutation test}. Batang berwarna biru
-         untuk BPFI dan merah untuk BPFO; BSF ditampilkan dengan batang
+         untuk BPFI dan merah untuk BPFO. BSF ditampilkan dengan batang
          abu-abu. Dataset CWRU ditandai sebagai \emph{underpowered}
          ($n = 10$, $p > 0{,}05$).
          \citetitb{TotoSuharto2025Journal2RUL}}
@@ -666,24 +666,21 @@ per dataset. Pada IMS, pada konfigurasi utama $k = 51$, BPFI (1{,}76\%)
 dan BSF (0{,}49\%) merupakan satu-satunya frekuensi dengan \emph{hit-rate}
 non-nol yang signifikan secara statistik ($p = 0{,}001$).
 \textcolor{blue}{Namun, IMS dilaporkan secara transparan sebagai
-\emph{ketidakcocokan parsial} (\emph{partial mismatch}): kegagalan yang
+\emph{ketidakcocokan parsial} (\emph{partial mismatch}), dimana kegagalan yang
 terdokumentasi pada \emph{run} IMS yang dianalisis adalah fatik
 \emph{rolling element}/sangkar, sedangkan \emph{sparsity sweep}
 (\S\ref{sec:bab5_sparsity_sweep}) justru memperlihatkan FTF (frekuensi
 sangkar) sebagai kanal yang naik monoton hingga 7{,}81\% pada $k = 205$.
-IMS karenanya merupakan satu-satunya dari empat dataset di mana BPFx
+Oleh karena itu, dataset IMS merupakan satu-satunya dari empat dataset di mana BPFx
 dominan tidak sepenuhnya selaras dengan moda kegagalan yang
-terdokumentasi; diskrepansi ini tidak dijelaskan-paksakan melainkan
-dicatat sebagai agenda investigasi lanjutan.}
-CWRU menunjukkan \emph{hit-rate} BPFI tertinggi secara numerik (5{,}08\%)
+terdokumentasi. Perbedaan ini dicatat untuk dapat dilakukan penelitianlanjutan.}
+Implementasi pada dataset CWRU menunjukkan \emph{hit-rate} BPFI tertinggi secara numerik (5{,}08\%)
 namun tidak mencapai signifikansi statistik ($p > 0{,}05$) karena hanya
 tersedia 10 rekaman \textcolor{blue}{pada tingkat berkas} untuk analisis
 korelasi, menjadikannya \emph{underpowered}.
 \textcolor{blue}{Atas dasar inilah CWRU dikeluarkan dari klaim falsifikasi
 formal penelitian (Novelti~N4) dan diperlakukan sebagai hasil rintisan
-(\emph{pilot}) yang bersifat kualitatif; ambang ukuran sampel ini sekaligus
-menjadi temuan metodologis tersendiri mengenai batas keberlakuan rancangan
-kontrol negatif.}
+(\emph{pilot}) yang bersifat kualitatif.}
 
 Korelasi Pearson maksimum yang teramati adalah $r_{\rm max} = 0{,}507$ pada
 fitur SAE ke-474 terhadap BPFI untuk PHM2012, dan $r_{\rm max} = 0{,}501$
@@ -693,7 +690,7 @@ Nilai korelasi moderat ini dapat diinterpretasi sebagai berikut: input ke
 \emph{backbone} RUL adalah vektor HI~5-D yang sudah diagregasi (bukan
 sinyal getaran mentah), sehingga fitur SAE tidak dapat "mengulang" analisis
 amplop secara langsung.
-Bahwa BPFO dan BPFI muncul sebagai satu-satunya BPFx dengan \emph{hit-rate}
+Fakta bahwa BPFO dan BPFI muncul sebagai satu-satunya BPFx dengan \emph{hit-rate}
 yang konsisten menunjukkan korespondensi lemah namun terdeteksi antara
 representasi yang dipelajari model dan teori getaran klasik.
 
@@ -713,7 +710,7 @@ aktivasi fitur SAE ke-474 dan amplitudo BPFI PHM2012.
 Titik-titik berwarna merah (mendekati \emph{end of life}) cenderung berada
 di sisi kanan atas plot, mengindikasikan bahwa fitur ini aktif lebih tinggi
 seiring meningkatnya amplitudo BPFI menjelang kegagalan.
-Pola ini selaras dengan fisika degradasi: amplitudo BPFI meningkat ketika
+Pola ini selaras dengan fisika degradasi, dimana amplitudo BPFI meningkat ketika
 \emph{spalling} pada \emph{inner race} berkembang dan impuls getaran
 semakin kuat.
 
@@ -749,12 +746,12 @@ semu pada representasi yang tidak terstruktur.
 
 \textcolor{blue}{Perlu dicatat bahwa panel CWRU pada uji kontrol negatif
 berperilaku berbeda dan bersifat \emph{cautionary}: dengan hanya 10 rekaman
-pada tingkat berkas, \emph{backbone} berinisialisasi acak (Xavier) bahkan
+pada tingkat data, \emph{backbone} berinisialisasi acak (Xavier) bahkan
 mencatat \emph{hit-rate} yang setara atau melampaui model terlatih pada
 tiga dari empat BPFx, dan kumpulan \emph{Gaussian noise} juga mencapai
 3--3{,}4\% pada keempat BPFx. Hal ini menegaskan adanya ambang ukuran
-sampel di bawah mana rancangan kontrol negatif tidak lagi informatif;
-karena itu CWRU dikeluarkan dari klaim falsifikasi formal dan diperlakukan
+sampel dimana rancangan kontrol negatif tidak lagi informatif.
+Oleh karena itu dataset CWRU dikeluarkan dari klaim falsifikasi formal dan diperlakukan
 sebagai hasil rintisan kualitatif (lihat \S\ref{sec:bab5_hitrate}).}
 
 Berdasarkan \textcolor{blue}{hasil kedua kontrol pada tiga dataset yang
@@ -780,17 +777,17 @@ Subbab ini membandingkan \emph{hit-rate} BPFx lintas ketiga arsitektur
 untuk mengevaluasi apakah pola korespondensi bersifat konsisten atau
 bergantung pada arsitektur tertentu.
 \textcolor{blue}{Pada eksperimen lintas-arsitektur, sebuah SAE baru dilatih
-secara terpisah pada \emph{hidden states} setiap \emph{backbone} (anggaran
-lebih pendek dibanding SAE \emph{post-hoc} utama), sehingga \emph{hit-rate}
+secara terpisah pada \emph{hidden states} setiap \emph{backbone} dengananggaran
+lebih pendek dibanding SAE \emph{post-hoc} utama, sehingga \emph{hit-rate}
 yang terbaca mencerminkan geometri laten masing-masing arsitektur secara
-mandiri; konsekuensinya, magnituda absolut pada subbab ini dapat berbeda
+mandiri. Sebagai konsekuensi, magnituda absolut pada subbab ini dapat berbeda
 dari Tabel~\ref{tab:bab5_hitrate_utama}.}
 
 Pada PHM2012, Mamba-xLSTM-Net menghasilkan \emph{hit-rate} BPFI
 tertinggi di antara ketiga arsitektur \textcolor{blue}{(BPFI~3{,}42\%,
 BPFO~3{,}03\%)}.
 Hal ini konsisten dengan \textcolor{blue}{bias induktif} SSM selektif yang secara alami
-merespons pola temporal berfrekuensi spesifik: mekanisme selektif Mamba
+merespons pola temporal berfrekuensi spesifik, dimana mekanisme selektif Mamba
 mengontrol eksplisit berapa banyak informasi dari setiap titik rekaman
 yang dipertahankan dalam status, sehingga komponen frekuensi yang berkorelasi
 dengan degradasi mendapat bobot lebih besar.
@@ -811,7 +808,7 @@ dengan anggaran lebih panjang (Tabel~\ref{tab:bab5_hitrate_utama},
 BPFO~2{,}2\%).}
 Hal ini mengisyaratkan bahwa pada XJTU-SY, di mana sinyal dataset tidak
 membatasi urutan BPFx secara kuat, \textcolor{blue}{bias induktif} encoder ikut
-memodulasi BPFx mana yang dominan---\emph{gating} ruang-keadaan selektif
+memodulasi BPFx mana yang dominan. \emph{Gating} ruang-keadaan selektif
 Mamba menguatkan komponen \emph{outer-race} dominan, sedangkan
 \emph{backbone} basis-blok dan konvolusi bergerbang menyebarkan respons
 secara lebih luas.
@@ -830,13 +827,12 @@ arsitektur.
 \textcolor{blue}{Temuan lintas-arsitektur ini mendukung Novelti~N4
 penelitian ini dengan kualifikasi yang jujur:}
 \textbf{\textcolor{blue}{urutan dominansi BPFx terjaga secara bersih
-lintas tiga paradigma arsitektur pada dua dari empat dataset---PHM2012
-dan CWRU---yaitu pada \emph{benchmark} yang fisika kegagalannya tidak
+lintas tiga paradigma arsitektur pada dua dari empat dataset, PHM2012
+dan CWRU, yaitu pada \emph{benchmark} yang fisika kegagalannya tidak
 ambigu}}\textcolor{blue}{; pada XJTU-SY dan IMS, BPFx dominan berbeda
 antar-\emph{backbone} dan magnituda absolut bervariasi 4--8 kali lipat,
 sehingga universalitas yang diklaim bersifat \emph{parsial}, bukan mutlak.}
-\textcolor{blue}{Pelaporan ketegaran parsial ini secara terbuka---alih-alih
-mengklaim universalitas penuh---justru memperkuat kredibilitas ilmiah
+\textcolor{blue}{Pelaporan konsistensi parsial ini secara terbuka justru memperkuat kredibilitas ilmiah
 kerangka interpretabilitas mekanistik di domain prognostik \emph{bearing}.}
 
 % =================================================================
@@ -845,7 +841,7 @@ kerangka interpretabilitas mekanistik di domain prognostik \emph{bearing}.}
 % =================================================================
 
 \textcolor{blue}{Pilihan $k = 51$ (5\% sparsitas) pada SAE diuji
-ketegarannya melalui \emph{sparsity sweep} atas empat nilai $k$, bukan
+konsistensinya melalui \emph{sparsity sweep} atas empat nilai $k$, bukan
 ditetapkan sebagai nilai optimal tunggal.}
 Gambar~\ref{fig:bab5_sparsity_sweep} menampilkan perubahan \emph{hit-rate}
 BPFx pada \textcolor{blue}{keempat dataset} ketika $k$ divariasikan pada
@@ -885,26 +881,26 @@ pola ini mengisyaratkan bahwa degradasi yang terekam pada lintasan
 \emph{run-to-failure} IMS secara dominan membebani kanal frekuensi
 sangkar (\emph{cage}).}
 \textcolor{blue}{Pada CWRU, BPFI adalah frekuensi dominan di semua tingkat
-sparsitas dengan pertumbuhan paling tajam di antara seluruh dataset---dari
-0{,}98\% pada $k = 10$ hingga 19{,}53\% pada $k = 205$---dan BSF mengikuti
-dengan magnituda sekitar separuhnya (hingga 10{,}45\% pada $k = 205$);
-pola ini selaras dengan dominasi kerusakan \emph{inner race} pada koleksi
+sparsitas dengan pertumbuhan paling tajam di antara seluruh dataset, dari
+0{,}98\% pada $k = 10$ hingga 19{,}53\% pada $k = 205$, dan BSF mengikuti
+dengan magnituda sekitar separuhnya (hingga 10{,}45\% pada $k = 205$).
+Pola ini selaras dengan dominasi kerusakan \emph{inner race} pada koleksi
 CWRU \citetitb{TotoSuharto2025Journal2RUL}.}
 
 \textcolor{blue}{Berdasarkan analisis ini, $k = 51$ tidak dipilih karena
 merupakan titik puncak, melainkan sebagai \emph{titik operasi} yang
-konservatif: pada nilai tersebut \emph{hit-rate} sudah jauh di atas nol
+konservatif. Pada nilai tersebut, \emph{hit-rate} sudah jauh di atas nol
 namun tetap jauh di bawah proporsi yang diharapkan secara kebetulan di
 bawah \emph{null} fitur acak, dan $k = 51$ sekaligus sesuai dengan
 pengaturan yang paling lazim dipakai dalam literatur SAE.}
 \textcolor{blue}{Konsekuensinya, magnituda \emph{hit-rate} yang dilaporkan
 pada bab ini bersifat bergantung pada anggaran sparsitas, sedangkan yang
-tegar lintas $k$ adalah \emph{urutan dominansi} BPFx pada tiap dataset;
-verifikasi lebih lanjut dengan $k > 205$ atau kamus yang lebih besar
+tegar lintas $k$ adalah \emph{urutan dominansi} BPFx pada tiap dataset.
+Verifikasi lebih lanjut dengan $k > 205$ atau dimensi yang lebih besar
 ($d_{\rm lat} = 4.096$) diperlukan untuk memastikan ada-tidaknya puncak
 \emph{hit-rate}.}
 
-Bab~VI akan mensintesiskan hasil \textcolor{blue}{komponen diagnostik} (Bab~IV) dan \textcolor{blue}{komponen prognostik} (Bab ini)
+Selanjutnya, Bab~VI akan mensintesiskan hasil \textcolor{blue}{komponen diagnostik} (Bab~IV) dan \textcolor{blue}{komponen prognostik} (Bab ini)
 ke dalam kerangka \emph{Perawatan Prediktif multi-tier} yang dapat
 dioperasikan dan diaudit lapis demi lapis, sekaligus merumuskan
 kesimpulan kuantitatif atas kelima novelti penelitian dan rekomendasi
