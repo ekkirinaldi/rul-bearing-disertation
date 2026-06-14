@@ -1,5 +1,4 @@
 """Dataset → trained run directory mapping and config loading."""
-
 from __future__ import annotations
 
 import json
@@ -14,12 +13,9 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 _MXLSTM = _REPO_ROOT / "Mamba-xLSTM"
 _DATA_BEARING = _REPO_ROOT / "data-bearing"
 
-# Tier-S dissertation checkpoints (seed 42, 75-epoch cloud runs)
 _RUN_DIRS: dict[str, Path] = {
-    "phm2012": _MXLSTM
-    / "results/runs/20260515_174110_algorithm_comparison_phm2012_mamba_xlstm_net_s42",
-    "xjtusy": _MXLSTM
-    / "results/runs/20260515_173301_algorithm_comparison_xjtusy_mamba_xlstm_net_s42",
+    "phm2012": _MXLSTM / "results/runs/20260515_174110_algorithm_comparison_phm2012_mamba_xlstm_net_s42",
+    "xjtusy": _MXLSTM / "results/runs/20260611_104213_algorithm_comparison_xjtusy_mamba_xlstm_net_s42",
 }
 
 _DATASET_LABELS: dict[str, str] = {
@@ -48,7 +44,7 @@ class DatasetSpec:
     model_name: str
     inference_model_key: str
     has_gt_rul: bool
-    stream_mode: str  # "bearing" | "skf_trending"
+    stream_mode: str
     transfer_note: str | None = None
 
 
@@ -70,7 +66,9 @@ def resolve_checkpoint(run_dir: Path) -> Path:
     if not cks:
         raise FileNotFoundError(f"No checkpoints under {ckpt_dir}")
     numbered = [c for c in cks if c.stem != "last"]
-    return numbered[0] if numbered else cks[0]
+    if numbered:
+        return numbered[0]
+    return cks[0]
 
 
 def _resolve_data_path(cfg_path: str | Path) -> Path:
@@ -99,7 +97,7 @@ def _load_benchmark_spec(key: str) -> DatasetSpec:
         smoothing_alpha=float(data.smoothing_alpha),
         test_bearings=[str(b) for b in data.test_bearings],
         acquisition_interval_s=interval,
-        fs=25_600,
+        fs=25600,
         checkpoint=resolve_checkpoint(run_dir),
         hi_scaler_path=run_dir / "hi_scaler.json",
         model_name=str(cfg.model.name),
@@ -129,17 +127,18 @@ def _load_skf_spec() -> DatasetSpec:
         smoothing_alpha=float(data.smoothing_alpha),
         test_bearings=streams,
         acquisition_interval_s=3600.0,
-        fs=25_600,
+        fs=25600,
         checkpoint=resolve_checkpoint(run_dir),
         hi_scaler_path=run_dir / "hi_scaler.json",
         model_name=str(cfg.model.name),
         inference_model_key=transfer_key,
-        has_gt_rul=False,
+        has_gt_rul=True,
         stream_mode="skf_trending",
         transfer_note=(
             "RUL from PHM2012-trained Mamba-xLSTM-Net (transfer demo); "
             "Observer trending → synthetic waveform → HI pipeline. "
-            "No ground-truth RUL on plant data."
+            "EOL anchored at the field failure event (~31 Aug 2023, envelope "
+            "spike collapse); post-repair September baseline is segmented out."
         ),
     )
 
@@ -166,7 +165,6 @@ def stream_label(dataset_key: str, stream_id: str) -> str:
     return f"Bearing {stream_id}"
 
 
-# Time/freq feature name order must mirror mxlstm.data.hi.extract_hi_features.
 _TIME_NAMES = ["rms", "peak", "kurtosis", "skewness", "crest", "shape", "impulse", "margin", "variance"]
 _FREQ_BASE = ["centroid", "entropy", "mean_freq", "rms_freq"]
 
@@ -178,7 +176,7 @@ def feature_names(spec: DatasetSpec) -> list[str]:
     """
     try:
         n_features = int(len(json.loads(spec.hi_scaler_path.read_text())["min"]))
-    except Exception:  # noqa: BLE001 — fall back to the common 2-channel layout
+    except Exception:
         n_features = 2 * (len(_TIME_NAMES) + len(_FREQ_BASE) + spec.n_bands)
     per_channel = len(_TIME_NAMES) + len(_FREQ_BASE) + spec.n_bands
     n_channels = max(1, n_features // per_channel)

@@ -1,0 +1,640 @@
+﻿%% chapters/01-pendahuluan.tex
+%% Bab I — Pendahuluan
+%% Fase A: restrukturisasi sesuai dissertation-outline.md Bab I
+%% Target: 7 seksi (Subbab~I.1–I.7), selaras SK-Toto Bab~I + outline 6-bab
+
+\chapter{Pendahuluan}
+\label{bab:pendahuluan}
+
+Perawatan prediktif \emph{rolling element bearing} memerlukan dua kemampuan yang
+saling melengkapi: deteksi jenis kerusakan yang akurat dan dapat
+dijelaskan, serta estimasi sisa umur pakai yang andal secara statistik.
+Bab ini memaparkan konteks industri yang melatarbelakangi kedua tuntutan
+tersebut, merumuskan pertanyaan penelitian yang memandu investigasi
+empiris, menetapkan novelti beserta status pembuktiannya yang eksplisit,
+serta menjabarkan kontribusi dan sistematika penulisan enam bab
+disertasi ini.
+
+\section{Latar Belakang}
+\label{sec:bab1_latar}
+
+Indonesia telah memasuki era revolusi industri keempat yang ditandai oleh
+digitalisasi sistem produksi secara menyeluruh \citetitb{WEF2018Industry4}.
+Pemerintah melalui peta jalan \emph{Making Indonesia 4.0} mendorong
+transformasi sektor manufaktur nasional agar mampu bersaing di pasar global
+dengan memanfaatkan teknologi analisis \emph{big data}, kecerdasan buatan
+(\emph{artificial intelligence}, AI), dan \emph{Internet of Things}
+\citetitb{Kemenperin2018Making4}.
+Salah satu sasaran utama transformasi ini adalah peningkatan efisiensi
+operasional pabrik melalui penerapan strategi \emph{perawatan prediktif}
+(\emph{predictive maintenance}, PdM) yang menggantikan jadwal perawatan
+berbasis waktu dengan intervensi tepat waktu berdasarkan kondisi aktual
+mesin.
+
+Perawatan prediktif bertumpu pada kemampuan memantau kondisi mesin secara
+\emph{real time} dan memprediksi kapan suatu komponen akan mencapai batas
+kegagalannya.
+Data kondisi mesin yang dikumpulkan dari sensor getaran, temperatur,
+tekanan, dan arus listrik mengandung informasi degradasi yang berharga,
+namun memerlukan metode analisis canggih untuk diinterpretasikan.
+Kegagalan komponen yang tidak terprediksi menyebabkan \emph{downtime} tidak
+terencana yang merugikan secara finansial, mengganggu rantai pasok, dan
+pada kasus ekstrem menimbulkan risiko keselamatan kerja
+\citetitb{Mobley2002PlantMaintenance}.
+
+\emph{Rolling element bearing} merupakan komponen
+mekanis yang paling kritis sekaligus paling rentan terhadap kegagalan
+dalam hampir seluruh mesin rotasi industri, mulai dari motor listrik,
+pompa, kompresor, hingga lini otomasi manufaktur
+\citetitb{Lei2018Machinery}.
+Studi empiris menunjukkan bahwa kegagalan \emph{bearing} menyumbang sekitar
+40--50\,\% dari total kegagalan mesin rotasi
+\citetitb{Nectoux2012PRONOSTIA}.
+Kemampuan mengidentifikasi \emph{jenis kerusakan} \emph{bearing} secara
+tepat --- apakah pada \emph{inner race}, \emph{outer race}, atau bola
+--- maupun memprediksi \emph{sisa umur pakai} (\emph{remaining useful
+life}, RUL) secara akurat menjadi inti dari strategi perawatan prediktif
+berbasis kondisi yang efektif.
+Gambar~\ref{fig:bab1_objek_industri} memperlihatkan komponen \emph{rolling element bearing} beserta tahapan permesinan yang menjadi konteks fisik
+penelitian ini.
+
+\begin{figure}[ht]
+  \centering
+  \begin{minipage}[b]{0.42\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{ball_bearing_components.png}
+    \caption*{(a) Komponen \emph{rolling element bearing}}
+  \end{minipage}\hfill
+  \begin{minipage}[b]{0.55\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{ball_bearing_machining.png}
+    \caption*{(b) Proses permesinan \emph{outer ring} dan \emph{inner ring}}
+  \end{minipage}
+  \caption{Konteks fisik objek penelitian: (a)~komponen utama \emph{rolling element bearing} (cincin luar, sangkar, bola, cincin dalam), dan
+           (b)~tahapan \emph{grinding} dan \emph{honing} pada cincin luar
+           dan dalam yang menjadi sumber sinyal getaran mesin produksi.
+           Sumber: SKF Group~\citetitb{SKF2017TechReport}.}
+  \label{fig:bab1_objek_industri}
+\end{figure}
+
+Pendekatan deteksi dan prediksi degradasi \emph{bearing} telah berkembang pesat,
+dari model fisika berbasis persamaan keausan Hertzian menuju metode
+berbasis data yang memanfaatkan rekaman degradasi berskala besar
+\citetitb{Lei2018Machinery}.
+Dalam dekade terakhir, arsitektur \emph{deep learning} --- khususnya
+\emph{Long Short-Term Memory} (LSTM), Transformer, dan jaringan konvolusi
+satu dimensi (CNN~1D) --- mendominasi literatur diagnostik dan prognostik
+\emph{bearing} \citetitb{Hochreiter1997LSTM,Vaswani2017Attention}.
+Pada sisi diagnostik, arsitektur \emph{Wide Deep Convolutional Neural
+Network} (WDCNN) \citetitb{Zhang2017WDCNN} menunjukkan akurasi tinggi
+dalam mengklasifikasikan jenis kerusakan langsung dari sinyal mentah,
+tanpa memerlukan ekstraksi fitur manual yang bergantung pada keahlian
+domain.
+Pada sisi prognostik, arsitektur baru Mamba \citetitb{Gu2023Mamba}
+dan xLSTM \citetitb{Beck2024xLSTM} membuka peluang pemodelan sekuens
+panjang yang lebih efisien untuk estimasi RUL.
+
+Penerapan benchmark multi-model yang mencakup tiga golongan algoritma
+secara paralel --- golongan \emph{kernel} (SVM, LR), \emph{tree-based}
+(DT, RF, XGBoost), dan \emph{deep learning} (WDCNN) --- memberikan
+perspektif konsistensi yang penting bagi adopsi industri: model mana
+yang memenuhi keseimbangan optimal antara akurasi dan kompleksitas
+komputasi pada setiap tingkatan dalam arsitektur sistem PdM.
+Pendekatan multi-model semacam ini belum banyak dilakukan secara
+sistematis dengan inferensi statistik yang ketat dan pada dataset
+yang sama.
+
+Hambatan terbesar adopsi \emph{deep learning} pada sistem perawatan
+prediktif industri adalah kurangnya keterjelasan (\emph{interpretability})
+keputusan model.
+Insinyur perawatan memerlukan bukti bahwa model tidak sekadar menghafal
+pola statistik, melainkan benar-benar menangkap fenomena fisika degradasi
+yang dapat diverifikasi.
+Dua \emph{research gap} kritis belum terisi dalam literatur.
+
+\textbf{Gap pertama — diagnostik:} hampir seluruh metode \emph{Explainable
+AI} (XAI) untuk klasifikasi \emph{bearing} berbasis \emph{deep learning}
+beroperasi di tingkat fitur agregat (misalnya kurtosis atau energi pita
+frekuensi), bukan di tingkat sinyal mentah.
+Interpretabilitas WDCNN secara langsung dalam domain waktu
+(2.048 titik per segmen) --- yang dapat dipetakan ke morfologi fisik
+impuls transien dan periodisitas frekuensi karakteristik \emph{bearing} ---
+belum pernah dilaporkan dengan validasi multi-metrik yang ketat.
+
+\textbf{Gap kedua — prognostik:} model RUL berbasis \emph{deep learning}
+menghasilkan prediksi yang akurat, namun representasi latennya masih
+merupakan "kotak hitam".
+Belum terbukti secara statistik bahwa model-model tersebut
+menginternalisasi fisika degradasi \emph{bearing} --- khususnya frekuensi
+karakteristik BPFO (\emph{Ball Pass Frequency Outer race}), BPFI
+(\emph{Ball Pass Frequency Inner race}), BSF (\emph{Ball Spin
+Frequency}), dan FTF (\emph{Fundamental Train Frequency}) --- di dalam
+ruang laten yang dipelajari.
+
+Pada konteks industri, PT~SKF~Indonesia mengoperasikan mesin
+\emph{grinding outer ring} (OR1 dan OR2) yang memproduksi cincin luar
+\emph{bearing} untuk sektor otomotif.
+Sinyal getaran spindel diakuisisi melalui modul SKF~IMx-8 dan
+diteruskan ke AWS Cloud; data tersebut dapat diintegrasikan
+dengan informasi kualitas produk (\emph{radial clearance checking})
+untuk membentuk basis data multi-sumber heterogen.
+Konteks ini menjadi \textbf{motivasi industri jangka panjang} bagi
+kerangka PdM yang dikembangkan dalam disertasi ini; pelaksanaan
+integrasi penuh data kualitas heterogen dijadikan rekomendasi
+penelitian lanjutan (Bab~VI, Rekomendasi~7).
+
+Disertasi ini merumuskan pendekatan penelitian pada dua jalur paralel:
+(A)~diagnostik \emph{bearing} berbasis benchmark multi-model dengan XAI
+tingkat sinyal mentah, dan (B)~prognostik RUL dengan
+\emph{mechanistic interpretability} berbasis \emph{Sparse Autoencoder}
+yang dipetakan ke frekuensi karakteristik fisik \emph{bearing}.
+Kedua jalur dikonvergensikan ke dalam kerangka PdM multi-tier yang
+dapat diaudit lapis demi lapis.
+
+
+\section{Rumusan Masalah}
+\label{sec:bab1_rumusan}
+
+Berdasarkan latar belakang yang telah dipaparkan, dirumuskan tiga
+pertanyaan penelitian pada tingkat pertanyaan industri, masing-masing
+dilengkapi sub-pertanyaan teknis yang menjadi jangkar empiris pada
+Bab~IV dan Bab~V.
+
+\textbf{RQ1 --- Integrasi Data Sensor dan Arsitektur PdM untuk OEE.}
+Bagaimana sistem perawatan prediktif berbasis sensor vibrasi yang
+melekat pada arsitektur multi-tier (Edge IoT → Edge Server → Cloud/GPU)
+dapat dirancang sebagai fondasi untuk mengurangi \emph{unplanned
+downtime} dan mendukung peningkatan OEE pada produksi \emph{bearing}, dengan
+integrasi penuh data kualitas heterogen sebagai peta jalan penelitian
+lanjutan?
+
+\begin{itemize}
+  \item \textbf{Sub-RQ1.1 — Pembagian beban komputasi lintas tier.}
+        Bagaimana memetakan tiga jenis beban inferensi (triage anomali
+        ringan, klasifikasi jenis kerusakan, estimasi RUL) ke tiga
+        tingkatan (Edge IoT, Edge Server, Cloud) sehingga keluaran
+        setiap tingkatan dapat dipakai oleh tingkatan berikutnya dalam
+        satu alur perawatan terpadu?
+\end{itemize}
+
+\noindent\textit{Catatan transparansi:} Integrasi penuh data kualitas
+heterogen (\emph{radial clearance}) tidak dijawab secara empiris oleh
+disertasi ini --- hanya disertakan sebagai motivasi industri
+(Subbab~\ref{sec:bab1_latar}) dan rekomendasi lanjutan (Bab~VI, Subbab~VI.5).
+Klaim peningkatan OEE bersifat \textbf{arsitektural} --- cetak biru
+pengurangan \emph{unplanned downtime} melalui deteksi dini dan estimasi
+RUL --- bukan klaim kuantitatif dari studi \emph{deployment} lapangan.
+
+\medskip
+
+\textbf{RQ2 --- Pendekatan Hibrid ML dan DL untuk Deteksi Kerusakan
+dan Estimasi RUL.}
+Apakah pendekatan hibrid yang menggabungkan golongan algoritma
+statistik-kernel (SVM, LR), \emph{tree-based} (DT, RF, XGBoost),
+dan \emph{deep learning} (WDCNN untuk diagnostik; Mamba-xLSTM-Net,
+N-BEATS-xLSTM-RUL, SparseGate-TCN-RUL untuk prognostik) dapat
+memberikan deteksi kerusakan dan estimasi RUL \emph{bearing} yang konsisten
+lintas golongan algoritma dan lintas dataset publik (CWRU, PHM2012,
+XJTU-SY, IMS)?
+
+\begin{itemize}
+  \item \textbf{Sub-RQ2.1 — Konsistensi diagnostik multi-model.}
+        Sejauh mana benchmark klasifikasi multi-model pada CWRU
+        menghasilkan akurasi yang konsisten, dan model mana yang
+        menempati posisi terbaik pada keseimbangan antara akurasi
+        dan kompleksitas parameter untuk \emph{edge deployment}?
+  \item \textbf{Sub-RQ2.2 — Universalitas \emph{backbone} RUL.}
+        Sejauh mana ketiga arsitektur \emph{backbone} (Mamba-xLSTM,
+        N-BEATS-xLSTM, SparseGate-TCN) menghasilkan estimasi RUL
+        yang konsisten lintas tiga dataset (PHM2012, XJTU-SY, IMS)
+        di bawah protokol pelatihan bersama (3 \emph{seed}, 75
+        \emph{epoch}, bf16, \emph{batch} 512, \emph{window} 32)
+        dengan inferensi statistik (\emph{bootstrap} CI dan
+        \emph{permutation test})?
+\end{itemize}
+
+\noindent\textit{Catatan cakupan:} "Hibrid" dalam disertasi ini
+berarti lintas golongan algoritma yang dievaluasi secara paralel,
+bukan \emph{ensembling} antar golongan ke satu prediktor tunggal.
+
+\medskip
+
+\textbf{RQ3 --- Transparansi Model melalui XAI untuk Adopsi Industri.}
+Bagaimana metode \emph{Explainable AI} --- SHAP (KernelExplainer,
+TreeExplainer, DeepExplainer) untuk diagnostik dan \emph{Top-k Sparse
+Autoencoder} dengan pemetaan ke frekuensi karakteristik \emph{bearing} (BPFx)
+untuk prognostik --- dapat meningkatkan transparansi dan
+\emph{auditability} model PdM sehingga layak diadopsi oleh praktisi
+industri manufaktur?
+
+\begin{itemize}
+  \item \textbf{Sub-RQ3.1 — Atribusi tingkat sinyal (diagnostik).}
+        Apakah pola atribusi SHAP DeepExplainer pada sinyal mentah
+        2.048 titik WDCNN dapat dipetakan ke morfologi impuls transien
+        atau periodisitas BPFx --- dan apakah pemetaan ini cukup
+        stabil dan diskriminatif untuk membentuk sidik jari
+        (\emph{Fault Signature Map}) per kelas kerusakan?
+  \item \textbf{Sub-RQ3.2 — Konsep laten (prognostik).}
+        Apakah \emph{Top-k Sparse Autoencoder} yang dilatih pada
+        \emph{hidden states backbone} RUL dapat mengekstrak fitur
+        laten yang berkorespondensi dengan BPFO/BPFI/BSF/FTF secara
+        statistik signifikan --- dibuktikan dengan \emph{bootstrap} CI,
+        \emph{permutation test}, dan dua \emph{negative controls}
+        (inisialisasi Xavier dan \emph{Gaussian noise})?
+\end{itemize}
+
+
+\section{Tujuan Penelitian dan Novelti}
+\label{sec:bab1_tujuan}
+
+Tiga tujuan penelitian dalam disertasi ini dipetakan satu-ke-satu
+ke tiga pertanyaan penelitian Subbab~\ref{sec:bab1_rumusan} dan ke lima
+novelti N1–N5.
+Pemetaan eksplisit ini penting agar setiap klaim kontribusi dapat
+dilacak ke bukti empiris yang terukur, bukan sekadar pernyataan
+aspirasional.
+Setiap novelti dilengkapi status pembuktian --- apakah
+\emph{empiris} (didukung angka kuantitatif) atau
+\emph{konseptual/sintesis} --- untuk menghindari klaim berlebih yang
+lazim dijumpai dalam literatur PdM berbasis \emph{deep learning}.
+
+\textbf{Tujuan~1 — Pengembangan Sistem PdM Multi-Tier (menjawab RQ1).}
+Merancang cetak biru (\emph{blueprint}) sistem perawatan prediktif
+berbasis sensor vibrasi yang mengintegrasikan blok diagnostik
+(klasifikasi kerusakan) dan blok prognostik (estimasi RUL) ke dalam
+arsitektur tiga tingkatan (Edge IoT → Edge Server → Cloud/GPU) yang
+dapat diaudit lapis demi lapis.
+
+Tujuan ini menetapkan \textbf{Novelti N5 — Kerangka Konseptual PdM
+Multi-Tier}: sintesis komponen FSM (\emph{input-attribution}) dan
+SAE-BPFx (\emph{latent-concept}) menjadi cetak biru sistem tiga-tier.
+\emph{Bukti pendukung:} tabel penempatan model per tingkatan di
+Bab~VI (berbasis jumlah parameter, estimasi latensi, tipe XAI yang
+sesuai).
+\emph{Status: \textbf{konseptual/sintesis} — bukan klaim hasil
+\emph{deployment} lapangan.}
+
+\medskip
+
+\textbf{Tujuan~2 — Validasi Konsistensi Hibrid ML dan DL Lintas
+Dataset (menjawab RQ2).}
+Memvalidasi konsistensi tiga golongan algoritma diagnostik
+(kernel/tree/\emph{deep}) dan tiga arsitektur \emph{backbone}
+prognostik (Mamba-xLSTM, N-BEATS-xLSTM, SparseGate-TCN) lintas
+empat dataset publik (CWRU, PHM2012, XJTU-SY, IMS), dengan inferensi
+statistik \emph{bootstrap} + \emph{permutation test} + dua
+\emph{negative controls}.
+
+Tujuan ini menetapkan \textbf{Novelti N4 — Universalitas dan
+\emph{Statistical Rigor}}: 3 arsitektur \emph{backbone} × 4 dataset
+dengan protokol reproduksi yang ketat.
+\emph{Bukti:} tabel RMSE 3 \emph{backbone} × 3 dataset RUL;
+konvergensi BPFx-\emph{dominant} lintas arsitektur; \emph{hit-rate}
+turun ke ${\approx}0$ pada kedua \emph{negative control}.
+\emph{Status: \textbf{empiris}.}
+
+Integrasi multi-modal data \emph{radial clearance} --- yang
+disebutkan dalam SK-Toto Tujuan~2 sebagai sasaran akhir pengembangan
+sistem PdM --- berada di luar lingkup empiris disertasi ini, meskipun
+relevansinya tidak diabaikan.
+Kendala utamanya adalah keterbatasan ketersediaan rekaman
+\emph{vibration-clearance} berpasangan dalam jumlah yang memadai
+untuk pelatihan model \emph{multi-modal}.
+Integrasi tersebut dijadikan rekomendasi lanjutan eksplisit pada
+Bab~VI, Subbab~VI.5, dengan prasyarat teknis dan jalur pengumpulan data
+yang dispesifikasikan.
+
+\medskip
+
+\textbf{Tujuan~3 — Transparansi Model melalui XAI untuk Adopsi
+Industri (menjawab RQ3).}
+Mengintegrasikan metode \emph{Explainable AI} berbasis SHAP
+(KernelExplainer / TreeExplainer / DeepExplainer) di sisi diagnostik
+dan \emph{Top-k Sparse Autoencoder} + pemetaan BPFx di sisi
+prognostik untuk meningkatkan transparansi dan \emph{auditability}
+model bagi praktisi industri.
+
+Tujuan ini menetapkan tiga novelti empiris berlapis:
+
+\begin{itemize}
+  \item \textbf{N1 — \emph{Fault Signature Maps} (FSM):} XAI tingkat
+        sinyal mentah pertama untuk WDCNN, resolusi 2.048 titik, tiga
+        varian (Signed/Absolute/Variance), tiga metrik validasi
+        (discriminability, severity monotonicity, split-half stability).
+        \emph{Bukti:} split-half stability 0,940; discriminability
+        0,216; severity monotonicity Ball 17,6\,\% / IR 13,8\,\% /
+        OR 8,6\,\%. \emph{Status: \textbf{empiris}.}
+
+  \item \textbf{N2 — Trade-off \emph{BatchNorm}:} temuan pertama
+        bahwa \emph{BatchNorm} menekan \emph{discriminability} FSM;
+        panduan desain arsitektur antara akurasi maksimum dan
+        interpretabilitas maksimum.
+        \emph{Bukti:} discriminability naik 133\,\% pada varian
+        tanpa BN, dengan \emph{trade-off} akurasi $-3{,}60$~pp.
+        \emph{Status: \textbf{empiris}.}
+
+  \item \textbf{N3 — SAEBearing:} adaptasi pertama
+        \emph{mechanistic interpretability} (\emph{Top-k Sparse
+        Autoencoder}) ke domain \emph{bearing prognostics}.
+        \emph{Bukti:} \emph{hit-rate} BPFI 2,3\,\% (PHM2012,
+        $p < 0{,}001$); BPFO 2,2\,\% (XJTU-SY, $p < 0{,}001$);
+        $r_{\max} = 0{,}507$.
+        \emph{Status: \textbf{empiris}.}
+\end{itemize}
+
+\noindent\textbf{Status pembuktian keseluruhan:} N1, N2, N3, dan N4
+merupakan novelti \textbf{empiris} yang terukur secara kuantitatif
+dengan angka kunci di Bab~IV–V.
+N5 merupakan novelti \textbf{konseptual/sintesis} --- cetak biru
+arsitektur yang menggabungkan komponen empiris N1–N4 ke satu sistem
+multi-tier; bukan klaim hasil \emph{deployment} lapangan.
+
+
+\section{Manfaat Penelitian}
+\label{sec:bab1_manfaat}
+
+Keberhasilan pendekatan diagnostik dan prognostik yang dikembangkan
+dalam disertasi ini tidak terbatas pada sumbangan akademik semata,
+tetapi memiliki implikasi langsung bagi praktisi industri yang
+menghadapi tekanan konkret untuk meningkatkan keandalan mesin produksi
+sekaligus memangkas biaya perawatan tak terencana.
+Manfaat yang diharapkan mencakup tiga tataran yang saling memperkuat:
+
+\begin{enumerate}
+  \item Memberikan contoh kasus implementasi analisis \emph{big data}
+        dan kecerdasan buatan dalam sistem produksi untuk meningkatkan
+        produktivitas dan daya saing manufaktur Indonesia dalam
+        kerangka \emph{Making Indonesia 4.0}.
+
+  \item Menghasilkan \emph{pipeline} sumber terbuka (\emph{open-source})
+        --- notebook reproduksi, bobot model, dan skrip evaluasi
+        statistik --- yang dapat menjadi rujukan integrasi
+        diagnostik–prognostik dengan lapisan XAI dua-tingkat dalam
+        sistem perawatan prediktif.
+        Peneliti lain dapat mengadopsi kerangka FSM maupun SAE-BPFx
+        untuk domain mesin rotasi yang berbeda.
+
+  \item \emph{Pipeline} yang dikembangkan untuk produksi \emph{bearing} dapat
+        menjadi dasar metodologis bagi sistem PdM pada proses produksi
+        lain yang menggunakan permesinan rotasi, tidak terbatas pada
+        \emph{bearing} jenis \emph{deep groove ball bearing}.
+\end{enumerate}
+
+\textbf{Aspirasi jangka panjang:} integrasi penuh data kualitas
+heterogen (\emph{vibration checking} dan \emph{radial clearance
+checking} PT~SKF) sebagai masukan model multi-modal merupakan
+\emph{future work} prioritas yang akan dilaksanakan setelah disertasi
+ini selesai (Bab~VI, Rekomendasi~7).
+
+
+\section{Batasan dan Asumsi Penelitian}
+\label{sec:bab1_batasan}
+
+\subsection*{Batasan}
+
+\begin{enumerate}
+  \item \textbf{Sistem produksi:} proses permesinan \emph{grinding}
+        pada produksi \emph{rolling element bearing}.
+  \item \textbf{Sinyal:} vibrasi mentah dari akselerometer; fitur
+        domain frekuensi dan \emph{envelope spectrum} dihitung sebagai
+        turunan, bukan masukan utama model.
+  \item \textbf{Dataset diagnostik:} CWRU (Load~0–3, 48~kHz,
+        10~kelas Normal + IR/OR/Ball × 0.007/0.014/0.021 inci,
+        segmen 2.048 titik, pembagian temporal 54/13/33\,\%).
+  \item \textbf{Dataset prognostik:} PHM2012 (FEMTO-PRONOSTIA,
+        17~\emph{bearing}, 3~kondisi beban), XJTU-SY (LDK~UER204,
+        10~\emph{bearing}), IMS (Rexnord, 4~\emph{bearing}).
+  \item \textbf{Arsitektur:} WDCNN untuk diagnostik;
+        Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL, SparseGate-TCN-RUL
+        untuk prognostik.
+        \emph{Baseline} tambahan: SVM-RBF, LR, DT, RF, XGBoost
+        (golongan \emph{kernel} dan \emph{tree}).
+  \item \textbf{XAI:} SHAP (KernelExplainer, TreeExplainer,
+        DeepExplainer) untuk diagnostik; \emph{Top-k} SAE dengan
+        pemetaan \emph{Hilbert envelope} untuk prognostik.
+  \item \textbf{Validasi industri:} terbatas pada sebagian kecil
+        data PT~SKF~Indonesia sebagai \emph{sanity check} eksternal
+        (Lampiran~D); bukan validasi lintas mesin lengkap.
+  \item \textbf{Perangkat lunak:} menggunakan \emph{library} sumber
+        terbuka (PyTorch, scikit-learn, XGBoost, SHAP, Mamba-SSM,
+        xLSTM); tidak ada pengembangan \emph{library} baru.
+\end{enumerate}
+
+\subsection*{Asumsi}
+
+\begin{enumerate}
+  \item Sensor vibrasi sudah dipasang dan terkalibrasi pada mesin yang
+        diamati sesuai spesifikasi pengukuran.
+  \item Data kondisi kualitas mesin (\emph{vibration checking} dan
+        \emph{radial clearance checking}) tersedia bagi tim PdM sebagai
+        acuan \emph{ground-truth} eksternal.
+  \item Mesin beroperasi dalam rentang normal sesuai spesifikasi
+        produsen selama akuisisi data.
+  \item Data historis perawatan tersedia untuk keperluan validasi dan
+        anotasi kondisi.
+  \item Infrastruktur komputasi (GPU NVIDIA~A40, \emph{on-premise}
+        dan \emph{cloud}) tersedia untuk pelatihan dan inferensi model.
+  \item Proses \emph{grinding} memiliki karakteristik degradasi yang
+        dapat dimodelkan secara kuantitatif dengan ML berbasis data.
+\end{enumerate}
+
+
+\section{Kontribusi dan Posisi Penelitian}
+\label{sec:bab1_kontribusi}
+
+\subsection*{Kontribusi Keilmuan}
+
+Disertasi ini menyumbangkan empat kontribusi yang dipetakan secara
+eksplisit ke novelti N1–N5 dan ke pertanyaan penelitian
+Subbab~\ref{sec:bab1_rumusan}, sebagaimana dirangkum dalam
+Tabel~\ref{tab:bab1_kontribusi}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Kontribusi keilmuan dan pemetaan ke novelti serta pertanyaan penelitian}
+  \label{tab:bab1_kontribusi}
+  \footnotesize
+  \begin{tabular}{@{}clp{3.2cm}p{4.5cm}c@{}}
+    \hline
+    \textbf{\#} & \textbf{Kontribusi} & \textbf{Novelti} &
+    \textbf{RQ yang dijawab} & \textbf{Tipe} \\
+    \hline
+    K1 & Kerangka FSM: XAI tingkat & N1 + N2 & RQ3 / Sub-RQ3.1 & Empiris \\
+       & sinyal mentah WDCNN & & & \\
+    K2 & SAEBearing: \emph{mechanistic} & N3 + N4 &
+       RQ2 / Sub-RQ2.2; & Empiris \\
+       & \emph{interpretability} & & RQ3 / Sub-RQ3.2 & \\
+    K3 & Integrasi PdM Multi-Tier & N5 & RQ1 / Sub-RQ1.1 & Konseptual \\
+    K4 & Konsistensi hibrid ML dan DL & mendukung N4 &
+       RQ2 / Sub-RQ2.1 & Empiris \\
+       & lintas golongan & & + Sub-RQ2.2 & \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\subsection*{Posisi Penelitian}
+
+Tabel~\ref{tab:bab1_posisi_penelitian} memposisikan keempat karya
+utama disertasi ini terhadap literatur eksternal pada matriks
+karakteristik kunci.
+
+\begin{table}[ht]
+  \centering
+  \caption{Posisi penelitian terhadap literatur berdasarkan tingkat XAI, dataset,
+           dan kelengkapan fitur sistem PdM}
+  \label{tab:bab1_posisi_penelitian}
+  \footnotesize
+  \begin{tabular}{@{}lp{2.0cm}p{2.8cm}p{1.8cm}ccc@{}}
+    \hline
+    \textbf{Sumber} & \textbf{Data} &
+    \textbf{Model} & \textbf{XAI} &
+    \textbf{FSM} & \textbf{SAE-} & \textbf{Tier} \\
+    & & & & & \textbf{BPFx} & \\
+    \hline
+    Literatur kernel    & CWRU & SVM/LR       & Fitur agregat & --           & -- & Edge \\
+    Literatur tree      & CWRU & DT/RF/XGB    & Fitur agregat & --           & -- & Edge \\
+    Literatur \emph{deep} & CWRU & WDCNN/CNN  & Fitur agregat & --           & -- & Server \\
+    Literatur RUL       & PHM/XJTU & LSTM/TCN & Tidak ada     & --           & -- & Cloud \\
+    \hline
+    Conf~1 \citetitb{TotoSuharto2024Conf1SVM}   & CWRU &
+      SVM/LR & KernelExp. & -- & -- & Edge IoT \\
+    Conf~2 \citetitb{TotoSuharto2024Conf2Tree}  & CWRU &
+      DT/RF/XGB & TreeExp. & -- & -- & Edge IoT \\
+    Journal~1 \citetitb{TotoSuharto2025Journal1FSM} & CWRU &
+      WDCNN & DeepExp. & $\checkmark$ & -- & Edge Server \\
+    Journal~2 \citetitb{TotoSuharto2025Journal2RUL} & PHM/XJTU/IMS &
+      3 \emph{backbone} & SAE-BPFx & -- & $\checkmark$ & Cloud \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Gambar~\ref{fig:bab1_kontribusi} menyajikan peta keterkaitan antara
+kelima novelti N1–N5, jalur penelitian, dan sub-pertanyaan penelitian
+yang dijawab.
+
+\begin{figure}[ht]
+  \centering
+  \resizebox{\textwidth}{!}{%
+  \begin{tikzpicture}[
+      node distance = 1.3cm and 2.0cm,
+      jalurA/.style  = {rectangle, rounded corners=4pt, draw, thick,
+                        fill=blue!8, text width=3.6cm, text centered,
+                        minimum height=1.5cm, font=\small},
+      jalurB/.style  = {rectangle, rounded corners=4pt, draw, thick,
+                        fill=green!8, text width=3.6cm, text centered,
+                        minimum height=1.5cm, font=\small},
+      konv/.style    = {rectangle, rounded corners=4pt, draw, thick,
+                        fill=orange!12, text width=4.8cm, text centered,
+                        minimum height=1.8cm, font=\small},
+      lbl/.style     = {font=\scriptsize\itshape},
+      arr/.style     = {-{Stealth[length=5pt]}, thick},
+      darr/.style    = {arr, dashed, gray!60},
+    ]
+    %% Baris Jalur A
+    \node[jalurA] (n1) {%
+      \textbf{N1}\\[-1pt]
+      {\scriptsize Fault Signature Maps}\\[-2pt]
+      {\scriptsize WDCNN + SHAP DeepExp.}};
+    \node[jalurA, right=of n1] (n2) {%
+      \textbf{N2}\\[-1pt]
+      {\scriptsize Trade-off BatchNorm}\\[-2pt]
+      {\scriptsize discriminability +133\,\%}};
+    \node[lbl, above=0.35cm of n1, text=blue!60!black]
+      {Jalur A — Diagnostik (Bab IV)};
+
+    %% Baris Jalur B
+    \node[jalurB, below=2.4cm of n1] (n3) {%
+      \textbf{N3}\\[-1pt]
+      {\scriptsize SAEBearing}\\[-2pt]
+      {\scriptsize \emph{mechanistic interp.}}};
+    \node[jalurB, right=of n3] (n4) {%
+      \textbf{N4}\\[-1pt]
+      {\scriptsize Universalitas + Rigor}\\[-2pt]
+      {\scriptsize 3 arch × 4 dataset}};
+    \node[lbl, above=0.35cm of n3, text=green!50!black]
+      {Jalur B — Prognostik (Bab V)};
+
+    %% Konvergensi
+    \coordinate (midAB) at ($(n2.east)!0.5!(n4.east) + (1.6cm,0)$);
+    \node[konv, right=1.4cm of midAB] (n5) {%
+      \textbf{N5}\\[-1pt]
+      {\scriptsize Kerangka PdM Multi-Tier}\\[-2pt]
+      {\scriptsize Edge IoT → Server → Cloud}\\[-2pt]
+      {\scriptsize \textit{[Konseptual, Bab VI]}}};
+    \node[lbl, above=0.35cm of n5, text=orange!60!black]
+      {Konvergensi};
+
+    %% Panah dalam Jalur A
+    \draw[arr] (n1) -- (n2) node[midway, above, font=\scriptsize]
+      {Sub-RQ3.1};
+    %% Panah dalam Jalur B
+    \draw[arr] (n3) -- (n4) node[midway, above, font=\scriptsize]
+      {Sub-RQ2.2 + 3.2};
+    %% Panah ke N5
+    \draw[darr] (n2.east) -- ++(0.5,0) |- (n5.west);
+    \draw[darr] (n4.east) -- ++(0.5,0) |- (n5.west);
+    %% Label N5 arrow
+    \node[font=\tiny, text=orange!50!black]
+      at ($(n5.west) + (-0.9,0)$) {Sub-RQ1.1};
+  \end{tikzpicture}%
+  }
+  \caption{Peta keterkaitan lima novelti N1–N5 dan sub-pertanyaan penelitian.
+           Jalur~A (diagnostik) menghasilkan N1 dan N2 yang menjawab Sub-RQ3.1.
+           Jalur~B (prognostik) menghasilkan N3 dan N4 yang menjawab
+           Sub-RQ2.2 dan Sub-RQ3.2.
+           N5 (konvergensi) mengintegrasikan keduanya menjadi kerangka PdM
+           multi-tier yang menjawab Sub-RQ1.1.}
+  \label{fig:bab1_kontribusi}
+\end{figure}
+
+
+\section{Sistematika Penulisan}
+\label{sec:bab1_sistematika}
+
+Disertasi ini disusun ke dalam enam bab dengan alur: konteks (Bab~I)
+→ teori (Bab~II) → fondasi bersama (Bab~III) → metodologi dan hasil
+diagnostik (Bab~IV) → metodologi dan hasil prognostik (Bab~V)
+→ sintesis dan kesimpulan (Bab~VI).
+
+\textbf{Bab~\ref{bab:pendahuluan}} (Pendahuluan) memuat latar belakang
+urgensi perawatan prediktif dalam konteks \emph{Making Indonesia~4.0},
+rumusan masalah tiga RQ beserta sub-RQ teknis, tujuan dan novelti
+N1–N5, manfaat penelitian, batasan dan asumsi, kontribusi dan posisi
+penelitian, serta sistematika penulisan.
+
+\textbf{Bab~\ref{bab:tinjauan-pustaka}} (Tinjauan Pustaka) memetakan
+\emph{state-of-the-art} perawatan prediktif dan Industri~4.0,
+diagnostik \emph{bearing} berbasis \emph{deep learning}, metode XAI tingkat
+atribusi masukan, prognostik RUL, \emph{mechanistic interpretability}
+dan \emph{Sparse Autoencoder}, fisika getaran \emph{bearing}, serta peta
+gap literatur yang memotivasi penelitian ini.
+
+\textbf{Bab~III} (Metodologi Umum) memuat fondasi bersama yang
+dipakai oleh Bab~IV dan Bab~V: kerangka konseptual terintegrasi,
+spesifikasi empat dataset (CWRU, PHM2012, XJTU-SY, IMS), praproses
+dan ekstraksi fitur HI~36-D, metrik evaluasi bersama, serta
+infrastruktur dan protokol reproduksi.
+
+\textbf{Bab~IV} (\emph{Bearing Fault Detection}: Metodologi dan
+Hasil) menyajikan Jalur~A secara \emph{end-to-end}: benchmark tiga
+golongan algoritma (kernel → tree → \emph{deep} WDCNN) dengan SHAP
+per golongan, formalisasi FSM, hasil klasifikasi, studi ablasi
+\emph{BatchNorm}, dan interpretasi fisika sinyal.
+Bab~IV disusun dengan urutan \textbf{metode → hasil} agar pembaca
+melihat dengan jelas perbedaan pendekatan diagnostik dengan prognostik.
+
+\textbf{Bab~V} (\emph{Remaining Useful Life}: Metodologi dan Hasil)
+menyajikan Jalur~B secara \emph{end-to-end}: tiga arsitektur
+\emph{backbone} RUL, \emph{Top-k Sparse Autoencoder}, pemetaan BPFx,
+\emph{hit-rate} dengan \emph{bootstrap} CI dan \emph{permutation
+test}, \emph{negative controls}, perbandingan lintas arsitektur, dan
+analisis \emph{sparsity sweep}.
+Bab~V juga disusun dengan urutan \textbf{metode → hasil} yang
+paralel dengan Bab~IV.
+
+\textbf{Bab~\ref{bab:kesimpulan}} (Kesimpulan dan Rekomendasi)
+menutup disertasi dengan pembahasan terintegrasi dua jalur
+interpretabilitas, kerangka PdM multi-tier, rekapitulasi kuantitatif
+N1–N5 beserta status pembuktiannya, keterbatasan penelitian, dan
+tujuh rekomendasi penelitian lanjutan termasuk prioritas integrasi
+data kualitas PT~SKF.

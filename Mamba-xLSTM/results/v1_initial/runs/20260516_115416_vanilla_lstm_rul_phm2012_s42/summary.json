@@ -1,0 +1,20 @@
+{
+  "run_id": "vanilla_lstm_rul_phm2012_s42",
+  "seed": 42,
+  "n_params": 409601,
+  "fit_seconds": 1.4602999687194824,
+  "test_metrics": {
+    "test/loss": 0.08045146614313126,
+    "test/rmse": 0.28363966941833496,
+    "test/mae": 0.23940832912921906,
+    "test/r2": -0.16836537420749664,
+    "test/phm_score": 0.9234664440155029,
+    "test/phm_score_paper": 2.5913050174713135,
+    "test/rmse_per_bearing": 0.2825981676578522,
+    "test/phm_per_bearing": 0.9306365847587585,
+    "test/phm_paper_per_bearing": 1.2956525087356567
+  },
+  "best_checkpoint": "",
+  "dataset": "phm2012",
+  "model_name": "vanilla_lstm_rul"
+}

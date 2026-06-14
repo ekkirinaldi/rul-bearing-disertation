@@ -1,0 +1,108 @@
+{
+  "run_id": "algorithm_comparison_phm2012_vanilla_lstm_rul_s44",
+  "run_dir": "results/runs/20260516_120512_algorithm_comparison_phm2012_vanilla_lstm_rul_s44",
+  "timings": [
+    {
+      "kind": "step",
+      "phase": "Setup",
+      "name": "Seed everything",
+      "elapsed_s": 0.02348494529724121
+    },
+    {
+      "kind": "step",
+      "phase": "Setup",
+      "name": "Detect compute profile",
+      "elapsed_s": 0.03772282600402832
+    },
+    {
+      "kind": "phase",
+      "name": "Setup",
+      "elapsed_s": 0.061577796936035156
+    },
+    {
+      "kind": "step",
+      "phase": "Data preparation",
+      "name": "Build DataModule",
+      "elapsed_s": 0.0017876625061035156
+    },
+    {
+      "kind": "step",
+      "phase": "Data preparation",
+      "name": "Load + extract HI + fit scaler",
+      "elapsed_s": 0.007065534591674805
+    },
+    {
+      "kind": "step",
+      "phase": "Data preparation",
+      "name": "Save HI scaler",
+      "elapsed_s": 0.0005095005035400391
+    },
+    {
+      "kind": "phase",
+      "name": "Data preparation",
+      "elapsed_s": 0.009787797927856445
+    },
+    {
+      "kind": "step",
+      "phase": "Model construction",
+      "name": "Build model (vanilla_lstm_rul)",
+      "elapsed_s": 0.005588054656982422
+    },
+    {
+      "kind": "step",
+      "phase": "Model construction",
+      "name": "Wrap in LightningModule",
+      "elapsed_s": 0.0006597042083740234
+    },
+    {
+      "kind": "phase",
+      "name": "Model construction",
+      "elapsed_s": 0.006677150726318359
+    },
+    {
+      "kind": "step",
+      "phase": "Training",
+      "name": "Build trainer + callbacks",
+      "elapsed_s": 0.007489919662475586
+    },
+    {
+      "kind": "step",
+      "phase": "Training",
+      "name": "Fit",
+      "elapsed_s": 70.17932438850403
+    },
+    {
+      "kind": "phase",
+      "name": "Training",
+      "elapsed_s": 70.18742728233337
+    },
+    {
+      "kind": "step",
+      "phase": "Evaluation",
+      "name": "Test on held-out bearings",
+      "elapsed_s": 0.5056655406951904
+    },
+    {
+      "kind": "step",
+      "phase": "Evaluation",
+      "name": "Persist per-bearing test predictions",
+      "elapsed_s": 0.0028438568115234375
+    },
+    {
+      "kind": "phase",
+      "name": "Evaluation",
+      "elapsed_s": 0.5090796947479248
+    },
+    {
+      "kind": "step",
+      "phase": "Reporting artefacts",
+      "name": "Write summary.json",
+      "elapsed_s": 0.0005900859832763672
+    },
+    {
+      "kind": "phase",
+      "name": "Reporting artefacts",
+      "elapsed_s": 0.0008113384246826172
+    }
+  ]
+}

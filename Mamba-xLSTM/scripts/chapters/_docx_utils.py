@@ -51,6 +51,15 @@ def new_document() -> DocumentType:
     return doc
 
 
+def _apply_paragraph_color(paragraph, color: str | None) -> None:
+    """Apply a hex color (e.g. '0000FF') to every run in *paragraph*."""
+    if not color:
+        return
+    rgb = RGBColor.from_string(color)
+    for run in paragraph.runs:
+        run.font.color.rgb = rgb
+
+
 def _apply_run_font(run, *, bold: bool = False, italic: bool = False, size: Pt | None = None) -> None:
     run.font.name = BODY_FONT
     run.font.size = size or BODY_SIZE
@@ -106,7 +115,14 @@ def add_chapter_title(doc: DocumentType, number_label: str, title: str) -> None:
     _apply_run_font(r2, bold=True, size=HEADING_BAB_SIZE)
 
 
-def add_heading(doc: DocumentType, number: str, title: str, level: int = 1) -> None:
+def add_heading(
+    doc: DocumentType,
+    number: str,
+    title: str,
+    level: int = 1,
+    *,
+    color: str | None = None,
+) -> None:
     """Add a numbered subsection heading (e.g. 'III.1   Sintesis Model')."""
 
     p = doc.add_paragraph()
@@ -123,6 +139,7 @@ def add_heading(doc: DocumentType, number: str, title: str, level: int = 1) -> N
         _apply_run_font(r, bold=True, italic=False, size=Pt(12))
     else:
         _apply_run_font(r, bold=True, italic=True, size=Pt(12))
+    _apply_paragraph_color(p, color)
 
 
 # --------------------------------------------------------------------------- #
@@ -531,6 +548,7 @@ def add_paragraph(
     *,
     indent_first_line: bool = True,
     align: int = WD_ALIGN_PARAGRAPH.JUSTIFY,
+    color: str | None = None,
 ) -> None:
     p = doc.add_paragraph()
     p.alignment = align
@@ -540,22 +558,25 @@ def add_paragraph(
     if indent_first_line:
         p.paragraph_format.first_line_indent = Cm(1.27)
     _add_runs_with_emphasis(p, text)
+    _apply_paragraph_color(p, color)
 
 
-def add_bullets(doc: DocumentType, items: Sequence[str]) -> None:
+def add_bullets(doc: DocumentType, items: Sequence[str], *, color: str | None = None) -> None:
     for item in items:
         p = doc.add_paragraph(style="List Bullet")
         p.paragraph_format.line_spacing = LINE_SPACING
         p.paragraph_format.space_after = Pt(2)
         _add_runs_with_emphasis(p, item)
+        _apply_paragraph_color(p, color)
 
 
-def add_numbered(doc: DocumentType, items: Sequence[str]) -> None:
+def add_numbered(doc: DocumentType, items: Sequence[str], *, color: str | None = None) -> None:
     for item in items:
         p = doc.add_paragraph(style="List Number")
         p.paragraph_format.line_spacing = LINE_SPACING
         p.paragraph_format.space_after = Pt(2)
         _add_runs_with_emphasis(p, item)
+        _apply_paragraph_color(p, color)
 
 
 def add_equation(doc: DocumentType, text: str, label: str | None = None) -> None:

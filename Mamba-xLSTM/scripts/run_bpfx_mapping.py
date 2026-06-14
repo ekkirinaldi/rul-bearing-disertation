@@ -112,30 +112,41 @@ DATASET_INFO = {
         ],
         "sae_pt": Path(__file__).resolve().parents[1]
             / "results/runs"
-            / "20260515_174110_algorithm_comparison_phm2012_mamba_xlstm_net_s42"
+            / "20260512_151550_algorithm_comparison_phm2012_mamba_xlstm_net_s42"
             / "explain/sae.pt",
         "run_dir": Path(__file__).resolve().parents[1]
             / "results/runs"
-            / "20260515_174110_algorithm_comparison_phm2012_mamba_xlstm_net_s42",
+            / "20260512_151550_algorithm_comparison_phm2012_mamba_xlstm_net_s42",
     },
     "xjtusy": {
         "bearing_geom": LDK_UER204,
-        # Use 35 Hz (condition 1, 2100 rpm) as primary.
+        # Primary reference frequency (condition 1); per-condition fr_hz is
+        # resolved automatically in analyse_dataset from the subfolder name.
         "fr_hz": 35.0,
         "fs_hz": 25_600.0,
+        # Shaft frequency per condition subfolder (Hz).
+        "fr_hz_map": {
+            "35Hz12kN":   35.0,
+            "37.5Hz11kN": 37.5,
+            "40Hz10kN":   40.0,
+        },
+        # Root of the XJTU-SY dataset tree (parent of the three condition folders).
         "raw_data_root": Path(__file__).resolve().parents[2]
-            / "data-bearing" / "xtju-sy" / "35Hz12kN",
+            / "data-bearing" / "xtju-sy",
+        # All nine training bearings from xjtu_sy_available_full.yaml:
+        # three per condition, covering the full 35/37.5/40 Hz operating range.
         "train_bearing_dirs": [
-            "Bearing1_1", "Bearing1_2", "Bearing1_3",
-            "Bearing2_1", "Bearing2_2",
+            "35Hz12kN/Bearing1_1",   "35Hz12kN/Bearing1_2",   "35Hz12kN/Bearing1_3",
+            "37.5Hz11kN/Bearing2_1", "37.5Hz11kN/Bearing2_2", "37.5Hz11kN/Bearing2_4",
+            "40Hz10kN/Bearing3_1",   "40Hz10kN/Bearing3_2",   "40Hz10kN/Bearing3_4",
         ],
         "sae_pt": Path(__file__).resolve().parents[1]
             / "results/runs"
-            / "20260515_173301_algorithm_comparison_xjtusy_mamba_xlstm_net_s42"
+            / "20260611_104213_algorithm_comparison_xjtusy_mamba_xlstm_net_s42"
             / "explain/sae.pt",
         "run_dir": Path(__file__).resolve().parents[1]
             / "results/runs"
-            / "20260515_173301_algorithm_comparison_xjtusy_mamba_xlstm_net_s42",
+            / "20260611_104213_algorithm_comparison_xjtusy_mamba_xlstm_net_s42",
     },
 }
 
@@ -285,13 +296,16 @@ def analyse_dataset(
     print(f"  Dataset: {dataset_key}")
     print(f"{'='*60}")
 
-    # 1. Characteristic frequencies
+    # 1. Characteristic frequencies (using primary / condition-1 fr_hz for reporting).
     freqs_hz = bpfx_frequencies(
         **info["bearing_geom"], fr=info["fr_hz"]
     )
-    print(f"  Characteristic frequencies (fr={info['fr_hz']} Hz):")
+    print(f"  Characteristic frequencies (fr={info['fr_hz']} Hz, primary reference):")
     for k, v in freqs_hz.items():
         print(f"    {k:5s} = {v:.2f} Hz")
+
+    # Per-condition fr_hz lookup (XJTU-SY only; PHM2012 uses a single fr_hz).
+    fr_hz_map: dict[str, float] = info.get("fr_hz_map", {})
 
     # 2. Load SAE
     print(f"\n  Loading SAE from {info['sae_pt']} …")
@@ -301,7 +315,10 @@ def analyse_dataset(
     print(f"  SAE: d_model={sae.cfg.d_model}  expansion={sae.cfg.expansion}"
           f"  d_latent={d_latent}  k={sae.k}")
 
-    # 3. Collect BPFx amplitudes from raw recordings
+    # 3. Collect BPFx amplitudes from raw recordings.
+    #    For XJTU-SY the bearing paths include a condition subfolder prefix
+    #    (e.g. "37.5Hz11kN/Bearing2_1"); we infer the shaft frequency from that
+    #    prefix so each bearing is analysed with its correct BPFx.
     raw_root = info["raw_data_root"]
     loader_fn = load_phm2012_recordings if dataset_key == "phm2012" else load_xjtusy_recordings
     fs = info["fs_hz"]
@@ -315,15 +332,27 @@ def analyse_dataset(
         if not b_dir.exists():
             print(f"  WARN: {b_dir} not found, skipping")
             continue
+
+        # Resolve the shaft frequency for this bearing.  For XJTU-SY the
+        # condition folder name encodes the speed (e.g. "37.5Hz11kN").  For
+        # PHM2012 (or any dataset without fr_hz_map) fall back to the single
+        # primary fr_hz.
+        cond_key = str(b_dir_name).split("/")[0] if "/" in str(b_dir_name) else ""
+        bearing_fr = fr_hz_map.get(cond_key, info["fr_hz"])
+        if bearing_fr != info["fr_hz"]:
+            bearing_freqs = bpfx_frequencies(**info["bearing_geom"], fr=bearing_fr)
+        else:
+            bearing_freqs = freqs_hz
+
         recs = loader_fn(b_dir)
-        print(f"  {b_dir_name}: {len(recs)} recordings")
+        print(f"  {b_dir_name} (fr={bearing_fr} Hz): {len(recs)} recordings")
         for rec in recs:
             if rec_count >= max_recordings:
                 break
             env_freqs, env_spec = hilbert_envelope_spectrum(rec, fs)
             amp_row = {
                 name: band_amplitude(env_freqs, env_spec, center, bw=bpfx_bw_hz)
-                for name, center in freqs_hz.items()
+                for name, center in bearing_freqs.items()
             }
             bpfx_amps.append(amp_row)
             rec_count += 1

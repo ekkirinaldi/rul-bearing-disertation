@@ -103,7 +103,7 @@ diharapkan menggunakan konvensi yang sama agar perbandingan menjadi adil.
 | Durasi rekaman | 1,28 detik per rekaman, interval 1 menit |
 | Sampel per rekaman | 32.768 |
 | Label mode kegagalan | Outer race, inner race, cage (tersedia per bantalan) |
-| Catatan ketersediaan | Kondisi 3 tidak tersedia di disk; hanya kondisi 1 dan 2 digunakan (10 bantalan) |
+| Catatan ketersediaan | Ketiga kondisi tersedia di ``data-bearing/xtju-sy`` (perbaikan dataset 2026-06); unduh VPS via S3 ``xtju-sy.zip`` (§11.1) |
 | Referensi | Wang dkk. (2020) |
 
 XJTU-SY menyediakan label mode kegagalan eksplisit per bantalan, yang menjadi
@@ -112,10 +112,12 @@ fitur ke BPFO/BPFI/BSF/FTF, label mode kegagalan ini memungkinkan uji silang
 apakah pemetaan tersebut konsisten dengan jenis cacat aktual yang
 didokumentasikan pemilik dataset.
 
-> **Catatan integritas data.** Kondisi 3 XJTU-SY dihilangkan karena ketidaktersediaan
-> data pada infrastruktur yang digunakan. Hal ini telah diakui sebagai
-> keterbatasan pada Bab V §V.3 dan tidak memengaruhi validitas perbandingan
-> internal antar-arsitektur karena semua model menggunakan *split* identik.
+> **Catatan integritas data.** Dataset XJTU-SY pernah tidak lengkap pada disk
+> (``Bearing2_3`` terpotong; kondisi 3 dan ``2_4``/``2_5`` hilang). Salinan di
+> ``data-bearing/xtju-sy`` telah diverifikasi byte-identik terhadap arsip asli
+> (9.216 berkas CSV). Split disertasi memakai ketiga kondisi operasi
+> (``configs/data/xjtu_sy_available_full.yaml``). Hasil Tier-S yang dilaporkan
+> sebelum perbaikan perlu di-*rerun*.
 
 <div class="page-break"></div>
 
@@ -195,15 +197,16 @@ benchmark yang sudah dipublikasikan.
 
 | Set | Bantalan | Jumlah |
 |---|---|---|
-| **Training** | 1_1, 1_2, 1_3, 2_1, 2_2 | 5 bantalan |
-| **Validation** | 1_4 | 1 bantalan |
-| **Test** | 1_5, 2_3 | 2 bantalan |
+| **Training** | 1_1, 1_2, 1_3, 2_1, 2_2, 2_4, 3_1, 3_2, 3_4 | 9 bantalan (3 per kondisi) |
+| **Validation** | 1_4, 2_5, 3_5 | 3 bantalan (1 per kondisi) |
+| **Test** | 1_5, 2_3, 3_3 | 3 bantalan (1 per kondisi) |
 
-Test set XJTU-SY hanya berisi dua bantalan karena keterbatasan ketersediaan
-data (kondisi 3 tidak dapat diakses). Konsekuensinya, variansi metrik
-antar-*seed* pada XJTU-SY relatif tinggi dan R² sering negatif karena
-*sum of squares total* kecil. RMSE tetap dipakai sebagai metrik utama untuk
-mempertahankan komparabilitas dengan literatur.
+Pembagian ini memuat ketiga kondisi operasi (35~Hz/12~kN, 37{,}5~Hz/11~kN,
+40~Hz/10~kN) setelah perbaikan dataset lengkap di ``data-bearing/xtju-sy``.
+*Bearing* uji ``3_3`` selaras dengan *bearing* uji pada jalur Liu et al.
+(2026) Table~1. Variansi metrik antar-*seed* pada XJTU-SY dapat tetap tinggi
+pada *bearing* uji pendek (mis. ``1_5``); RMSE tetap dipakai sebagai metrik
+utama untuk komparabilitas dengan literatur.
 
 > **Aturan normalisasi.** Statistik normalisasi (mean, standar deviasi)
 > dihitung **hanya pada *training set*** dan diterapkan ke validation dan test.
@@ -399,11 +402,10 @@ sementara prediksi RUL terlambat menyebabkan kegagalan tak terduga (biaya
 *downtime* dan keselamatan jauh lebih besar). Sifat asimetris PHM Score
 menghukum kedua kesalahan tersebut dengan bobot yang berbeda.
 
-> **Catatan R² negatif pada XJTU-SY.** R² negatif pada *test set* XJTU-SY
-> adalah artefak dari *test split* yang sangat kecil (2 bantalan) yang
-> menghasilkan *high variance* pada SS_total. RMSE tetap valid sebagai
-> metrik utama untuk perbandingan yang adil. Hal ini telah diakui sebagai
-> keterbatasan pada Bab V.
+> **Catatan R² pada XJTU-SY.** R² pada *test set* XJTU-SY dapat negatif pada
+> *bearing* uji pendek (mis. ``1_5``). RMSE tetap valid sebagai metrik utama
+> untuk perbandingan yang adil. Split terbaru memuat tiga *bearing* uji (satu
+> per kondisi operasi).
 
 <div class="page-break"></div>
 
@@ -482,26 +484,24 @@ untuk mencapai performa optimal.
 | Mamba-xLSTM-Net | 0,2166 | 0,1644 | 0,4006 | **0,9044** | 71 |
 | N-BEATS-xLSTM-RUL | 0,2782 | 0,2369 | 0,0116 | 0,8898 | 0 |
 
-#### XJTU-SY
+#### XJTU-SY (rerun 2026-06-11, `xjtu_sy_available_full.yaml`, RunPod A40)
 
 | Model | RMSE ↓ | MAE | R² ↑ | PHM Score ↑ | Best Epoch |
 |---|---:|---:|---:|---:|---:|
-| **SparseGate-TCN-RUL** | **0,2607** | 0,2212 | **−0,0120** | 0,8795 | 0 |
-| N-BEATS-xLSTM-RUL | 0,2610 | 0,2243 | −0,0144 | 0,8790 | 1 |
-| Mamba-xLSTM-Net | 0,2813 | **0,2036** | −0,1782 | **0,9351** | 70 |
+| **Mamba-xLSTM-Net** | **0,1532** | **0,1233** | **0,6785** | **0,9527** | 4 |
+| SparseGate-TCN-RUL | 0,2302 | 0,1751 | 0,2739 | 0,9186 | 0 |
+| N-BEATS-xLSTM-RUL | 0,2644 | 0,2287 | 0,0425 | 0,8776 | 0 |
 
-> **Interpretasi XJTU-SY.** R² negatif untuk semua model menunjukkan kesulitan
-> dataset XJTU-SY pada *test split* yang sangat terbatas (2 bantalan).
-> RMSE tetap valid sebagai metrik utama. Mamba-xLSTM-Net memiliki PHM Score
-> tertinggi (0,935) meski RMSE terburuk — menunjukkan prediksi yang lebih
-> konservatif (terlambat) yang diuntungkan oleh skor asimetris.
+> **Catatan.** Tabel ini adalah *seed* 42 dari rerun pasca-perbaikan dataset
+> (tiga kondisi, `test_windows=863`). Angka pra-perbaikan (2 kondisi) tidak
+> lagi dipakai pada disertasi.
 
 ### 10.3 Analisis Best Epoch
 
-| Model | PHM2012 Best Epoch | XJTU Best Epoch |
+| Model | PHM2012 Best Epoch | XJTU Best Epoch (rerun 2026-06) |
 |---|---:|---:|
-| Mamba-xLSTM-Net | 71/75 | 70/75 |
-| N-BEATS-xLSTM-RUL | 0/75 | 1/75 |
+| Mamba-xLSTM-Net | 71/75 | 4/75 (s42), 6/75 (s43), 19/75 (s44) |
+| N-BEATS-xLSTM-RUL | 0/75 | 0/75 (s42, s44), 1/75 (s43) |
 | SparseGate-TCN-RUL | 20/75 | 0/75 |
 
 Mamba-xLSTM-Net terus membaik hingga akhir budget 75 epoch. N-BEATS-xLSTM dan
@@ -534,21 +534,21 @@ Per-seed RMSE PHM2012:
 | N-BEATS-xLSTM-RUL | 0,2782 | 0,2639 | 0,2644 |
 | SparseGate-TCN-RUL | 0,1843 | 0,2415 | 0,2516 |
 
-#### XJTU-SY — Test Metrics (mean ± std, n=3)
+#### XJTU-SY — Test Metrics (mean ± std, n=3; rerun 2026-06-11 RunPod)
 
 | Model | RMSE ↓ | MAE | PHM Score ↑ | R² |
 |---|---:|---:|---:|---:|
-| **N-BEATS-xLSTM-RUL** | **0,2588 ± 0,0033** | 0,2226 | 0,8748 | 0,0023 |
-| SparseGate-TCN-RUL | 0,2630 ± 0,0030 | 0,2222 | 0,8816 | −0,0305 |
-| Mamba-xLSTM-Net | 0,2666 ± 0,0115 | **0,2111** | **0,9071** | −0,0606 |
+| **Mamba-xLSTM-Net** | **0,2134 ± 0,0563** | 0,1662 | **0,9382** | 0,3326 |
+| SparseGate-TCN-RUL | 0,2155 ± 0,0105 | **0,1646** | 0,9147 | **0,3621** |
+| N-BEATS-xLSTM-RUL | 0,2564 ± 0,0099 | 0,2179 | 0,8732 | 0,0983 |
 
 Per-seed RMSE XJTU-SY:
 
 | Model | Seed 42 | Seed 43 | Seed 44 |
 |---|---:|---:|---:|
-| Mamba-xLSTM-Net | 0,2813 | 0,2653 | 0,2533 |
-| N-BEATS-xLSTM-RUL | 0,2610 | 0,2613 | 0,2541 |
-| SparseGate-TCN-RUL | 0,2607 | 0,2612 | 0,2672 |
+| Mamba-xLSTM-Net | 0,1532 | 0,1983 | 0,2887 |
+| N-BEATS-xLSTM-RUL | 0,2644 | 0,2426 | 0,2621 |
+| SparseGate-TCN-RUL | 0,2302 | 0,2117 | 0,2046 |
 
 #### Interpretasi Agregat
 
@@ -557,15 +557,14 @@ Per-seed RMSE XJTU-SY:
   bagus (0,184) — kemungkinan besar *convergence fluke* pada epoch 20.
   Mamba-xLSTM-Net lebih **stabil** (±0,020) dan terus membaik hingga
   akhir budget 75 epoch (best epoch 71).
-- **XJTU-SY.** Perbedaan RMSE antara tiga model sangat kecil (<0,01) —
-  *test split* hanya 2 bantalan membuat variansi antara *seed* mendominasi
-  dibanding perbedaan arsitektur. Mamba unggul pada **PHM Score** (0,907)
-  yang menunjukkan prediksi lebih konservatif dan sesuai arah asimetri
-  kompetisi.
-- **N-BEATS-xLSTM.** Paling stabil secara lintas-*seed* (±0,007 PHM;
-  ±0,003 XJTU) — model ini sudah konvergen di epoch 0–1 sehingga tidak
-  sensitif *seed*. Hal ini efek desain: *polynomial basis blocks*
-  menyediakan *strong prior* tanpa banyak *random initialization*.
+- **XJTU-SY (rerun 2026-06).** Mamba-xLSTM-Net unggul pada **mean RMSE**
+  (0,213) dan **PHM Score** (0,938) pada split tiga kondisi (`test_windows=863`).
+  SparseGate kompetitif pada MAE/$R^2$ dengan $\sigma$ RMSE terkecil (±0,011).
+  Variansi Mamba antar-*seed* lebih besar (±0,056) karena *seed* 42 sangat
+  kuat (0,153) sementara *seed* 44 lebih lemah (0,289).
+- **N-BEATS-xLSTM.** Tetap paling stabil pada RMSE XJTU (±0,010) dengan
+  konvergensi di epoch 0–1; *strong prior* basis-blok menekan sensitivitas
+  inisialisasi meskipun RMSE rata-rata berada di atas Mamba pada split baru.
 - **Mamba-xLSTM-Net sebagai pilihan utama SAE.** Epoch terbaik di 70–71/75
   menunjukkan model terus memanfaatkan seluruh budget pelatihan →
   *hidden states* pada epoch akhir mengandung representasi matang yang
@@ -576,7 +575,7 @@ Per-seed RMSE XJTU-SY:
 | Dataset | Model | Best Seed | Run Directory | Test RMSE |
 |---|---|---:|---|---:|
 | PHM2012 | Mamba-xLSTM-Net | **42** | `20260512_151550_..._phm2012_mamba_xlstm_net_s42` | 0,2166 |
-| XJTU-SY | Mamba-xLSTM-Net | **44** | `20260512_193202_..._xjtusy_mamba_xlstm_net_s44` | 0,2533 |
+| XJTU-SY | Mamba-xLSTM-Net | **42** | `20260611_104213_..._xjtusy_mamba_xlstm_net_s42` | 0,1532 |
 
 <div class="page-break"></div>
 
@@ -655,7 +654,7 @@ fr = kecepatan rotasi poros (Hz).
 | Dataset | BPFO | BPFI | BSF | FTF |
 |---|:---:|:---:|:---:|:---:|
 | PHM2012 | **2,0%** (20/1024) | **2,3%** (24/1024) | 0,0% (0/1024) | 0,0% (0/1024) |
-| XJTU-SY | **2,2%** (23/1024) | 0,0% (0/1024) | **0,3%** (3/1024) | 0,0% (0/1024) |
+| XJTU-SY (rerun 2026-06) | 0,7% (7/1024) | **1,5%** (15/1024) | **1,6%** (16/1024) | 0,2% (2/1024) |
 
 #### 10.6.3 Top-5 Fitur SAE per BPFx
 
@@ -669,18 +668,18 @@ fr = kecepatan rotasi poros (Hz).
 | BPFO | f655 | 0,408 |
 | BPFO | f474 | 0,397 |
 
-**XJTU-SY**
+**XJTU-SY (rerun 2026-06, `20260611_104213_..._s42`)**
 
 | Frekuensi | Fitur Teratas (idx) | Pearson r |
 |---|---|---:|
-| BPFO | f959 | **0,501** |
-| BPFO | f521 | 0,487 |
-| BPFO | f886 | 0,482 |
-| BPFO | f556 | −0,470 |
-| BSF | f959 | 0,333 |
+| BPFO | f868 | **0,468** |
+| BPFI | f241 | **0,458** |
+| BSF | f920 | **0,449** |
+| BPFI | f801 | 0,390 |
+| BSF | f969 | 0,423 |
 
-Korelasi tertinggi r = 0,507 (f474 ↔ BPFI pada PHM2012) dan r = 0,501
-(f959 ↔ BPFO pada XJTU-SY) merupakan korelasi moderat yang signifikan
+Korelasi tertinggi r = 0,507 (f474 ↔ BPFI pada PHM2012) dan r = 0,468
+(f868 ↔ BPFO pada XJTU-SY rerun) merupakan korelasi moderat yang signifikan
 secara statistik (n = 300, p ≪ 0,05). Fitur SAE memang menangkap variasi
 energi spektral di sekitar frekuensi karakteristik fisik.
 
@@ -698,8 +697,8 @@ konteks desain model dan pipeline yang digunakan:
 
 2. **BPFO dan BPFI tetap muncul sebagai frekuensi yang paling banyak
    dikorelasikan.** Pada PHM2012, BPFI (2,3%) dan BPFO (2,0%) adalah
-   satu-satunya BPFx dengan *hit* > 0. Pada XJTU-SY, BPFO (2,2%) muncul
-   dominan. Konsisten dengan literatur: *spalling* pada *outer race* dan
+   satu-satunya BPFx dengan *hit* > 0. Pada XJTU-SY rerun, BPFI (1,5%),
+   BSF (1,6%), dan BPFO (0,7%) tersebar. Konsisten dengan literatur: *spalling* pada *outer race* dan
    *inner race* adalah mode kegagalan dominan pada kedua dataset, sehingga
    BPFO/BPFI yang paling informatif.
 
@@ -743,10 +742,17 @@ results/bpfx_mapping/
 ### 11.1 Prasyarat VPS
 
 ```bash
-# 1. Clone dataset dari S3
+# 1. Dataset dari S3 (PHM2012 + layout dasar)
 curl -fL -o data-bearing.zip \
   'https://dataset-bearing-rul.s3.ap-southeast-2.amazonaws.com/data-bearing/data-bearing.zip'
-unzip -q data-bearing.zip && rm data-bearing.zip
+unzip -q data-bearing.zip && rm -f data-bearing.zip
+
+# 1b. XJTU-SY lengkap (tiga kondisi; perbaikan 2026-06) — wajib untuk xjtusy
+mkdir -p data-bearing
+curl -fL -o xtju-sy.zip \
+  'https://dataset-bearing-rul.s3.ap-southeast-2.amazonaws.com/data-bearing/xtju-sy.zip'
+unzip -q -o xtju-sy.zip -d data-bearing/ && rm -f xtju-sy.zip
+find data-bearing/xtju-sy -name '*.csv' | wc -l   # harapan: 9216
 
 # 2. Bootstrap Python venv dengan CUDA 12.8
 TORCH_CUDA=cu128 bash Mamba-xLSTM/scripts/bootstrap_gpu_vps.sh
@@ -867,47 +873,41 @@ dan dirangkum sebagai kontribusi pada Bab VI (Kesimpulan).
 
 ### 14.1 Keterbatasan yang Diakui
 
-1. **Test split XJTU-SY yang sangat kecil** (2 bantalan) menyebabkan
-   estimasi metrik yang kurang stabil. Penelitian lanjutan sebaiknya
-   menggunakan lebih banyak bantalan test atau teknik *cross-validation*
-   berbasis bantalan.
+1. **Hasil Tier-S XJTU-SY pra-perbaikan dataset** (split 2 kondisi) telah
+   digantikan oleh rerun RunPod 2026-06-11 (9/3/3, ``xjtu_sy_available_full.yaml``).
+   Metrik Bab V dan §10 diperbarui; artefak kanonik SAE/BPFx XJTU mengacu pada
+   ``20260611_104213_..._mamba_xlstm_net_s42``.
 
-2. **Kondisi 3 XJTU-SY tidak diikutsertakan** karena ketidaktersediaan
-   data pada infrastruktur yang digunakan. Hal ini dapat memengaruhi
-   generalisasi hasil pada kondisi beban dan kecepatan yang berbeda.
-
-3. **Budget pelatihan 75 epoch** dipilih berdasarkan analisis konvergensi
+2. **Budget pelatihan 75 epoch** dipilih berdasarkan analisis konvergensi
    awal Mamba-xLSTM-Net. Eksperimen dengan budget lebih panjang untuk
    N-BEATS-xLSTM dan SparseGate-TCN mungkin menghasilkan performa yang
    berbeda, terutama mengingat model-model ini konvergen sangat cepat dan
    menunjukkan indikasi *overfitting* pada epoch pertengahan.
 
-4. **Interpretabilitas SAE** dijalankan sebagai analisis *post-hoc* dan
+3. **Interpretabilitas SAE** dijalankan sebagai analisis *post-hoc* dan
    belum diintegrasikan ke dalam loop pelatihan model. Pendekatan
    *integrated interpretability* (melatih model dengan regularizer SAE
    secara *end-to-end*) adalah arah penelitian lanjutan yang menjanjikan.
 
-5. **Alignment temporal yang proporsional** antara rekaman *raw* dan
+4. **Alignment temporal yang proporsional** antara rekaman *raw* dan
    *window* SAE menjadi sumber utama *hit-rate* yang relatif rendah.
    Alignment yang lebih presisi (memetakan setiap *window* ke rekaman
    aslinya) berpotensi meningkatkan akurasi korelasi.
 
 ### 14.2 Rencana Pengembangan (Future Work)
 
-1. Integrasikan kondisi 3 XJTU-SY setelah dataset tersedia untuk validasi
-   lintas kondisi operasi yang lebih komprehensif.
-2. Eksperimen budget pelatihan >100 epoch untuk Mamba-xLSTM-Net guna
+1. Eksperimen budget pelatihan >100 epoch untuk Mamba-xLSTM-Net guna
    mengonfirmasi apakah performa terus meningkat atau mencapai plato.
-3. Kembangkan prosedur BPFx mapping yang lebih sistematis dengan uji
+2. Kembangkan prosedur BPFx mapping yang lebih sistematis dengan uji
    statistik formal (misalnya *Pearson correlation* dengan *bootstrap
    confidence interval*) antara aktivasi SAE dan amplitudo frekuensi
    karakteristik.
-4. Evaluasi model pada dataset tambahan (IMS Bearing) untuk memvalidasi
+3. Evaluasi model pada dataset tambahan (IMS Bearing) untuk memvalidasi
    generalisasi lintas platform pengujian.
-5. Implementasikan *integrated SAE* yang dilatih bersama-sama dengan model
+4. Implementasikan *integrated SAE* yang dilatih bersama-sama dengan model
    RUL sebagai *regularizer*, sehingga representasi laten secara inheren
    *sparse* dan *interpretable*.
-6. Tambahkan uji signifikansi statistik Wilcoxon *signed-rank* berpasangan
+5. Tambahkan uji signifikansi statistik Wilcoxon *signed-rank* berpasangan
    pada perbandingan multi-*seed* untuk klaim "model A lebih baik dari
    model B".
 

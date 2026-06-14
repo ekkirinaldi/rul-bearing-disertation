@@ -1,0 +1,46 @@
+data:
+  dataset: xjtusy
+  root: ../data-bearing/xtju-sy
+  cache_dir: ../data-bearing/processed/xjtusy
+  window_length: 32
+  stride_train: 1
+  stride_eval: 1
+  label_scheme: linear
+  smoothing_alpha: 0.1
+  n_bands: 5
+  batch_size: 512
+  num_workers: 8
+  train_bearings:
+  - '1_1'
+  - '1_2'
+  - '1_3'
+  - '2_1'
+  - '2_2'
+  val_bearings:
+  - '1_4'
+  test_bearings:
+  - '1_5'
+  - '2_3'
+model:
+  name: vanilla_transformer_rul
+  d_model: 128
+  n_heads: 4
+  num_layers: 3
+  ffn_dim: 512
+  head_hidden: 64
+  dropout: 0.1
+train:
+  max_epochs: 75
+  lr: 0.0008
+  weight_decay: 0.0003
+  xlstm_lr_mult: 0.75
+  freeze_xlstm_epochs: 5
+  scheduler: cosine
+  warmup_epochs: 5
+  monotonicity_weight: 0.05
+  gradient_clip_val: 1.0
+  early_stopping_patience: 9999
+  precision: bf16-mixed
+  seed: 42
+  results_root: results
+  run_id: null

@@ -5,7 +5,7 @@
 \label{lamp:hparam}
 
 Lampiran ini memuat hyperparameter arsitektur dan konfigurasi pelatihan
-lengkap untuk seluruh model yang dievaluasi pada Bab~\ref{bab:hasil-pembahasan},
+lengkap untuk seluruh model yang dievaluasi pada Bab~\ref{bab:prognostik},
 demi memastikan reproducibility hasil eksperimen. Tabel~\ref{tab:lampB_tier_s}
 merangkum tiga arsitektur Tier-S yang dipilih untuk evaluasi multi-\emph{seed}
 penuh. Bagian~\ref{lamp:hparam_lstm}--\ref{lamp:hparam_informer} mendokumentasikan
@@ -35,7 +35,7 @@ seleksi awal.
 % -----------------------------------------------------------------
 
 Mamba-xLSTM-Net merupakan arsitektur fokus penelitian ini. Hyperparameter
-berikut berlaku untuk konfigurasi eksperimen utama (Bab~\ref{bab:hasil-pembahasan}).
+berikut berlaku untuk konfigurasi eksperimen utama (Bab~\ref{bab:prognostik}).
 
 \begin{table}[ht]
   \centering
@@ -65,7 +65,7 @@ Arsitektur penuh terdiri dari: (1) proyeksi input $F \to$ \texttt{d\_model},
 (4) \emph{gated fusion} antara output BiMamba dan xLSTM, dan
 (5) \emph{regression head} (LayerNorm $\to$ Linear $\to$ GELU $\to$ Dropout $\to$ Linear $\to$ Sigmoid).
 Rincian mekanisme \emph{gated fusion} dan \emph{bidirectional scan} disajikan
-pada Bab~\ref{bab:dasar-teori} dan Bab~\ref{bab:metodologi}.
+pada Bab~\ref{bab:metodologi-umum} dan Bab~\ref{bab:prognostik}.
 
 % -----------------------------------------------------------------
 \section{N-BEATS-xLSTM-RUL}

@@ -1,0 +1,20 @@
+{
+  "run_id": "algorithm_comparison_phm2012_vanilla_transformer_rul_s44",
+  "seed": 44,
+  "n_params": 608129,
+  "fit_seconds": 87.75516414642334,
+  "test_metrics": {
+    "test/loss": 0.09907636791467667,
+    "test/rmse": 0.31476399302482605,
+    "test/mae": 0.23550477623939514,
+    "test/r2": -0.2652983069419861,
+    "test/phm_score": 0.8501024842262268,
+    "test/phm_score_paper": 7.594282150268555,
+    "test/rmse_per_bearing": 0.3029811382293701,
+    "test/phm_per_bearing": 0.8390980958938599,
+    "test/phm_paper_per_bearing": 0.9492852687835693
+  },
+  "best_checkpoint": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_120754_algorithm_comparison_phm2012_vanilla_transformer_rul_s44/checkpoints/032.ckpt",
+  "dataset": "phm2012",
+  "model_name": "vanilla_transformer_rul"
+}

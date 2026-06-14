@@ -1,83 +1,87 @@
-%% chapters/00-abstrak-id.tex
-%% Abstrak Bahasa Indonesia (~500-600 kata)
-%% Aturan: .cursor/rules/disertation/12-abstrak-front-matter.mdc
+﻿%% chapters/00-abstrak-id.tex
+%% Abstrak Bahasa Indonesia (~500–800 kata)
+%% Pedoman ITB Subbab~II.2: 4 paragraf, tanpa referensi, kata kunci ≤ 7 frasa
+%% Fase H — ditulis ulang sesuai struktur dua jalur outline outline Abstrak
 
 \begin{abstractid}
 
-Perawatan prediktif (\emph{predictive maintenance}) berbasis kondisi
-merupakan strategi kritis dalam transformasi industri manufaktur modern
-menuju era Industri 4.0.
-Kemampuan memprediksi sisa umur pakai (\emph{remaining useful life},
-RUL) komponen kritis secara akurat dan tepat waktu memungkinkan
-intervensi perawatan yang efisien, meminimalkan \emph{downtime} tidak
-terencana, dan meningkatkan keselamatan operasional.
-\emph{Rolling element bearings} merupakan komponen yang paling rentan terhadap
-kegagalan pada mesin rotasi industri, dengan kontribusi sekitar
-40--50\,\% dari total kegagalan mesin.
+\emph{Rolling element bearing} merupakan komponen paling rentan pada mesin rotasi
+industri, dengan kontribusi sekitar 40--50\% dari total kegagalan mesin.
+Transformasi industri manufaktur Indonesia menuju Industri~4.0 mendorong
+adopsi perawatan prediktif berbasis kondisi sebagai pengganti strategi
+korektif dan preventif konvensional, karena kemampuannya mendeteksi
+kerusakan dini dan memperkirakan sisa umur pakai secara akurat.
+Dua kesenjangan penelitian mendorong disertasi ini: metode
+\emph{explainable AI} (XAI) untuk jaringan dalam diagnostik masih
+beroperasi pada tingkat fitur agregat dan belum menjangkau sinyal mentah
+2.048 titik; model estimasi sisa umur pakai (\emph{remaining useful life},
+RUL) berbasis pembelajaran dalam belum terbukti menginternalisasi frekuensi
+karakteristik \emph{bearing} (BPFO, BPFI, BSF, FTF) dalam ruang latennya
+secara statistik signifikan.
 
-Disertasi ini mengusulkan arsitektur hibrida \emph{Mamba-xLSTM-Net}
-untuk prediksi RUL \emph{rolling element bearings}, yang mengintegrasikan
-\emph{selective state-space model} (Mamba-3) dengan \emph{matrix-memory
-Long Short-Term Memory} (mLSTM).
-Mekanisme fusi dirancang berdasarkan sifat non-stasioner sinyal getaran
-\emph{bearing}: Mamba menangani dependensi temporal jangka panjang pada fase
-degradasi gradual, sementara mLSTM mempertahankan presisi rekuren pada
-perubahan mendadak menjelang kegagalan.
+Jalur pertama penelitian ini membandingkan tiga kelompok algoritma
+klasifikasi kerusakan \emph{bearing} pada dataset CWRU (10 kelas, sinyal 2.048
+titik, pembagian temporal 54/13/33\%): model berbasis kernel (SVM dengan
+kernel RBF dan Regresi Logistik \emph{one-vs-rest}), algoritma berbasis
+pohon keputusan (DT, RF, dan XGBoost), serta arsitektur jaringan dalam
+\emph{Wide and Deep Convolutional Neural Network} (WDCNN).
+WDCNN mencapai akurasi 99,87\% (749 dari 750 sampel uji,
+\emph{macro} F1 = 0,997), melampaui SVM-RBF (96,4\%) dan XGBoost
+(97,1\%).
+Atribusi SHAP \emph{DeepExplainer} pada sinyal mentah diagregasikan
+menjadi \emph{Fault Signature Maps} (FSM) per kelas, dengan koefisien
+stabilitas \emph{split-half} sebesar 0,940 dan indeks diskriminabilitas
+0,216.
+Studi ablasi tiga varian WDCNN mengungkap temuan yang belum pernah
+dilaporkan dalam literatur klasifikasi \emph{bearing}: penghapusan
+\emph{BatchNorm} meningkatkan diskriminabilitas FSM sebesar 133\% (dari
+0,216 menjadi 0,735), dengan konsekuensi penurunan akurasi sebesar
+3,60 poin persentase.
 
-Di samping aspek kinerja prediksi, disertasi ini juga mengusulkan modul
-interpretabilitas berbasis \emph{Top-$k$ Sparse Autoencoder} (SAE) yang
-bekerja secara \emph{post-hoc} terhadap representasi laten
-\emph{Mamba-xLSTM-Net}.
-Prosedur kuantitatif dikembangkan untuk memetakan fitur-fitur SAE ke
-frekuensi karakteristik fisik \emph{bearing} --- \emph{Ball Pass Frequency
-Outer Race} (BPFO), \emph{Ball Pass Frequency Inner Race} (BPFI),
-\emph{Ball Spin Frequency} (BSF), dan \emph{Fundamental Train Frequency}
-(FTF) --- melalui korelasi Pearson terhadap amplitudo \emph{Hilbert
-envelope spectrum} sinyal getaran mentah.
+Pada jalur kedua, tiga arsitektur \emph{backbone} estimasi RUL
+dikembangkan dan diuji: Mamba-xLSTM-Net (898~K parameter, menggabungkan
+\emph{selective state-space model} Mamba dengan memori rekuren
+\emph{matrix LSTM}), N-BEATS-xLSTM-RUL (459~K parameter, memanfaatkan
+basis-blok struktural kurva degradasi), dan SparseGate-TCN-RUL (249~K
+parameter, arsitektur ringan untuk \emph{deployment edge}).
+Ketiga arsitektur dilatih dengan protokol bersama (75 \emph{epoch},
+presisi bf16, \emph{batch} 512, jendela 32, tiga \emph{seed}) pada
+dataset PHM2012, XJTU-SY, dan IMS.
+Pemenang berbeda menurut dataset: SparseGate-TCN mencapai RMSE
+$0{,}226 \pm 0{,}030$ pada PHM2012, {\color{blue}Mamba-xLSTM-Net mencapai RMSE
+$0{,}213 \pm 0{,}056$ pada XJTU-SY}, dan Mamba-xLSTM mencapai RMSE
+$0{,}407 \pm 0{,}040$ pada IMS.
+Setelah pelatihan, \emph{Top-$k$ Sparse Autoencoder} (SAE,
+$d_{\rm lat} = 1\,024$, $k = 51$) dilatih secara \emph{post-hoc} pada
+\emph{hidden states} setiap \emph{backbone} yang dibekukan.
+Pemetaan ke frekuensi karakteristik melalui korelasi Pearson dan
+spektrum \emph{Hilbert envelope} menunjukkan bahwa 2,3\% fitur SAE
+berkorelasi moderat ($|r| \geq 0{,}30$) dengan BPFI pada PHM2012
+($p < 0{,}001$, $r_{\rm max} = 0{,}507$), {\color{blue}sementara pada XJTU-SY \emph{hit-rate} tersebar pada BPFI, BSF, dan BPFO
+(1{,}5\%, 1{,}6\%, 0{,}7\%; $p < 0{,}001$, $r_{\rm max} = 0{,}468$).}
+Dua \emph{negative control}, yaitu model dengan bobot acak Xavier dan
+\emph{hidden states} berupa derau Gaussian, mengonfirmasi bahwa
+korespondensi ini merupakan properti yang muncul dari representasi
+terlatih, bukan artefak arsitektur maupun prosedur SAE.
 
-Validasi empiris dilakukan pada dua dataset publik \emph{run-to-failure},
-yaitu PHM2012 (FEMTO-PRONOSTIA) yang memuat 17 \emph{bearings} NSK~6804 dalam
-tiga kondisi operasi, dan XJTU-SY yang memuat 10 \emph{bearings} LDK~UER204
-(kondisi 1 dan 2).
-Protokol multi-\emph{seed} dengan tiga inisialisasi berbeda (seed 42, 43,
-44) diterapkan untuk memastikan rigor statistik.
-Kinerja dievaluasi menggunakan empat metrik sekaligus: RMSE, MAE,
-koefisien determinasi R\textsuperscript{2}, dan PHM Score asimetris.
+Penelitian ini menghasilkan lima novelti: N1 (FSM, XAI pertama pada
+tingkat sinyal mentah untuk WDCNN), N2 (\emph{trade-off BatchNorm}
+yang menekan diskriminabilitas FSM, temuan pertama dalam literatur), N3
+(SAEBearing, adaptasi pertama \emph{mechanistic interpretability} ke
+domain prognostik \emph{bearing}), N4 (universalitas korespondensi BPFx lintas
+tiga arsitektur dan empat dataset dengan rigor statistik \emph{bootstrap}
+CI dan \emph{permutation test}), serta N5 (kerangka konseptual PdM
+tiga-tier: Edge IoT melalui model berbasis kernel, Edge Server melalui
+WDCNN+FSM, dan Cloud/GPU melalui \emph{backbone} RUL+SAE-BPFx).
+Kontribusi lintas kedua jalur ini membentuk jembatan pertama yang
+terverifikasi statistik antara pendekatan pembelajaran dalam berbasis data
+dan teori getaran klasik \emph{bearing}: jalur diagnostik menghubungkan sinyal
+mentah dengan FSM, sementara jalur prognostik menghubungkan representasi
+laten dengan frekuensi karakteristik BPFx.
 
-Pada dataset PHM2012, \emph{Mamba-xLSTM-Net} mencapai RMSE
-$0{,}242 \pm 0{,}020$ dan memperlihatkan stabilitas lintas \emph{seed}
-tertinggi di antara tiga model yang dibandingkan.
-Pada XJTU-SY, \emph{Mamba-xLSTM-Net} mencapai PHM Score tertinggi
-($0{,}907$), metrik yang paling relevan dengan praktik pemeliharaan
-prediktif karena memperhitungkan asimetri konsekuensi kesalahan.
-Kurva pelatihan yang terus membaik hingga \emph{epoch} 71/75 menunjukkan
-bahwa arsitektur ini belum mencapai kapasitas penuh pada anggaran yang
-digunakan.
-
-Pada Pilar~2, SAE dengan 1024 dimensi laten dan $k = 51$ fitur aktif
-($\approx 5\%$ sparsity) berhasil merekonstruksi representasi laten
-dengan \emph{loss} MSE di bawah $10^{-3}$, mengindikasikan bahwa
-representasi laten \emph{Mamba-xLSTM-Net} secara alami bersifat
-\emph{sparse}.
-Pemetaan BPFx menunjukkan bahwa 2{,}0--2{,}3\% fitur SAE berkorelasi
-moderat ($|r| \geq 0{,}30$) dengan amplitudo \emph{envelope spectrum}
-di sekitar BPFO dan BPFI, yang merupakan satu-satunya frekuensi
-karakteristik dengan \emph{hit-rate} $> 0$.
-Korelasi moderat tertinggi mencapai $r = 0{,}507$ (fitur SAE
-f474~$\leftrightarrow$~BPFI pada PHM2012) dan $r = 0{,}501$
-(f959~$\leftrightarrow$~BPFO pada XJTU-SY), keduanya signifikan secara
-statistik ($n = 300$, $p \ll 0{,}05$).
-Hasil ini merupakan bukti empiris pertama bahwa model \emph{deep
-learning} yang dilatih untuk RUL mempelajari representasi laten yang
-berkorespondensi dengan teori klasik diagnosis getaran \emph{bearing}.
-
-Penelitian ini memberikan tiga kontribusi utama: (1)~arsitektur
-hibrida \emph{Mamba-xLSTM-Net} sebagai pendekatan baru yang menggabungkan
-SSM selektif dengan \emph{matrix-memory recurrent} untuk prognostik
-\emph{bearing}; (2)~prosedur pemetaan SAE ke frekuensi karakteristik fisik
-sebagai metodologi interpretabilitas baru untuk domain perawatan
-prediktif; dan (3)~bukti empiris korespondensi antara representasi laten
-\emph{deep learning} dan teori fisika klasik pada dua dataset
-\emph{benchmark} terkemuka.
+\bigskip\noindent
+\textbf{Kata kunci:} perawatan prediktif, diagnostik \emph{bearing},
+\emph{Fault Signature Maps}, sisa umur pakai, \emph{Sparse Autoencoder},
+interpretabilitas mekanistik, frekuensi karakteristik \emph{bearing}
 
 \end{abstractid}

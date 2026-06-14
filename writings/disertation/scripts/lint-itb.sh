@@ -3,7 +3,7 @@
 # Pemeriksaan otomatis kepatuhan format ITB.
 # Exit code != 0 jika ada pelanggaran fatal.
 #
-# Aturan dirinci di .cursor/rules/14-build-workflow.mdc §D
+# Aturan dirinci di .cursor/rules/14-build-workflow.mdc  bagian D
 
 set -uo pipefail
 
@@ -205,6 +205,140 @@ if [ -n "$hits" ]; then
 else
   ok "Semua \\caption terisi."
 fi
+
+# --- 11. "di mana" sebagai kata ganti relatif --------------------------
+echo ""
+echo "--- 11. 'di mana' sebagai kata ganti relatif ---"
+hits=$(grep -inE '(,\s*di\s+mana\b|[.;]\s+[Dd]i\s+mana\b)' $ALL_BODY 2>/dev/null \
+  | grep -vE ':[[:space:]]*%' || true)
+if [ -n "$hits" ]; then
+  warn "Ditemukan pola 'di mana' — kemungkinan kata ganti relatif (calque 'where'). Ganti dengan 'yang', 'tempat', 'pada saat', atau restrukturisasi:"
+  echo "$hits"
+else
+  ok "Tidak ada pola 'di mana' yang mencurigakan."
+fi
+
+# --- 12. Kalimat dimulai dengan konjungsi terlarang --------------------
+echo ""
+echo "--- 12. Kalimat dimulai dengan Maka/Sedangkan/Sehingga ---"
+hits=$(grep -inE '^\s*(Maka|Sedangkan|Sehingga)\b' $ALL_BODY 2>/dev/null \
+  | grep -vE ':[[:space:]]*%' || true)
+if [ -n "$hits" ]; then
+  warn "Kalimat dimulai dengan konjungsi terlarang (Maka/Sedangkan/Sehingga). Restrukturisasi kalimat:"
+  echo "$hits"
+else
+  ok "Tidak ada kalimat yang dimulai dengan Maka/Sedangkan/Sehingga."
+fi
+
+# --- 13. Heading berakhir dengan titik ---------------------------------
+echo ""
+echo "--- 13. Heading \\section/\\subsection berakhir dengan titik ---"
+hits=$(grep -inE '\\(sub)*section\*?\{[^}]*\.\s*\}' $ALL_BODY 2>/dev/null \
+  | grep -vE ':[[:space:]]*%' || true)
+if [ -n "$hits" ]; then
+  warn "Judul subbab berakhir dengan titik (pedoman: judul bukan kalimat — hapus titiknya):"
+  echo "$hits"
+else
+  ok "Tidak ada heading yang berakhir dengan titik."
+fi
+
+# --- 14. \footnote di bab body -----------------------------------------
+echo ""
+echo "--- 14. \\footnote di bab body ---"
+hits=$(grep -inE '\\footnote\{' $ALL_BODY 2>/dev/null \
+  | grep -vE ':[[:space:]]*%' \
+  | grep -vE 'kata-pengantar' || true)
+if [ -n "$hits" ]; then
+  warn "Ditemukan \\footnote di body. Referensi harus inline via \\citetitb{}, bukan catatan kaki:"
+  echo "$hits"
+else
+  ok "Tidak ada \\footnote di body."
+fi
+
+# --- 15. Sitasi (\cite) di dalam teks abstrak --------------------------
+echo ""
+echo "--- 15. \\cite di teks abstrak ---"
+ABSTRACTS=""
+[ -f "chapters/00-abstrak-id.tex" ]  && ABSTRACTS="$ABSTRACTS chapters/00-abstrak-id.tex"
+[ -f "chapters/00-abstract-en.tex" ] && ABSTRACTS="$ABSTRACTS chapters/00-abstract-en.tex"
+if [ -n "$ABSTRACTS" ]; then
+  hits=$(grep -inE '\\(cite|citetitb|citenameitb|parencite|textcite)\{' $ABSTRACTS 2>/dev/null \
+    | grep -vE ':[[:space:]]*%' || true)
+  if [ -n "$hits" ]; then
+    fatal "Ditemukan sitasi di abstrak. Pedoman ITB  bagian II.2: abstrak tidak boleh memuat rujukan literatur:"
+    echo "$hits"
+  else
+    ok "Tidak ada sitasi di teks abstrak."
+  fi
+else
+  warn "File abstrak (00-abstrak-id.tex / 00-abstract-en.tex) tidak ditemukan — lewati cek #15."
+fi
+
+# --- 16. Penanda frasa mesin (AI-marker) -----------------------------------
+echo ""
+echo "--- 16. Penanda frasa mesin (AI-marker) ---"
+ai_warn=0
+_check_ai() {
+  local pattern="$1" label="$2"
+  hits=$(grep -inE "$pattern" $ALL_BODY 2>/dev/null | grep -vE ':[[:space:]]*%' || true)
+  if [ -n "$hits" ]; then
+    warn "Frasa mesin '$label' — restrukturisasi agar lebih organik:"
+    echo "$hits" | head -3
+    ai_warn=1
+  fi
+}
+_check_ai 'tidak dapat dipungkiri'                          'tidak dapat dipungkiri'
+_check_ai 'memainkan peran (yang )?penting'                 'memainkan peran penting'
+_check_ai '\bpenting untuk dicatat\b'                       'penting untuk dicatat'
+_check_ai '\bperlu dicatat bahwa\b'                         'perlu dicatat bahwa'
+_check_ai '\b(dalam|di) era (modern|digital|industri)\b'   'dalam/di era modern/digital/industri'
+_check_ai '\btentunya\b'                                    'tentunya (informal/klise mesin)'
+_check_ai '\bmerupakan hal yang (sangat )?(penting|krusial|vital|mendasar)\b' \
+                                                            'merupakan hal yang penting/krusial'
+_check_ai '\bsecara (komprehensif|holistik)\b'              'secara komprehensif/holistik'
+_check_ai '\bperlu dipahami bahwa\b'                        'perlu dipahami bahwa'
+_check_ai '\btidak dapat dipisahkan\b'                      'tidak dapat dipisahkan (klise)'
+_check_ai '\bkeluarga\b'  'keluarga (untuk algoritma/model — gunakan: jenis/varian/kelompok/kelas/model)'
+_check_ai '\bpada (dasarnya|intinya)\b'                     'pada dasarnya/intinya (filler mesin)'
+_check_ai '\bdapat dikatakan bahwa\b'                       'dapat dikatakan bahwa (hedging klise)'
+_check_ai '\bberbagai macam\b'                              'berbagai macam (kabur — sebutkan jumlah konkret)'
+_check_ai '\bperlu diperhatikan bahwa\b'                    'perlu diperhatikan bahwa'
+_check_ai '\b(sangat|amat) penting\b'                       'sangat/amat penting (vague intensifier)'
+# Pembuka kalimat "Lebih lanjut,"
+hits=$(grep -inE '^\s*(Lebih lanjut)[,.]' $ALL_BODY 2>/dev/null | grep -vE ':[[:space:]]*%' || true)
+if [ -n "$hits" ]; then
+  warn "Frasa mesin 'Lebih lanjut,' sebagai pembuka — gunakan 'Selain itu,' atau integrasikan:"
+  echo "$hits" | head -3
+  ai_warn=1
+fi
+# Em-dash: Unicode — atau LaTeX --- di luar konteks tabel/komentar
+em_hits=$(grep -inE '(—|---[^-])' $ALL_BODY 2>/dev/null \
+  | grep -vE ':[[:space:]]*%' \
+  | grep -vE '(\\hline|\\toprule|\\midrule|\\bottomrule|\\cline|\\rule\b)' \
+  || true)
+if [ -n "$em_hits" ]; then
+  warn "Em dash (— atau ---) di prosa — ganti dengan koma, titik koma, titik dua, atau pisah kalimat:"
+  echo "$em_hits" | head -3
+  ai_warn=1
+fi
+[ "$ai_warn" -eq 0 ] && ok "Tidak ada frasa mesin yang terdeteksi."
+
+# --- 17. Istilah teknis domain bearing ------------------------------------
+echo ""
+echo "--- 17. Istilah teknis domain bearing ---"
+term_warn=0
+_check_term() {
+  local pattern="$1" wrong="$2" right="$3"
+  hits=$(grep -inE "$pattern" $ALL_BODY 2>/dev/null | grep -vE ':[[:space:]]*%' || true)
+  if [ -n "$hits" ]; then
+    warn "Istilah tidak baku '$wrong' — gunakan '$right' (terminologi teknis baku):"
+    echo "$hits" | head -3
+    term_warn=1
+  fi
+}
+_check_term '\bbantalan\b'  'bantalan'  'bearing'
+_check_term '\bgelinding\b' 'gelinding' 'rolling'
+[ "$term_warn" -eq 0 ] && ok "Istilah teknis domain sudah konsisten."
 
 # --- Summary -----------------------------------------------------------
 echo ""

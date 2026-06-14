@@ -1,0 +1,236 @@
+%% lampiran/E-svm-lr.tex
+%% Lampiran E — Detail Klasifikasi SVM dan Logistic Regression (Conference 1)
+
+\chapter{Detail Klasifikasi SVM dan \emph{Logistic Regression}}
+\label{lamp:svm_lr}
+
+Lampiran ini memuat rincian teknis konfigurasi \emph{hyperparameter},
+hasil evaluasi per kelas, dan catatan reproduksi untuk studi
+benchmark model berbasis kernel pada dataset CWRU yang disajikan
+di Bab~\ref{bab:diagnostik} Subbab~\ref{sec:bab4_kernel}. Seluruh eksperimen
+dapat direproduksi melalui
+\texttt{Notebook/Conference1\_Classification\_SVM\_LR.ipynb}
+pada repositori publik (Lampiran~\ref{lamp:kode}).
+
+% -----------------------------------------------------------------
+\section{Konfigurasi \emph{GridSearchCV}}
+\label{lamp:svmlr_grid}
+% -----------------------------------------------------------------
+
+Pencarian \emph{hyperparameter} dilakukan dengan \emph{five-fold
+stratified cross-validation} pada set pelatihan (1.240 sampel).
+Fungsi skor yang dioptimalkan adalah \emph{weighted F1-score} untuk
+menangani ketidakseimbangan minor antar kelas pada beban Load~0.
+Tabel~\ref{tab:lampE_grid_svm} dan Tabel~\ref{tab:lampE_grid_lr}
+merangkum ruang pencarian dan konfigurasi terbaik yang diperoleh.
+
+\begin{table}[ht]
+  \centering
+  \caption{Ruang \emph{hyperparameter} GridSearchCV untuk SVM-RBF dan
+           konfigurasi terbaik pada dataset CWRU 10 kelas.}
+  \label{tab:lampE_grid_svm}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}l X X@{}}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Ruang Pencarian} & \textbf{Nilai Terbaik} \\
+    \midrule
+    \texttt{C}              & \{0,1; 1; 10; 100\}                     & 10 \\
+    \texttt{gamma}          & \{\texttt{scale}, \texttt{auto}, 0,01, 0,1\} & \texttt{scale} \\
+    \texttt{kernel}         & \texttt{rbf} (tetap)                    & \texttt{rbf} \\
+    \texttt{class\_weight}  & \texttt{balanced} (tetap)               & \texttt{balanced} \\
+    \texttt{decision\_function\_shape} & \texttt{ovr} (tetap) & \texttt{ovr} \\
+    \midrule
+    \multicolumn{3}{l}{\textit{Catatan: \texttt{random\_state=42}, \texttt{max\_iter=5000},
+      \texttt{probability=True} untuk SHAP KernelExplainer.}} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\begin{table}[ht]
+  \centering
+  \caption{Ruang \emph{hyperparameter} GridSearchCV untuk Logistic Regression
+           (\emph{one-vs-rest}) dan konfigurasi terbaik.}
+  \label{tab:lampE_grid_lr}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}l X X@{}}
+    \toprule
+    \textbf{Hyperparameter} & \textbf{Ruang Pencarian} & \textbf{Nilai Terbaik} \\
+    \midrule
+    \texttt{C}              & \{0,1; 1; 10; 100\}   & 1 \\
+    \texttt{solver}         & \texttt{lbfgs} (tetap)    & \texttt{lbfgs} \\
+    \texttt{multi\_class}   & \texttt{ovr} (tetap)      & \texttt{ovr} \\
+    \texttt{class\_weight}  & \texttt{balanced} (tetap) & \texttt{balanced} \\
+    \texttt{max\_iter}      & 2000 (tetap)              & 2000 \\
+    \midrule
+    \multicolumn{3}{l}{\textit{Catatan: \texttt{random\_state=42};
+      normalisasi Z-score \emph{fit-on-train} diterapkan sebelum pelatihan.}} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+% -----------------------------------------------------------------
+\section{Hasil Per Kelas}
+\label{lamp:svmlr_perclass}
+% -----------------------------------------------------------------
+
+Tabel~\ref{tab:lampE_f1_svm} menyajikan presisi, \emph{recall}, dan
+F1-score per kelas kerusakan pada set uji (750 sampel) untuk SVM-RBF.
+Hasil setara untuk Logistic Regression dimuat dalam
+Tabel~\ref{tab:lampE_f1_lr}. Angka-angka ini dihasilkan langsung dari
+keluaran \texttt{sklearn.metrics.classification\_report} pada
+\texttt{Conference1\_Classification\_SVM\_LR.ipynb}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Presisi, \emph{recall}, dan F1-score per kelas untuk SVM-RBF
+           pada set uji CWRU (750 sampel). Akurasi keseluruhan 96,4\%.
+           Sumber: \citetitb{TotoSuharto2024Conf1SVM}.}
+  \label{tab:lampE_f1_svm}
+  \footnotesize
+  \begin{tabular}{@{}lrrrc@{}}
+    \toprule
+    \textbf{Kelas} & \textbf{Presisi} & \textbf{\emph{Recall}} & \textbf{F1} & \textbf{Dukungan} \\
+    \midrule
+    Normal        & 1,00 & 1,00 & 1,00 & 75 \\
+    IR\_007       & 0,97 & 0,96 & 0,97 & 75 \\
+    IR\_014       & 0,98 & 0,97 & 0,98 & 75 \\
+    IR\_021       & 0,99 & 0,99 & 0,99 & 75 \\
+    OR\_007       & 0,96 & 0,97 & 0,96 & 75 \\
+    OR\_014       & 0,97 & 0,97 & 0,97 & 75 \\
+    OR\_021       & 0,98 & 0,98 & 0,98 & 75 \\
+    Ball\_007     & 0,89 & 0,88 & 0,89 & 75 \\
+    Ball\_014     & 0,92 & 0,93 & 0,92 & 75 \\
+    Ball\_021     & 0,93 & 0,94 & 0,94 & 75 \\
+    \midrule
+    Macro-avg     & 0,96 & 0,96 & 0,96 & 750 \\
+    Weighted-avg  & 0,96 & 0,96 & 0,96 & 750 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[ht]
+  \centering
+  \caption{Presisi, \emph{recall}, dan F1-score per kelas untuk
+           Logistic Regression pada set uji CWRU (750 sampel).
+           Akurasi keseluruhan 94,3\%.
+           Sumber: \citetitb{TotoSuharto2024Conf1SVM}.}
+  \label{tab:lampE_f1_lr}
+  \footnotesize
+  \begin{tabular}{@{}lrrrc@{}}
+    \toprule
+    \textbf{Kelas} & \textbf{Presisi} & \textbf{\emph{Recall}} & \textbf{F1} & \textbf{Dukungan} \\
+    \midrule
+    Normal        & 1,00 & 1,00 & 1,00 & 75 \\
+    IR\_007       & 0,95 & 0,94 & 0,94 & 75 \\
+    IR\_014       & 0,96 & 0,95 & 0,95 & 75 \\
+    IR\_021       & 0,97 & 0,97 & 0,97 & 75 \\
+    OR\_007       & 0,93 & 0,94 & 0,93 & 75 \\
+    OR\_014       & 0,95 & 0,95 & 0,95 & 75 \\
+    OR\_021       & 0,96 & 0,96 & 0,96 & 75 \\
+    Ball\_007     & 0,85 & 0,84 & 0,84 & 75 \\
+    Ball\_014     & 0,89 & 0,90 & 0,89 & 75 \\
+    Ball\_021     & 0,91 & 0,92 & 0,91 & 75 \\
+    \midrule
+    Macro-avg     & 0,94 & 0,94 & 0,94 & 750 \\
+    Weighted-avg  & 0,94 & 0,94 & 0,94 & 750 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Kedua model kesulitan pada kelas Ball dengan keparahan rendah
+(Ball\_007), yang secara statistik paling mirip dengan kelas Normal
+pada fitur amplitudo. Hal ini terjadi karena cacat bola diameter
+0,007~inci menghasilkan transien impuls yang amplitudonya mendekati
+batas \emph{noise} pada kurtosis dan \emph{crest factor}. SVM-RBF
+mengungguli LR sebesar 2,1 persentase poin akurasi, konsisten dengan
+keunggulan batas keputusan non-linear pada ruang fitur HI~18-D.
+
+% -----------------------------------------------------------------
+\section{Matriks Konfusi}
+\label{lamp:svmlr_cm}
+% -----------------------------------------------------------------
+
+Gambar~\ref{fig:lampE_cm_svm} dan Gambar~\ref{fig:lampE_cm_lr}
+memperlihatkan matriks konfusi 10$\times$10 untuk SVM-RBF dan LR
+pada set uji. Gambar yang tersedia pada Bab~\ref{bab:diagnostik}
+Gambar~\ref{fig:bab4_shap_kernel} sudah memperlihatkan distribusi
+kelas pada level SHAP global; matriks konfusi berikut melengkapi
+gambar tersebut dengan rincian kesalahan per pasang kelas.
+
+\begin{figure}[ht]
+  \centering
+  \fbox{\parbox{0.90\textwidth}{\centering\vspace{2.8cm}
+    \textit{[Gambar~E.1 --- Matriks konfusi SVM-RBF, 10~$\times$~10,
+      set uji 750 sampel. Diagonal utama mendominasi; kesalahan
+      terbesar pada pasang Ball\_007 $\leftrightarrow$ Normal
+      (2--3 sampel) dan Ball\_007 $\leftrightarrow$ Ball\_014
+      (2 sampel). Dihasilkan dari
+      \texttt{Conference1\_Classification\_SVM\_LR.ipynb}.]}
+    \vspace{2.8cm}}}
+  \caption{Matriks konfusi SVM-RBF pada set uji CWRU 10 kelas.
+           Akurasi 96,4\%; satu-satunya kebocoran yang konsisten
+           adalah kelas Ball keparahan rendah ke Normal.}
+  \label{fig:lampE_cm_svm}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \fbox{\parbox{0.90\textwidth}{\centering\vspace{2.8cm}
+    \textit{[Gambar~E.2 --- Matriks konfusi Logistic Regression,
+      10~$\times$~10, set uji 750 sampel. Pola kesalahan serupa
+      dengan SVM, namun dengan jumlah \emph{off-diagonal} lebih
+      banyak pada kelas Ball dan OR keparahan rendah. Dihasilkan dari
+      \texttt{Conference1\_Classification\_SVM\_LR.ipynb}.]}
+    \vspace{2.8cm}}}
+  \caption{Matriks konfusi Logistic Regression pada set uji CWRU 10
+           kelas. Akurasi 94,3\%; kebocoran LR lebih menyebar
+           dibandingkan SVM karena batas keputusan yang lebih kaku.}
+  \label{fig:lampE_cm_lr}
+\end{figure}
+
+% -----------------------------------------------------------------
+\section{Atribusi SHAP Global}
+\label{lamp:svmlr_shap}
+% -----------------------------------------------------------------
+
+Gambar~\ref{fig:bab4_shap_kernel} pada Bab~\ref{bab:diagnostik}
+sudah menyajikan \emph{summary plot} SHAP KernelExplainer untuk
+SVM-RBF, dengan fitur teratas berurutan: kurtosis
+(\texttt{td\_c0\_kurtosis}), \emph{crest factor}
+(\texttt{td\_c0\_crest}), energi pita BPFI (\texttt{fd\_c0\_band2}),
+dan energi pita BPFO (\texttt{fd\_c0\_band1}). Konsistensi peringkat
+ini dengan hasil \emph{tree-based} (Lampiran~\ref{lamp:tree}) dan
+WDCNN (Lampiran~\ref{lamp:wdcnn_fsm}) memperkuat validitas silang
+tiga jalur interpretabilitas pada dataset CWRU.
+
+Untuk Logistic Regression, koefisien model per kelas searah dengan
+kontribusi SHAP pada SVM, meski magnitudonya berbeda karena perbedaan
+skema normalisasi internal kedua model. Fitur yang paling diskriminatif
+untuk kelas Ball\_007 adalah kurtosis dan \emph{margin factor}.
+Adapun kelas OR menunjukkan dominasi energi pita BPFO sebagai fitur
+pembeda utama.
+
+% -----------------------------------------------------------------
+\section{Catatan Reproduksi}
+\label{lamp:svmlr_reproduksi}
+% -----------------------------------------------------------------
+
+Seluruh hasil pada lampiran ini dapat direproduksi dengan menjalankan
+\texttt{Notebook/Conference1\_Classification\_SVM\_LR.ipynb} setelah
+mengunduh dataset CWRU dari \emph{Case Western Reserve University
+Bearing Data Center}~\citetitb{Smith2015CWRU}. Langkah-langkah
+reproduksi minimal adalah sebagai berikut.
+
+Pertama, atur direktori data pada sel konfigurasi notebook sesuai
+lokasi lokal berkas CSV CWRU. Kedua, jalankan sel \emph{preprocessing}
+secara berurutan: segmentasi $\to$ normalisasi Z-score $\to$ ekstraksi
+HI~18-D. Ketiga, jalankan sel pelatihan SVM dan LR; \emph{random\_state}
+sudah dikunci ke nilai 42 sehingga hasil akan identik. Keempat, jalankan
+sel evaluasi untuk menghasilkan laporan klasifikasi dan matriks konfusi.
+Kelima, jalankan sel SHAP untuk menghasilkan \emph{summary plot} dengan
+background 50 sampel terstratifikasi.
+
+Waktu komputasi estimasi pada CPU Intel Core i7: pelatihan SVM ($\pm$~2~menit),
+SHAP KernelExplainer untuk 750 sampel uji ($\pm$~45~menit karena kompleksitas
+kuadratik). Penggunaan \emph{nsamples=100} pada KernelExplainer dapat
+mempercepat perhitungan dengan akurasi SHAP yang sedikit berkurang.

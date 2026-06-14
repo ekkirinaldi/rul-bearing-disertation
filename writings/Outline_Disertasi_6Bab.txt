@@ -1,0 +1,301 @@
+PERAWATAN PREDIKTIF UNTUK SISTEM PRODUKSI DENGAN
+                                   PENDEKATAN
+
+          ANALISIS BIG DATA DAN KECERDASAN BUATAN
+                             MENGGUNAKAN DATA
+
+    KONDISI MESIN DAN INFORMASI KUALITAS YANG REAL
+                                          TIME
+
+               Outline Disertasi Doktoral -- ITB, 2025 | Toto Suharto
+
+                          LOGIKA STRUKTUR DISERTASI
+Bab III berisi metodologi bersama (shared) yang berlaku untuk keseluruhan disertasi:
+kerangka konseptual, dataset, dan infrastruktur evaluasi. Bab IV dan V masing-masing
+membuka dengan sub-bab metodologi spesifiknya sendiri sebelum masuk ke hasil --
+sehingga pembaca melihat dengan jelas perbedaan metode antara studi diagnostik
+(WDCNN + SHAP + FSM) dan studi prognostik (Backbone RUL + Top-k SAE).
+
+Alur: Bab I (konteks)  Bab II (teori)  Bab III (fondasi bersama)  Bab IV (metode
++ hasil: Diagnostik)  Bab V (metode + hasil: Prognostik)  Bab VI (sintesis +
+kesimpulan)
+
+                            BAB I -- PENDAHULUAN
+
+I.1 Latar Belakang
+ Bearing = 40­50% kegagalan rotating machinery. Gap: akurasi AI tinggi tapi
+kepercayaan industrial rendah karena tidak ada bukti fisika.
+ Dua gap yang belum terisi: (1) XAI diagnostik belum ada di level sinyal mentah; (2)
+model RUL belum terbukti menginternalisasi fisika degradasi (BPFx) dalam ruang
+latennya.
+
+I.2 Rumusan Masalah
+ RQ1: Pola atribusi SHAP pada sinyal mentah 2.048 titik -- berkorelasi dengan
+morfologi impuls atau periodisitas BPFx?
+ RQ2: Dapatkah Top-k SAE mengekstrak fitur laten model RUL yang berkorespondensi
+dengan BPFx secara statistik signifikan?
+ RQ3: Bagaimana kedua kerangka membentuk sistem PdM yang interpretable dan
+dapat diaudit?
+I.3 Tujuan dan Novelti
+ N1: FSM -- XAI level sinyal pertama untuk WDCNN (resolusi 2.048 titik, 3 varian, 3
+metrik validasi).
+ N2: Trade-off BatchNorm -- temuan pertama BatchNorm menekan discriminability
+FSM; panduan desain arsitektur.
+ N3: SAEBearing -- adaptasi pertama mechanistic interpretability (LLM) ke domain
+bearing prognostics.
+ N4: Universalitas -- 3 arsitektur × 4 dataset, statistical rigor (bootstrap CI +
+permutation test + negative controls).
+ N5: Integrasi -- kerangka diagnostik­prognostik terpadu, dua lapis interpretabilitas,
+PdM multi-tier.
+
+I.4 Batasan Masalah
+ Diagnostik: CWRU, Load 0­3, 48 kHz, 10 kelas, segmen 2.048 titik.
+ Prognostik: PHM2012, XJTU-SY, IMS. Arsitektur: WDCNN (diagnostik);
+Mamba-xLSTM / N-BEATS-xLSTM / SparseGate-TCN (prognostik).
+
+I.5 Sistematika Penulisan
+ Enam bab: Bab III = fondasi bersama; Bab IV = metode+hasil diagnostik; Bab V =
+metode+hasil prognostik; Bab VI = sintesis.
+
+                       BAB II -- TINJAUAN PUSTAKA
+
+II.1 Perawatan Prediktif dan Industri 4.0
+ Evolusi CBM (ISO 13374/13381). Ekosistem sensor dan IoT industri.
+
+II.2 Diagnostik Bearing Berbasis Deep Learning
+II.2.1 Evolusi Arsitektur
+ SVM+statistik  CNN 1D  WDCNN (Zhang 2017)  hybrid CNN-LSTM 
+Transformer.
+II.2.2 Dataset CWRU
+ Protokol, jenis kesalahan (EDM-seeded), isu temporal leakage pada random split.
+
+II.3 Explainable AI: Input Attribution
+II.3.1 Taxonomy Metode XAI
+ Gradient-based, propagation (LRP), perturbation (SHAP). Hampir semua beroperasi
+di level fitur -- gap yang dijawab Paper 1.
+II.3.2 SHAP DeepExplainer
+ Shapley values, rescale rule DeepLIFT. Kelebihan dan keterbatasan.
+
+II.4 Prognostik Bearing: Estimasi RUL
+II.4.1 Fisika vs. Data-Driven
+ Model Paris/Archard vs. LSTMTransformerMamba/xLSTM. Tren: akurasi
+saturasi  trustworthiness.
+II.4.2 Benchmark Dataset RUL
+ PHM2012, XJTU-SY, IMS. Metrik: RMSE, skor PHM (penalti asimetris terlambat >
+lebih awal).
+
+II.5 Mechanistic Interpretability dan Sparse Autoencoders
+II.5.1 Superposition dan Top-k SAE
+ Elhage 2022 (superposition), Bricken/Cunningham 2023 (Top-k SAE).
+Monosemantisitas sebagai tujuan.
+II.5.2 Gap: Belum Ada SAE untuk Bearing
+ Bearing = test case lebih bersih dari bahasa; BPFx = set konsep fisika terdefinisi
+yang harus ada di latent space model terlatih.
+
+II.6 Fisika Getaran Bearing
+ Formula BPFO, BPFI, BSF, FTF. Envelope analysis (Hilbert transform) sebagai
+referensi validasi kuantitatif.
+
+II.7 Peta Gap Literatur
+ Matriks: level interpretabilitas × dataset × validasi statistik × integrasi
+diagnostik­prognostik. Posisi Paper 1 dan Paper 2.
+
+                      BAB III -- METODOLOGI UMUM
+
+Bab ini memuat fondasi bersama: kerangka konseptual yang menghubungkan kedua
+studi, spesifikasi seluruh dataset, dan infrastruktur evaluasi yang digunakan oleh Bab IV
+maupun Bab V. Metodologi spesifik masing-masing studi dijelaskan di awal Bab IV dan
+Bab V.
+
+III.1 Kerangka Konseptual Terintegrasi
+ Dua jalur paralel yang konvergen: (A) CWRUWDCNNSHAPFSM [Bab IV];
+(B) PHM/XJTU/IMSBackbone RULSAEBPFx [Bab V].
+ Konvergensi di Bab VI: kerangka PdM multi-tier yang menggabungkan
+input-attribution (FSM) dan latent-concept interpretability (SAE).
+
+III.2 Dataset
+III.2.1 CWRU -- digunakan di Bab IV
+ 10 kelas, Drive-End 48 kHz, Load 0­3. Segmen 2.048 titik, temporal split 54/13/33%
+ 1.240/310/750 sampel. Z-score normalisasi.
+III.2.2 PHM2012 -- digunakan di Bab V
+ 17 bearing FEMTO-PRONOSTIA, 3 kondisi beban. EOL: RMS > 20g. Split
+bearing-wise. Label RUL linier 10.
+III.2.3 XJTU-SY -- digunakan di Bab V
+ 10 bearing LDK UER204, outer-race spalling dominan. Split bearing-wise.
+III.2.4 IMS -- digunakan di Bab V
+ 4 bearing Rexnord, 2.000 rpm, akuisisi tiap 10 menit. Bearing 3: outer-race; bearing
+4: rolling-element fatigue.
+
+III.3 Metrik Evaluasi Bersama
+ Diagnostik (Bab IV): akurasi, macro-F1, confusion matrix.
+ Prognostik (Bab V): RMSE , MAE , skor PHM (penalti asimetris).
+ Interpretabilitas (Bab IV): discriminability, severity monotonicity, split-half stability.
+ Interpretabilitas (Bab V): hit-rate H, bootstrap 95% CI, permutation p-value.
+
+ BAB IV -- BEARING FAULT DETECTION: METODOLOGI DAN
+                                         HASIL
+
+Backbone: Paper 1 (FSM Paper) -- WDCNN + SHAP DeepExplainer + Fault Signature
+Maps pada dataset CWRU.
+
+[ METODOLOGI STUDI DIAGNOSTIK ]
+
+IV.1 Arsitektur WDCNN
+ Kernel pertama: lebar 64, stride 16. Blok konvolusi 2­5: kernel 3. Dua lapisan
+FC(100), dropout 0.5, softmax 10 kelas. ~60.710 parameter.
+ Tiga varian ablasi yang diuji: (A) baseline, (B) kernel sempit k=3, (C) tanpa
+BatchNorm.
+ Pelatihan: Adam lr=0.001, StepLR, CrossEntropyLoss, early stopping patience=15.
+
+IV.2 SHAP DeepExplainer pada Sinyal Mentah
+ Background: 300 sampel terstratifikasi (30/kelas). Target eksplanasi: 500 sampel uji
+(50/kelas).
+ Output: 10 array atribusi (500 × 2.048) = 10,24 juta nilai SHAP per model.
+ Operasi pada sinyal mentah 2.048 titik -- berbeda dari semua studi sebelumnya yang
+beroperasi di level fitur.
+
+IV.3 Formalisasi Fault Signature Maps (FSM)
+ Signed FSM: rata-rata atribusi dengan tanda. Absolute FSM: rata-rata nilai absolut
+(dipakai sebagai sidik jari utama). Variance FSM: variansi antar sampel.
+ Tiga metrik validasi: (i) discriminability index, (ii) severity monotonicity fraction, (iii)
+split-half stability coefficient.
+
+[ HASIL DAN ANALISIS ]
+IV.4 Kinerja Klasifikasi WDCNN
+ Akurasi 99,87% (749/750). Macro F1 = 0,997. Early stopping epoch ke-54. Satu
+misklasifikasi: Ball_014  IR_014.
+ vs. SVM-RBF 96,4%: reduksi error pengujian 91%.
+
+IV.5 Pola Atribusi SHAP
+ Tiga karakteristik global: suppression tepi (0­100, 1.900­2.048), modulasi ~16
+sampel (artefak stride), distribusi merata ||  0,015­0,025.
+ Profil per kelas: Normal (rendah)  Ball (difus)  IR (datar)  OR (terlokalisasi);
+OR_021 puncak ||  0,08 di posisi 600­700.
+
+IV.6 Validasi FSM
+ Split-half stability = 0,940. Discriminability index = 0,216. Severity monotonicity:
+Ball 17,6% > IR 13,8% > OR 8,6%.
+
+IV.7 Interpretasi Fisika: Morfologi vs. Periodisitas
+ Puncak FSM TIDAK selaras dengan periode BPFx teoritis.
+ Temuan kritis: WDCNN mengklasifikasikan via morfologi transien impuls (42,67 ms),
+bukan via periodisitas BPFx. Implikasi: model tidak butuh geometri bearing atau
+kecepatan poros  lebih transferable.
+
+IV.8 Studi Ablasi: Trade-off BatchNorm
+ Varian A (baseline): akurasi 99,73%, discriminability 0,216.
+ Varian B (kernel sempit k=3): akurasi  0,80pp; parameter  7,3×; discriminability 
+17%.
+ Varian C (tanpa BatchNorm): akurasi  3,60pp; discriminability  133% ( 0,735).
+Temuan pertama dalam literatur.
+ Panduan desain: Varian A untuk akurasi kritis; Varian C untuk interpretabilitas
+maksimum.
+
+    BAB V -- REMAINING USEFUL LIFE: METODOLOGI DAN
+                                         HASIL
+
+Backbone: Paper 2 (SAE Paper) -- Backbone RUL + Top-k Sparse Autoencoders +
+BPFx Mapping pada PHM2012, XJTU-SY, IMS, CWRU.
+
+[ METODOLOGI STUDI PROGNOSTIK ]
+
+V.1 Arsitektur Backbone RUL
+ Mamba-xLSTM-Net: selective state-space + matrix-memory xLSTM. Konteks panjang
++ presisi rekuren.
+ N-BEATS-xLSTM-RUL: basis-block (trend/wear/shock) + xLSTM residual. Prior
+struktural kurva degradasi.
+ SparseGate-TCN-RUL: dilated causal convolution + sparse gating. Latensi rendah,
+baseline ringan.
+ Protokol: 75 epoch, bf16, batch 512 × window-32, 3 seed (42/43/44). Checkpoint loss
+validasi terbaik.
+
+V.2 Top-k Sparse Autoencoder
+ Arsitektur: encoder Wenc  R^(dlat×d), decoder Wdec, bpre bias. dlat = 8d = 1.024.
+k = 51 (~5% aktif).
+ Pelatihan: pool N = 20.000 hidden states (frozen backbone), AdamW lr=1e-3, 50
+epoch, loss MSE rekonstruksi.
+ Prinsip: mendorong monosemantisitas -- setiap fitur SAE mengkodekan satu konsep
+fisika, bukan campuran polysemantic.
+
+V.3 Prosedur Mapping SAE  BPFx
+ Hilbert envelope spectrum: band-pass di resonansi dominan (spectral kurtosis),
+envelope Ar(t), Ar, = _{±2} Ar(f) df.
+ Korelasi Pearson ri, antara profil aktivasi fitur SAE z r,i dan amplitudo BPFx Ar,
+lintas semua recording.
+ Hit-rate: H = |{i: |ri,|  0.30}| / dlat. Threshold 0.30 = korelasi moderat secara
+praktis.
+
+V.4 Inferensi Statistik dan Negative Controls
+ Bootstrap B=1.000 resample recording  95% CI untuk H. Permutation test
+B=1.000 shuffle  p-value two-sided.
+ Control 1 (model belum terlatih, Xavier init): apakah korespondensi artefak
+arsitektur?
+ Control 2 (Gaussian noise hidden states): apakah korespondensi artefak prosedur SAE
+itu sendiri?
+ Sparsity sweep: k  {10, 51, 102, 205} untuk uji robustness.
+
+[ HASIL DAN ANALISIS ]
+
+V.5 Kinerja Backbone RUL
+ PHM2012: SparseGate-TCN terbaik (RMSE 0,226 ± 0,030). XJTU-SY:
+N-BEATS-xLSTM terbaik (0,259 ± 0,003). IMS: Mamba-xLSTM terbaik (0,407 ± 0,040).
+ Semua backbone viable  justified untuk memeriksa makna fisik representasi
+latennya.
+
+V.6 Hit-Rate BPFx: Hasil Utama
+ PHM2012: BPFI 2,3% + BPFO 2,0% (p < 0,001); BSF & FTF = 0.  Konsisten:
+mixed inner+outer-race spalling.
+ XJTU-SY: BPFO 2,2% dominan + BSF 0,3% (p < 0,001); BPFI & FTF = 0. 
+Konsisten: outer-race spalling LDK UER204.
+ IMS: BPFI 1,76% + BSF 0,49% (p = 0,001).  Konsisten: cage & rolling-element
+fatigue.
+ CWRU: BPFI 5,08% dominan (p > 0,05, underpowered -- n=10 recording).
+V.7 Negative Controls: Eliminasi Artefak
+ Control 1 + Control 2: hit-rate turun drastis pada model belum terlatih dan noise 
+korespondensi adalah emergent property representasi terlatih, bukan artefak arsitektur
+atau prosedur SAE.
+
+V.8 Perbandingan Lintas Arsitektur
+ PHM2012: Mamba-xLSTM memimpin BPFI  model lebih kuat secara temporal 
+alignment fisika lebih kaya.
+ XJTU-SY: Mamba-xLSTM BPFO-dominant (4,69%); arsitektur lain menyebar  bias
+induktif state-space amplifikasi outer-race.
+ CWRU: ketiga arsitektur konvergensi ke BPFI-dominant (4,69­5,08%)  distribusi
+data mendominasi, bukan bias arsitektur.
+
+V.9 Sparsity Sweep
+ k = 51 optimal. k < 10: beberapa BPFx kehilangan signifikansi. k > 102: noise BPFx
+sekunder meningkat.
+
+            BAB VI -- KESIMPULAN DAN REKOMENDASI
+
+VI.1 Pembahasan Terintegrasi
+ FSM (Bab IV) = input attribution, level sinyal. SAE (Bab V) = latent concept, level
+hidden state. Dua lapisan berbeda, saling melengkapi.
+ Paradoks yang tampak: FSM tidak sejajar BPFx, SAE berkorelasi dengan BPFx.
+Bukan kontradiksi -- mencerminkan perbedaan cakrawala waktu (42,67 ms vs. ratusan
+akuisisi degradasi).
+ Rantai konsistensi: kurtosis/crest factor (fitur)  impuls terlokalisasi (FSM/sinyal) 
+BPFx di latent space (SAE). Semua lapisan mengeksploitasi tanda fisik underlying yang
+sama.
+
+VI.2 Kerangka PdM Multi-Tier
+ Tier 1 -- Edge IoT: SVM/LR + SHAP fitur, triage anomali.
+ Tier 2 -- Edge Server: WDCNN + FSM, konfirmasi jenis dan keparahan, akurasi
+99,87%.
+ Tier 3 -- Cloud/GPU: Backbone RUL + SAE, estimasi RUL + audit latent­physics via
+hit-rate BPFx.
+
+VI.3 Kesimpulan
+ Lima novelti (N1­N5) terjawab secara kuantitatif. Kontribusi inti: jembatan pertama
+data-driven AI  classical vibration theory yang dapat diverifikasi statistik.
+
+VI.4 Keterbatasan
+ Single operating condition per dataset. CWRU = seeded faults. SAE post-hoc, belum
+dalam loop pelatihan. CWRU underpowered untuk SAE (n=10).
+VI.5 Rekomendasi Penelitian Lanjutan
+ Validasi Paderborn / MFPT. SAE dalam loop pelatihan. Normalizer-Free Networks.
+SHAP pada STFT/CWT. Implementasi edge real-time (< 100 ms). Integrasi ERP/CMMS.
+
+                                          -- Akhir Outline --
+

@@ -39,6 +39,11 @@ ap-southeast-2.amazonaws.com
 curl -fL -o data-bearing.zip \
   "$U/data-bearing/data-bearing.zip"
 unzip -q data-bearing.zip && rm -f data-bearing.zip
+mkdir -p data-bearing
+curl -fL -o xtju-sy.zip \
+  "$U/data-bearing/xtju-sy.zip"
+unzip -q -o xtju-sy.zip -d data-bearing/ \
+  && rm -f xtju-sy.zip
 
 # Lingkungan Python (GPU: ikuti scripts/bootstrap_gpu_vps.sh di repositori)
 cd Mamba-xLSTM

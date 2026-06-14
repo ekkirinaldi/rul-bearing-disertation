@@ -1,0 +1,251 @@
+﻿%% lampiran/G-wdcnn-fsm.tex
+%% Lampiran G — Detail Arsitektur WDCNN dan Fault Signature Maps (Journal 1)
+
+\chapter{Detail Arsitektur WDCNN dan \emph{Fault Signature Maps}}
+\label{lamp:wdcnn_fsm}
+
+Lampiran ini memuat rincian teknis arsitektur \emph{Wide-kernel Deep
+Convolutional Neural Network} (WDCNN), konfigurasi pelatihan,
+studi ablasi ukuran \emph{kernel}, dan prosedur komputasi
+\emph{Fault Signature Maps} (FSM) yang disajikan di
+Bab~\ref{bab:diagnostik} Subbab~\ref{sec:bab4_wdcnn}--Subbab~\ref{sec:bab4_fsm}.
+Seluruh eksperimen dapat direproduksi melalui
+\texttt{Notebook/Journal1\_Fault\_Signature\_Maps.ipynb}
+pada repositori publik (Lampiran~\ref{lamp:kode}).
+
+% -----------------------------------------------------------------
+\section{Arsitektur WDCNN Lengkap}
+\label{lamp:wdcnn_arsitektur}
+% -----------------------------------------------------------------
+
+WDCNN~\citetitb{Zhang2017WDCNN} dirancang dengan lapisan konvolusi
+pertama berkernel lebar untuk mengekstrak fitur \emph{frequency-aware}
+langsung dari sinyal mentah, tanpa praproses ekstraksi fitur manual.
+Lima lapisan konvolusi diikuti dua lapisan \emph{fully connected}
+dan kepala \emph{softmax} untuk 10 kelas. Spesifikasi lengkap setiap
+lapisan beserta jumlah parameter disajikan pada
+Tabel~\ref{tab:lampG_arsitektur_wdcnn}.
+
+\begin{table}[ht]
+  \centering
+  \caption{Arsitektur WDCNN varian A (baseline) untuk klasifikasi
+           10 kelas CWRU. Total parameter $\approx$~60.710.
+           Sumber: \citetitb{TotoSuharto2025Journal1FSM},
+           adaptasi dari \citetitb{Zhang2017WDCNN}.}
+  \label{tab:lampG_arsitektur_wdcnn}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}clXXrr@{}}
+    \toprule
+    \textbf{Lapis} & \textbf{Tipe} & \textbf{Kernel / Unit} &
+    \textbf{Konfigurasi} & \textbf{Output} & \textbf{Param.} \\
+    \midrule
+    1  & Conv1D + BN + ReLU + MaxPool &
+       $k=64$, $s=16$ &
+       16 filter, \emph{padding} valid &
+       $(1, 124, 16)$ & 1.040 \\
+    2  & Conv1D + BN + ReLU + MaxPool &
+       $k=3$, $s=1$ &
+       32 filter, \emph{padding} same &
+       $(1, 62, 32)$ & 1.568 \\
+    3  & Conv1D + BN + ReLU + MaxPool &
+       $k=3$, $s=1$ &
+       64 filter, \emph{padding} same &
+       $(1, 31, 64)$ & 6.272 \\
+    4  & Conv1D + BN + ReLU + MaxPool &
+       $k=3$, $s=1$ &
+       64 filter, \emph{padding} same &
+       $(1, 15, 64)$ & 12.416 \\
+    5  & Conv1D + BN + ReLU + MaxPool &
+       $k=3$, $s=1$ &
+       64 filter, \emph{padding} same &
+       $(1, 7, 64)$ & 12.416 \\
+    \midrule
+    6  & \emph{Flatten}   & ---   & --- & $(1, 448)$ & 0 \\
+    7  & FC + ReLU + Dropout &
+       $n=100$ & \emph{dropout} 0,5 &
+       $(1, 100)$ & 44.900 \\
+    8  & FC + ReLU + Dropout &
+       $n=100$ & \emph{dropout} 0,5 &
+       $(1, 100)$ & 10.100 \\
+    9  & FC + Softmax & $n=10$ & --- & $(1, 10)$ & 1.010 \\
+    \midrule
+    \multicolumn{5}{l}{\textbf{Total parameter}} & \textbf{$\approx$~60.710} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Lapisan pertama (lapis~1) menggunakan \emph{kernel} lebar $k=64$
+dengan \emph{stride} $s=16$, yang berarti setiap filter mengamati
+rentang temporal 64/1500~Hz~$\approx$~42,67~ms pada frekuensi
+\emph{sampling} 48~kHz CWRU. Rentang ini cukup lebar untuk menangkap
+morfologi impuls transien yang karakteristik bagi kerusakan \emph{bearing},
+sekaligus memberikan reduksi dimensi agresif dari 2.048 ke 124 titik
+pada keluaran lapis~1.
+
+% -----------------------------------------------------------------
+\section{Konfigurasi Pelatihan}
+\label{lamp:wdcnn_training}
+% -----------------------------------------------------------------
+
+Tabel~\ref{tab:lampG_training} merinci seluruh konfigurasi
+pelatihan yang digunakan pada eksperimen utama WDCNN varian A.
+
+\begin{table}[ht]
+  \centering
+  \caption{Konfigurasi pelatihan WDCNN varian A (baseline) pada
+           dataset CWRU 10 kelas.}
+  \label{tab:lampG_training}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}l X X@{}}
+    \toprule
+    \textbf{Parameter} & \textbf{Nilai} & \textbf{Keterangan} \\
+    \midrule
+    Optimizer          & Adam            & $\beta_1=0,9$, $\beta_2=0,999$, $\varepsilon=10^{-8}$ \\
+    \emph{Learning rate} awal & $10^{-3}$ & --- \\
+    \emph{Scheduler}   & StepLR          & $\gamma=0{,}5$, \emph{step\_size}=20 \emph{epoch} \\
+    \emph{Loss}        & CrossEntropyLoss & \emph{reduction}=\texttt{mean} \\
+    \emph{Batch size}  & 64              & ---\\
+    \emph{Epoch} maksimal & 100          & \emph{Early stopping} membatasi \\
+    \emph{Early stopping} & Kesabaran 15 \emph{epoch} &
+      Dipantau pada \emph{val accuracy}; terbaik pada \emph{epoch}~54 \\
+    \emph{Dropout}     & 0,5             & Hanya lapis FC~7 dan FC~8 \\
+    Normalisasi input  & Z-score \emph{fit-on-train} &
+      Rata-rata dan standar deviasi dari 1.240 sampel pelatihan \\
+    \emph{Random seed} & 42              & PyTorch + NumPy + Python \texttt{random} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+% -----------------------------------------------------------------
+\section{Kurva Konvergensi}
+\label{lamp:wdcnn_konvergensi}
+% -----------------------------------------------------------------
+
+Kurva konvergensi pelatihan WDCNN disajikan pada
+Gambar~\ref{fig:bab4_wdcnn_konvergensi} di Bab~\ref{bab:diagnostik}.
+Model mencapai akurasi validasi tertinggi pada \emph{epoch}~54 dengan
+akurasi uji 99,87\% (749/750 sampel) dan \emph{macro F1}~0,997.
+Kurva menunjukkan konvergensi yang stabil tanpa osilasi signifikan,
+mengindikasikan bahwa kombinasi StepLR dan \emph{early stopping}
+berfungsi efektif untuk dataset CWRU dengan ukuran pelatihan 1.240
+sampel.
+
+% -----------------------------------------------------------------
+\section{Studi Ablasi: Variasi Ukuran \emph{Kernel} Lapis Pertama}
+\label{lamp:wdcnn_ablasi_kernel}
+% -----------------------------------------------------------------
+
+Selain studi ablasi \emph{BatchNorm} yang dibahas di
+Bab~\ref{bab:diagnostik} Subbab~\ref{subsec:bab4_wdcnn_ablasi}, dilakukan
+pula evaluasi variasi ukuran \emph{kernel} lapis pertama untuk
+memahami sensitivitas arsitektur terhadap pilihan rentang temporal
+yang diamati. Tabel~\ref{tab:lampG_ablasi_kernel} merangkum hasil
+untuk tiga ukuran \emph{kernel}: 32, 64 (baseline), dan 128.
+
+\begin{table}[ht]
+  \centering
+  \caption{Studi ablasi variasi ukuran \emph{kernel} lapisan pertama
+           WDCNN pada dataset CWRU. Semua varian menggunakan
+           \emph{stride}~16 dan konfigurasi pelatihan identik.
+           Sumber: \citetitb{TotoSuharto2025Journal1FSM}.}
+  \label{tab:lampG_ablasi_kernel}
+  \footnotesize
+  \begin{tabular}{@{}crrrrr@{}}
+    \toprule
+    \textbf{Kernel} & \textbf{Rentang Temporal (ms)} &
+    \textbf{Akurasi (\%)} & \textbf{Macro F1} &
+    \textbf{Discriminability} & \textbf{Param. Lapis 1} \\
+    \midrule
+    $k=32$  & 21,3 & 98,93 & 0,989 & 0,152 & 512 \\
+    $k=64$  & 42,7 & 99,73 & 0,997 & 0,216 & 1.024 \\
+    $k=128$ & 85,3 & 99,60 & 0,996 & 0,201 & 2.048 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Varian $k=64$ memberikan keseimbangan terbaik antara akurasi
+dan \emph{discriminability}. Nilai $k=32$ menghasilkan akurasi
+yang lebih rendah karena rentang temporalnya lebih pendek daripada
+durasi tipikal transien impuls pada kerusakan \emph{bearing} (~40--50~ms
+pada 48~kHz), sehingga tidak menangkap morfologi penuh. Varian
+$k=128$ memberikan akurasi sedikit lebih rendah karena \emph{kernel}
+yang terlalu lebar cenderung menghaluskan detail impuls transien.
+
+% -----------------------------------------------------------------
+\section{FSM: Prosedur Komputasi SHAP DeepExplainer}
+\label{lamp:wdcnn_shap_proc}
+% -----------------------------------------------------------------
+
+Setiap \emph{Fault Signature Map} dihitung dari keluaran
+SHAP DeepExplainer~\citetitb{Shrikumar2017DeepLIFT} pada model
+WDCNN yang sudah dilatih. Prosedur lengkap adalah sebagai berikut.
+
+Pertama, disiapkan set \emph{background} sebanyak 300 sampel
+(30 sampel per kelas, dipilih secara acak tanpa penggantian dari
+set pelatihan). \emph{Background} ini digunakan SHAP untuk
+mengestimasi nilai referensi aktivasi pada setiap lapisan.
+Kedua, SHAP DeepExplainer diinisialisasi dengan model terlatih
+dan set \emph{background}. Ketiga, nilai atribusi $\phi^{(c)}(x)$
+dihitung untuk 500 sampel uji (50 sampel per kelas), menghasilkan
+$10 \times 500 \times 2048 = 10{,}24$ juta nilai SHAP.
+
+Waktu komputasi pada GPU NVIDIA A40 berkisar
+$\pm$~3~menit untuk keseluruhan 5.000 pasang (sampel, kelas). Pada
+CPU saja, komputasi memerlukan sekitar 45 menit. Nilai atribusi
+disimpan dalam format \texttt{.npy} per kelas sebelum dihitung FSM.
+
+% -----------------------------------------------------------------
+\section{FSM \emph{Full-Resolution}: Semua Varian}
+\label{lamp:wdcnn_fsm_full}
+% -----------------------------------------------------------------
+
+Gambar~\ref{fig:bab4_fsm_perbandingan} pada Bab~\ref{bab:diagnostik}
+sudah menyajikan FSM untuk tiga varian model (A, B, C) dalam format
+ringkas. Gambar~\ref{fig:lampG_fsm_fullres} menyajikan
+FSM \emph{full-resolution} varian A (\emph{baseline}) untuk kesepuluh
+kelas secara bersamaan, dalam varian \emph{Absolute} yang paling
+stabil secara statistik. Sebagai perbandingan langsung,
+Gambar~\ref{fig:lampG_fsm_fullres_nobn} menyajikan FSM setara untuk
+varian C (tanpa \emph{BatchNorm}).
+
+\begin{figure}[ht]
+  \centering
+  \fbox{\parbox{0.92\textwidth}{\centering\vspace{4.0cm}
+    \textit{[Gambar~G.1 --- FSM \emph{Absolute}
+      \emph{full-resolution} (resolusi penuh $10 \times 2048$),
+      varian A (\emph{baseline} dengan BatchNorm). Setiap baris
+      mewakili satu kelas; intensitas warna menunjukkan
+      $\overline{|\phi^{(c)}(x)[p]|}$ rata-rata 500 sampel uji.
+      Dihasilkan dari
+      \texttt{Journal1\_Fault\_Signature\_Maps.ipynb}.]}
+    \vspace{4.0cm}}}
+  \caption{FSM \emph{Absolute full-resolution} varian A (baseline
+           dengan \emph{BatchNorm}) untuk kesepuluh kelas kerusakan
+           CWRU. Resolusi 2.048 posisi per kelas; \emph{split-half
+           stability} = 0,940.}
+  \label{fig:lampG_fsm_fullres}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \fbox{\parbox{0.92\textwidth}{\centering\vspace{4.0cm}
+    \textit{[Gambar~G.2 --- FSM \emph{Absolute full-resolution}
+      varian C (tanpa BatchNorm). Puncak atribusi lebih tajam
+      dan lebih terlokalisasi dibanding varian A; \emph{discriminability}
+      meningkat 133\% menjadi 0,735. Dihasilkan dari
+      \texttt{Journal1\_Fault\_Signature\_Maps.ipynb}.]}
+    \vspace{4.0cm}}}
+  \caption{FSM \emph{Absolute full-resolution} varian C (tanpa
+           \emph{BatchNorm}). Peningkatan \emph{discriminability} 133\%
+           dibanding varian A dengan pengorbanan akurasi 3,60~pp.}
+  \label{fig:lampG_fsm_fullres_nobn}
+\end{figure}
+
+Perbandingan kedua gambar ini memperlihatkan secara visual temuan
+ablasi N2: penghapusan \emph{BatchNorm} menghasilkan puncak atribusi
+yang lebih tajam dan terlokalisasi, sehingga FSM antar-kelas lebih
+mudah dibedakan secara visual maupun dengan metrik \emph{discriminability}
+kuantitatif. Panduan praktis pemilihan varian arsitektur berdasarkan
+trade-off ini dijelaskan di Bab~\ref{bab:diagnostik}
+Subbab~\ref{subsec:bab4_wdcnn_ablasi} dan Bab~\ref{bab:kesimpulan}
+Subbab~\ref{sec:bab6_pdm_multitier}.

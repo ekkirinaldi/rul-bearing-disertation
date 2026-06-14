@@ -240,6 +240,152 @@ def build(doc) -> None:
         "ditelaah secara ablasi pada Bab IV untuk mengisolasi pengaruh kapasitas blok SSM.",
     )
 
+    # ===================== III.2a (new) — Preprocessing =====================
+    _BLUE = "0000FF"
+
+    add_heading(
+        doc,
+        "III.2a",
+        "Praproses Sinyal Getaran dan Ekstraksi Fitur",
+        level=1,
+        color=_BLUE,
+    )
+
+    add_heading(
+        doc,
+        "III.2a.1",
+        "Dasar Sinyal Getaran dan Analisis Spektrum",
+        level=2,
+        color=_BLUE,
+    )
+    add_paragraph(
+        doc,
+        "Saat mesin beroperasi, komponen bergerak menimbulkan gaya dinamis yang menyebabkan "
+        "struktur bergetar. Getaran ditransmisikan ke sensor akselerometer yang dipasang pada "
+        "*bearing housing*, menghasilkan sinyal percepatan dalam satuan $g$ "
+        r"(1 $g$ = 9,81 m/s$^2$).",
+        color=_BLUE,
+    )
+    add_paragraph(
+        doc,
+        "Sinyal getaran dapat dianalisis dalam dua ranah. Pada *time domain*, sinyal ditampilkan "
+        "sebagai amplitudo terhadap waktu; informasi yang diperoleh meliputi nilai RMS, puncak, "
+        "dan pola gelombang (periodik, acak, atau impulsif). Pada *frequency domain*, sinyal "
+        "diubah menjadi spektrum amplitudo terhadap frekuensi sehingga sumber getaran dapat "
+        "diidentifikasi: *unbalance* memberikan puncak pada 1x kecepatan putar, *misalignment* "
+        "pada 1x dan 2x, sedangkan kerusakan *bearing* menghasilkan puncak pada frekuensi "
+        "karakteristik BPFO, BPFI, BSF, dan FTF.",
+        color=_BLUE,
+    )
+    add_paragraph(
+        doc,
+        "Transformasi dari *time domain* ke *frequency domain* dilakukan dengan *Discrete Fourier "
+        "Transform* (DFT). Algoritma *Fast Fourier Transform* (FFT) mengurangi kompleksitas "
+        r"komputasi dari $O(N^2)$ menjadi $O(N \log N)$ dengan memanfaatkan simetri periodik "
+        "kernel DFT, sehingga FFT menjadi standar de facto pada *predictive maintenance* berbasis "
+        "getaran.",
+        color=_BLUE,
+    )
+    add_paragraph(
+        doc,
+        "Getaran mesin dapat dikuantifikasi dalam tiga parameter yang saling berkaitan. "
+        "*Displacement* (satuan mikrometer) mengukur perpindahan dari posisi nominal dan cocok "
+        "untuk frekuensi rendah seperti *unbalance* dan *misalignment*. *Velocity* (satuan "
+        "mm/s RMS) merupakan parameter yang direkomendasikan standar ISO 10816/20816 untuk "
+        "evaluasi kondisi keseluruhan mesin pada frekuensi menengah. *Acceleration* "
+        r"(satuan $g$ atau m/s$^2$) sensitif terhadap frekuensi tinggi dan karenanya menjadi "
+        "parameter utama untuk deteksi kerusakan *bearing* dan *gear mesh*.",
+        color=_BLUE,
+    )
+
+    add_heading(
+        doc,
+        "III.2a.2",
+        "Enveloping dan Demodulasi Amplitudo",
+        level=2,
+        color=_BLUE,
+    )
+    add_paragraph(
+        doc,
+        "Kerusakan *bearing* (aus, *pitting*, atau *spalling* pada *race* atau *rolling element*) "
+        "menimbulkan impuls berulang saat elemen bergulir melewati cacat. Impuls tersebut sering "
+        "tenggelam dalam komponen dominan lain seperti *unbalance* atau getaran *gear mesh*. "
+        "Teknik *enveloping* atau demodulasi amplitudo digunakan untuk mengekstraksi impuls "
+        "tersembunyi tersebut sehingga BPFO, BPFI, BSF, dan FTF muncul jelas dalam spektrum. "
+        "Proses *enveloping* terdiri atas langkah-langkah berikut.",
+        color=_BLUE,
+    )
+    add_numbered(
+        doc,
+        [
+            "**Akuisisi sinyal percepatan.** Sinyal getaran direkam menggunakan akselerometer "
+            "karena parameter percepatan sensitif pada frekuensi tinggi tempat impuls *bearing* muncul.",
+            "**Filter *band-pass* frekuensi tinggi.** Sinyal dilewatkan filter *band-pass* pada "
+            "rentang 5--20 kHz untuk mengisolasi zona frekuensi tempat impuls termodulasi, "
+            "sekaligus membuang komponen frekuensi rendah yang mendominasi.",
+            "**Rektifikasi.** Sinyal hasil filter diubah ke nilai absolut sehingga komponen "
+            "negatif terlipat ke atas.",
+            "***Low-pass filter* atau FFT.** Filter *low-pass* atau FFT diterapkan untuk "
+            "menghasilkan amplop (*envelope*) sinyal, yakni kurva yang mengikuti puncak-puncak "
+            "impuls berulang.",
+            "**Analisis spektrum amplop.** FFT dari amplop menghasilkan *envelope spectrum* "
+            "di mana puncak pada BPFO, BPFI, BSF, FTF, dan harmoniknya menandai mode kegagalan "
+            "*bearing* yang aktif.",
+        ],
+        color=_BLUE,
+    )
+    add_paragraph(
+        doc,
+        "Dalam konteks disertasi ini, *envelope spectrum* digunakan sebagai referensi "
+        "eksperimental untuk memvalidasi interpretabilitas laten (*hit-rate* SAE terhadap BPFx) "
+        "pada Bab V. Korelasi Pearson antara aktivasi fitur SAE dan amplitudo *envelope spectrum* "
+        r"pada pita $\pm$2 Hz di sekitar BPFO, BPFI, BSF, dan FTF merupakan metrik kuantitatif "
+        "inti Novelti N3.",
+        color=_BLUE,
+    )
+
+    add_heading(
+        doc,
+        "III.2a.3",
+        "Tahapan Praproses Data",
+        level=2,
+        color=_BLUE,
+    )
+    add_paragraph(
+        doc,
+        "Sebelum sinyal getaran dapat digunakan untuk melatih model *machine learning* atau "
+        "*deep learning*, diperlukan serangkaian tahap praproses yang memproses dan "
+        "mentransformasikan data agar dapat ditangani secara efisien oleh model. Tujuh tahapan "
+        "praproses yang diterapkan dalam penelitian ini adalah sebagai berikut.",
+        color=_BLUE,
+    )
+    add_numbered(
+        doc,
+        [
+            "**Validasi data sensor.** Data yang terkumpul diperiksa kualitasnya untuk memastikan "
+            "rekaman tidak mengandung artefak akuisisi, saturasi *amplifier*, atau kegagalan transmisi.",
+            "**Sinkronisasi fitur.** Sinyal dari berbagai sumber (akselerometer, temperatur, "
+            "data kualitas produk) yang direkam pada waktu berbeda diselaraskan ke basis deret "
+            "waktu yang seragam sebelum pengolahan lebih lanjut.",
+            "**Pembersihan data.** Nilai yang hilang (*missing values*) diinterpolasi atau dihapus; "
+            "duplikat dibuang; dan *outlier* teridentifikasi melalui metode "
+            r"$3\sigma$ atau IQR diproses sesuai kebijakan per-dataset.",
+            "**Pengkodean dan diskritisasi.** Fitur kategorikal atau *timestamp* diproyeksikan "
+            "ke ruang numerik yang dapat ditangani oleh model. Untuk sinyal getaran kontinu, "
+            "tahap ini umumnya berupa konversi tipe data dan pengaturan presisi numerik.",
+            "**Segmentasi.** Data panjang dibagi menjadi segmen-segmen menggunakan jendela "
+            "geser, memungkinkan analisis paralel dan pemrosesan dataset berskala besar. "
+            "Detail konfigurasi jendela per dataset diuraikan pada Subbab III.3.",
+            "**Penskalaan fitur.** Normalisasi atau standardisasi diterapkan agar semua fitur "
+            "berada pada skala yang sebanding, mencegah dominasi fitur dengan rentang nilai besar. "
+            "Standardisasi Z-score berbasis *training set* diterapkan pada penelitian ini.",
+            "***Noise handling*.** Komponen derau frekuensi tinggi yang tidak berkorelasi dengan "
+            "degradasi *bearing* diatasi melalui kombinasi filter *band-pass* (untuk *enveloping*) "
+            "dan pembobotan jendela Hann sebelum FFT pada konstruksi HI.",
+        ],
+        color=_BLUE,
+    )
+
     # ===================== III.3 =====================
     add_heading(doc, "III.3", "Formulasi Masalah Prediksi Remaining Useful Life", level=1)
     add_heading(doc, "III.3.1", "Definisi Masalah", level=2)

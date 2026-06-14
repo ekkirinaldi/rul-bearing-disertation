@@ -91,22 +91,37 @@ disertasi-itb/
 disertasi/
 spec/
 
-# Bulky v1_initial result bundle (regenerable comparison reports)
-Mamba-xLSTM/results/v1_initial/
+# =============================================================================
+# Loose draft DOCX / seminar presentation files at repo root
+# =============================================================================
+*.docx
+*.pptx
+# Re-include tracked dissertation DOCX tree
+!dissertation-docx/**/*.docx
+!dissertation-docx/**/*.pptx
 
 # =============================================================================
-# Local manuscripts and Word working copies (LaTeX/Markdown remain tracked)
+# writings/disertation/figures/bab* — generated copies of dissertation-docx assets
+# The source of truth lives in dissertation-docx/assets/figures/
 # =============================================================================
-paper*.pdf
-**/*.docx.bak
-**/*.docx.bak*
-writings/**/*.pdf
-writings/**/*.docx
-writings/**/paper.txt
-writings/journal-q2/jets-mechanistic-interp/
+writings/disertation/figures/bab2/
+writings/disertation/figures/bab3/
+writings/disertation/figures/bab4/
+writings/disertation/figures/bab5/
+writings/disertation/figures/bab6/
+writings/disertation/figures/research_flow.png
 
-# Adopted dashboard design folder (prototype removed after merge into web/)
-inference-engine/Remaining Useful Life Dashboard/
+# dissertation-docx PDF build output (regenerable via make build)
+dissertation-docx/build/
+
+# journal-q2 working draft (separate publication, not dissertation core)
+writings/journal-q2/
+
+# =============================================================================
+# Inference engine — keep source, exclude Python caches
+# =============================================================================
+inference-engine/**/__pycache__/
+inference-engine/**/*.py[cod]
 
 # =============================================================================
 # OS / IDE / temporary files
@@ -131,8 +146,7 @@ Thumbs.db
 # Cursor IDE workspace files (agent transcripts, project caches, local config)
 # =============================================================================
 .cursor/
+.claude/
 
-# =============================================================================
-# JETS docs Word track — seed scaffolding (run once then delete)
-# =============================================================================
-writings/journal-q2/jets-docs/_seed/
+# Loose PDFs at repo root (paper drafts, keep locally)
+*.pdf

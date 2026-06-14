@@ -1,137 +1,226 @@
-%% lampiran/D-klasifikasi-industri.tex
-%% Lampiran D — Studi Kasus Klasifikasi Industri (Pilar 0)
+﻿%% lampiran/D-klasifikasi-industri.tex
+%% Lampiran D — Validasi Industri PT~SKF Indonesia (Sanity Check Eksternal)
+%%
+%% PENTING: Lampiran ini hanya mendokumentasikan verifikasi kualitatif terbatas
+%% dengan subset kecil data sensor PT~SKF. Bukan validasi lintas mesin penuh.
 
-\chapter{Studi Kasus Klasifikasi Industri (Pilar~0)}
+\chapter{Validasi Industri PT~SKF Indonesia: Pengujian Eksternal}
 \label{lamp:klasifikasi_industri}
 
-Lampiran ini mendokumentasikan rincian teknis tambahan untuk Pilar~0 ---
-studi kasus klasifikasi tiga kelas pada lini produksi PT~SKF~Indonesia
-yang telah diuraikan pada Subbab~\ref{sec:bab4_studi_kasus_industri}
-dan Subbab~\ref{sec:bab5_studi_kasus_industri}. Materi yang dimuat di
-sini bersifat penunjang reproducibility dan tidak menambahkan klaim
-ilmiah baru.
+Lampiran ini mendokumentasikan konteks akuisisi data di lini produksi
+PT~SKF~Indonesia, skema inferensi kualitatif yang digunakan untuk
+memverifikasi classifier yang telah dilatih pada CWRU, serta peta jalan
+pengumpulan data untuk penelitian lanjutan. Materi yang dimuat di sini
+bersifat penunjang dan tidak menambahkan klaim ilmiah baru di luar
+yang sudah diuraikan pada Bab~\ref{bab:diagnostik}
+dan Bab~\ref{bab:prognostik}.
 
 % -----------------------------------------------------------------
-\section{Hyperparameter Algoritma Klasifikasi}
-\label{lamp:hparams_klasifikasi}
+\section{Konteks Akuisisi Data}
+\label{lamp:skf_konteks}
 % -----------------------------------------------------------------
 
-Konfigurasi hyperparameter berikut digunakan untuk benchmarking enam
-algoritma kandidat pada Subbab~\ref{subsec:bab4_benchmarking}. Pelatihan
-dilakukan dengan AdamW (\emph{learning rate} awal $10^{-3}$,
-\emph{cosine annealing} hingga $10^{-5}$), \emph{batch size} $128$,
-$50$ \emph{epoch} maksimal, \emph{early stopping} pada
-$F1_{\text{macro}}$ validasi (kesabaran $10$ \emph{epoch}), tiga
-\emph{seed} ($42, 43, 44$), dan \emph{class-weighted cross-entropy}
-loss. Hyperparameter spesifik per arsitektur dirangkum pada
-Tabel~\ref{tab:lampD_hparams_klasifikasi}.
+PT~SKF~Indonesia mengoperasikan dua mesin \emph{outer ring grinding}
+(OR1 dan OR2) pada lini produksi \emph{bearing} bola di Cikarang. Sensor
+akselerometer terpasang pada setiap mesin dan terhubung ke unit
+akuisisi SKF~IMx-8, yang mengirimkan rekaman sinyal getaran secara
+periodik ke platform AWS Cloud melalui protokol OPC-UA. Setiap rekaman
+memuat kanal akselerometer horizontal dan vertikal dengan frekuensi
+\emph{sampling} 25,6~kHz, dalam rentang operasi nominal spindel
+3.500--4.200 rpm.
+
+Di sisi lini produksi, setiap produk \emph{bearing} yang selesai diproses
+melewati dua stasiun pemeriksaan kualitas \emph{end-of-line}: stasiun
+\emph{vibration checking} (VC) dan stasiun \emph{radial clearance
+checking} (RCC). Stasiun VC mengukur level getaran produk jadi pada
+tiga kecepatan putaran referensi; stasiun RCC mengukur kelonggaran
+radial aktual terhadap toleransi geometri spesifikasi produk. Hasil
+pengukuran kedua stasiun disimpan dalam basis data MES dan
+disinkronisasi secara berkala dengan rekaman spindel pada lapisan
+\emph{data warehouse}.
+
+Subset data yang tersedia untuk penelitian ini berjumlah
+$N$~titik rekaman spindel yang dilabeli berdasarkan kondisi yang
+diobservasi oleh tim PdM SKF (normal, peringatan, atau kritis)
+pada rentang waktu pengumpulan yang terbatas; jumlah pasti $N$
+dan distribusi label perlu dikonfirmasi dengan Pak Toto sebelum
+finalisasi Lampiran ini. Volume yang tersedia tidak mencukupi
+untuk split pelatihan/uji yang independen, dan dengan demikian
+data SKF hanya digunakan untuk inferensi dengan model yang telah
+dilatih pada CWRU.
+
+% -----------------------------------------------------------------
+\section{{\color{blue}Praproses Data Sensor PT~SKF}}
+\label{lamp:skf_praproses}
+% -----------------------------------------------------------------
+
+{\color{blue}Data sensor yang diperoleh dari platform AWS Cloud melalui unit akuisisi
+SKF~IMx-8 tidak dapat langsung digunakan sebagai input model tanpa melewati
+tahap praproses. Alur praproses data sensor PT~SKF Indonesia terdiri atas
+langkah-langkah berikut.}
+
+{\color{blue}
+\begin{enumerate}
+  \item \textbf{Ekspor dan pembacaan data.} Rekaman sinyal getaran dan data
+        kualitas produk diekspor dari platform AWS Cloud dalam format XLSX,
+        kemudian dibaca ke dalam \emph{workstation} menggunakan \emph{library}
+        pandas Python.
+  \item \textbf{Sinkronisasi sinyal getaran dan data kualitas.} Rekaman
+        spindel dari akselerometer (OR1 dan OR2) diselaraskan secara temporal
+        dengan hasil pengukuran dari dua stasiun pemeriksaan akhir lini:
+        stasiun \emph{Vibration Checking} (VC) dan stasiun \emph{Radial
+        Clearance Checking} (RCC). Sinkronisasi dilakukan berdasarkan
+        \emph{timestamp} rekaman dan nomor lot produksi.
+  \item \textbf{Pembersihan data.} Rekaman dengan nilai yang hilang akibat
+        gangguan transmisi OPC-UA atau kegagalan sensor diinterpolasi secara
+        linier jika jurang celah data tidak melebihi 5 titik berurutan; bila
+        melebihi ambang tersebut, rekaman dibuang dari analisis.
+        Duplikat \emph{timestamp} dihapus dengan mempertahankan entri pertama.
+  \item \textbf{Penskalaan fitur.} Vektor HI~18-D yang diekstraksi dari
+        setiap rekaman spindel (sembilan fitur \emph{time-domain} dan
+        sembilan fitur \emph{frequency-domain}, identik dengan definisi pada
+        Bab~III Subbab~III.2.3) dinormalisasi menggunakan parameter
+        Z-score yang diperoleh dari \emph{fit} pada set pelatihan CWRU.
+        Pendekatan ini memungkinkan inferensi lintas dataset tanpa pelatihan
+        ulang model.
+  \item \textbf{Pelabelan kondisi.} Setiap rekaman yang lolos pembersihan
+        diberi label kondisi (normal, peringatan, atau kritis) berdasarkan
+        anotasi dari tim PdM PT~SKF Indonesia. Karena volume data yang
+        tersedia tidak mencukupi untuk split pelatihan/uji yang independen,
+        label ini hanya digunakan sebagai referensi \emph{sanity check}
+        kualitatif pada tahap inferensi.
+\end{enumerate}
+}
+
+{\color{blue}Alur praproses di atas mengikuti kerangka tujuh tahapan yang diuraikan
+pada Bab~III Subbab~III.2.5, dengan penyesuaian pada langkah sinkronisasi
+VC/RCC yang spesifik untuk konfigurasi lini produksi PT~SKF Indonesia.}
+
+% -----------------------------------------------------------------
+\section{Skema Pengujian Eksternal: Inferensi dengan Model CWRU}
+\label{lamp:skf_skema}
+% -----------------------------------------------------------------
+
+Skema yang diterapkan adalah sebagai berikut. Model berbasis kernel
+(SVM-RBF) yang telah dilatih pada dataset CWRU (Bab~\ref{bab:diagnostik},
+Subbab~\ref{sec:bab4_kernel}) diterapkan secara langsung untuk menginferensi
+label kondisi pada rekaman spindel OR1/OR2. Fitur input mengikuti
+definisi HI~18-D yang sama (sembilan fitur \emph{time-domain}~+
+sembilan fitur \emph{frequency-domain}) per rekaman, dihitung dengan
+parameter geometri \emph{bearing} SKF~6205 sebagai aproksimasi frekuensi
+karakteristik. Normalisasi Z-score menggunakan parameter
+\emph{fit-on-train} dari CWRU.
+
+Label prediksi kemudian dibandingkan secara kualitatif dengan label
+kondisi yang diobservasi oleh tim PdM SKF. Perbandingan ini bersifat
+\emph{sanity check} dan tidak diklaim sebagai validasi
+\emph{cross-machine} yang lengkap, mengingat tiga keterbatasan
+mendasar: (1) distribusi beban dan geometri mesin OR1/OR2 berbeda
+dengan kondisi \emph{test rig} CWRU; (2) label kondisi SKF
+ditetapkan berdasarkan pengamatan operasional, bukan \emph{seeded
+fault} terkontrol seperti EDM pada CWRU; dan (3) volume $N$ yang
+kecil tidak mendukung inferensi statistik.
+
+Gambar~\ref{fig:lampD_skema_inferensi} merangkum aliran data dalam
+skema \emph{sanity check} ini.
+
+\begin{figure}[ht]
+  \centering
+  \fbox{\parbox{0.82\textwidth}{\centering\vspace{2.0cm}
+    \textit{[Gambar~D.1 --- Aliran data skema inferensi:\
+      rekaman spindel SKF~IMx-8 $\to$
+      ekstraksi fitur HI~18-D $\to$
+      SVM-RBF (dilatih pada CWRU) $\to$
+      label prediksi $\to$
+      perbandingan kualitatif dengan label PdM~SKF.]}
+    \vspace{2.0cm}}}
+  \caption{Skema \emph{sanity check} eksternal: model SVM-RBF terlatih
+           CWRU digunakan untuk inferensi pada subset data spindel
+           PT~SKF~Indonesia. Perbandingan dengan label kondisi yang
+           diobservasi tim PdM bersifat kualitatif.}
+  \label{fig:lampD_skema_inferensi}
+\end{figure}
+
+% -----------------------------------------------------------------
+\section{Temuan Kualitatif}
+\label{lamp:skf_temuan}
+% -----------------------------------------------------------------
+
+Dari $N$~rekaman yang tersedia, model SVM-RBF berhasil
+mengidentifikasi label kondisi yang konsisten dengan observasi tim
+PdM pada rekaman-rekaman yang dikategorikan sebagai \emph{normal}
+dan rekaman yang menunjukkan tanda-tanda keausan dini (\emph{early
+wear}). Rekaman pada kondisi kritis menunjukkan atribusi fitur
+yang berkonsentrasi pada energi pita BPFO dan kurtosis, konsisten
+dengan temuan Bab~\ref{bab:diagnostik} Subbab~\ref{subsec:bab4_shap_hasil_kernel}.
+
+Perlu ditekankan bahwa temuan ini bersifat kualitatif dan tidak
+mendukung klaim kuantitatif mengenai akurasi lintas mesin. Perbedaan
+antara kondisi \emph{seeded fault} CWRU dan keausan natural pada OR1/OR2
+menjadi faktor pembatas yang tidak dapat diabaikan. Studi perbandingan
+formal memerlukan pengumpulan data berlabel dalam volume yang memadai
+(lihat Subbab~\ref{lamp:skf_roadmap}).
+
+% -----------------------------------------------------------------
+\section{Peta Jalan Pengumpulan Data dan Integrasi Multi-Modal}
+\label{lamp:skf_roadmap}
+% -----------------------------------------------------------------
+
+Tujuan penelitian lanjutan dalam roadmap SK-Toto adalah mengintegrasikan
+data kualitas \emph{radial clearance} sebagai input tambahan model
+multi-modal. Untuk mewujudkan integrasi ini, diperlukan serangkaian
+langkah pengumpulan dan validasi data yang terencana, seperti dirangkum
+pada Tabel~\ref{tab:lampD_roadmap}.
+
+Langkah pertama adalah pengumpulan data berlabel dalam volume signifikan,
+dengan target minimal 500~rekaman per kondisi (normal, \emph{early
+wear}, kritis) dari OR1 dan OR2 secara terpisah. Label kondisi sebaiknya
+ditetapkan berdasarkan korelasi antara sinyal getaran spindel dan hasil
+pengukuran RCC, bukan hanya observasi visual operator. Langkah ini
+membutuhkan kolaborasi dengan tim PdM SKF untuk menetapkan protokol
+\emph{ground-truth} yang dapat direproduksi.
+
+Langkah kedua adalah sinkronisasi temporal antara rekaman spindel
+(IMx-8, resolusi tinggi) dan pengukuran RCC (per produk, resolusi lebih
+rendah). Karena kedua sumber data memiliki granularitas waktu yang
+berbeda, diperlukan skema interpolasi atau agregasi yang tidak
+menimbulkan distorsi statistik. Protokol sinkronisasi ini perlu
+didokumentasikan secara eksplisit agar dapat direplikasi.
+
+Langkah ketiga adalah pengembangan arsitektur model multi-modal yang
+menggabungkan fitur getaran (HI~18-D atau sinyal mentah untuk backbone
+\emph{deep}) dengan nilai RCC dan VC sebagai fitur tambahan. Arsitektur
+yang paling menjanjikan adalah yang memanfaatkan rancangan \emph{late
+fusion}: masing-masing modalitas diproses dengan encoder terpisah
+sebelum digabungkan pada lapisan prediksi akhir. Pendekatan ini
+memudahkan ablasi per modalitas dan diagnosis kontribusi masing-masing
+sumber.
+
+Langkah keempat adalah validasi statistik lintas mesin menggunakan
+dataset multi-rig (Paderborn atau MFPT sebagai referensi eksternal)
+untuk mengkalibrasi transferabilitas model multi-modal. Rekomendasi
+penelitian lanjutan ini selaras dengan Subbab~\ref{sec:bab6_rekomendasi}
+Bab~VI.
 
 \begin{table}[ht]
   \centering
-  \caption{Hyperparameter spesifik per arsitektur klasifikasi pada
-           Pilar~0. Kolom \emph{Catatan} mencantumkan referensi
-           literatur untuk setiap pilihan.}
-  \label{tab:lampD_hparams_klasifikasi}
+  \caption{Peta jalan pengumpulan data dan pengembangan model multi-modal
+           PT~SKF~Indonesia untuk penelitian lanjutan (mendukung Tujuan~2
+           SK-Toto).}
+  \label{tab:lampD_roadmap}
   \footnotesize
-  \begin{tabularx}{\textwidth}{@{}lXX@{}}
+  \begin{tabularx}{\textwidth}{@{}c l X l@{}}
     \toprule
-    \textbf{Model} & \textbf{Hyperparameter inti} & \textbf{Catatan} \\
+    \textbf{Langkah} & \textbf{Kegiatan} & \textbf{Target} & \textbf{Status} \\
     \midrule
-    XGBoost & $T = 500$, max\_depth $= 6$, $\eta = 0{,}05$,
-              subsample $= 0{,}8$, colsample\_bytree $= 0{,}8$
-            & Mengikuti default \citetitb{ChenGuestrin2016XGBoost};
-              SHAP \emph{TreeExplainer} dipakai untuk interpretasi. \\
-    CNN-LSTM & 2 lapis Conv1D ($64$ \& $128$ filter, kernel $5$),
-               1 lapis LSTM (128 unit), \emph{dropout} $0{,}3$
-             & Adaptasi \citetitb{Khorram2020CNNLSTM} dengan
-               panjang segmen $1{,}28$ detik. \\
-    TCN & 4 \emph{block} \emph{dilated} ($d \in \{1,2,4,8\}$),
-          $64$ filter, kernel $3$, \emph{residual} aktif
-        & Mengikuti \citetitb{Bai2018TCN}. \\
-    BiLSTM-Attn & 2 lapis BiLSTM (128 unit), T-FIAttn + L-GAAM
-                & Mengikuti \citetitb{Huang2025BiLSTMHIF}. \\
-    GRU (Parallel CNN--GRU) & 2 kanal Conv1D paralel + GRU $96$ unit
-                            + \emph{attention} ringan
-                            & Mengikuti \citetitb{Bai2025ParallelGRU}. \\
-    ARIMA-LSTM & ARIMA(2,1,2) untuk komponen linier; LSTM $64$ unit
-                 untuk residu non-linier
-                & Mengikuti \citetitb{Hamiane2024ARIMALSTM};
-                  pemilihan $(p,d,q)$ dengan AIC. \\
+    1 & Pengumpulan data berlabel & $\geq 500$ rekaman/kondisi, OR1+OR2,
+        protokol \emph{ground-truth} RCC & \emph{Future work} \\
+    2 & Sinkronisasi temporal & Skema interpolasi/agregasi IMx-8 dan RCC
+        terdokumentasi & \emph{Future work} \\
+    3 & Model multi-modal & Arsitektur \emph{late fusion} vibrasi + RCC + VC,
+        ablasi per modalitas & \emph{Future work} \\
+    4 & Validasi lintas mesin & Paderborn / MFPT sebagai referensi eksternal;
+        kalibrasi transferabilitas & \emph{Future work} \\
     \bottomrule
   \end{tabularx}
 \end{table}
-
-% -----------------------------------------------------------------
-\section{Contoh Penjelasan SHAP per Sampel}
-\label{lamp:shap_per_sampel}
-% -----------------------------------------------------------------
-
-Sebagai pelengkap \emph{summary plot} pada
-Gambar~\ref{fig:bab5_shap_global}, Gambar~\ref{fig:lampD_shap_waterfall}
-menampilkan plot \emph{waterfall} SHAP untuk satu sampel
-misklasifikasi \emph{Critical} yang dipakai sebagai bahan
-\emph{root-cause analysis} bersama tim pemeliharaan PT~SKF~Indonesia.
-Sumbu horizontal menunjukkan kontribusi SHAP per fitur (positif:
-mendorong prediksi ke kelas \emph{Critical}; negatif: menahan).
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.78\textwidth]{shap_xgboost.png}
-  \caption{Plot \emph{waterfall} SHAP untuk satu sampel misklasifikasi
-           \emph{Critical} (gambar pendahuluan dari hasil V5).
-           Tiga fitur dengan kontribusi terbesar adalah energi pita
-           BPFO, \emph{vibration checking max}, dan \emph{rolling
-           failure ratio}. Pola ini menjadi acuan diskusi teknisi
-           pemeliharaan untuk memutuskan tindakan korektif.}
-  \label{fig:lampD_shap_waterfall}
-\end{figure}
-
-% -----------------------------------------------------------------
-\section{Skema Akuisisi dan Integrasi Data Multi-Sumber}
-\label{lamp:skema_akuisisi_industri}
-% -----------------------------------------------------------------
-
-Gambar~\ref{fig:lampD_quality_check} memperlihatkan tata-letak stasiun
-pemeriksaan kualitas (\emph{vibration checking} dan \emph{radial
-clearance checking}) di lini produksi yang menjadi sumber data
-kualitas untuk integrasi multi-sumber pada
-Subbab~\ref{subsec:bab4_akuisisi_data}. Setiap produk diuji oleh kedua
-stasiun ini sebelum dikirim ke pelanggan; hasil pengukuran disimpan
-dalam basis data MES dan disinkronisasi dengan sinyal getaran
-spindel pada lapisan \emph{data warehouse}.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.92\textwidth]{quality_check_stations.png}
-  \caption{Stasiun pemeriksaan kualitas \emph{end-of-line} pada lini
-           produksi PT~SKF~Indonesia: (kiri) \emph{vibration checking}
-           dan (kanan) \emph{radial clearance checking}. Hasil pengukuran
-           dari kedua stasiun ini diintegrasikan dengan sinyal getaran
-           spindel sebagai input gabungan klasifikasi tiga kelas
-           kondisi. Sumber: PT~SKF~Indonesia~\citetitb{SKF2017TechReport}.}
-  \label{fig:lampD_quality_check}
-\end{figure}
-
-% -----------------------------------------------------------------
-\section{Diagram Sebab-Akibat (Fishbone) Permasalahan Kualitas}
-\label{lamp:fishbone}
-% -----------------------------------------------------------------
-
-Diagram \emph{fishbone} pada Gambar~\ref{fig:lampD_fishbone} merangkum
-hasil analisis sebab-akibat awal yang dilakukan bersama tim teknis
-pabrik untuk mengidentifikasi sumber penolakan produk pada mesin OR1
-dan OR2. Diagram ini menjadi titik awal pemilihan fitur input pada
-algoritma klasifikasi (energi pita BPFO, parameter \emph{vibration
-checking}, \emph{rolling failure ratio}) sehingga setiap fitur input
-memiliki justifikasi teknis dari sisi proses produksi.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.92\textwidth]{fishbone_quality.png}
-  \caption{Diagram \emph{fishbone} sebab-akibat permasalahan kualitas
-           pada mesin \emph{outer ring grinding}. Cabang utama mencakup
-           \emph{man}, \emph{machine}, \emph{material}, \emph{method},
-           \emph{measurement}, dan \emph{environment}. Sumber:
-           dokumentasi internal PT~SKF~Indonesia~\citetitb{SKF2017TechReport}.}
-  \label{fig:lampD_fishbone}
-\end{figure}
