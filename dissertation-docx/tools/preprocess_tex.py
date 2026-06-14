@@ -380,6 +380,14 @@ def _strip_textcolor(block: str) -> str:
         block = block[:i] + block[j + 1:e - 1] + block[e:]
 
 
+def _strip_color_decl(block: str) -> str:
+    """Drop \\color{c} / \\color[model]{c} declarations, keeping group content.
+
+    Used for revision-marker color (e.g. {\\color{blue} ...}) inside math;
+    texmath cannot parse the \\color declaration."""
+    return re.sub(r"\\color(?:\[[^\]]*\])?\{[^{}]*\}", "", block)
+
+
 def strip_math_color(src: str) -> str:
     """texmath cannot parse \\textcolor inside math - drop it in equations.
 
@@ -389,7 +397,7 @@ def strip_math_color(src: str) -> str:
     spans = list(find_env(src, "equation")) + list(find_env(src, "align"))
     for b, e in sorted(spans):
         out.append(src[pos:b])
-        out.append(_fix_math_text(_strip_textcolor(src[b:e])))
+        out.append(_fix_math_text(_strip_color_decl(_strip_textcolor(src[b:e]))))
         pos = e
     out.append(src[pos:])
     return "".join(out)
