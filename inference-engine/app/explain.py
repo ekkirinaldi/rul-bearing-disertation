@@ -10,6 +10,7 @@ Two tiers, both operating on the Mamba-xLSTM-Net backbone (``lit.model``):
   Gradients over the current buffered window. Heavier (``n_steps`` model
   evaluations); run in a threadpool from the server.
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -17,23 +18,16 @@ from typing import Any
 import numpy as np
 import torch
 
-from mxlstm.interp.integrated_gradients import integrated_gradients
-
 
 def _feature_name(names: list[str], i: int) -> str:
-    if i < len(names):
-        return names[i]
-    return f"f{i}"
+    return names[i] if i < len(names) else f"f{i}"
 
 
 def _unwrap_pred(out: Any) -> tuple[torch.Tensor, dict | None]:
     """Normalize a backbone forward result into ``(pred, hidden|None)``."""
     if isinstance(out, tuple):
-        pred = out[0]
-        hidden = out[1] if len(out) > 1 else None
-        if isinstance(hidden, dict):
-            return pred, hidden
-        return pred, None
+        pred, hidden = out[0], (out[1] if len(out) > 1 else None)
+        return pred, (hidden if isinstance(hidden, dict) else None)
     return out, None
 
 
@@ -86,12 +80,12 @@ def live_explanation(
     pred_val = float(pred_scalar.detach().cpu().item())
     branch_gate = _branch_gate(hidden)
 
-    top_drivers = None
+    top_drivers: list[dict[str, Any]] | None = None
     if x.grad is not None:
-        grad = x.grad.detach()[0]
+        grad = x.grad.detach()[0]  # (L, F)
         inp = x.detach()[0]
-        sal = (grad * inp).abs().sum(dim=0).cpu().numpy()
-        direction = grad.mean(dim=0).cpu().numpy()
+        sal = (grad * inp).abs().sum(dim=0).cpu().numpy()  # (F,)
+        direction = grad.mean(dim=0).cpu().numpy()  # (F,)
         total = float(sal.sum()) + 1e-12
         weights = sal / total
         order = np.argsort(weights)[::-1][:top_k]
@@ -123,15 +117,19 @@ def integrated_gradients_explanation(
     Returns a per-feature importance bar (top_k) and a downsampled
     time×feature heatmap for the most important features.
     """
+    from mxlstm.interp.integrated_gradients import integrated_gradients
+
     x = torch.from_numpy(np.ascontiguousarray(window, dtype=np.float32)).unsqueeze(0)
-    attr = integrated_gradients(lit.model, x, n_steps=n_steps, device=device)[0]
-    per_feat = np.abs(attr).sum(axis=0)
-    order = np.argsort(per_feat)[::-1][:max(top_k, 1)]
+    attr = integrated_gradients(lit.model, x, n_steps=n_steps, device=device)[0]  # (L, F)
+
+    per_feat = np.abs(attr).sum(axis=0)  # (F,)
+    order = np.argsort(per_feat)[::-1][: max(top_k, 1)]
     features = [
         {"name": _feature_name(feature_names, int(i)), "value": float(per_feat[i])}
         for i in order
     ]
 
+    # Heatmap: downsample the time axis to <= time_bins, keep the top features.
     L = attr.shape[0]
     bins = min(time_bins, L)
     edges = np.linspace(0, L, bins + 1, dtype=int)
@@ -144,7 +142,7 @@ def integrated_gradients_explanation(
         "features": features,
         "heatmap": {
             "feature_names": [_feature_name(feature_names, int(i)) for i in order],
-            "values": heat.tolist(),
+            "values": heat.tolist(),  # (top_k, bins), signed
             "n_time": int(L),
             "bins": int(bins),
         },

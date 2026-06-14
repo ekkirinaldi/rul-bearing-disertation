@@ -1,4 +1,5 @@
 """Streaming inference engine: per-acquisition HI pipeline + Mamba-xLSTM-Net."""
+
 from __future__ import annotations
 
 import json
@@ -10,6 +11,7 @@ from typing import Any
 
 import numpy as np
 import torch
+
 from mxlstm.data.adapters import BearingRun, load_phm2012_bearing, load_xjtusy_bearing
 from mxlstm.data.hi import MinMaxScaler, extract_hi_features
 from mxlstm.models.mamba_xlstm_net import MambaXLSTMConfig, MambaXLSTMNet
@@ -20,6 +22,9 @@ from app.explain import integrated_gradients_explanation, live_explanation
 from app.model_registry import DatasetSpec, load_dataset_spec
 from app.skf_loader import SkfTrendRun, load_skf_stream
 
+
+# Backward-based saliency runs only every Nth acquisition (drivers change slowly);
+# every other step is a cheap no_grad forward. Keeps M-series memory/CPU flat.
 _SALIENCY_EVERY = 12
 
 
@@ -82,7 +87,11 @@ def load_model(dataset_key: str) -> LoadedModel:
     n_features = int(scaler.min_.shape[0])
     backbone = _build_backbone(cfg, n_features, spec.window_length)
     device = _pick_device()
-    lit = RULLitModule.load_from_checkpoint(str(spec.checkpoint), model=backbone, map_location=device)
+    lit = RULLitModule.load_from_checkpoint(
+        str(spec.checkpoint),
+        model=backbone,
+        map_location=device,
+    )
     lit = lit.to(device).eval()
     loaded = LoadedModel(spec=spec, lit=lit, device=device, scaler=scaler, cfg=cfg)
     _MODEL_CACHE[cache_key] = loaded
@@ -91,10 +100,21 @@ def load_model(dataset_key: str) -> LoadedModel:
 
 def _load_bearing(spec: DatasetSpec, bearing_id: str) -> BearingRun:
     if spec.key == "phm2012":
-        run = load_phm2012_bearing(spec.data_root, bearing_id, cache_dir=spec.cache_dir, use_cache=True)
+        run = load_phm2012_bearing(
+            spec.data_root,
+            bearing_id,
+            cache_dir=spec.cache_dir,
+            use_cache=True,
+        )
     elif spec.key == "xjtusy":
         cond = int(bearing_id.split("_")[0])
-        run = load_xjtusy_bearing(spec.data_root, cond, bearing_id, cache_dir=spec.cache_dir, use_cache=True)
+        run = load_xjtusy_bearing(
+            spec.data_root,
+            cond,
+            bearing_id,
+            cache_dir=spec.cache_dir,
+            use_cache=True,
+        )
     else:
         raise ValueError(spec.key)
     if run is None:
@@ -104,7 +124,7 @@ def _load_bearing(spec: DatasetSpec, bearing_id: str) -> BearingRun:
 
 def _downsample_waveform(acq: np.ndarray, max_pts: int = 512) -> dict[str, list[float]]:
     """Downsample (C, L) acquisition for JSON transport."""
-    out = {}
+    out: dict[str, list[float]] = {}
     names = ["horizontal", "vertical"]
     for c in range(min(acq.shape[0], len(names))):
         sig = acq[c]
@@ -120,6 +140,7 @@ def _downsample_waveform(acq: np.ndarray, max_pts: int = 512) -> dict[str, list[
 
 def _hi_snapshot(raw_hi: np.ndarray) -> dict[str, float]:
     """Extract a few interpretable raw HI scalars (before scaling)."""
+    # Feature layout: td_c0_rms=0, td_c1_rms=9, td_c0_kurtosis=2
     return {
         "rms_h": float(raw_hi[0]),
         "rms_v": float(raw_hi[9]) if raw_hi.size > 9 else float(raw_hi[0]),
@@ -165,8 +186,6 @@ class StreamSession:
 
     @property
     def eol_index(self) -> int:
-        if self.skf_run is not None:
-            return int(self.skf_run.eol_index)
         if not self.spec.has_gt_rul:
             return self.n_total - 1
         assert self.bearing is not None
@@ -192,7 +211,9 @@ class StreamSession:
         self.last_drivers = None
         self.start_wall_clock = time.time()
 
-    def _predicted_ttf(self, r_hat: float, elapsed_s: float) -> tuple[float | None, float | None, bool]:
+    def _predicted_ttf(
+        self, r_hat: float, elapsed_s: float
+    ) -> tuple[float | None, float | None, bool]:
         """Derive useful time left from the prediction (no ground truth needed).
 
         The RUL target is ``r = (eol - t)/eol`` (fraction of *total* life left),
@@ -240,7 +261,7 @@ class StreamSession:
         """Rewind and replay acquisitions 0..t inclusive; return the frame at t."""
         t = max(-1, min(t, self.n_total - 1))
         self.reset()
-        last = None
+        last: dict[str, Any] | None = None
         for _ in range(t + 1):
             last = self.step()
         return last
@@ -273,33 +294,44 @@ class StreamSession:
             hi_snap = None
 
         alpha = self.spec.smoothing_alpha
+
         raw_hi, names = extract_hi_features(acq, fs, n_bands=self.spec.n_bands)
         if not self.feature_names:
             self.feature_names = list(names)
         hi_scaled = self.loaded.scaler.transform(raw_hi.reshape(1, -1))[0]
+
         if self.ema_state is None:
             self.ema_state = hi_scaled.copy()
         else:
-            self.ema_state = (alpha * hi_scaled + (1.0 - alpha) * self.ema_state).astype(np.float32)
+            self.ema_state = (alpha * hi_scaled + (1.0 - alpha) * self.ema_state).astype(
+                np.float32
+            )
+
         self.hi_buffer.append(self.ema_state.copy())
         if len(self.hi_buffer) > self.window_length:
             self.hi_buffer.popleft()
+
         self.t = next_t
         if hi_snap is None:
             hi_snap = _hi_snapshot(raw_hi)
         self.hi_history.append(hi_snap)
 
         warmup = len(self.hi_buffer) < self.window_length
-        pred_rul = None
-        branch_gate = None
-        top_drivers = None
+        pred_rul: float | None = None
+        branch_gate: dict[str, float] | None = None
+        top_drivers: list[dict[str, Any]] | None = None
         if not warmup:
             window = np.stack(list(self.hi_buffer), axis=0).astype(np.float32)
             self.last_window = window
+            # Prediction + gate run every step under no_grad (cheap, flat memory);
+            # the backward-based saliency is throttled — top drivers change slowly.
             want_saliency = (next_t % _SALIENCY_EVERY == 0) or (self.last_drivers is None)
             try:
                 expl = live_explanation(
-                    self.loaded.lit, window, self.loaded.device, self.feature_names,
+                    self.loaded.lit,
+                    window,
+                    self.loaded.device,
+                    self.feature_names,
                     with_saliency=want_saliency,
                 )
                 pred_rul = expl["pred"]
@@ -307,7 +339,7 @@ class StreamSession:
                 if expl["top_drivers"] is not None:
                     self.last_drivers = expl["top_drivers"]
                 top_drivers = self.last_drivers
-            except Exception:
+            except Exception:  # noqa: BLE001 — never let explainability break the stream
                 x = torch.from_numpy(window).unsqueeze(0).to(self.loaded.device)
                 with torch.no_grad():
                     pred_rul = float(self.loaded.lit(x).squeeze().cpu().item())
@@ -315,20 +347,22 @@ class StreamSession:
         gt_rul = self._ground_truth_rul(next_t) if self.spec.has_gt_rul else None
         elapsed_s = next_t * self.interval_s
 
-        pred_remaining_s = None
-        pred_total_life_s = None
+        # Prediction-derived "useful time left" (works without ground truth).
+        pred_remaining_s: float | None = None
+        pred_total_life_s: float | None = None
         ttf_capped = False
         if pred_rul is not None:
-            pred_remaining_s, pred_total_life_s, ttf_capped = self._predicted_ttf(pred_rul, elapsed_s)
+            pred_remaining_s, pred_total_life_s, ttf_capped = self._predicted_ttf(
+                pred_rul, elapsed_s
+            )
         pred_eol_unix, pred_eol_iso = self._predicted_eol(next_t, pred_remaining_s)
 
-        gt_remaining_s = None
-        if self.skf_run is not None:
-            gt_remaining_s = self.skf_run.rul_seconds(next_t)
-        elif self.spec.has_gt_rul:
+        # Ground-truth remaining shown alongside the prediction when available.
+        gt_remaining_s: float | None = None
+        if self.spec.has_gt_rul:
             gt_remaining_s = max(0, self.eol_index - next_t) * self.interval_s
 
-        payload = {
+        payload: dict[str, Any] = {
             "t": next_t,
             "n_total": self.n_total,
             "eol_index": self.eol_index if self.spec.has_gt_rul else None,
@@ -346,19 +380,16 @@ class StreamSession:
             "ttf_capped": ttf_capped,
             "pred_eol_unix": pred_eol_unix,
             "pred_eol_iso": pred_eol_iso,
-            **{
-                "gt_remaining_s": gt_remaining_s,
-                "branch_gate": branch_gate,
-                "top_drivers": top_drivers,
-                "interval_s": self.interval_s,
-                "bearing_id": self.bearing_id,
-                "dataset": self.dataset_key,
-                "model": self.spec.model_name,
-                "has_gt_rul": self.spec.has_gt_rul,
-                "transfer_note": self.spec.transfer_note,
-            },
+            "gt_remaining_s": gt_remaining_s,
+            "branch_gate": branch_gate,
+            "top_drivers": top_drivers,
+            "interval_s": self.interval_s,
+            "bearing_id": self.bearing_id,
+            "dataset": self.dataset_key,
+            "model": self.spec.model_name,
+            "has_gt_rul": self.spec.has_gt_rul,
+            "transfer_note": self.spec.transfer_note,
         }
-
         if self.skf_run is not None:
             pt = self.skf_run.points[next_t]
             payload["timestamp"] = pt.timestamp.isoformat()
@@ -367,13 +398,13 @@ class StreamSession:
                 "velocity": pt.velocity,
                 "envelope": pt.envelope,
             }
-
         return payload
 
     def run_to_end(self) -> list[dict[str, Any]]:
-        out = []
+        out: list[dict[str, Any]] = []
         while True:
             msg = self.step()
             if msg is None:
-                return out
+                break
             out.append(msg)
+        return out

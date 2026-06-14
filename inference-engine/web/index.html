@@ -1,134 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RUL Streaming Inference Engine</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
+<div class="app" data-screen-label="RUL Dashboard">
+
   <header class="topbar">
     <div class="brand">
-      <span class="logo">RUL</span>
+      <div class="mark"><span></span></div>
       <div>
-        <h1>Streaming Inference Engine</h1>
-        <p class="sub">Mamba-xLSTM-Net &middot; live health-indicator prognostics</p>
+        <h1>RUL Streaming Inference Engine</h1>
+        <div class="sub">Simulated sensor stream · Mamba-xLSTM-Net · dissertation Tier-S</div>
       </div>
     </div>
-    <div id="conn-status" class="conn offline">offline</div>
+    <div class="status" id="status" data-state="idle">
+      <span class="led"></span><span id="statusText">Idle</span>
+    </div>
   </header>
 
-  <main class="layout">
-    <section class="panel controls">
-      <h2>Stream control</h2>
-      <form id="control-form" autocomplete="off" onsubmit="return false;">
-        <label for="dataset-select">Dataset</label>
-        <select id="dataset-select" name="dataset"></select>
-
-        <label for="bearing-select">Bearing / channel</label>
-        <select id="bearing-select" name="bearing"></select>
-
-        <label for="speed-range">Speed (<span id="speed-value">50</span> ms/frame)</label>
-        <input type="range" id="speed-range" name="speed" min="10" max="500" step="10" value="50" />
-
-        <div class="btn-row">
-          <button id="btn-start" type="button" class="primary">Start</button>
-          <button id="btn-pause" type="button">Pause</button>
-          <button id="btn-resume" type="button">Resume</button>
-        </div>
-        <div class="btn-row">
-          <button id="btn-step" type="button">Step</button>
-          <button id="btn-reset" type="button">Reset</button>
-          <button id="btn-stop" type="button">Stop</button>
-        </div>
-        <button id="btn-explain" type="button" class="explain">Explain (Integrated Gradients)</button>
-      </form>
-
-      <div id="transfer-note" class="note hidden"></div>
-
-      <h2>Run metadata</h2>
-      <dl class="meta">
-        <dt>Model</dt><dd id="meta-model">&mdash;</dd>
-        <dt>Checkpoint</dt><dd id="meta-checkpoint">&mdash;</dd>
-        <dt>Device</dt><dd id="meta-device">&mdash;</dd>
-        <dt>Window</dt><dd id="meta-window">&mdash;</dd>
-        <dt>Interval</dt><dd id="meta-interval">&mdash;</dd>
-      </dl>
-    </section>
-
-    <section class="panel status">
-      <h2>Live status</h2>
-      <div class="progress-wrap">
-        <div id="progress-bar" class="progress-bar"></div>
-        <span id="progress-label" class="progress-label">idle</span>
-      </div>
-
-      <div class="metric-grid">
-        <div class="metric">
-          <span class="metric-label">Predicted RUL</span>
-          <span id="metric-pred-rul" class="metric-value">&mdash;</span>
-        </div>
-        <div class="metric">
-          <span class="metric-label">Ground-truth RUL</span>
-          <span id="metric-gt-rul" class="metric-value">&mdash;</span>
-        </div>
-        <div class="metric">
-          <span class="metric-label">Predicted time left</span>
-          <span id="metric-remaining" class="metric-value">&mdash;</span>
-        </div>
-        <div class="metric">
-          <span class="metric-label">Predicted failure (EOL)</span>
-          <span id="metric-eol" class="metric-value">&mdash;</span>
-        </div>
-        <div class="metric">
-          <span class="metric-label">Elapsed (sim)</span>
-          <span id="metric-elapsed" class="metric-value">&mdash;</span>
-        </div>
-        <div class="metric">
-          <span class="metric-label">Acquisition</span>
-          <span id="metric-acq" class="metric-value">&mdash;</span>
+  <div class="row-top">
+    <!-- CTL-00: Acquisition Control -->
+    <div class="panel panel-ctl">
+      <div class="head"><span class="ttl">Acquisition Control</span><span class="tag">CTL-00</span></div>
+      <div class="body card-fill">
+        <p id="transfer-note" class="transfer-note field-span" hidden></p>
+        <div class="ctl-grid">
+          <div class="field">
+            <span class="lbl">Dataset</span>
+            <select id="dataset" name="dataset">
+              <option value="">Loading…</option>
+            </select>
+          </div>
+          <div class="field">
+            <span class="lbl">Test Bearing</span>
+            <select id="bearing" name="bearing"></select>
+          </div>
+          <div class="field field-span">
+            <span class="lbl">Stream Speed</span>
+            <div class="range-row">
+              <input type="range" id="speed" name="speed_ms" min="10" max="500" step="10" value="50" />
+              <span class="range-cap"><b id="speedVal">50</b> ms</span>
+            </div>
+          </div>
+          <div class="field">
+            <span class="lbl">Warn (%)</span>
+            <input type="number" id="warn" name="warn_thresh" value="40" min="1" max="99" />
+          </div>
+          <div class="field">
+            <span class="lbl">Crit (%)</span>
+            <input type="number" id="crit" name="crit_thresh" value="20" min="1" max="99" />
+          </div>
+          <div class="field field-span ctl-btns">
+            <button type="button" class="btn primary" id="btnStart" name="start">▶ Start</button>
+            <button type="button" class="btn warn" id="btnPause" name="pause" disabled>❚❚ Pause</button>
+            <button type="button" class="btn" id="btnStep" name="step" disabled>Step</button>
+            <button type="button" class="btn" id="btnReset" name="reset" disabled>Reset</button>
+          </div>
+          <div class="field field-span seek">
+            <span class="lbl">Seek</span>
+            <input type="range" id="seek" name="seek" min="0" max="0" value="0" disabled />
+            <div class="seek-meta"><b id="seekIdx">—</b> / <span id="seekMax">—</span></div>
+          </div>
         </div>
       </div>
+    </div>
 
-      <div id="warmup-banner" class="banner hidden">Warming up the window&hellip;</div>
+    <!-- XAI-02: Live Explainability -->
+    <div class="panel panel-xai">
+      <div class="head"><span class="ttl">Live Explainability</span><span class="tag">XAI-02</span></div>
+      <div class="body card-fill">
+        <div class="xai-block">
+          <span class="lbl">Fusion Gate</span>
+          <div class="fusion" id="fusionBar">
+            <div class="seg xlstm" id="segX" style="flex-basis:50%"><span>xLSTM</span><span class="pc" id="pcX">50%</span></div>
+            <div class="seg mamba" id="segM" style="flex-basis:50%"><span class="pc" id="pcM">50%</span><span>Mamba</span></div>
+          </div>
+        </div>
+        <div class="xai-block xai-grow">
+          <span class="lbl">Top Drivers (|grad·input|)</span>
+          <div class="drivers" id="drivers"><div class="driver muted">Awaiting predictions…</div></div>
+        </div>
+        <button type="button" class="btn primary btn-block" id="btnExplain" name="explain" disabled>⊹ Integrated Gradients</button>
+      </div>
+    </div>
 
-      <h3>Fusion branch gate</h3>
-      <div class="gate">
-        <div class="gate-bar">
-          <div id="gate-xlstm" class="gate-xlstm" style="width:50%">xLSTM</div>
-          <div id="gate-mamba" class="gate-mamba" style="width:50%">Mamba</div>
+    <!-- RUL-01: Predicted Remaining Useful Life -->
+    <div class="panel panel-rul">
+      <div class="head"><span class="ttl">Predicted Remaining Useful Life</span><span class="tag">RUL-01</span></div>
+      <div class="body card-fill">
+        <div class="metrics metrics-compact">
+          <div class="mcell accent" id="mUsefulCell">
+            <div class="k">Useful Left (pred.)</div>
+            <div class="v v-hero" id="mUseful">—</div>
+          </div>
+          <div class="mcell">
+            <div class="k">Pred. End-of-Life</div>
+            <div class="v v-sm" id="mEol">—</div>
+          </div>
+          <div class="mcell">
+            <div class="k">Truth Remaining</div>
+            <div class="v v-sm" id="mTruth">—</div>
+          </div>
+          <div class="mcell-row">
+            <div class="mcell">
+              <div class="k">Acquisition</div>
+              <div class="v v-xs" id="mAcq">— / —</div>
+            </div>
+            <div class="mcell">
+              <div class="k">Elapsed</div>
+              <div class="v v-xs" id="mElapsed">—</div>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <section class="panel chart-panel wide">
-      <h2>RUL trajectory</h2>
-      <canvas id="rul-chart" height="120"></canvas>
-    </section>
+  <div class="cols block">
+    <div class="panel panel-chart">
+      <div class="head"><span class="ttl">RUL — Predicted vs Ground Truth</span><span class="tag">TRN-03</span></div>
+      <div class="body body-chart">
+        <div class="legend legend-compact">
+          <span class="it"><span class="sw" style="background:var(--blue)"></span>Predicted</span>
+          <span class="it gt-legend"><span class="sw dash"></span>Truth</span>
+          <span class="it"><span class="sw" style="background:var(--amber-wash);border:1px solid var(--amber)"></span>Warn</span>
+          <span class="it"><span class="sw" style="background:var(--red-wash);border:1px solid var(--red)"></span>Crit</span>
+        </div>
+        <div class="chart-wrap"><canvas id="cRul" height="240"></canvas></div>
+      </div>
+    </div>
+    <div class="panel panel-chart">
+      <div class="head"><span class="ttl">Latest Vibration Waveform</span><span class="tag">VIB-04</span></div>
+      <div class="body body-chart">
+        <div class="legend legend-compact">
+          <span class="it"><span class="sw" style="background:var(--blue)"></span>Horizontal</span>
+          <span class="it"><span class="sw" style="background:var(--rust)"></span>Vertical</span>
+        </div>
+        <div class="chart-wrap"><canvas id="cWave" height="240"></canvas></div>
+      </div>
+    </div>
+  </div>
 
-    <section class="panel chart-panel">
-      <h2>Health indicators (raw)</h2>
-      <canvas id="hi-chart" height="160"></canvas>
-    </section>
+  <div class="cols block">
+    <div class="panel panel-chart">
+      <div class="head"><span class="ttl">Integrated Gradients — Feature Attribution</span><span class="tag">XAI-05</span></div>
+      <div class="body body-chart">
+        <div class="legend legend-compact">
+          <span class="it"><span class="sw" style="background:var(--blue)"></span>Σ|attribution|</span>
+        </div>
+        <div class="chart-wrap chart-wrap-sm"><canvas id="cAttr" height="200"></canvas></div>
+        <div class="heat heat-compact">
+          <span class="lbl">Time × Feature Heatmap</span>
+          <div class="heatgrid" id="heatgrid"></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-chart">
+      <div class="head"><span class="ttl">Health Indicators (raw)</span><span class="tag">HI-06</span></div>
+      <div class="body body-chart">
+        <div class="legend legend-compact">
+          <span class="it"><span class="sw" style="background:var(--blue)"></span>RMS H</span>
+          <span class="it"><span class="sw" style="background:var(--rust)"></span>RMS V</span>
+          <span class="it"><span class="sw" style="background:var(--green)"></span>Kurt H</span>
+        </div>
+        <div class="chart-wrap"><canvas id="cHealth" height="240"></canvas></div>
+      </div>
+    </div>
+  </div>
 
-    <section class="panel chart-panel">
-      <h2>Waveform (downsampled)</h2>
-      <canvas id="wave-chart" height="160"></canvas>
-    </section>
+  <div class="row-3 block">
+    <div class="panel panel-sys">
+      <div class="head"><span class="ttl">Run Details</span><span class="tag">SYS-07</span></div>
+      <div class="body body-tight">
+        <table class="kv kv-compact">
+          <tr><td class="k">Model</td><td class="v" id="info-model">—</td></tr>
+          <tr><td class="k">Checkpoint</td><td class="v" id="info-ckpt">—</td></tr>
+          <tr><td class="k">Device</td><td class="v" id="info-device">—</td></tr>
+          <tr><td class="k">Window</td><td class="v" id="info-window">—</td></tr>
+          <tr><td class="k">Acquisitions</td><td class="v" id="info-ntotal">—</td></tr>
+          <tr><td class="k">Interval</td><td class="v" id="info-interval">—</td></tr>
+          <tr><td class="k">Stage</td><td class="v stage" id="stage">—</td></tr>
+        </table>
+        <button type="button" class="btn btn-block" id="btnCsv" name="export_csv" disabled>⬇ Export CSV</button>
+      </div>
+    </div>
 
-    <section class="panel">
-      <h2>Top driving features <span class="muted">(live |grad&times;input|)</span></h2>
-      <ul id="drivers-list" class="drivers"></ul>
-    </section>
+    <div class="panel panel-hi">
+      <div class="head"><span class="ttl">Health Indicators (all features)</span><span class="tag">HI-08</span></div>
+      <div class="body body-tight body-scroll">
+        <table class="ftable ftable-compact">
+          <thead><tr><th>Feature</th><th class="num">Raw</th><th class="num">Scaled</th></tr></thead>
+          <tbody id="featBody"><tr><td colspan="3" class="muted">—</td></tr></tbody>
+        </table>
+      </div>
+    </div>
 
-    <section class="panel">
-      <h2>Integrated Gradients</h2>
-      <div id="ig-status" class="muted">Press <em>Explain</em> on a running stream to attribute the current window.</div>
-      <canvas id="ig-chart" height="180"></canvas>
-    </section>
-  </main>
+    <div class="panel panel-log">
+      <div class="head">
+        <span class="ttl">Event Log</span>
+        <span class="btns">
+          <button type="button" class="btn sm" id="btnClear" name="clear_log">Clear</button>
+          <button type="button" class="btn sm" id="btnLogExport" name="export_log">Export</button>
+        </span>
+      </div>
+      <div class="body body-tight body-log">
+        <div class="logwrap"><div class="log" id="log"></div></div>
+      </div>
+    </div>
+  </div>
 
-  <script src="/static/app.js"></script>
+  <div class="foot">
+    <span>RUL STREAMING INFERENCE ENGINE · BUILD 2026.06 · LIVE INFERENCE</span>
+    <span id="footClock">—</span>
+  </div>
+
+</div>
+<script src="/static/app.js"></script>
 </body>
 </html>
