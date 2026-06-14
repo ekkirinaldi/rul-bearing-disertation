@@ -9,7 +9,7 @@
 \label{bab:pendahuluan}
 
 Bagian pendahuluan ini menjelaskan latar belakang, rumusan
-masalah, tujuan penelitian, \textcolor{blue}{manfaat penelitian,} kontribusi dan kebaruan penelitian, \textcolor{blue}{metodologi penelitian, batasan dan asumsi, serta sistematika
+masalah, tujuan penelitian, {\color{blue}manfaat penelitian,} kontribusi dan kebaruan penelitian, {\color{blue}metodologi penelitian, batasan dan asumsi, serta sistematika
 penulisan disertasi}.
 
 
@@ -59,7 +59,7 @@ Studi empiris menunjukkan bahwa kegagalan \emph{bearing} menyumbang sekitar
 \emph{downtime} yang tidak terencana di industri manufaktur
 \citetitb{Nectoux2012PRONOSTIA}.
 Gambar~\ref{fig:bab1_objek_industri} memperlihatkan komponen \emph{rolling
-element bearing} beserta tahapan proses \textcolor{blue}{permesinannya}, yang menjadi konteks dalam penelitian ini.
+element bearing} beserta tahapan proses {\color{blue}permesinannya}, yang menjadi konteks dalam penelitian ini.
 Pada penelitian ini, konteks industri bersumber dari PT~SKF~Indonesia yang
 mengoperasikan mesin \emph{grinding outer ring} (OR1 dan OR2) untuk
 memproduksi cincin luar \emph{bearing} bagi sektor otomotif
@@ -141,13 +141,13 @@ dan FTF (\emph{Fundamental Train Frequency}), di dalam representasi laten
 yang dipelajari.
 
 Berdasarkan latar belakang tersebut, disertasi ini mengusulkan pendekatan
-perawatan prediktif yang mencakup \textcolor{blue}{dua hal} yang saling mendukung dan dapat
-dikombinasikan, yaitu \textcolor{blue}{(i)}~diagnostik kerusakan \emph{bearing} berbasis
+perawatan prediktif yang mencakup {\color{blue}dua hal} yang saling mendukung dan dapat
+dikombinasikan, yaitu {\color{blue}(i)}~diagnostik kerusakan \emph{bearing} berbasis
 \emph{benchmark} multi-model dengan interpretabilitas dari sinyal mentah, dan
-\textcolor{blue}{(ii)}~prognostik RUL dengan interpretabilitas mekanistik berbasis
+{\color{blue}(ii)}~prognostik RUL dengan interpretabilitas mekanistik berbasis
 \emph{Sparse Autoencoder} yang dipetakan ke frekuensi karakteristik
 degradasi \emph{bearing}.
-\textcolor{blue}{Kedua metode tersebut} dirancang agar dapat ditempatkan dalam arsitektur komputasi
+{\color{blue}Kedua metode tersebut} dirancang agar dapat ditempatkan dalam arsitektur komputasi
 bertingkat, dari sensor di tepi jaringan hingga \emph{cloud}, sehingga
 sistem yang dihasilkan tidak hanya akurat, tetapi juga dapat diinterpretasikan, dan dapat
 dipercaya oleh praktisi industri.
@@ -171,13 +171,13 @@ Gambar~\ref{fig:bab1_skema}.
 
 Pada sistem perawatan prediktif \emph{bearing} berbasis \emph{deep learning},
 terdapat tiga permasalahan utama yang saling berkaitan.
-\textcolor{blue}{Pertama}, model dengan akurasi tinggi cenderung kompleks dan tidak dapat diinterpretasikan,
+{\color{blue}Pertama}, model dengan akurasi tinggi cenderung kompleks dan tidak dapat diinterpretasikan,
 sementara model yang sederhana dan mudah dijelaskan sering kali kurang
 akurat pada kasus kerusakan yang bervariasi.
-\textcolor{blue}{Kedua}, model yang mampu \textcolor{blue}{mendeteksi kerusakan dan} memprediksi sisa umur pakai secara akurat
-tidak selalu dapat membuktikan bahwa \textcolor{blue}{keputusan dan} prediksinya berlandaskan pada fisika
-degradasi yang sebenarnya terjadi, bukan sekadar korelasi statistik \textcolor{blue}{semata}.
-\textcolor{blue}{Ketiga, model yang dikembangkan dan divalidasi pada dataset benchmark
+{\color{blue}Kedua}, model yang mampu {\color{blue}mendeteksi kerusakan dan} memprediksi sisa umur pakai secara akurat
+tidak selalu dapat membuktikan bahwa {\color{blue}keputusan dan} prediksinya berlandaskan pada fisika
+degradasi yang sebenarnya terjadi, bukan sekadar korelasi statistik {\color{blue}semata}.
+{\color{blue}Ketiga, model yang dikembangkan dan divalidasi pada dataset benchmark
 laboratorium belum tentu dapat bekerja dengan baik pada data industri nyata,
 sehingga kelayakan penerapannya untuk mengurangi waktu henti yang tidak terencana
 pada proses produksi \emph{ball bearing} belum terbukti.}
@@ -186,21 +186,21 @@ masalah penelitian sebagai berikut:
 
 \begin{enumerate}
 
-  \item \textcolor{blue}{Bagaimana mengembangkan model perawatan prediktif \textcolor{blue}{\emph{ball bearing}}
+  \item {\color{blue}Bagaimana mengembangkan model perawatan prediktif {\color{blue}\emph{ball bearing}}
           berbasis data sensor vibrasi dengan pendekatan \emph{machine learning}
           dan \emph{deep learning} yang mampu melakukan deteksi kerusakan
           (\emph{fault diagnosis}) dan prediksi sisa umur pakai
           (\emph{remaining useful life}) secara akurat?}
 
-  \item \textcolor{blue}{Bagaimana menerapkan metode \emph{explainable artificial intelligence}
-        (XAI) pada model perawatan prediktif \textcolor{blue}{\emph{ball bearing}}
+  \item {\color{blue}Bagaimana menerapkan metode \emph{explainable artificial intelligence}
+        (XAI) pada model perawatan prediktif {\color{blue}\emph{ball bearing}}
         berbasis data sensor vibrasi berbasis
         \emph{deep learning}, sehingga keputusan klasifikasi kerusakan dapat
         menghasilkan peta karakteristik kerusakan diskriminatif serta
         representasi laten model prediksi RUL dapat dibuktikan bersesuaian
         dengan fisika degradasi \emph{bearing}?}
 
-  \item \textcolor{blue}{Bagaimana menerapkan dan memvalidasi model prediksi
+  \item {\color{blue}Bagaimana menerapkan dan memvalidasi model prediksi
         sisa umur pakai (\emph{remaining useful life}) \emph{bearing} yang
         dikembangkan pada dataset benchmark terhadap data sensor vibrasi dari
         proses produksi \emph{ball bearing} di industri manufaktur real?}
@@ -210,15 +210,15 @@ masalah penelitian sebagai berikut:
 
 % \begin{enumerate}
 
-%   \item Bagaimana mengembangkan model perawatan prediktif \textcolor{blue}{\emph{bearing}}
+%   \item Bagaimana mengembangkan model perawatan prediktif {\color{blue}\emph{bearing}}
 %         berbasis data sensor vibrasi dengan pendekatan \emph{machine learning}
 %         dan \emph{deep learning} yang mampu melakukan deteksi kerusakan
 %         (\emph{fault diagnosis}) dan prediksi sisa umur pakai
 %         (\emph{remaining useful life}) secara akurat, sehingga
 %         mendukung pengurangan waktu henti yang tidak terencana pada sistem
-%         produksi \textcolor{blue}{\emph{ball bearing}}?
+%         produksi {\color{blue}\emph{ball bearing}}?
 
-%   \item \textcolor{blue}{Bagaimana menerapkan metode \emph{explainable artificial intelligence}
+%   \item {\color{blue}Bagaimana menerapkan metode \emph{explainable artificial intelligence}
 %         (XAI) pada model diagnostik dan prognostik \emph{bearing} berbasis
 %         \emph{deep learning}, sehingga keputusan klasifikasi kerusakan dapat
 %         menghasilkan peta karakteristik kerusakan (\emph{fault signature})
@@ -228,7 +228,7 @@ masalah penelitian sebagai berikut:
 %         BPFI, BSF, dan FTF), sehingga hasil model dapat diverifikasi dan
 %         dipercaya oleh insinyur perawatan?}
 
-%   \item \textcolor{blue}{Bagaimana menerapkan dan memvalidasi model prediksi
+%   \item {\color{blue}Bagaimana menerapkan dan memvalidasi model prediksi
 %         sisa umur pakai (\emph{remaining useful life}) \emph{bearing} yang
 %         dikembangkan pada dataset benchmark terhadap data sensor vibrasi dari
 %         proses produksi \emph{ball bearing} di industri manufaktur real,
@@ -254,10 +254,10 @@ tanpa ekstraksi fitur manual.
 Namun, interpretabilitas internal WDCNN---fitur mana dari sinyal yang
 mendorong klasifikasi---belum dikaji secara sistematis dengan metode XAI
 tingkat sinyal.
-\textcolor{blue}{Sejumlah studi sebelumnya telah mencoba menerapkan XAI pada
+{\color{blue}Sejumlah studi sebelumnya telah mencoba menerapkan XAI pada
 diagnostik \emph{bearing}, namun beroperasi pada tingkat fitur agregat
 atau resolusi spektrogram.}
-Sebagai perbandingan, \textcolor{blue}{\citenameitb{Santos2024SHAPSVM}
+Sebagai perbandingan, {\color{blue}\citenameitb{Santos2024SHAPSVM}
 menerapkan SHAP pada 9--15 fitur statistik untuk SVM,
 sementara \citenameitb{Jeon2023CAMBearing} menggunakan
 \emph{class activation mapping} (CAM) pada spektrogram STFT yang
@@ -281,7 +281,7 @@ berpengaruh, namun tidak dapat menjawab apakah representasi laten model
 bersesuaian dengan konsep fisik yang bermakna.
 Mekanisme interpretabilitas (\emph{mechanistic interpretability}), yang
 pertama kali dikembangkan untuk model bahasa besar dengan \emph{Sparse
-Autoencoder} \textcolor{blue}{\citetitb{Bricken2023Monosemanticity}}, menawarkan pendekatan
+Autoencoder} {\color{blue}\citetitb{Bricken2023Monosemanticity}}, menawarkan pendekatan
 berbeda: mengekstrak fitur monosemantik dari representasi laten yang
 kemudian dapat dipetakan ke konsep fisik yang diketahui.
 Ruang yang belum terisi adalah adaptasi pendekatan ini ke domain
@@ -289,7 +289,7 @@ prognostik \emph{bearing} belum pernah dilaporkan, termasuk prosedur
 pemetaan ke frekuensi karakteristik degradasi dengan inferensi statistik
 yang ketat.
 Tanpa prosedur seperti ini, pertanyaan paling mendasar bagi insinyur
-perawatan---\textcolor{blue}{\emph{``apakah model RUL ini benar-benar mengetahui tentang
+perawatan---{\color{blue}\emph{``apakah model RUL ini benar-benar mengetahui tentang
 BPFO?''}}---tidak dapat dijawab secara kuantitatif.
 Ketersediaan jawaban yang terverifikasi atas pertanyaan ini merupakan
 prasyarat untuk penggunaan model prediksi RUL berbasis \emph{deep
@@ -313,7 +313,7 @@ yang dapat diandalkan, bukan sekadar perbandingan untuk
 memilih model yang sesuai dengan sumber daya komputasi yang tersedia di setiap
 tingkatan arsitektur sistem PdM.
 
-\textcolor{blue}{Tabel~\ref{tab:bab1_posisi_penelitian} merangkum posisi
+{\color{blue}Tabel~\ref{tab:bab1_posisi_penelitian} merangkum posisi
 penelitian disertasi ini relatif terhadap literatur terdahulu pada sembilan
 dimensi kritis yang teridentifikasi dari kajian \emph{state of the art}
 di atas, dengan kontribusi penelitian disangga oleh dua artikel jurnal utama
@@ -321,7 +321,7 @@ di atas, dengan kontribusi penelitian disangga oleh dua artikel jurnal utama
 
 \begin{table}[!ht]
   \centering
-  \caption{\textcolor{blue}{Posisi penelitian disertasi ini relatif terhadap
+  \caption{{\color{blue}Posisi penelitian disertasi ini relatif terhadap
            literatur terdahulu pada sembilan dimensi kritis. Tanda kurung di
            kolom kontribusi menunjukkan sumber empiris internal:
            Conf~1 dan Conf~2 (konferensi pendukung), J~1 (FSM), J~2 (SAE-BPFx).}}
@@ -450,7 +450,7 @@ di atas, dengan kontribusi penelitian disangga oleh dua artikel jurnal utama
    J~2 = \citenameitb{TotoSuharto2025Journal2RUL}.}
 \end{table}
 
-\textcolor{blue}{Pemaparan detail \emph{state of the art} per studi, termasuk
+{\color{blue}Pemaparan detail \emph{state of the art} per studi, termasuk
 metode, dataset, hasil utama, dan keterbatasan masing-masing, disajikan pada
 Tabel~\ref{tab:bab2_sota_pdm} di Bab~\ref{bab:tinjauan-pustaka}.}
 
@@ -462,20 +462,20 @@ Tabel~\ref{tab:bab2_sota_pdm} di Bab~\ref{bab:tinjauan-pustaka}.}
 
 Tujuan penelitian pada disertasi ini adalah menghasilkan kerangka perawatan prediktif
 \emph{bearing} yang tidak hanya akurat, tetapi juga dapat diinterpretasikan dan dapat dipercaya oleh insinyur perawatan di lingkungan industri
-manufaktur\textcolor{blue}{, sekaligus menyediakan fondasi konseptual untuk
+manufaktur{\color{blue}, sekaligus menyediakan fondasi konseptual untuk
 integrasi data sensor mesin dengan informasi kualitas produk secara waktu nyata}.
 Untuk mencapai tujuan tersebut, diperlukan tujuan-tujuan yang lebih rinci
 sebagai berikut:
 
 \begin{enumerate}
 
-  \item \textcolor{blue}{Memvalidasi dan membandingkan kinerja beberapa golongan
+  \item {\color{blue}Memvalidasi dan membandingkan kinerja beberapa golongan
         algoritma diagnostik \emph{bearing} (statistik-\emph{kernel},
         \emph{tree-based}, dan \emph{deep learning}) serta mengembangkan model prognostik RUL
         sehingga tersedia model diagnostik dan prognostik yang akurat
         sebagai fondasi sistem perawatan prediktif \emph{ball bearing}.}
 
-  \item \textcolor{blue}{Mengembangkan kerangka XAI untuk model
+  \item {\color{blue}Mengembangkan kerangka XAI untuk model
         perawatan prediktif \emph{ball bearing}: (a)~pada level diagnostik,
         menerapkan SHAP DeepExplainer pada sinyal vibrasi mentah resolusi
         penuh (2.048 titik) untuk memformalisasi \emph{Fault Signature Maps}
@@ -486,7 +486,7 @@ sebagai berikut:
         frekuensi karakteristik BPFO, BPFI, BSF, dan FTF melalui
         \emph{bootstrap} CI dan \emph{permutation test}.}
 
-  \item \textcolor{blue}{Menerapkan dan memvalidasi model prediksi RUL
+  \item {\color{blue}Menerapkan dan memvalidasi model prediksi RUL
         \emph{bearing} yang dikembangkan pada dataset benchmark terhadap data
         sensor vibrasi dari proses produksi \emph{ball bearing} kondisi nyata,
         serta merancang arsitektur sistem perawatan
@@ -502,14 +502,14 @@ sebagai berikut:
 \label{sec:bab1_manfaat}
 %% ================================================================
 
-\textcolor{blue}{Penelitian ini diharapkan memberikan manfaat sebagai berikut:}
+{\color{blue}Penelitian ini diharapkan memberikan manfaat sebagai berikut:}
 
 \begin{enumerate}
 
-      \item \textcolor{blue}{Memberikan contoh kasus implementasi analisis
+      \item {\color{blue}Memberikan contoh kasus implementasi analisis
       big data dan AI dalam sistem produksi dalam meningkatkan produktivitas dan daya saing.}
 
-      \item \textcolor{blue}{Secara ilmiah, penelitian ini berkontribusi pada
+      \item {\color{blue}Secara ilmiah, penelitian ini berkontribusi pada
         pengembangan metode XAI yang beroperasi di level sinyal mentah
         (diagnostik) dan level representasi laten (prognostik) untuk perawatan
         prediktif \emph{bearing}, yang selama ini masih jarang dilakukan.
@@ -517,19 +517,19 @@ sebagai berikut:
         literatur interpretabilitas model \emph{deep learning} pada domain
         mesin rotasi.}
 
-  \item \textcolor{blue}{Secara praktis, validasi model pada data vibrasi
+  \item {\color{blue}Secara praktis, validasi model pada data vibrasi
         industri real menunjukkan kelayakan penerapan
         sistem perawatan prediktif berbasis \emph{deep learning} untuk
         mengurangi waktu henti yang tidak terencana di lingkungan manufaktur.
         Arsitektur multi-tier yang dirancang memberikan cetak biru yang dapat
         diadopsi oleh industri untuk implementasi bertahap.}
 
-%   \item \textcolor{blue}{Hasil penelitian yang berupa \emph{pipeline} sumber
+%   \item {\color{blue}Hasil penelitian yang berupa \emph{pipeline} sumber
 %         terbuka, bobot model, dan kerangka konseptual multi-tier dapat menjadi
 %         contoh dan acuan bagi implementasi perawatan prediktif berbasis
 %         kecerdasan artifisial pada sistem produksi lain yang menggunakan
 %         proses permesinan, tidak terbatas pada produksi \emph{ball bearing}.}
-   \item \textcolor{blue}{Hasil dari penelitian ini yang berupa sistem 
+   \item {\color{blue}Hasil dari penelitian ini yang berupa sistem 
    dengan menggunakan perangkat lunak dan perangkat keras dapat 
    menjadi contoh bagi implementasi analisis big data dan AI dalam memperbaiki 
    sistem perawatan prediktif yang sudah ada.}
@@ -565,14 +565,14 @@ beberapa aspek berikut:
         \citetitb{TotoSuharto2025Journal2RUL}.
 
   \item Penyediaan \emph{benchmark} multi-model yang sistematis dengan
-        inferensi statistik ketat, membandingkan tiga \textcolor{blue}{golongan} algoritma
+        inferensi statistik ketat, membandingkan tiga {\color{blue}golongan} algoritma
         (statistik-\emph{kernel}, \emph{tree-based}, \emph{deep learning})
         dengan evaluasi temporal yang sama.
         Hasilnya memberikan panduan pemilihan model yang dapat diandalkan
         untuk adopsi industri dengan berbagai tingkatan komputasi
         \citetitb{TotoSuharto2024Conf1SVM,TotoSuharto2024Conf2Tree}.
 
-  \item \textcolor{blue}{Validasi lintas domain model prediksi RUL pada data
+  \item {\color{blue}Validasi lintas domain model prediksi RUL pada data
         sensor vibrasi dari proses produksi \emph{ball bearing} di
         PT~SKF~Indonesia, yang menunjukkan kelayakan penerapan pipeline
         prognostik yang dikembangkan pada dataset benchmark ke lingkungan
@@ -599,10 +599,10 @@ FSM diformalisasikan dalam tiga varian matematis (Signed, Absolute, Variance)
 dan divalidasi melalui tiga metrik kuantitatif: \emph{discriminability
 index} $D = 0{,}216$, \emph{severity monotonicity} Ball 17{,}6\,\% /
 IR 13{,}8\,\% / OR 8{,}6\,\%, dan \emph{split-half cosine similarity}
-\textcolor{blue}{$r = 0{,}940$ pada analisis utama (300 \emph{background} /
+{\color{blue}$r = 0{,}940$ pada analisis utama (300 \emph{background} /
 500 sampel uji)}.
 Metode ablasi menjelaskan \emph{trade-off} yang belum pernah dilaporkan
-sebelumnya: \textcolor{blue}{pada subset SHAP tereduksi (30 \emph{background}
+sebelumnya: {\color{blue}pada subset SHAP tereduksi (30 \emph{background}
 / 50 sampel uji), menghapus \emph{BatchNorm} meningkatkan
 \emph{discriminability} FSM sebesar 133\,\% (dari $0{,}315$ menjadi $0{,}735$)}
 dengan \emph{trade-off} akurasi $-3{,}60$~pp,
@@ -629,22 +629,22 @@ Urutan dominansi BPFx konsisten lintas tiga arsitektur \emph{backbone}
 meski dengan variasi magnituda 4--8 kali lipat
 \citetitb{TotoSuharto2025Journal2RUL}.
 
-\textbf{3. \textcolor{blue}{Validasi lintas domain dan kerangka PdM multi-tier.}}
-\textcolor{blue}{Model prediksi RUL yang dikembangkan pada dataset benchmark
+\textbf{3. {\color{blue}Validasi lintas domain dan kerangka PdM multi-tier.}}
+{\color{blue}Model prediksi RUL yang dikembangkan pada dataset benchmark
 (PHM2012, XJTU-SY, IMS) divalidasi pada data sensor vibrasi dari mesin
 \emph{grinding} OR1/OR2 PT~SKF~Indonesia.
 Validasi lintas domain ini menunjukkan kelayakan penerapan pipeline prognostik
 yang dikembangkan pada kondisi laboratorium ke lingkungan produksi
 \emph{ball bearing} yang sesungguhnya, dengan kerusakan yang berkembang
 secara alami.}
-Sintesis komponen FSM (\emph{input-attribution}, \textcolor{blue}{diagnostik}) dan SAE-BPFx
-(\emph{latent-concept}, \textcolor{blue}{prognostik}) ke dalam cetak biru sistem perawatan
+Sintesis komponen FSM (\emph{input-attribution}, {\color{blue}diagnostik}) dan SAE-BPFx
+(\emph{latent-concept}, {\color{blue}prognostik}) ke dalam cetak biru sistem perawatan
 prediktif tiga tingkatan: (i)~Edge IoT untuk triage anomali ringan dengan
 model ringan berbasis fitur statistik, (ii)~Edge Server untuk klasifikasi
 kerusakan akurat menggunakan WDCNN dengan FSM sebagai lapisan audit, dan
 (iii)~Cloud untuk estimasi RUL jangka panjang menggunakan arsitektur
 \emph{backbone} dengan interpretabilitas SAE-BPFx.
-\textcolor{blue}{Kerangka ini diperkuat oleh hasil validasi pada data
+{\color{blue}Kerangka ini diperkuat oleh hasil validasi pada data
 industri real PT~SKF~Indonesia, dan menyertakan peta jalan integrasi data
 kualitas produk (\emph{vibration checking} dan \emph{radial clearance
 checking}) sebagai aliran data tambahan untuk penelitian lanjutan.}
@@ -659,13 +659,13 @@ validasi RUL pada data industri real memberikan bukti awal kelayakan
 %% ================================================================
 
 Penelitian disertasi ini telah melalui tahap-tahap penelitian sesuai
-dengan standar pelaksanaan penelitian doktoral di bidang \textcolor{blue}{teknik
+dengan standar pelaksanaan penelitian doktoral di bidang {\color{blue}teknik
 dan manajemen industri}.
 Metodologi penelitian dirancang mengikuti enam tahap makro berikut,
 kemudian dijabarkan secara operasional pada rincian pelaksanaan di akhir
 subbab ini.
 
-\textcolor{blue}{
+{\color{blue}
 \subsection{Tahap Perencanaan}
 \label{subsec:bab1_tahap_perencanaan}
 
@@ -701,7 +701,7 @@ konsisten untuk jalur diagnostik dan prognostik.
 Kerangka tersebut mengikuti alur berikut.
 }
 
-\textcolor{blue}{
+{\color{blue}
 \begin{enumerate}
   \item \textbf{Ekstraksi fitur (\emph{feature generation}).}
         Data mentah sinyal getaran diubah menjadi representasi yang siap
@@ -731,7 +731,7 @@ Kerangka tersebut mengikuti alur berikut.
 \end{enumerate}
 }
 
-\textcolor{blue}{
+{\color{blue}
 Dua kelompok tugas pemodelan dirancang paralel.
 Untuk \textbf{regresi} (prognostik RUL), metrik evaluasi utama adalah
 RMSE, MAE, $R^2$, dan PHM~Score (PHM2012).
@@ -744,7 +744,7 @@ prognostik, dan protokol \emph{fixed-budget training} (75 epoch,
 \texttt{bf16-mixed}).
 }
 
-\textcolor{blue}{
+{\color{blue}
 \subsection{Pengembangan Model}
 \label{subsec:bab1_pengembangan_model}
 
@@ -761,7 +761,7 @@ Adaptasi \emph{Top-k Sparse Autoencoder} (\emph{SAEBearing}) dilakukan
 BPFx.
 }
 
-\textcolor{blue}{
+{\color{blue}
 \subsection{Komparasi Model dengan Dunia Nyata}
 \label{subsec:bab1_komparasi_dunia_nyata}
 
@@ -774,7 +774,7 @@ Komparasi sebelum--sesudah pengembangan model dievaluasi melalui metrik
 RUL dan analisis residual per \emph{bearing}.
 }
 
-\textcolor{blue}{
+{\color{blue}
 \subsection{Aksi untuk Perbaikan Situasi}
 \label{subsec:bab1_aksi_perbaikan}
 
@@ -788,7 +788,7 @@ SAE-BPFx ke dalam alur keputusan perawatan yang dapat diaudit insinyur
 pabrik.
 }
 
-\textcolor{blue}{
+{\color{blue}
 \subsection{Tahap Kesimpulan dan Saran Penelitian}
 \label{subsec:bab1_tahap_kesimpulan}
 
@@ -800,7 +800,7 @@ perluasan validasi industri.
 Uraian lengkap disajikan pada Bab~\ref{bab:kesimpulan}.
 }
 
-\textcolor{blue}{Rincian operasional pelaksanaan metodologi dijabarkan
+{\color{blue}Rincian operasional pelaksanaan metodologi dijabarkan
 pada poin-poin berikut.}
 
 \begin{enumerate}
@@ -815,7 +815,7 @@ pada poin-poin berikut.}
         dan \emph{Reliability Engineering \& System Safety}.
         Hasil kajian literatur memetakan \emph{state of the art},
         mengidentifikasi celah penelitian yang belum terisi, dan
-        memotivasi \textcolor{blue}{kedua komponen} penelitian utama (FSM dan SAE-BPFx).
+        memotivasi {\color{blue}kedua komponen} penelitian utama (FSM dan SAE-BPFx).
 
   \item \textbf{Persiapan Data Penelitian.}
         Penelitian menggunakan empat dataset \emph{bearing} yang bersifat
@@ -869,8 +869,8 @@ pada poin-poin berikut.}
 
   \item \textbf{Pengujian dan Validasi Statistik.}
         Seluruh klaim kontribusi divalidasi dengan inferensi statistik yang
-        ketat: \emph{bootstrap} CI 95\,\% (\textcolor{blue}{$B = 1.000$ iterasi}), \emph{permutation
-        test} (\textcolor{blue}{$B = 1.000$}), dan dua \emph{negative controls} (inisialisasi
+        ketat: \emph{bootstrap} CI 95\,\% ({\color{blue}$B = 1.000$ iterasi}), \emph{permutation
+        test} ({\color{blue}$B = 1.000$}), dan dua \emph{negative controls} (inisialisasi
         Xavier dan \emph{Gaussian noise}) untuk SAEBearing.
         Uji konsistensi lintas arsitektur dilakukan dengan membandingkan
         urutan dominansi BPFx pada ketiga \emph{backbone} secara bersamaan.
@@ -904,7 +904,7 @@ menggunakan proses permesinan \emph{grinding} pada produksi
 \emph{rolling element bearing}; (2)~sinyal masukan adalah data vibrasi
 mentah dari akselerometer, dengan fitur frekuensi hanya untuk validasi
 fisika; (3)~penggunaan dataset diagnostik CWRU dan dataset prognostik PHM2012,
-XJTU-SY, serta IMS; \textcolor{blue}{(4)~validasi lintas domain pada data
+XJTU-SY, serta IMS; {\color{blue}(4)~validasi lintas domain pada data
 industri menggunakan data vibrasi dari mesin \emph{grinding} OR1/OR2
 PT~SKF~Indonesia, dengan fokus pada komponen prognostik (prediksi RUL);}
 (5)~integrasi data kualitas produk
@@ -914,7 +914,7 @@ bagian dari implementasi empiris disertasi ini; dan (6)~seluruh
 perangkat lunak menggunakan \emph{library} sumber terbuka yang
 telah ada.
 
-\textcolor{blue}{Adapun asumsi yang digunakan dalam penelitian ini adalah
+{\color{blue}Adapun asumsi yang digunakan dalam penelitian ini adalah
 sebagai berikut:}
 (1)~sensor vibrasi telah terpasang dan terkalibrasi sesuai spesifikasi pada
 mesin produksi \emph{ball bearing} (OR1 dan OR2);
@@ -922,7 +922,7 @@ mesin produksi \emph{ball bearing} (OR1 dan OR2);
 spesifikasi teknis yang ditetapkan;
 (3)~infrastruktur komputasi yang memadai (GPU) tersedia untuk pelatihan
 model \emph{machine learning} dan \emph{deep learning};
-\textcolor{blue}{(4)~data sensor vibrasi dari mesin \emph{grinding}
+{\color{blue}(4)~data sensor vibrasi dari mesin \emph{grinding}
 PT~SKF~Indonesia yang digunakan untuk validasi lintas domain telah diakuisisi
 melalui \emph{gateway} SKF~IMx-8 sesuai protokol akuisisi standar}; dan
 (5)~proses permesinan \emph{grinding} pada \emph{ball bearing} memiliki
@@ -940,7 +940,7 @@ konteks hingga kesimpulan.
 
 \textbf{Bab~\ref{bab:pendahuluan}} (Pendahuluan) memuat latar belakang
 urgensi perawatan prediktif dalam konteks \emph{Making Indonesia 4.0},
-\textcolor{blue}{rumusan masalah tiga butir, tujuan penelitian, manfaat
+{\color{blue}rumusan masalah tiga butir, tujuan penelitian, manfaat
 penelitian}, kontribusi dan kebaruan beserta uraian teknis, metodologi
 penelitian, batasan dan asumsi penelitian, serta sistematika penulisan.
 
@@ -951,25 +951,25 @@ tingkat atribusi masukan, prognostik RUL, \emph{mechanistic
 interpretability} dan \emph{Sparse Autoencoder}, fisika vibrasi
 \emph{bearing}, serta peta celah literatur yang memotivasi penelitian ini.
 
-\textbf{Bab~\textcolor{blue}{\ref{bab:metodologi-umum}}} (Metodologi) membahas metodologi penelitian yang digunakan pada
- Bab~\textcolor{blue}{\ref{bab:diagnostik}} dan Bab~\textcolor{blue}{\ref{bab:prognostik}}. Pembahasannya terkait kerangka konseptual terintegrasi, spesifikasi
+\textbf{Bab~{\color{blue}\ref{bab:metodologi-umum}}} (Metodologi) membahas metodologi penelitian yang digunakan pada
+ Bab~{\color{blue}\ref{bab:diagnostik}} dan Bab~{\color{blue}\ref{bab:prognostik}}. Pembahasannya terkait kerangka konseptual terintegrasi, spesifikasi
 empat dataset, praproses dan ekstraksi fitur, metrik evaluasi bersama,
 serta infrastruktur dan protokol reproduksi.
 
-\textbf{Bab~\textcolor{blue}{\ref{bab:diagnostik}}} (\emph{Bearing Fault Detection})
-membahas penelitian terkait \textcolor{blue}{diagnostik} secara \emph{end-to-end} dan \emph{benchmark}
+\textbf{Bab~{\color{blue}\ref{bab:diagnostik}}} (\emph{Bearing Fault Detection})
+membahas penelitian terkait {\color{blue}diagnostik} secara \emph{end-to-end} dan \emph{benchmark}
 model algoritma dengan SHAP, formalisasi FSM dalam tiga
 varian matematis, hasil klasifikasi pada dataset CWRU, studi ablasi
 \emph{BatchNorm}, dan interpretasi fisika sinyal.
 Bab ini disusun dengan urutan metode $\rightarrow$ hasil agar pembaca
 dapat mengikuti alur dari rancangan eksperimen hingga temuan.
 
-\textbf{Bab~\textcolor{blue}{\ref{bab:prognostik}}} (\emph{Remaining Useful Life})
-menyajikan penelitian terkait \textcolor{blue}{ prognostik} secara \emph{end-to-end} dengan tiga arsitektur
+\textbf{Bab~{\color{blue}\ref{bab:prognostik}}} (\emph{Remaining Useful Life})
+menyajikan penelitian terkait {\color{blue} prognostik} secara \emph{end-to-end} dengan tiga arsitektur
 \emph{backbone} RUL, \emph{Top-k Sparse Autoencoder}, pemetaan BPFx,
 \emph{hit-rate} dengan \emph{bootstrap} CI dan \emph{permutation test},
 \emph{negative controls}, dan perbandingan lintas arsitektur.
-Bab ini disusun paralel dengan Bab~\textcolor{blue}{\ref{bab:diagnostik}} sehingga pembaca dapat
+Bab ini disusun paralel dengan Bab~{\color{blue}\ref{bab:diagnostik}} sehingga pembaca dapat
 membandingkan pendekatan diagnostik dan prognostik secara simetris.
 
 \textbf{Bab~\ref{bab:kesimpulan}} (Kesimpulan dan Rekomendasi) menutup

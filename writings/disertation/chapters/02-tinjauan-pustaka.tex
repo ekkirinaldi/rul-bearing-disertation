@@ -1,12 +1,12 @@
 % =====================================================================
 % Bab II — Tinjauan Pustaka  [REVISI]
-% Perubahan signifikan dan referensi baru ditandai \textcolor{blue}{...}
+% Perubahan signifikan dan referensi baru ditandai {\color{blue}...}
 % =====================================================================
 \chapter{Tinjauan Pustaka}
 \label{bab:tinjauan-pustaka}
 
 Bab ini membahas tinjauan terhadap literatur yang mendasari penelitian,
-\textcolor{blue}{disusun dalam delapan sub bagian:
+{\color{blue}disusun dalam delapan sub bagian:
 (1)~perawatan prediktif dalam konteks Industri 4.0,
 (2)~vibrasi \emph{rolling element bearing},
 (3)~diagnostik \emph{rolling element bearing} berbasis \emph{deep learning},
@@ -17,8 +17,8 @@ Bab ini membahas tinjauan terhadap literatur yang mendasari penelitian,
 (8)~Kesenjangan literatur yang memposisikan penelitian ini relatif
 terhadap penelitian sebelumnya.}
 Hasil kesenjangan yang teridentifikasi
-pada Subbab~\ref{sec:bab2_gap_literatur} menjadi \textcolor{blue}{justifikasi langsung bagi
-ketiga rumusan masalah} yang dirumuskan pada \textcolor{blue}{Subbab~\ref{sec:bab1_rumusan}}.
+pada Subbab~\ref{sec:bab2_gap_literatur} menjadi {\color{blue}justifikasi langsung bagi
+ketiga rumusan masalah} yang dirumuskan pada {\color{blue}Subbab~\ref{sec:bab1_rumusan}}.
 
 % Catatan perubahan struktur:
 % - Subbab~II.6 (fisika vibrasi) DIPINDAHKAN menjadi Subbab~II.2 agar frekuensi
@@ -105,10 +105,10 @@ ditetapkan sebagai \emph{future work} pada Subbab~VI.5.
 % -----------------------------------------------------------------
 % Subbab~II.2 BARU — dipindahkan dari Subbab~II.6 lama
 % -----------------------------------------------------------------
-\textcolor{blue}{\section{Vibrasi \emph{Rolling Element Bearing}}
+{\color{blue}\section{Vibrasi \emph{Rolling Element Bearing}}
 \label{sec:bab2_fisika_vibrasi}}
 
-\textcolor{blue}{Pemahaman terhadap fisika vibrasi \emph{rolling element bearing} memberikan \emph{ground
+{\color{blue}Pemahaman terhadap fisika vibrasi \emph{rolling element bearing} memberikan \emph{ground
 truth} yang diperlukan untuk (i)~memvalidasi apakah pola atribusi SHAP DeepExplainer
 pada Bab~IV sesuai dengan impuls transien fisik, dan (ii)~memvalidasi pemetaan
 SAE $\to$ BPFx pada Bab~V.
@@ -166,7 +166,7 @@ menghasilkan impuls pada frekuensi ini. \emph{Fundamental Train Frequency}
 sangkar (\emph{cage}); cacat pada sangkar terekspresikan pada harmonik FTF
 \citetitb{Randall2011CondMonitoring}.
 
-\textcolor{blue}{Untuk \emph{bearing} CWRU ($n = 8$ bola, $\alpha = 15{,}17^{\circ}$,
+{\color{blue}Untuk \emph{bearing} CWRU ($n = 8$ bola, $\alpha = 15{,}17^{\circ}$,
 $d_b = 0{,}3126$~inci, $d_m = 1{,}537$~inci) pada kecepatan putar 1.750~rpm,
 nilai teoritis adalah: $f_\text{BPFO} \approx 104{,}6$~Hz,
 $f_\text{BPFI} \approx 157{,}9$~Hz, $f_\text{BSF} \approx 68{,}9$~Hz,
@@ -175,7 +175,7 @@ Frekuensi-frekuensi ini
 dan harmoniknya menjadi \emph{ground truth} fisika yang digunakan untuk
 memvalidasi pemetaan SAE pada Subbab~V.3 dan untuk menginterpretasikan pola impuls
 transien pada FSM di Subbab~IV.6.
-\textcolor{blue}{Nilai-nilai ini konsisten dengan geometri dan kecepatan
+{\color{blue}Nilai-nilai ini konsisten dengan geometri dan kecepatan
 yang dilaporkan pada Subbab~IV.11.}
 
 \subsection{Analisis \emph{Envelope} dan Kurtogram Spektral}
@@ -251,10 +251,10 @@ penelitian bergeser ke aspek \emph{trustworthiness}, yakni kemampuan model untuk
 menjelaskan keputusannya kepada teknisi perawatan
 \citetitb{Serradilla2022DLPdM}.
 
-\textcolor{blue}{\subsection{\emph{Transfer Learning} dan \emph{Domain Adaptation}: Tren dan Posisi Penelitian}
+{\color{blue}\subsection{\emph{Transfer Learning} dan \emph{Domain Adaptation}: Tren dan Posisi Penelitian}
 \label{subsec:bab2_transfer_learning}}
 
-\textcolor{blue}{Sejak 2020, \emph{transfer learning} dan \emph{domain adaptation} telah menjadi
+{\color{blue}Sejak 2020, \emph{transfer learning} dan \emph{domain adaptation} telah menjadi
 arah dominan dalam diagnostik \emph{bearing} berbasis \emph{deep learning}.
 Pendekatan ini melatih model pada \emph{source domain} (kondisi operasi atau
 jenis \emph{bearing} tertentu) lalu mengadaptasinya ke \emph{target domain}
@@ -263,7 +263,7 @@ Metode seperti \emph{domain adversarial neural networks} (DANN)
 \citetitb{Ganin2015DANN} dan \emph{maximum mean discrepancy} (MMD) secara
 aktif mengurangi perbedaan distribusi antar domain dalam ruang representasi.}
 
-\textcolor{blue}{Meskipun demikian, penelitian ini tidak mengambil arah \emph{transfer learning}
+{\color{blue}Meskipun demikian, penelitian ini tidak mengambil arah \emph{transfer learning}
 dengan pertimbangan berikut: (i)~pertanyaan penelitian berfokus pada
 \emph{interpretabilitas} keputusan model, bukan pada generalisasi lintas domain;
 (ii)~protokol \emph{benchmark} multi-model pada dataset CWRU yang sama membutuhkan
@@ -333,10 +333,10 @@ menghasilkan nilai atribusi per posisi waktu (2.048 nilai per sampel per kelas),
 yang kemudian diagregasi menjadi \emph{Fault Signature Maps} (FSM) sebagai
 \emph{fingerprint} kelas kerusakan \citetitb{TotoSuharto2025Journal1FSM}.
 
-\textcolor{blue}{Sebagai perbandingan dengan literatur sebelumnya,
+{\color{blue}Sebagai perbandingan dengan literatur sebelumnya,
 Tabel~\ref{tab:bab2_klasifikasi_survey} menampilkan representasi penelitian dari tiga model berbeda.}
 Tabel~\ref{tab:bab2_klasifikasi_survey} merangkum kinerja dan kemampuan
-interpretabilitas dari representasi tiap model pendekatan. \textcolor{blue}{Angka kunci
+interpretabilitas dari representasi tiap model pendekatan. {\color{blue}Angka kunci
 dari penelitian ini} dilaporkan dari
 \citetitb{TotoSuharto2024Conf1SVM}, \citetitb{TotoSuharto2024Conf2Tree},
 dan \citetitb{TotoSuharto2025Journal1FSM}; detail lengkap dijelaskan pada
@@ -345,7 +345,7 @@ Subbab~IV.7--Subbab~IV.9.
 \begin{table}[ht]
   \centering
   \caption{Ringkasan kinerja dan kemampuan interpretabilitas tiga model pendekatan
-           algoritma klasifikasi \emph{bearing} pada dataset CWRU\textcolor{blue}{,
+           algoritma klasifikasi \emph{bearing} pada dataset CWRU{\color{blue},
            dengan baris perbandingan dari literatur eksternal ditandai~($*$).}}
   \label{tab:bab2_klasifikasi_survey}
   \footnotesize
@@ -356,13 +356,13 @@ Subbab~IV.7--Subbab~IV.9.
     \midrule
     SVM RBF      & Berbasis kernel  & CWRU & 96,4  & \emph{KernelExplainer} & — \\
     LR (\emph{one-vs-rest}) & Berbasis kernel & CWRU & 94,3 & \emph{KernelExplainer} & — \\
-    \textcolor{blue}{SVM-RBF (Santos dkk., 2021)$^*$} & \textcolor{blue}{Berbasis kernel} & \textcolor{blue}{CWRU} & \textcolor{blue}{95,1} & \textcolor{blue}{\emph{KernelExplainer}} & \textcolor{blue}{—} \\
+    {\color{blue}SVM-RBF (Santos dkk., 2021)$^*$} & {\color{blue}Berbasis kernel} & {\color{blue}CWRU} & {\color{blue}95,1} & {\color{blue}\emph{KernelExplainer}} & {\color{blue}—} \\
     RF            & Berbasis pohon  & CWRU & 95,8  & \emph{TreeExplainer}  & — \\
     XGBoost       & Berbasis pohon  & CWRU & 97,1  & \emph{TreeExplainer}  & — \\
-    \textcolor{blue}{XGBoost (Cerrada dkk., 2022)$^*$} & \textcolor{blue}{Berbasis pohon} & \textcolor{blue}{CWRU} & \textcolor{blue}{96,8} & \textcolor{blue}{\emph{TreeExplainer}} & \textcolor{blue}{—} \\
+    {\color{blue}XGBoost (Cerrada dkk., 2022)$^*$} & {\color{blue}Berbasis pohon} & {\color{blue}CWRU} & {\color{blue}96,8} & {\color{blue}\emph{TreeExplainer}} & {\color{blue}—} \\
     WDCNN (var A) & Deep Learning & CWRU & 99,87 & \emph{DeepExplainer}  & \checkmark \\
-    WDCNN (var C, tanpa BN) & Deep Learning& CWRU & \textcolor{blue}{96,13} & \emph{DeepExplainer} & \checkmark \\
-    \textcolor{blue}{CNN-1D \citetitb{Zhang2017WDCNN}$^*$} & \textcolor{blue}{Jaringan dalam} & \textcolor{blue}{CWRU} & \textcolor{blue}{99,60} & \textcolor{blue}{—} & \textcolor{blue}{—} \\
+    WDCNN (var C, tanpa BN) & Deep Learning& CWRU & {\color{blue}96,13} & \emph{DeepExplainer} & \checkmark \\
+    {\color{blue}CNN-1D \citetitb{Zhang2017WDCNN}$^*$} & {\color{blue}Jaringan dalam} & {\color{blue}CWRU} & {\color{blue}99,60} & {\color{blue}—} & {\color{blue}—} \\
     \bottomrule
   \end{tabularx}
 
@@ -372,7 +372,7 @@ Subbab~IV.7--Subbab~IV.9.
    \citenameitb{TotoSuharto2025Journal1FSM} (WDCNN). Var~A = \emph{baseline}
    (kernel 64 + BN); Var~C = tanpa \emph{BatchNorm}. Detail hiperparameter
    di Lampiran E dan F.
-   \textcolor{blue}{($^*$) Baris perbandingan dari literatur eksternal;
+   {\color{blue}($^*$) Baris perbandingan dari literatur eksternal;
    protokol evaluasi masing-masing studi dapat berbeda dengan protokol
    \emph{temporal split} yang digunakan dalam penelitian ini.}}
 \end{table}
@@ -382,7 +382,7 @@ Model kernel dan model berbasis pohon memberikan akurasi yang layak untuk \emph{
 deployment} dengan interpretabilitas di tingkat fitur, sedangkan WDCNN
 melampaui semua \emph{baseline} dalam akurasi sekaligus memungkinkan
 interpretabilitas di tingkat sinyal mentah melalui FSM. Temuan bahwa
-\textcolor{blue}{penonaktifan \emph{BatchNorm} (Varian~C) meningkatkan
+{\color{blue}penonaktifan \emph{BatchNorm} (Varian~C) meningkatkan
 \emph{discriminability} FSM dari 0,315 menjadi 0,735 pada subset ablasi
 (30 \emph{background} / 50 sampel uji) --- kenaikan 0,420 poin
 atau sekitar +133\% ($2{,}3\times$) relatif terhadap Varian~A dengan BN aktif} --- merupakan
@@ -537,9 +537,9 @@ Validitas FSM diukur melalui tiga metrik formal (definisi kuantitatif
 disajikan pada Subbab~IV.6): (i)~\emph{discriminability index}: sejauh mana
 FSM antar-kelas dapat dibedakan; (ii)~\emph{severity monotonicity fraction}:
 fraksi posisi yang kepentingannya meningkat monoton seiring tingkat
-keparahan cacat; (iii)~\emph{split-half stability coefficient}: \textcolor{blue}{kemiripan
+keparahan cacat; (iii)~\emph{split-half stability coefficient}: {\color{blue}kemiripan
 kosinus (\emph{cosine similarity})} antara FSM yang dihitung dari dua subset acak separuh data uji.
-\textcolor{blue}{Pada WDCNN Varian~A, koefisien stabilitas mencapai 0,940
+{\color{blue}Pada WDCNN Varian~A, koefisien stabilitas mencapai 0,940
 pada analisis utama (300 \emph{background} / 500 sampel uji),
 mengkonfirmasi bahwa FSM bukan artefak \emph{sampling}, melainkan representasi
 yang stabil dari mekanisme keputusan model. Pada subset ablasi tereduksi
@@ -558,16 +558,16 @@ Berbeda dengan diagnostik yang bersifat klasifikasi diskrit, estimasi RUL
 adalah masalah regresi kontinu yang membutuhkan pemodelan dinamika degradasi
 lintas seluruh siklus hidup komponen.
 
-\textcolor{blue}{\subsection{Konstruksi \emph{Health Indicator} dan Normalisasi Degradasi}
+{\color{blue}\subsection{Konstruksi \emph{Health Indicator} dan Normalisasi Degradasi}
 \label{subsec:bab2_health_indicator}}
 
-\textcolor{blue}{Sebelum model \emph{deep learning} dapat dilatih untuk estimasi RUL, sinyal vibrasi
+{\color{blue}Sebelum model \emph{deep learning} dapat dilatih untuk estimasi RUL, sinyal vibrasi
 mentah perlu diubah menjadi representasi degradasi yang terstruktur, yang dikenal
 sebagai \emph{health indicator} (HI). HI merangkum kondisi \emph{bearing} menjadi
 skalar atau vektor yang berubah secara monoton seiring penurunan kondisi komponen,
 sehingga dapat dipetakan ke label RUL secara langsung.}
 
-\textcolor{blue}{Pendekatan berbasis statistik temporal seperti RMS (\emph{root mean square}) dan
+{\color{blue}Pendekatan berbasis statistik temporal seperti RMS (\emph{root mean square}) dan
 kurtosis rolling window merupakan metode yang paling banyak digunakan karena
 kesederhanaan dan kemudahan interpretasinya.
 Pada dataset PHM2012, kriteria akhir hidup (\emph{end-of-life}, EOL) didefinisikan
@@ -578,7 +578,7 @@ Pendekatan berbasis autoencoder \citetitb{Malhotra2016LSTMAnomalyDetect}
 mengonstruksi HI dari galat rekonstruksi: model dilatih hanya pada data kondisi
 normal, sehingga galat rekonstruksi meningkat secara alami seiring degradasi.}
 
-\textcolor{blue}{Pilihan metode normalisasi HI berpengaruh signifikan terhadap kemampuan model
+{\color{blue}Pilihan metode normalisasi HI berpengaruh signifikan terhadap kemampuan model
 untuk mempelajari laju degradasi yang konsisten lintas \emph{bearing} yang berbeda.
 Penelitian ini menggunakan label RUL linier yang dikalibrasi per rekaman
 dengan \emph{StandardScaler} yang disesuaikan pada data pelatihan saja,
@@ -624,11 +624,12 @@ arsitektur sel LSTM klasik dengan empat mekanisme \emph{gating}.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.88\textwidth]{figures/bab2/fig_lstm_cell.png}
+  \includegraphics[width=0.92\textwidth]{figures/bab2/fig_lstm_cell.png}
   \caption{Arsitektur sel LSTM klasik \citetitb{Hochreiter1997LSTM}: empat \emph{gate}
            (forget, input, candidate, output) mengatur aliran informasi melalui
            \emph{cell state} $c_t$ yang mengalir horizontal, mengatasi masalah
-           \emph{vanishing gradient} pada jaringan rekuren konvensional.}
+           \emph{vanishing gradient} pada jaringan rekuren konvensional.
+           Diadaptasi dari \citetitb{Hochreiter1997LSTM}.}
   \label{fig:bab2_lstm_cell}
 \end{figure}
 
@@ -644,39 +645,42 @@ matriks yang memperluas kapasitas representasi
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.80\textwidth]{figures/bab2/fig_mamba_ssm_block.png}
+  \includegraphics[width=0.92\textwidth]{figures/bab2/fig_mamba_ssm_block.png}
   \caption{Blok \emph{Selective State Space Model} (Mamba, Gu \& Dao, 2023):
            parameter $\Delta_t$, $B_t$, $C_t$ bergantung pada masukan $x_t$
            sehingga model dapat memilih informasi yang dipertahankan, ditolak,
-           atau dilewatkan secara adaptif dengan kompleksitas $\mathcal{O}(L \cdot d)$.}
+           atau dilewatkan secara adaptif dengan kompleksitas $\mathcal{O}(L \cdot d)$.
+           Diadaptasi dari \citetitb{Gu2023Mamba}.}
   \label{fig:bab2_mamba_ssm}
 \end{figure}
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.78\textwidth]{figures/bab2/fig_slstm_block.png}
+  \includegraphics[width=0.65\textwidth]{figures/bab2/fig_slstm_block.png}
   \caption{Blok \emph{scalar LSTM} (sLSTM) dalam arsitektur xLSTM
            \citetitb{Beck2024xLSTM}: \emph{exponential gating} ($i_t = \exp(\cdot)$,
            $f_t = \exp(\cdot)$) menggantikan saturasi sigmoid pada LSTM klasik,
-           memberikan kapasitas memori yang lebih besar.}
+           memberikan kapasitas memori yang lebih besar.
+           Diadaptasi dari \citetitb{Beck2024xLSTM}.}
   \label{fig:bab2_slstm}
 \end{figure}
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.78\textwidth]{figures/bab2/fig_mlstm_block.png}
+  \includegraphics[width=0.65\textwidth]{figures/bab2/fig_mlstm_block.png}
   \caption{Blok \emph{matrix LSTM} (mLSTM) dalam arsitektur xLSTM
            \citetitb{Beck2024xLSTM}: memori matriks $C_t \in \mathbb{R}^{d \times d}$
            menyimpan asosiasi \emph{key-value} dengan kapasitas jauh lebih besar
-           dibanding memori vektor LSTM klasik.}
+           dibanding memori vektor LSTM klasik.
+           Diadaptasi dari \citetitb{Beck2024xLSTM}.}
   \label{fig:bab2_mlstm}
 \end{figure}
-\textcolor{blue}{Di lini interpretabilitas berbasis arsitektur, kerangka N-BEATS
+{\color{blue}Di lini interpretabilitas berbasis arsitektur, kerangka N-BEATS
 \citetitb{Oreshkin2020NBEATS} memperkenalkan dekomposisi basis-blok eksplisit
 (\emph{trend} dan \emph{seasonality}) yang menghasilkan struktur internal yang
 dapat diinterpretasi tanpa metode XAI pasca-hoc.}
 Penelitian ini mengombinasikan
-\textcolor{blue}{ketiga keunggulan tersebut --- efisiensi Mamba, kapasitas memori
+{\color{blue}ketiga keunggulan tersebut --- efisiensi Mamba, kapasitas memori
 xLSTM, dan dekomposisi interpretabel N-BEATS ---} dalam tiga arsitektur
 \emph{backbone} RUL (Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL, dan SparseGate-TCN-RUL;
 diuraikan pada Subbab~V.1).
@@ -689,7 +693,7 @@ merepresentasikan fisika degradasi secara internal? Pertanyaan inilah yang
 dijawab oleh Bab~V melalui pemetaan SAE → BPFx
 \citetitb{TotoSuharto2025Journal2RUL}.
 
-\textcolor{blue}{\textbf{Kuantifikasi ketidakpastian (\emph{uncertainty quantification}, UQ).}
+{\color{blue}\textbf{Kuantifikasi ketidakpastian (\emph{uncertainty quantification}, UQ).}
 Selain akurasi titik estimasi, tren mutakhir dalam prognostik RUL turut menekankan
 pentingnya kuantifikasi ketidakpastian: sejauh mana model dapat memberikan
 interval kepercayaan yang terkalibrasi, bukan sekadar nilai prediksi tunggal.
@@ -800,19 +804,27 @@ konvensional, Top-$k$ memberikan kendali langsung atas tingkat \emph{sparsity}
 dan pelatihan yang lebih stabil. \citenameitb{Templeton2024Scaling} mengvalidasi
 pendekatan ini pada model produksi skala besar, menunjukkan bahwa jutaan fitur
 yang dapat diinterpretasi dapat diekstrak.
-Gambar~\ref{fig:bab2_sae_architecture} mengilustrasikan arsitektur
-Top-$k$ SAE yang digunakan dalam penelitian ini.
+Gambar~\ref{fig:bab2_sae_architecture} mengilustrasikan konsep arsitektur
+Top-$k$ SAE menurut \citetitb{Cunningham2023TopkSAE}; dalam penelitian ini,
+aktivasi diambil dari \emph{hidden state} \emph{backbone} RUL, bukan dari
+model bahasa.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.86\textwidth]{figures/bab2/fig_sae_architecture.png}
-  \caption{Arsitektur Top-$k$ \emph{Sparse Autoencoder} (SAE)
-           \citetitb{Cunningham2023TopkSAE}: \emph{hidden state} $\mathbf{h} \in \mathbb{R}^d$
-           dari \emph{backbone} RUL dikodekan ke \emph{dictionary} berlapis
-           ($d_{\rm lat} = 8d$), kemudian hanya $k$ fitur teraktif ($k = 51$,
-           $\approx 5\%$) yang dipertahankan sebagai kode \emph{sparse} $\mathbf{z}$.
-           \emph{Loss} rekonstruksi MSE mendorong SAE membangun representasi yang
-           dapat diinterpretasi secara monosemantik.}
+  \includegraphics[width=0.88\textwidth]{figures/bab2/fig_sae_architecture.png}
+  \caption{Konsep arsitektur Top-$k$ \emph{Sparse Autoencoder} (SAE)
+           \citetitb{Cunningham2023TopkSAE}: aktivasi lapisan (\emph{Activation})
+           dari model sumber dikodekan melalui \emph{Encoder} menjadi kode
+           \emph{sparse} (\emph{Sparse Coefficient}), lalu didekode kembali
+           melalui \emph{Decoder} (\emph{dictionary}) menjadi aktivasi
+           rekonstruksi (\emph{Reconstructed Activation}). Hanya sejumlah kecil
+           fitur aktif per sampel (Top-$k$); fitur tersebut dipetakan ke
+           interpretasi mekanistik (\emph{feature\_id: interpretations}).
+           Dalam penelitian ini, model sumber digantikan oleh \emph{backbone}
+           RUL prognostik dengan \emph{hidden state}
+           $\mathbf{h} \in \mathbb{R}^d$, kamus laten
+           $d_{\rm lat} = 8d$, dan $k = 51$ ($\approx 5\%$).
+           Diadaptasi dari \citetitb{Cunningham2023TopkSAE}.}
   \label{fig:bab2_sae_architecture}
 \end{figure}
 
@@ -835,45 +847,18 @@ kegagalan yang dipelajari. Namun, belum ada studi yang mencoba memetakan fitur
 SAE dari representasi laten model RUL ke BPFx secara statistik signifikan,
 dengan kontrol terhadap artefak arsitektur dan prosedur.
 
-Penelitian yang dilaporkan pada \citetitb{TotoSuharto2025Journal2RUL}
-merupakan studi pertama yang: (i)~mengadaptasi Top-$k$ SAE ke domain
-prognostik \emph{bearing} (\emph{novelti N3: SAEBearing}), (ii)~memetakan
-fitur SAE ke BPFx menggunakan korelasi Pearson dan uji statistik \emph{bootstrap}
-CI~95\% \textcolor{blue}{($B = 1.000$ resampel)} + \emph{permutation test}
-\textcolor{blue}{dua-sisi} dengan dua \emph{negative controls} (model
-Xavier-init dan \emph{hidden state} Gaussian acak), dan (iii)~mengkonfirmasi
-bahwa korespondensi SAE $\leftrightarrow$ BPFx merupakan properti \emph{emergent}
-dari representasi yang terlatih, bukan artefak arsitektur atau prosedur.
-Gambar~\ref{fig:bab2_sae_pipeline} merangkum \emph{pipeline} interpretabilitas
-mekanistik yang diusulkan secara keseluruhan.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.94\textwidth]{figures/bab2/fig_sae_pipeline.png}
-  \caption{\emph{Pipeline} interpretabilitas mekanistik SAE–BPFx
-           \citetitb{TotoSuharto2025Journal2RUL}: sinyal vibrasi mentah
-           diproses oleh tiga \emph{backbone} RUL beku untuk menghasilkan
-           \emph{pool} \emph{hidden state}, kemudian Top-$k$ SAE
-           mengekstrak kode \emph{sparse}, dan korelasi Pearson terhadap
-           amplitudo Hilbert \emph{envelope} pada empat frekuensi karakteristik
-           (BPFO, BPFI, BSF, FTF) menghasilkan \emph{hit-rate} per BPFx.
-           Validitas dikonfirmasi dengan \emph{bootstrap} 95\% CI,
-           \emph{permutation test}, dan dua \emph{negative control}.}
-  \label{fig:bab2_sae_pipeline}
-\end{figure}
-
 % -----------------------------------------------------------------
 % Subbab~II.7 BARU — tinjauan XAI lintas domain sinyal 1-D
 % -----------------------------------------------------------------
-\textcolor{blue}{\section{XAI pada Domain Sinyal Satu Dimensi: Tinjauan Lintas Domain}
+{\color{blue}\section{XAI pada Domain Sinyal Satu Dimensi: Tinjauan Lintas Domain}
 \label{sec:bab2_xai_lintas_domain}}
 
-\textcolor{blue}{Penerapan XAI pada sinyal satu dimensi tidak terbatas pada domain vibrasi mesin.
+{\color{blue}Penerapan XAI pada sinyal satu dimensi tidak terbatas pada domain vibrasi mesin.
 Tinjauan lintas domain memberikan konteks penting untuk menilai sejauh mana FSM
 merupakan kontribusi metodologis yang bersifat umum, dan di mana celah spesifik
 domain vibrasi yang belum terisi.}
 
-\textcolor{blue}{Pada domain \emph{electrocardiogram} (ECG), SHAP dan \emph{Integrated Gradients}
+{\color{blue}Pada domain \emph{electrocardiogram} (ECG), SHAP dan \emph{Integrated Gradients}
 (IG) telah digunakan untuk mengidentifikasi segmen temporal dalam denyut jantung
 yang paling berpengaruh terhadap klasifikasi aritmia.
 \citenameitb{Strodthoff2021ECGExplainability} menerapkan beberapa metode XAI
@@ -886,7 +871,7 @@ Pada domain audio dan \emph{speech}, Grad-CAM yang diadaptasi untuk konvolusi
 untuk mengidentifikasi bagian ucapan yang menentukan klasifikasi emosi atau
 kata kunci.}
 
-\textcolor{blue}{Kesamaan lintas domain ini menegaskan bahwa pendekatan XAI berbasis atribusi
+{\color{blue}Kesamaan lintas domain ini menegaskan bahwa pendekatan XAI berbasis atribusi
 posisi temporal---yang menjadi fondasi FSM---bukan merupakan pendekatan yang
 asing. Namun, perbedaan mendasar antara domain ECG/audio dan domain vibrasi
 \emph{bearing} terletak pada interpretabilitas fisik: sinyal ECG dan audio
@@ -905,13 +890,13 @@ pertama untuk WDCNN pada dataset CWRU \citetitb{TotoSuharto2025Journal1FSM}.}
 \label{sec:bab2_gap_literatur}
 % -----------------------------------------------------------------
 
-\textcolor{blue}{Berdasarkan tinjauan pada Subbab~\ref{sec:bab2_pdm_industri}
+{\color{blue}Berdasarkan tinjauan pada Subbab~\ref{sec:bab2_pdm_industri}
 hingga Subbab~\ref{sec:bab2_xai_lintas_domain}, bagian ini memetakan
 \emph{state of the art} penelitian perawatan prediktif secara komprehensif
 dan mengidentifikasi kesenjangan yang menjadi justifikasi langsung bagi
 ketiga rumusan masalah pada Subbab~\ref{sec:bab1_rumusan}.}
 
-\textcolor{blue}{Tabel~\ref{tab:bab2_sota_pdm} menyajikan pemaparan detail
+{\color{blue}Tabel~\ref{tab:bab2_sota_pdm} menyajikan pemaparan detail
 \emph{state of the art} perawatan prediktif \emph{bearing} dari 17 studi
 representatif yang dikelompokkan berdasarkan lima tema utama, plus empat
 karya internal disertasi ini. Setiap baris memuat metode, dataset, hasil
@@ -927,7 +912,7 @@ utama, dan keterbatasan masing-masing studi.}
                      >{\raggedright\arraybackslash}p{2.8cm}
                      >{\raggedright\arraybackslash}p{2.4cm}
                      >{\raggedright\arraybackslash}p{7.4cm}@{}}
-\caption{\textcolor{blue}{Pemaparan \emph{state of the art} (SotA) penelitian
+\caption{{\color{blue}Pemaparan \emph{state of the art} (SotA) penelitian
          perawatan prediktif (PdM) \emph{bearing} dan posisi penelitian
          disertasi ini, dikelompokkan dalam lima grup tematik (A--E) ditambah
          karya internal (Grup F).}}
@@ -952,7 +937,7 @@ utama, dan keterbatasan masing-masing studi.}
 \bottomrule
 \endlastfoot
 
-\multicolumn{4}{@{}l}{\textbf{\textcolor{blue}{Grup A. Diagnostik
+\multicolumn{4}{@{}l}{\textbf{{\color{blue}Grup A. Diagnostik
 \emph{bearing} berbasis pembelajaran mesin dan pembelajaran mendalam}}} \\
 \midrule
 
@@ -994,7 +979,7 @@ Interpretabilitas linguistik melalui aturan fuzzy; namun
 dan akurasi tertinggal dibandingkan DL modern. \\
 
 \midrule
-\multicolumn{4}{@{}l}{\textbf{\textcolor{blue}{Grup B. \emph{Explainable AI}
+\multicolumn{4}{@{}l}{\textbf{{\color{blue}Grup B. \emph{Explainable AI}
 (XAI) pada diagnostik \emph{bearing}}}} \\
 \midrule
 
@@ -1027,7 +1012,7 @@ studi beroperasi pada tingkat masukan dan tidak pada
 representasi laten model. \\
 
 \midrule
-\multicolumn{4}{@{}l}{\textbf{\textcolor{blue}{Grup C. Prognostik
+\multicolumn{4}{@{}l}{\textbf{{\color{blue}Grup C. Prognostik
 \emph{bearing} dan estimasi sisa umur pakai (RUL)}}} \\
 \midrule
 
@@ -1073,7 +1058,7 @@ Memetakan dua paradigma; menyoroti bahwa model \emph{data-driven}
 yang akurat sering kali tidak dapat diinterpretasikan secara fisika. \\
 
 \midrule
-\multicolumn{4}{@{}l}{\textbf{\textcolor{blue}{Grup D. Interpretabilitas
+\multicolumn{4}{@{}l}{\textbf{{\color{blue}Grup D. Interpretabilitas
 mekanistik dengan \emph{Sparse Autoencoder} (SAE)}}} \\
 \midrule
 
@@ -1098,7 +1083,7 @@ Membuktikan SAE dapat diperluas; namun belum diadaptasi ke domain
 non-bahasa dengan validasi fisika sebelum disertasi ini. \\
 
 \midrule
-\multicolumn{4}{@{}l}{\textbf{\textcolor{blue}{Grup E. Arsitektur
+\multicolumn{4}{@{}l}{\textbf{{\color{blue}Grup E. Arsitektur
 sistem PdM \emph{edge}/\emph{cloud}}}} \\
 \midrule
 
@@ -1115,7 +1100,7 @@ Mendemonstrasikan kelayakan \emph{edge deployment}; namun
 tidak menyertakan lapisan interpretabilitas yang dapat diaudit. \\
 
 \midrule
-\multicolumn{4}{@{}l}{\textbf{\textcolor{blue}{Grup F. Karya internal
+\multicolumn{4}{@{}l}{\textbf{{\color{blue}Grup F. Karya internal
 disertasi ini}}} \\
 \midrule
 
@@ -1156,7 +1141,7 @@ lintas tiga arsitektur; validasi dengan \emph{bootstrap} CI 95\,\%,
 \end{longtable}
 \end{small}
 
-\textcolor{blue}{Berdasarkan Tabel~\ref{tab:bab2_sota_pdm}, dapat
+{\color{blue}Berdasarkan Tabel~\ref{tab:bab2_sota_pdm}, dapat
 diidentifikasi bahwa sebagian besar studi diagnostik \emph{bearing}
 (Grup~A) hanya membandingkan satu hingga tiga algoritma tanpa XAI dan tanpa
 protokol evaluasi temporal yang ketat. Studi XAI yang ada (Grup~B) beroperasi
@@ -1176,7 +1161,7 @@ dimensi-dimensi yang menutup kesenjangan tersebut.
 \begin{table}[ht]
   \centering
   \caption{Posisi empat karya penelitian ini relatif terhadap literatur umum
-           pada \textcolor{blue}{enam} dimensi kritis. Simbol \checkmark = terpenuhi,
+           pada {\color{blue}enam} dimensi kritis. Simbol \checkmark = terpenuhi,
            \emph{sebagian} = terpenuhi parsial; kolom tidak relevan
            atau tidak dilaporkan dikosongkan.}
   \label{tab:bab2_posisi_penelitian}
@@ -1197,11 +1182,11 @@ dimensi-dimensi yang menutup kesenjangan tersebut.
     Validasi statistik
       & Akurasi, F1 & Akurasi, F1 & Akurasi, F1 + 3 metrik FSM
       & RMSE + \emph{bootstrap} CI + uji permutasi & Akurasi saja \\[3pt]
-    \textcolor{blue}{Validasi industri (data real)}
-      & \textcolor{blue}{$\times$} & \textcolor{blue}{$\times$}
-      & \textcolor{blue}{$\times$}
-      & \textcolor{blue}{\emph{sebagian} (SKF)}
-      & \textcolor{blue}{Sangat terbatas} \\[3pt]
+    {\color{blue}Validasi industri (data real)}
+      & {\color{blue}$\times$} & {\color{blue}$\times$}
+      & {\color{blue}$\times$}
+      & {\color{blue}\emph{sebagian} (SKF)}
+      & {\color{blue}Sangat terbatas} \\[3pt]
     Integrasi diagnostik–prognostik
       & $\times$ & $\times$ & $\times$ & $\times$ & $\times$ \\[3pt]
     Interpretabilitas dua lapis (masukan + laten)
@@ -1218,7 +1203,7 @@ dimensi-dimensi yang menutup kesenjangan tersebut.
 \end{table}
 
 Tabel~\ref{tab:bab2_posisi_penelitian} mengungkapkan
-\textcolor{blue}{empat} kesenjangan yang
+{\color{blue}empat} kesenjangan yang
 belum terisi oleh literatur yang ada, termasuk oleh keempat karya secara
 individual.
 
@@ -1229,7 +1214,7 @@ bukan \emph{posisi mana dalam sinyal mentah 2.048 sampel} yang menjadi basis
 keputusan. Belum ada peta fingerprint kelas kerusakan berbasis atribusi sinyal
 mentah dengan validasi multi-metrik (discriminability, severity monotonicity,
 split-half stability). Kesenjangan ini dijawab oleh Journal~1 dan Bab~IV
-\textcolor{blue}{(RM-2)}.
+{\color{blue}(RM-2)}.
 
 \textbf{Kesenjangan~2 (Interpretabilitas laten prognostik).} Belum ada studi
 yang memetakan fitur SAE dari representasi laten model RUL ke frekuensi
@@ -1238,7 +1223,7 @@ terhadap artefak arsitektur (model Xavier-init) dan artefak prosedur (hidden
 state acak). Metode interpretabilitas yang ada beroperasi di tingkat masukan atau
 tidak dapat menjembatani representasi laten dengan teori fisika degradasi.
 Kesenjangan ini dijawab oleh Journal~2 dan Bab~V
-\textcolor{blue}{(RM-2)}.
+{\color{blue}(RM-2)}.
 
 \textbf{Kesenjangan~3 (Integrasi diagnostik–prognostik yang dapat diaudit).}
 Belum ada kerangka yang menyatukan interpretabilitas tingkat masukan (FSM untuk
@@ -1246,10 +1231,10 @@ diagnostik) dan interpretabilitas tingkat laten (SAE-BPFx untuk prognostik)
 menjadi satu sistem PdM multi-tier yang dapat diaudit lapis demi lapis.
 Ketiadaan integrasi ini merupakan hambatan adopsi industri: teknisi tidak dapat
 menelusuri alasan keputusan dari sinyal mentah hingga konsep fisika laten.
-Kesenjangan ini dijawab oleh \textcolor{blue}{arsitektur multi-tier pada Bab~VI
+Kesenjangan ini dijawab oleh {\color{blue}arsitektur multi-tier pada Bab~VI
 (RM-3)}.
 
-\textcolor{blue}{\textbf{Kesenjangan~4 (Validasi industri real).} Sebagian
+{\color{blue}\textbf{Kesenjangan~4 (Validasi industri real).} Sebagian
 besar studi diagnostik dan prognostik \emph{bearing} dikembangkan dan
 divalidasi pada dataset publik yang dikumpulkan dalam kondisi laboratorium
 terkontrol. Validasi pada lingkungan industri nyata, khususnya pada proses
@@ -1258,14 +1243,14 @@ masih sangat terbatas. Model yang akurat pada dataset benchmark belum tentu
 bekerja pada data industri real. Kesenjangan ini dijawab oleh validasi RUL
 pada data vibrasi PT~SKF Indonesia (RM-3).}
 
-\textcolor{blue}{Keempat} kesenjangan tersebut terhubung langsung dengan
-\textcolor{blue}{tiga} pertanyaan penelitian
-pada Subbab~\ref{sec:bab1_rumusan}: \textcolor{blue}{Kesenjangan~1 dan~2
+{\color{blue}Keempat} kesenjangan tersebut terhubung langsung dengan
+{\color{blue}tiga} pertanyaan penelitian
+pada Subbab~\ref{sec:bab1_rumusan}: {\color{blue}Kesenjangan~1 dan~2
 menjustifikasi RM-2 (XAI dua lapis); Kesenjangan~3 dan~4 menjustifikasi
 RM-3 (validasi industri dan arsitektur multi-tier). RM-1 (model PdM
 diagnostik dan prognostik yang akurat) merupakan prasyarat yang memungkinkan
 seluruh kesenjangan di atas ditangani.} Metodologi umum untuk menjawab
-\textcolor{blue}{keempat} kesenjangan disajikan pada Bab~III, dengan detail
+{\color{blue}keempat} kesenjangan disajikan pada Bab~III, dengan detail
 diagnostik pada Bab~IV dan prognostik pada Bab~V.
 
 % =====================================================================

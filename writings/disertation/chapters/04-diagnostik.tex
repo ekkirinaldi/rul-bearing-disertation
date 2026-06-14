@@ -9,7 +9,7 @@
 \chapter{Deteksi Kerusakan \emph{Bearing}}
 \label{bab:diagnostik}
 
-Bab ini menyajikan \textcolor{blue}{komponen diagnostik} dari penelitian ini secara \emph{end-to-end}: mulai dari perancangan
+Bab ini menyajikan {\color{blue}komponen diagnostik} dari penelitian ini secara \emph{end-to-end}: mulai dari perancangan
 metodologi, perbandingan antara tiga kelompok algoritma hingga analisis
 hasil, validasi interpretabilitas, dan sintesis antar kelompok.
 Sumber empiris utama pembahasan bab ini terdiri atas tiga publikasi yang masing-masing merepresentasikan
@@ -320,10 +320,10 @@ Novelti~N2:
         konvolusi. Varian ini merepresentasikan konfigurasi referensi
         \citetitb{Zhang2017WDCNN}.
   \item \textbf{Varian B (Kernel Sempit):} Ukuran kernel pertama diperkecil
-        dari 64 ke 3 \textcolor{blue}{(\emph{stride} 16 menjadi 1)},
+        dari 64 ke 3 {\color{blue}(\emph{stride} 16 menjadi 1)},
         menyamakan dengan kernel blok lainnya. Tujuan ablasi
         ini adalah menguji peran kernel lebar dalam pemrosesan frekuensi.
-        \textcolor{blue}{Jumlah parameter meningkat sebesar \
+        {\color{blue}Jumlah parameter meningkat sebesar \
         $7{,}3\times$ (dari 60.710 menjadi 443.734) karena hilangnya
         reduksi dimensi implisit oleh \emph{stride} lebar, membuat peta fitur
         beresolusi penuh dan memerlukan bank filter yang jauh lebih besar.}
@@ -392,7 +392,7 @@ komparabel secara langsung.
 
 SHAP \emph{TreeExplainer} mengeksploitasi struktur percabangan \emph{tree}
 secara eksak menggunakan algoritma \emph{path-dependent} yang diusulkan
-\textcolor{blue}{\citenameitb{Lundberg2017SHAP}}, dengan kompleksitas waktu $O(TLD^2)$ di mana $T$
+{\color{blue}\citenameitb{Lundberg2017SHAP}}, dengan kompleksitas waktu $O(TLD^2)$ di mana $T$
 adalah jumlah pohon, $L$ jumlah daun, dan $D$ kedalaman maksimum
 \citetitb{TotoSuharto2024Conf2Tree}.
 Berbeda dengan \emph{KernelExplainer}, \emph{TreeExplainer} tidak menggunakan
@@ -507,10 +507,10 @@ tidak tumpang tindih antarkelas.
 Metrik monotonik mengukur apakah amplitudo puncak FSM meningkat secara konsisten
 seiring bertambahnya keparahan cacat (7 mil, 14 mil, 21 mil). Metrik ini
 menghubungkan output SHAP dengan sifat fisika degradasi \emph{bearing}.
-Stabilitas mengukur konsistensi FSM \textcolor{blue}{antara dua paruh acak
+Stabilitas mengukur konsistensi FSM {\color{blue}antara dua paruh acak
 yang saling lepas dari sampel uji tiap kelas (\emph{split-half}) melalui
 kemiripan kosinus}. FSM yang stabil menunjukkan pola interpretasi yang tidak bergantung pada variasi
-\textcolor{blue}{pemilihan sampel} tertentu.
+{\color{blue}pemilihan sampel} tertentu.
 
 Ketiga metrik ini dievaluasi secara terpisah untuk $\text{FSM}^{\text{signed}}$,
 $\text{FSM}^{\text{abs}}$, dan $\text{FSM}^{\text{var}}$, serta dibandingkan
@@ -650,7 +650,7 @@ peringkat global.
 Namun, \emph{dependence plot} mengungkap perbedaan penting: XGBoost mampu
 menangkap interaksi antara kurtosis dan \emph{crest factor} yang tidak
 terlihat pada plot SVM-RBF, karena \emph{TreeExplainer} mendukung
-\emph{shap interaction values} yang merekam \textcolor{blue}{kontribusi gabungan dua fitur}
+\emph{shap interaction values} yang merekam {\color{blue}kontribusi gabungan dua fitur}
 secara eksplisit.
 
 Pola atribusi DT, meskipun interpretabilitasnya paling tinggi secara
@@ -679,7 +679,7 @@ langsung.
 
 Tabel~\ref{tab:bab4_hasil_wdcnn} merangkum kinerja WDCNN Varian~A (konfigurasi
 referensi dengan BN penuh) pada dataset CWRU sepuluh kelas.
-\textcolor{blue}{WDCNN dilatih dan dievaluasi mengikuti pembagian temporal
+{\color{blue}WDCNN dilatih dan dievaluasi mengikuti pembagian temporal
 ketat 1.240/310/750 sampel (\emph{training}/\emph{validation}/\emph{test})
 sebagaimana diuraikan pada Bab~\ref{bab:metodologi-umum}, untuk mencegah
 inflasi akurasi akibat kebocoran data antar-segmen.}
@@ -799,7 +799,7 @@ mencerminkan fakta bahwa BN menormalisasi aktivasi internal sehingga model
 tidak bergantung terlalu kuat pada posisi tertentu.
 Sebaliknya, Varian~C (tanpa BN) menunjukkan puncak atribusi yang jauh lebih
 tajam dan terlokalisasi; model tanpa BN mengembangkan detektor impuls yang
-lebih spesifik \textcolor{blue}{secara posisional}.
+lebih spesifik {\color{blue}secara posisional}.
 
 \subsection{FSM Tiga Varian: Perbandingan Visual}
 \label{subsec:bab4_fsm_visual}
@@ -840,14 +840,14 @@ internal antar-\emph{batch}.
 % =================================================================
 
 Tabel~\ref{tab:bab4_validasi_fsm} menyajikan nilai tiga metrik validasi FSM
-\textcolor{blue}{(diskriminabilitas, monotonik, stabilitas) untuk
+{\color{blue}(diskriminabilitas, monotonik, stabilitas) untuk
 $\text{FSM}^{\text{abs}}$ Varian~A (konfigurasi referensi WDCNN dengan BN
 penuh), dirata-rata atas sepuluh kelas CWRU. Metrik ini dihitung pada
 analisis FSM utama dengan 300 sampel \emph{background} dan 500 sampel uji;
 perbandingan terhadap Varian~C dibahas tersendiri pada studi ablasi Subbab~IV.13.}
 
 \begin{table}[ht]
-\caption{\textcolor{blue}{Metrik validasi FSM$^{\text{abs}}$ Varian~A
+\caption{{\color{blue}Metrik validasi FSM$^{\text{abs}}$ Varian~A
          (BN aktif) rata-rata sepuluh kelas CWRU pada analisis utama
          (300 \emph{background} / 500 sampel uji).}
          Nilai lebih tinggi lebih baik untuk ketiga metrik.}
@@ -857,31 +857,31 @@ perbandingan terhadap Varian~C dibahas tersendiri pada studi ablasi Subbab~IV.13
 \toprule
 \textbf{Varian} & \textbf{Diskriminabilitas} & \textbf{Monotonik} & \textbf{Stabilitas}\\
 \midrule
-\textcolor{blue}{A (BN aktif)} & \textcolor{blue}{0,216} & \textcolor{blue}{0,940} & \textcolor{blue}{0,940}\\
+{\color{blue}A (BN aktif)} & {\color{blue}0,216} & {\color{blue}0,940} & {\color{blue}0,940}\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textcolor{blue}{Hasil analisis utama menunjukkan bahwa FSM$^{\text{abs}}$
+{\color{blue}Hasil analisis utama menunjukkan bahwa FSM$^{\text{abs}}$
 Varian~A memiliki \emph{split-half stability} 0,940, yang berarti pola FSM
 sangat dapat direproduksi (kemiripan kosinus 94\%) dan tidak bergantung pada
 pemilihan sampel acak.} Sebaliknya, indeks diskriminabilitas hanya 0,216,
-mengindikasikan bahwa \textcolor{blue}{FSM rata-rata antarkelas justru relatif
+mengindikasikan bahwa {\color{blue}FSM rata-rata antarkelas justru relatif
 mirip satu sama lain pada ruang atribusi 2.048 dimensi penuh. Hal ini terjadi
 karena sinyal diskriminatif terkonsentrasi pada sebagian kecil posisi temporal
 yang tertutupi oleh komponen energi latar yang besar dan bersama
 \citetitb{TotoSuharto2025Journal1FSM}.}
 
-\textcolor{blue}{Karena itu, kekhasan FSM lebih efektif dinilai secara visual
+{\color{blue}Karena itu, kekhasan FSM lebih efektif dinilai secara visual
 melalui \emph{heatmap} yang menyoroti konsentrasi temporal spesifik, bukan
 semata melalui metrik kemiripan kosinus 2.048-D. Studi ablasi Subbab~IV.13
 menunjukkan bahwa diskriminabilitas ini dapat ditingkatkan secara substansial
 melalui modifikasi arsitektur, khususnya penghapusan \emph{Batch
 Normalization}.}
 
-Metrik monotonik \textcolor{blue}{Varian~A (0,940 untuk FSM$^{\text{abs}}$
+Metrik monotonik {\color{blue}Varian~A (0,940 untuk FSM$^{\text{abs}}$
 agregat)} menghubungkan output SHAP dengan fisika degradasi \emph{bearing}.
-\textcolor{blue}{Analisis monotonik per kelompok kelas mengungkap pola yang
+{\color{blue}Analisis monotonik per kelompok kelas mengungkap pola yang
 konsisten dengan fisika keparahan cacat.}
 Fraksi monotonik diurutkan: kelas Ball (17,6\%) $>$ kelas IR (13,8\%) $>$
 kelas OR (8,6\%).
@@ -938,11 +938,11 @@ diturunkan dari geometri \emph{bearing}.
 
 Dari geometri \emph{bearing} CWRU (8 bola, sudut kontak 15,17°, diameter bola
 0,3126 inci, diameter \emph{pitch} 1,537 inci), frekuensi karakteristik
-pada kecepatan putar \textcolor{blue}{1.772~rpm (CWRU Load~1)} adalah
-\textcolor{blue}{BPFO $\approx$ 105,9~Hz, BPFI $\approx$ 159,9~Hz, dan
+pada kecepatan putar {\color{blue}1.772~rpm (CWRU Load~1)} adalah
+{\color{blue}BPFO $\approx$ 105,9~Hz, BPFI $\approx$ 159,9~Hz, dan
 BSF $\approx$ 69,6~Hz}.
 Pada frekuensi pengambilan sampel 48~kHz dan panjang segmen 2.048 titik,
-perioda impuls BPFI setara dengan \textcolor{blue}{$\approx 300$ titik sampel}.
+perioda impuls BPFI setara dengan {\color{blue}$\approx 300$ titik sampel}.
 Seandainya WDCNN mengklasifikasikan berdasarkan periodisitas BPFx, maka puncak-puncak
 FSM seharusnya muncul berulang pada kelipatan periode tersebut.
 
@@ -967,7 +967,7 @@ posisi BPFI dan BPFO teoritis yang diharapkan.
 
 Inspeksi pada Gambar~\ref{fig:bab4_fsm_fisika} menunjukkan bahwa puncak FSM
 tidak berulang secara periodik pada kelipatan BPFI
-(\textcolor{blue}{$\approx 300$ titik sampel}) maupun BPFO.
+({\color{blue}$\approx 300$ titik sampel}) maupun BPFO.
 Sebaliknya, pola atribusi tinggi tersebar dalam jendela kontinyu yang lebarnya
 setara dengan $\approx 42{,}67$~ms, dihitung dari panjang lapisan reseptif
 efektif WDCNN (kernel-1 berukuran 64 dengan stride 16 dan 4 blok
@@ -1028,13 +1028,13 @@ dari tiga varian WDCNN dalam satu pandangan terpadu.
 
 \begin{table}[ht]
 \caption{Ringkasan metrik kinerja dan interpretabilitas FSM$^{\text{abs}}$
-         tiga varian WDCNN. \textcolor{blue}{Akurasi diperoleh dari protokol
+         tiga varian WDCNN. {\color{blue}Akurasi diperoleh dari protokol
          ablasi terkontrol (pelatihan 50 \emph{epoch} tanpa \emph{early
          stopping}, konfigurasi optimizer identik), sehingga sedikit berbeda
          dari akurasi uji Varian~A = 99,87\% pada
          Tabel~\ref{tab:bab4_hasil_wdcnn} yang menggunakan \emph{early
          stopping}.} Kolom \textbf{F1} adalah F1
-         makro; \textcolor{blue}{kolom \textbf{Param.} adalah jumlah parameter
+         makro; {\color{blue}kolom \textbf{Param.} adalah jumlah parameter
          terlatih; kolom \textbf{Disk.} dan \textbf{Stab.} adalah
          diskriminabilitas dan \emph{split-half stability} FSM$^{\text{abs}}$
          yang dihitung pada subset SHAP tereduksi (30 \emph{background} /
@@ -1046,32 +1046,32 @@ dari tiga varian WDCNN dalam satu pandangan terpadu.
 \begin{tabular}{lccc|cc}
 \toprule
 \textbf{Varian} & \textbf{Akurasi (\%)\,$\uparrow$} & \textbf{F1\,$\uparrow$}
-                & \textcolor{blue}{\textbf{Param.}}
+                & {\color{blue}\textbf{Param.}}
                 & \textbf{Disk.\,$\uparrow$} & \textbf{Stab.\,$\uparrow$}\\
 \midrule
-A (Baseline, BN aktif) & \textbf{99,73} & \textbf{0,997} & \textcolor{blue}{60.710} & \textcolor{blue}{0,315} & \textcolor{blue}{0,705}\\
-B (Kernel $k=3$)       & 98,93 ($\downarrow$0,80) & 0,989 & \textcolor{blue}{443.734} & \textcolor{blue}{0,369} & \textcolor{blue}{0,690}\\
-C (Tanpa BN)           & 96,13 ($\downarrow$3,60) & 0,961 & \textcolor{blue}{60.230} & \textcolor{blue}{\textbf{0,735}} & \textcolor{blue}{\textbf{0,741}}\\
+A (Baseline, BN aktif) & \textbf{99,73} & \textbf{0,997} & {\color{blue}60.710} & {\color{blue}0,315} & {\color{blue}0,705}\\
+B (Kernel $k=3$)       & 98,93 ($\downarrow$0,80) & 0,989 & {\color{blue}443.734} & {\color{blue}0,369} & {\color{blue}0,690}\\
+C (Tanpa BN)           & 96,13 ($\downarrow$3,60) & 0,961 & {\color{blue}60.230} & {\color{blue}\textbf{0,735}} & {\color{blue}\textbf{0,741}}\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Tabel~\ref{tab:bab4_ablasi_bn} memperlihatkan secara eksplisit
 \emph{trade-off} yang dimaksud: Varian~A unggul pada metrik kinerja klasifikasi
-(akurasi dan F1), sementara \textcolor{blue}{Varian~C unggul pada
+(akurasi dan F1), sementara {\color{blue}Varian~C unggul pada
 diskriminabilitas FSM}.
-\textcolor{blue}{Perbedaan antara akurasi uji Varian~A pada
+{\color{blue}Perbedaan antara akurasi uji Varian~A pada
 Tabel~\ref{tab:bab4_hasil_wdcnn} (99,87\%, dengan \emph{early stopping}) dan
 akurasi pada tabel ini (99,73\%, protokol ablasi 50 \emph{epoch} terkontrol)
 mencerminkan perbedaan protokol pelatihan, bukan partisi data yang berbeda.}
-\textcolor{blue}{Penghapusan \emph{Batch Normalization} pada Varian~C
+{\color{blue}Penghapusan \emph{Batch Normalization} pada Varian~C
 meningkatkan diskriminabilitas FSM dari 0,315 menjadi 0,735, yaitu kenaikan
 sekitar $2{,}3\times$ ($+133\%$), dengan \emph{trade-off} penurunan akurasi
 3,60 poin persentase. Inilah temuan inti Novelti~N2: hubungan
 \emph{interpretability--accuracy trade-off} antara \emph{Batch Normalization}
 dan kualitas interpretabilitas level sinyal yang sebelumnya tidak
 terdokumentasi \citetitb{TotoSuharto2025Journal1FSM}.}
-\textcolor{blue}{Penggantian kernel pertama lebar (64) dengan kernel sempit
+{\color{blue}Penggantian kernel pertama lebar (64) dengan kernel sempit
 ($k=3$) pada Varian~B justru melonjakkan jumlah parameter sebesar
 $7{,}3\times$ (dari 60.710 menjadi 443.734) karena peta fitur beresolusi
 penuh memerlukan bank filter yang jauh lebih besar; kenaikan
@@ -1174,7 +1174,7 @@ tiga dimensi, yaitu akurasi yang dibutuhkan, sumber daya komputasi yang tersedia
 dan kedalaman interpretabilitas yang diperlukan oleh pengguna akhir (operator
 mesin, insinyur pemeliharaan, atau peneliti).
 
-Bab~V akan mengembangkan \textcolor{blue}{komponen prognostik} dengan memperkenalkan tiga
+Bab~V akan mengembangkan {\color{blue}komponen prognostik} dengan memperkenalkan tiga
 model RUL berbasis sinyal bearing yang beroperasi pada distribusi data yang
 berbeda secara fundamental: data \emph{run-to-failure} longitudinal dari
 \emph{dataset} PHM2012, XJTU-SY, dan IMS, berbeda dari CWRU yang berupa

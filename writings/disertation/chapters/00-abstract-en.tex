@@ -45,7 +45,7 @@ All three are trained under a shared protocol (75 epochs, bf16 precision,
 batch size 512, window 32, three random seeds) on PHM2012, XJTU-SY, and
 IMS.
 The winning model differs by dataset: SparseGate-TCN achieves
-RMSE $0.226 \pm 0.030$ on PHM2012, \textcolor{blue}{Mamba-xLSTM-Net achieves
+RMSE $0.226 \pm 0.030$ on PHM2012, {\color{blue}Mamba-xLSTM-Net achieves
 RMSE $0.213 \pm 0.056$ on XJTU-SY}, and Mamba-xLSTM achieves
 $0.407 \pm 0.040$ on IMS.
 After training, a Top-$k$ Sparse Autoencoder (SAE, $d_{\rm lat} = 1{,}024$,
@@ -53,7 +53,7 @@ $k = 51$) is trained post-hoc on the frozen hidden states of each backbone.
 Mapping to characteristic frequencies via Pearson correlation and Hilbert
 envelope spectra shows that 2.3\% of SAE features exhibit moderate
 correlation ($|r| \geq 0.30$) with BPFI on PHM2012 ($p < 0.001$,
-$r_{\rm max} = 0.507$), \textcolor{blue}{while on XJTU-SY the hit-rate spreads across BPFI, BSF, and BPFO
+$r_{\rm max} = 0.507$), {\color{blue}while on XJTU-SY the hit-rate spreads across BPFI, BSF, and BPFO
 (1.5\%, 1.6\%, 0.7\%; $p < 0.001$, $r_{\rm max} = 0.468$).}
 Two negative controls, namely an untrained Xavier-initialized model and
 Gaussian-noise hidden states, confirm that this correspondence is an

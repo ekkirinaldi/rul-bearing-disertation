@@ -12,49 +12,49 @@
 \label{bab:dasar-teori}% [REVISI Isu#2] hapus pada Fase D
 
 Bab ini menjelaskan fondasi penelitian yang digunakan oleh Bab~IV (diagnostik)
-dan Bab~V (prognostik). Fondasi tersebut mencakup kerangka konseptual \textcolor{blue}{diagnostik
+dan Bab~V (prognostik). Fondasi tersebut mencakup kerangka konseptual {\color{blue}diagnostik
 dan prognostik} yang saling melengkapi, spesifikasi empat dataset,
-prosedur praproses sinyal dan ekstraksi fitur, metrik evaluasi \textcolor{blue}{bersama}, serta infrastruktur komputasi dan protokol reproduksi.
-metodologi spesifik \textcolor{blue}{tiap kasus} dikembangkan lebih lanjut di awal Bab~IV
-(\textcolor{blue}{diagnostik}) dan Bab~V (\textcolor{blue}{prognostik}).
+prosedur praproses sinyal dan ekstraksi fitur, metrik evaluasi {\color{blue}bersama}, serta infrastruktur komputasi dan protokol reproduksi.
+metodologi spesifik {\color{blue}tiap kasus} dikembangkan lebih lanjut di awal Bab~IV
+({\color{blue}diagnostik}) dan Bab~V ({\color{blue}prognostik}).
 
 % =================================================================
 \section{Kerangka Konseptual}
 \label{sec:bab3_kerangka}
 % =================================================================
 
-Penelitian ini disusun dalam \textcolor{blue}{dua pendekatan} yang mencerminkan dua tipe  sistem perawatan prediktif berbasis vibrasi:
-\textcolor{blue}{\textbf{diagnostik}} dan \textcolor{blue}{\textbf{prognostik}}.
-\textcolor{blue}{Keduanya} berbagi fondasi data, praproses, dan infrastruktur yang diuraikan
+Penelitian ini disusun dalam {\color{blue}dua pendekatan} yang mencerminkan dua tipe  sistem perawatan prediktif berbasis vibrasi:
+{\color{blue}\textbf{diagnostik}} dan {\color{blue}\textbf{prognostik}}.
+{\color{blue}Keduanya} berbagi fondasi data, praproses, dan infrastruktur yang diuraikan
 pada bab ini, kemudian masing-masing mengembangkan metodologi dan hasilnya
 pada Bab~IV dan Bab~V, sebelum akhirnya berkonvergensi pada kerangka
 \emph{Perawatan Prediktif} (\emph{Predictive Maintenance}, PdM) yang disintesiskan pada Bab~VI.
 
-\textcolor{blue}{Pendekatan diagnostik} berfokus pada \textbf{identifikasi jenis dan keparahan kerusakan
+{\color{blue}Pendekatan diagnostik} berfokus pada \textbf{identifikasi jenis dan keparahan kerusakan
 \emph{bearing}} menggunakan dataset CWRU dengan pendekatan progresif dari
 model berbasis kernel (SVM/LR), algoritma berbasis pohon keputusan
 (DT/RF/XGBoost), hingga \emph{Deep Learning} (WDCNN). Setiap pendekatan
 dilengkapi modul \emph{Explainable AI} (SHAP) yang sesuai dengan
-arsitekturnya. Keluaran utama \textcolor{blue}{pendekatan diagnostik} adalah
+arsitekturnya. Keluaran utama {\color{blue}pendekatan diagnostik} adalah
 \emph{Fault Signature Maps} (FSM), yaitu representasi \emph{fingerprint}
 per kelas kerusakan pada resolusi sinyal mentah 2.048 titik.
-\textcolor{blue}{Modul XAI yang digunakan pada setiap golongan algoritma
+{\color{blue}Modul XAI yang digunakan pada setiap golongan algoritma
 disesuaikan dengan arsitekturnya: KernelExplainer untuk model berbasis kernel
 (SVM/LR), TreeExplainer untuk algoritma berbasis pohon keputusan
 (DT/RF/XGBoost), dan DeepExplainer untuk \emph{Deep Learning} (WDCNN).
 Rincian implementasi masing-masing modul SHAP dikembangkan pada
 Bab~IV Subbab~IV.2--IV.4.}% [Revisi Subbab 3.1 transisi SHAP]
 
-Di sisi lain, \textcolor{blue}{pendekatan prognostik} berfokus pada \textbf{estimasi sisa umur pakai}
+Di sisi lain, {\color{blue}pendekatan prognostik} berfokus pada \textbf{estimasi sisa umur pakai}
 (\emph{Remaining Useful Life}, RUL) menggunakan tiga dataset prognostik
 (PHM2012, XJTU-SY, IMS) dengan tiga arsitektur \emph{backbone}:
 Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL, dan SparseGate-TCN-RUL.
-Interpretabilitas \textcolor{blue}{pendekatan prognostik} dicapai melalui \emph{Top-k Sparse Autoencoder}
+Interpretabilitas {\color{blue}pendekatan prognostik} dicapai melalui \emph{Top-k Sparse Autoencoder}
 (SAE) yang memetakan representasi laten model ke frekuensi karakteristik
 \emph{bearing} (BPFx) secara statistik terverifikasi.
 
 Gambar~\ref{fig:bab3_kerangka_terintegrasi} mengilustrasikan alur keseluruhan
-\textcolor{blue}{kedua pendekatan} beserta titik konvergensi di Bab~VI.
+{\color{blue}kedua pendekatan} beserta titik konvergensi di Bab~VI.
 
 \begin{figure}[ht]
 \centering
@@ -86,7 +86,7 @@ Gambar~\ref{fig:bab3_kerangka_terintegrasi} mengilustrasikan alur keseluruhan
        {\emph{Fault Signature}\\{\scriptsize \emph{Maps} (FSM)}};
 
   \node[font=\scriptsize\bfseries, text=blue!70!black, above=0.2cm of cwru]
-       {\textcolor{blue}{Diagnostik} (Bab~IV)};
+       {{\color{blue}Diagnostik} (Bab~IV)};
 
   \draw[arr] (cwru)  -- (bench);
   \draw[arr] (bench) -- (shap);
@@ -103,7 +103,7 @@ Gambar~\ref{fig:bab3_kerangka_terintegrasi} mengilustrasikan alur keseluruhan
        {Pemetaan BPFx\\{\scriptsize Pearson + \emph{bootstrap}}};
 
   \node[font=\scriptsize\bfseries, text=green!60!black, below=0.2cm of progds]
-       {\textcolor{blue}{Prognostik} (Bab~V)};
+       {{\color{blue}Prognostik} (Bab~V)};
 
   \draw[arr] (progds) -- (rul);
   \draw[arr] (rul)    -- node[midway, above, font=\scriptsize]{laten $\mathbf{h}$} (sae);
@@ -120,31 +120,31 @@ Gambar~\ref{fig:bab3_kerangka_terintegrasi} mengilustrasikan alur keseluruhan
 
 \end{tikzpicture}%
 }
-\caption{Kerangka konseptual: \textcolor{blue}{pendekatan diagnostik} (biru) menggunakan dataset
+\caption{Kerangka konseptual: {\color{blue}pendekatan diagnostik} (biru) menggunakan dataset
          CWRU untuk \emph{benchmark} algoritma
          (kernel/pohon keputusan/\emph{Deep Learning}) dan menghasilkan FSM sebagai
-         XAI level sinyal; \textcolor{blue}{pendekatan prognostik} (hijau)
+         XAI level sinyal; {\color{blue}pendekatan prognostik} (hijau)
          menggunakan tiga dataset prognostik untuk estimasi RUL dan pemetaan
-         BPFx melalui Top-$k$ SAE. \textcolor{blue}{Keduanya} berkonvergensi pada kerangka
+         BPFx melalui Top-$k$ SAE. {\color{blue}Keduanya} berkonvergensi pada kerangka
          PdM \emph{multi-tier} di Bab~VI.}
 \label{fig:bab3_kerangka_terintegrasi}
 \end{figure}
 
-Pemilihan \textcolor{blue}{dua pendekatan berbeda} dan (bukan satu \textcolor{blue}{alur} hirarkis tunggal) mencerminkan
+Pemilihan {\color{blue}dua pendekatan berbeda} dan (bukan satu {\color{blue}alur} hirarkis tunggal) mencerminkan
 realitas sistem PdM industri yang membutuhkan dua kemampuan yang berbeda
 namun saling melengkapi, yaitu kemampuan diagnostik untuk pengambilan keputusan
 jangka pendek (jenis dan lokasi kerusakan), dan kemampuan prognostik untuk
 perencanaan perawatan jangka panjang (estimasi kapan komponen akan gagal).
 Interpretabilitas pada kedua kemampuan diwujudkan melalui pendekatan yang
 sesuai dengan skala waktu masing-masing. FSM untuk interpretabilitas level
-sinyal dalam satu segmen pendek (\textcolor{blue}{diagnostik}), dan SAE-BPFx untuk
-interpretabilitas konsep laten lintas ratusan rekaman degradasi (\textcolor{blue}{prognostik}).
+sinyal dalam satu segmen pendek ({\color{blue}diagnostik}), dan SAE-BPFx untuk
+interpretabilitas konsep laten lintas ratusan rekaman degradasi ({\color{blue}prognostik}).
 
-\textcolor{blue}{Kerangka sistem PdM yang dibangun dalam penelitian ini mengikuti alur
+{\color{blue}Kerangka sistem PdM yang dibangun dalam penelitian ini mengikuti alur
 enam tahap yang bersifat inkremental: setiap keputusan pada satu tahap
 memengaruhi tahap berikutnya secara langsung.}
 
-\textcolor{blue}{
+{\color{blue}
 \begin{enumerate}
   \item \textbf{Praproses (\emph{Pre-processing}).} Mempersiapkan data sinyal
         getaran mentah agar siap digunakan oleh model: validasi data sensor,
@@ -181,8 +181,8 @@ memengaruhi tahap berikutnya secara langsung.}
 \label{sec:bab3_dataset}
 % =================================================================
 
-Empat dataset publik digunakan dalam penelitian ini. Satu dataset untuk \textcolor{blue}{diagnostik}
-dan tiga untuk \textcolor{blue}{prognostik}. Semua merupakan dataset \emph{benchmark} yang banyak
+Empat dataset publik digunakan dalam penelitian ini. Satu dataset untuk {\color{blue}diagnostik}
+dan tiga untuk {\color{blue}prognostik}. Semua merupakan dataset \emph{benchmark} yang banyak
 dijadikan acuan dalam literatur penelitian perawatan prediktif \emph{bearing}.
 Tabel~\ref{tab:bab3_dataset_ringkasan} merangkum karakteristik utama
 keempat dataset.
@@ -194,17 +194,17 @@ keempat dataset.
 \small
 \begin{tabular}{@{}lllll@{}}
 \toprule
-\textbf{Dataset} & \textbf{\textcolor{blue}{Peran}} & \textbf{\emph{Bearing}/Kelas} & \textbf{Fs (kHz)} & \textbf{Tugas} \\
+\textbf{Dataset} & \textbf{{\color{blue}Peran}} & \textbf{\emph{Bearing}/Kelas} & \textbf{Fs (kHz)} & \textbf{Tugas} \\
 \midrule
-CWRU    & \textcolor{blue}{Diagnostik}  & 1 \emph{rig}, 10 kelas & 48   & Klasifikasi kerusakan \\
-PHM2012 & \textcolor{blue}{Prognostik}  & 17 \emph{bearing}            & 25,6 & Estimasi RUL \\
-XJTU-SY & \textcolor{blue}{Prognostik}  & 10 \emph{bearing}            & 25,6 & Estimasi RUL \\
-IMS     & \textcolor{blue}{Prognostik}  & 4 \emph{bearing} × 3 run     & 20   & Estimasi RUL \\
+CWRU    & {\color{blue}Diagnostik}  & 1 \emph{rig}, 10 kelas & 48   & Klasifikasi kerusakan \\
+PHM2012 & {\color{blue}Prognostik}  & 17 \emph{bearing}            & 25,6 & Estimasi RUL \\
+XJTU-SY & {\color{blue}Prognostik}  & 10 \emph{bearing}            & 25,6 & Estimasi RUL \\
+IMS     & {\color{blue}Prognostik}  & 4 \emph{bearing} × 3 run     & 20   & Estimasi RUL \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{CWRU \textcolor{blue}{(Diagnostik)}}
+\subsection{CWRU {\color{blue}(Diagnostik)}}
 \label{subsec:bab3_cwru}
 
 Dataset CWRU (\emph{Case Western Reserve University Bearing Data Center})
@@ -224,26 +224,26 @@ Tabel~\ref{tab:bab3_cwru_kelas}.
 \centering
 \caption{Sepuluh kelas kondisi dataset CWRU, lokasi, tingkat keparahan,
          dan jumlah sampel setelah \emph{temporal split}
-         \textcolor{blue}{54/13/33\% (124/31/75 per kelas).}}% [REVISI ISU-06]
+         {\color{blue}54/13/33\% (124/31/75 per kelas).}}% [REVISI ISU-06]
 \label{tab:bab3_cwru_kelas}
 \small
 \begin{tabular}{@{}clccrrrr@{}}
 \toprule
 \textbf{Kelas} & \textbf{Kondisi} & \textbf{Lokasi} &
-\textbf{Kerusakan (inci)} & \textbf{Latih} & \textcolor{blue}{\textbf{Val.}} & \textbf{Uji} \\
+\textbf{Kerusakan (inci)} & \textbf{Latih} & {\color{blue}\textbf{Val.}} & \textbf{Uji} \\
 \midrule
-0 & Normal            & --  & --     & 124 & \textcolor{blue}{31} & 75 \\
-1 & \emph{Inner Race} & DE & 0,007 & 124 & \textcolor{blue}{31} & 75 \\
-2 & \emph{Inner Race} & DE & 0,014 & 124 & \textcolor{blue}{31} & 75 \\
-3 & \emph{Inner Race} & DE & 0,021 & 124 & \textcolor{blue}{31} & 75 \\
-4 & \emph{Outer Race} & DE & 0,007 & 124 & \textcolor{blue}{31} & 75 \\
-5 & \emph{Outer Race} & DE & 0,014 & 124 & \textcolor{blue}{31} & 75 \\
-6 & \emph{Outer Race} & DE & 0,021 & 124 & \textcolor{blue}{31} & 75 \\
-7 & \emph{Ball}       & DE & 0,007 & 124 & \textcolor{blue}{31} & 75 \\
-8 & \emph{Ball}       & DE & 0,014 & 124 & \textcolor{blue}{31} & 75 \\
-9 & \emph{Ball}       & DE & 0,021 & 124 & \textcolor{blue}{31} & 75 \\
+0 & Normal            & --  & --     & 124 & {\color{blue}31} & 75 \\
+1 & \emph{Inner Race} & DE & 0,007 & 124 & {\color{blue}31} & 75 \\
+2 & \emph{Inner Race} & DE & 0,014 & 124 & {\color{blue}31} & 75 \\
+3 & \emph{Inner Race} & DE & 0,021 & 124 & {\color{blue}31} & 75 \\
+4 & \emph{Outer Race} & DE & 0,007 & 124 & {\color{blue}31} & 75 \\
+5 & \emph{Outer Race} & DE & 0,014 & 124 & {\color{blue}31} & 75 \\
+6 & \emph{Outer Race} & DE & 0,021 & 124 & {\color{blue}31} & 75 \\
+7 & \emph{Ball}       & DE & 0,007 & 124 & {\color{blue}31} & 75 \\
+8 & \emph{Ball}       & DE & 0,014 & 124 & {\color{blue}31} & 75 \\
+9 & \emph{Ball}       & DE & 0,021 & 124 & {\color{blue}31} & 75 \\
 \midrule
-  & \textbf{Total}    &    &       & \textbf{1.240} & \textcolor{blue}{\textbf{310}} & \textbf{750} \\
+  & \textbf{Total}    &    &       & \textbf{1.240} & {\color{blue}\textbf{310}} & \textbf{750} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -276,7 +276,7 @@ beberapa model algoritma. Pada Bab~V, CWRU juga digunakan untuk validasi
 daya statistik terbatas ($p > 0{,}05$). Keterbatasan ini ditandai secara
 eksplisit pada Subbab~V.8.
 
-\subsection{PHM2012 / FEMTO-PRONOSTIA \textcolor{blue}{(Prognostik)}}
+\subsection{PHM2012 / FEMTO-PRONOSTIA {\color{blue}(Prognostik)}}
 \label{subsec:bab3_phm2012}
 
 Dataset PHM2012 merupakan hasil kompetisi \emph{Prognostics and Health
@@ -387,7 +387,7 @@ dipublikasikan sebelumnya.
   \label{fig:bab3_phm2012_dataset_overview}
 \end{figure}
 
-\subsection{XJTU-SY \textcolor{blue}{(Prognostik)}}
+\subsection{XJTU-SY {\color{blue}(Prognostik)}}
 \label{subsec:bab3_xjtusy}
 
 Dataset XJTU-SY dikembangkan oleh Xi'an Jiaotong University bersama
@@ -415,22 +415,22 @@ Mode kegagalan dominan & \emph{Outer-race spalling} (mayoritas \emph{bearing}) \
 \end{tabular}
 \end{table}
 
-\textcolor{blue}{Ketiga kondisi operasi digunakan (15 \emph{bearing} aktif). Pembagian set
+{\color{blue}Ketiga kondisi operasi digunakan (15 \emph{bearing} aktif). Pembagian set
 \emph{bearing-wise} dirinci pada Tabel~\ref{tab:bab3_split_xjtu}; konfigurasi
 pelatihan mengacu pada \texttt{configs/data/xjtu\_sy\_available\_full.yaml}.}
 
 \begin{table}[ht]
 \centering
-\caption{\textcolor{blue}{Pembagian set data XJTU-SY (bearing-wise, 3 kondisi operasi).}}
+\caption{{\color{blue}Pembagian set data XJTU-SY (bearing-wise, 3 kondisi operasi).}}
 \label{tab:bab3_split_xjtu}
 \small
 \begin{tabular}{@{}lll@{}}
 \toprule
 \textbf{Set} & \textbf{\emph{Bearing}} & \textbf{Jumlah} \\
 \midrule
-\textcolor{blue}{\emph{Training}}   & \textcolor{blue}{1\_1, 1\_2, 1\_3, 2\_1, 2\_2, 2\_4, 3\_1, 3\_2, 3\_4} & \textcolor{blue}{9} \\
-\textcolor{blue}{\emph{Validation}} & \textcolor{blue}{1\_4, 2\_5, 3\_5} & \textcolor{blue}{3} \\
-\textcolor{blue}{\emph{Test}}       & \textcolor{blue}{1\_5, 2\_3, 3\_3} & \textcolor{blue}{3} \\
+{\color{blue}\emph{Training}}   & {\color{blue}1\_1, 1\_2, 1\_3, 2\_1, 2\_2, 2\_4, 3\_1, 3\_2, 3\_4} & {\color{blue}9} \\
+{\color{blue}\emph{Validation}} & {\color{blue}1\_4, 2\_5, 3\_5} & {\color{blue}3} \\
+{\color{blue}\emph{Test}}       & {\color{blue}1\_5, 2\_3, 3\_3} & {\color{blue}3} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -451,11 +451,11 @@ XJTU-SY beserta tiga kondisi operasinya.
 \end{figure}
 
 Ketersediaan label mode kegagalan per \emph{bearing} pada XJTU-SY menjadi aset
-penting untuk memvalidasi interpretabilitas \textcolor{blue}{prognostik}. Apabila SAE memetakan
+penting untuk memvalidasi interpretabilitas {\color{blue}prognostik}. Apabila SAE memetakan
 fitur ke BPFO, konsistensi dengan dominansi \emph{outer-race spalling} yang
 terdokumentasi oleh pemilik dataset memberikan uji silang fisis yang kuat.
 
-\subsection{IMS / \emph{Intelligent Maintenance Systems} \textcolor{blue}{(Prognostik)}}
+\subsection{IMS / \emph{Intelligent Maintenance Systems} {\color{blue}(Prognostik)}}
 \label{subsec:bab3_ims}
 
 Dataset IMS dikembangkan oleh \emph{Center for Intelligent Maintenance
@@ -489,14 +489,14 @@ Run tersedia       & 3 (\emph{Run}~1: ${\sim}43$~jam; \emph{Run}~2: ${\sim}160$~
 Setiap \emph{run} memantau keempat \emph{bearing} (\emph{Bearing}~1–4) secara bersamaan.
 Mode kegagalan yang terdokumentasi. Pada \emph{Run}~1, \emph{Bearing}~3 mengalami
 \emph{outer-race fault} dan \emph{Bearing}~4 mengalami kegagalan
-\textcolor{blue}{elemen gelinding (\emph{rolling element fault})};% [Revisi: hilangkan redudansi frasa]
+{\color{blue}elemen gelinding (\emph{rolling element fault})};% [Revisi: hilangkan redudansi frasa]
 pada \emph{Run}~2, \emph{Bearing}~1 mengalami
-\emph{inner-race fault}. \textcolor{blue}{Catatan: analisis SAE-BPFx pada Bab~V
+\emph{inner-race fault}. {\color{blue}Catatan: analisis SAE-BPFx pada Bab~V
 menggunakan kanal \emph{Bearing}~1 (\emph{Run}~1) sebagai kanal utama dan
 mendokumentasikan korespondensi FTF yang konsisten dengan kegagalan sangkar
 (\emph{cage fatigue}) pada \emph{Run}~1 \citetitb{Qiu2006WaveletBearing}.}% [INFO ISU-05]
 
-\textcolor{blue}{Pembagian data pada dataset IMS mengikuti prosedur berbasis
+{\color{blue}Pembagian data pada dataset IMS mengikuti prosedur berbasis
 \emph{bearing} (\emph{bearing-wise}), yaitu \emph{Bearing}~1 dan \emph{Bearing}~2
 dialokasikan untuk \emph{training}, \emph{Bearing}~3 untuk \emph{validation},
 dan \emph{Bearing}~4 untuk pengujian; pembagian ini konsisten untuk seluruh
@@ -528,7 +528,7 @@ konfigurasi fisik \emph{test rig} IMS dengan empat \emph{bearing} pada satu poro
 \label{sec:bab3_praproses}
 % =================================================================
 
-Meskipun \textcolor{blue}{pendekatan diagnostik dan prognostik} menggunakan representasi input yang berbeda
+Meskipun {\color{blue}pendekatan diagnostik dan prognostik} menggunakan representasi input yang berbeda
 untuk model akhirnya, keduanya berbagi tiga tahap praproses awal:
 (1) segmentasi jendela geser, (2) normalisasi Z-score berbasis
 \emph{training set}, dan (3) ekstraksi fitur atau penggunaan langsung sinyal
@@ -537,7 +537,7 @@ masing-masing model.
 
 % --- NEW SUBSECTIONS (blue) ---
 
-\textcolor{blue}{
+{\color{blue}
 \subsection{Dasar Sinyal Getaran dan Analisis Spektrum}
 \label{subsec:bab3_sinyal_getaran}
 
@@ -560,14 +560,14 @@ dengan \emph{Discrete Fourier Transform} (DFT). Untuk sinyal diskret
 $x[n]$, $n = 0, 1, \ldots, N-1$, DFT didefinisikan sebagai:
 }
 
-\textcolor{blue}{
+{\color{blue}
 \begin{equation*}
   X[k] = \sum_{n=0}^{N-1} x[n]\, e^{-j\,2\pi k n / N},
   \quad k = 0, 1, \ldots, N-1.
 \end{equation*}
 }
 
-\textcolor{blue}{
+{\color{blue}
 Komputasi DFT langsung memerlukan $\mathcal{O}(N^2)$ operasi, sehingga tidak
 praktis untuk data industri berskala besar. Algoritma \emph{Fast Fourier
 Transform} (FFT) mengurangi kompleksitas menjadi $\mathcal{O}(N \log N)$
@@ -584,7 +584,7 @@ terhadap frekuensi tinggi dan karenanya menjadi parameter utama untuk deteksi
 kerusakan bearing dan \emph{gear mesh}.
 }
 
-\textcolor{blue}{
+{\color{blue}
 \subsection{Enveloping dan Demodulasi Amplitudo}
 \label{subsec:bab3_enveloping}
 
@@ -597,7 +597,7 @@ sehingga BPFO, BPFI, BSF, dan FTF muncul jelas dalam spektrum. Proses
 \emph{enveloping} terdiri atas langkah-langkah berikut.
 }
 
-\textcolor{blue}{
+{\color{blue}
 \begin{enumerate}
   \item \textbf{Akuisisi sinyal percepatan.} Sinyal getaran direkam menggunakan
         akselerometer karena parameter percepatan sensitif pada frekuensi tinggi
@@ -617,7 +617,7 @@ sehingga BPFO, BPFI, BSF, dan FTF muncul jelas dalam spektrum. Proses
 \end{enumerate}
 }
 
-\textcolor{blue}{
+{\color{blue}
 Dalam konteks disertasi ini, \emph{envelope spectrum} digunakan sebagai
 referensi eksperimental untuk memvalidasi interpretabilitas laten
 (\emph{hit-rate} SAE terhadap BPFx) pada Bab~V. Korelasi Pearson antara
@@ -626,7 +626,7 @@ $\pm$2~Hz di sekitar BPFO, BPFI, BSF, dan FTF merupakan metrik kuantitatif
 inti Novelti~N3.
 }
 
-\textcolor{blue}{
+{\color{blue}
 \subsection{Tahapan Praproses Data}
 \label{subsec:bab3_tahapan_praproses}
 
@@ -637,7 +637,7 @@ efisien oleh model. Tujuh tahapan praproses yang diterapkan dalam penelitian
 ini adalah sebagai berikut.
 }
 
-\textcolor{blue}{
+{\color{blue}
 \begin{enumerate}
   \item \textbf{Validasi data sensor.} Data yang terkumpul diperiksa
         kualitasnya untuk memastikan rekaman tidak mengandung artefak akuisisi,
@@ -677,11 +677,11 @@ ini adalah sebagai berikut.
 Segmentasi membagi rekaman sinyal panjang menjadi segmen pendek menggunakan
 jendela geser dengan ukuran yang disesuaikan per dataset dan pendekatan model:
 \begin{itemize}
-  \item \textbf{CWRU \textcolor{blue}{(Diagnostik)}:} jendela 2.048 titik, \emph{stride} penuh
+  \item \textbf{CWRU {\color{blue}(Diagnostik)}:} jendela 2.048 titik, \emph{stride} penuh
         (tidak tumpang-tindih) untuk \emph{training} dan evaluasi. Panjang
         2.048 dipilih agar mencakup setidaknya satu periode impuls BPFx
         pada 48~kHz.
-  \item \textbf{PHM2012, XJTU-SY, IMS \textcolor{blue}{(Prognostik)}:} jendela temporal berisi
+  \item \textbf{PHM2012, XJTU-SY, IMS {\color{blue}(Prognostik)}:} jendela temporal berisi
         $L_{\rm win}$ rekaman berurutan (\emph{health indicator} per rekaman);
         konfigurasi $L_{\rm win}$ dan \emph{stride} diuraikan pada
         Bab~V~Subbab~V.1.
@@ -724,7 +724,7 @@ Lampiran~\ref{lamp:fitur}. Jendela FFT tipe \emph{Hann} digunakan
 untuk mengurangi \emph{spectral leakage} pada fitur domain frekuensi.
 Normalisasi Z-score tambahan diterapkan pada vektor HI 36-D setelah
 ekstraksi, dengan statistik juga bersumber dari \emph{training set}.
-\textcolor{blue}{Penting dicatat: penggunaan dua kanal (DE+FE) berlaku
+{\color{blue}Penting dicatat: penggunaan dua kanal (DE+FE) berlaku
 khusus untuk model berbasis kernel dan pohon. WDCNN (Subbab~\ref{subsec:bab3_input_deep})
 menggunakan hanya sinyal mentah kanal \emph{drive-end} (DE) tunggal,
 berdimensi $1 \times 2048$, tanpa ekstraksi fitur dua-kanal.}% [REVISI ISU-09]
@@ -736,12 +736,12 @@ Dua jenis model \emph{Deep Learning} dalam penelitian ini menggunakan representa
 input yang berbeda dari HI 36-D:
 
 \begin{enumerate}
-  \item \textbf{WDCNN (Bab~IV, \textcolor{blue}{diagnostik}):} menerima sinyal mentah 2.048 titik
+  \item \textbf{WDCNN (Bab~IV, {\color{blue}diagnostik}):} menerima sinyal mentah 2.048 titik
         secara langsung ($\mathbf{x} \in \mathbb{R}^{2048}$), tanpa ekstraksi
         fitur manual. Kernel konvolusional berukuran 64 dengan \emph{stride}
         16 pada lapisan pertama berfungsi sebagai ekstraktor frekuensi adaptif
         otomatis \citetitb{Zhang2017WDCNN}.
-  \item \textbf{Backbone RUL (Bab~V, \textcolor{blue}{prognostik}):} menerima sekuens vektor
+  \item \textbf{Backbone RUL (Bab~V, {\color{blue}prognostik}):} menerima sekuens vektor
         HI 5-D yang diekstraksi per rekaman melalui dekomposisi energi RMS
         lima pita frekuensi. Input berbentuk
         $\mathbf{X} \in \mathbb{R}^{L_{\rm win} \times 5}$ (sekuens $L_{\rm win}$
@@ -761,8 +761,8 @@ degradasi dari sekuens ratusan rekaman yang mencakup seluruh lintasan degradasi.
 
 Bagian ini mendefinisikan seluruh metrik evaluasi yang digunakan pada Bab~IV
 dan Bab~V. Pengelompokan mengikuti tiga dimensi: kinerja klasifikasi diagnostik
-\textcolor{blue}{diagnostik}, kinerja prognostik, dan validasi interpretabilitas
-(FSM untuk \textcolor{blue}{diagnostik}; SAE-BPFx untuk \textcolor{blue}{prognostik}).
+{\color{blue}diagnostik}, kinerja prognostik, dan validasi interpretabilitas
+(FSM untuk {\color{blue}diagnostik}; SAE-BPFx untuk {\color{blue}prognostik}).
 
 \subsection{Metrik Diagnostik}
 \label{subsec:bab3_metrik_diagnostik}
@@ -795,19 +795,19 @@ Maps} (FSM):
 \begin{enumerate}
   \item \textbf{Indeks diskriminabilitas} ($D$): mengukur sejauh mana pola
         FSM antar-kelas lebih berbeda dibandingkan pola dalam satu kelas,
-        \textcolor{blue}{dinyatakan sebagai rasio kemiripan kosinus rata-rata
+        {\color{blue}dinyatakan sebagai rasio kemiripan kosinus rata-rata
         antar-kelas terhadap kemiripan kosinus rata-rata dalam kelas
         (\emph{inter}/\emph{intra} cosine ratio)}:% [REVISI ISU-03 KRITIS: ikuti definisi jurnal FSM]
         \begin{equation}\label{eq:bab3_discriminability}
           D = \frac{\bar{\rho}_{\rm inter}}{\bar{\rho}_{\rm intra}},
           \qquad
-          \textcolor{blue}{\bar{\rho}_{\rm inter} = \frac{1}{\binom{C}{2}}
+          {\color{blue}\bar{\rho}_{\rm inter} = \frac{1}{\binom{C}{2}}
             \sum_{c_1 < c_2}
             \frac{\mathrm{FSM}_{c_1}^{\rm abs} \cdot \mathrm{FSM}_{c_2}^{\rm abs}}
                  {\bigl\|\mathrm{FSM}_{c_1}^{\rm abs}\bigr\|_2
                   \bigl\|\mathrm{FSM}_{c_2}^{\rm abs}\bigr\|_2}},
         \end{equation}
-        \textcolor{blue}{di mana $\bar{\rho}_{\rm intra}$ adalah kemiripan
+        {\color{blue}di mana $\bar{\rho}_{\rm intra}$ adalah kemiripan
         kosinus rata-rata antar 20 pasang sampel acak dalam kelas yang sama,
         dirata-rata atas $C$ kelas. Nilai $D > 1$ berarti FSM lebih mudah
         dibedakan antar kelas daripada varian dalam kelas; nilai $D < 1$
@@ -831,11 +831,11 @@ Maps} (FSM):
 
   \item \textbf{Koefisien stabilitas \emph{split-half}} ($\rho$): mengukur
         konsistensi FSM antara dua subset acak separuh dari data uji,
-        \textcolor{blue}{dihitung sebagai kemiripan kosinus (\emph{cosine
+        {\color{blue}dihitung sebagai kemiripan kosinus (\emph{cosine
         similarity}) rata-rata lintas $C$ kelas}:% [REVISI ISU-01 KRITIS: cosine similarity, bukan Pearson]
         \begin{equation}\label{eq:bab3_stability}
           \rho = \frac{1}{C} \sum_{c=1}^{C}
-            \textcolor{blue}{\frac{\mathrm{FSM}_c^{\rm abs}\big|_{\rm subset_1}
+            {\color{blue}\frac{\mathrm{FSM}_c^{\rm abs}\big|_{\rm subset_1}
                                     \;\cdot\;\mathrm{FSM}_c^{\rm abs}\big|_{\rm subset_2}}
                             {\bigl\|\mathrm{FSM}_c^{\rm abs}\big|_{\rm subset_1}\bigr\|_2
                              \bigl\|\mathrm{FSM}_c^{\rm abs}\big|_{\rm subset_2}\bigr\|_2}},
@@ -843,7 +843,7 @@ Maps} (FSM):
         di mana $\mathrm{subset}_1$ dan $\mathrm{subset}_2$ adalah dua bagian
         sama besar yang dipisah secara acak dari data uji. Nilai $\rho \geq 0{,}90$
         menunjukkan FSM yang sangat stabil antar subsampel
-        \textcolor{blue}{(nilai yang dicapai pada analisis utama: $\rho = 0{,}940$,
+        {\color{blue}(nilai yang dicapai pada analisis utama: $\rho = 0{,}940$,
         yaitu 94\,\% kemiripan kosinus rata-rata lintas 10 kelas CWRU).}% [REVISI ISU-01]
 \end{enumerate}
 
@@ -900,7 +900,7 @@ lintas ketiga dataset prognostik.
 \label{subsec:bab3_metrik_interpretabilitas}
 
 Tiga metrik digunakan untuk mengevaluasi korespondensi fitur SAE terhadap
-frekuensi karakteristik \emph{bearing} (BPFx) pada \textcolor{blue}{prognostik}.
+frekuensi karakteristik \emph{bearing} (BPFx) pada {\color{blue}prognostik}.
 
 \textbf{Hit-rate} $H_\varphi$ mengukur proporsi fitur SAE yang berkorelasi
 moderat dengan amplitudo BPFx $\varphi$ ($\varphi \in
@@ -930,7 +930,7 @@ akibat variabilitas sampel lintas rekaman.
 
 \textbf{\emph{Permutation p-value}} dihitung dengan $B = 1{.}000$ permutasi
 label rekaman terhadap nilai amplitudo BPFx; \emph{hit-rate} pada setiap permutasi
-dibandingkan terhadap \emph{hit-rate} yang teramati \textcolor{blue}{(uji dua-sisi:
+dibandingkan terhadap \emph{hit-rate} yang teramati {\color{blue}(uji dua-sisi:
 proporsi permutasi \emph{null} yang nilai korelasi absolutnya melampaui nilai teramati)}:% [REVISI ISU-07: konsisten dua-sisi dengan jurnal RUL]
 
 \begin{equation}\label{eq:bab3_permutation_pvalue}
@@ -940,7 +940,7 @@ proporsi permutasi \emph{null} yang nilai korelasi absolutnya melampaui nilai te
 
 Nilai $p < 0{,}05$ menunjukkan bahwa korespondensi SAE–BPFx yang teramati
 tidak dapat dijelaskan oleh kebetulan semata dan merupakan properti
-\emph{emergent} dari representasi yang terlatih. \textcolor{blue}{Untuk
+\emph{emergent} dari representasi yang terlatih. {\color{blue}Untuk
 mengendalikan beban pengujian ganda (\emph{multiple testing}), satu BPFx
 dominan per pasangan (dataset, arsitektur) ditetapkan sebagai luaran primer---menghasilkan
 12 uji primer atas 3 dataset valid $\times$ 4 BPFx---dengan ambang signifikansi setara
@@ -973,7 +973,7 @@ Tabel~\ref{tab:bab3_infra}. Pelatihan \emph{single-card} (satu GPU per
 \begin{table}[ht]
 \centering
 \caption{Infrastruktur komputasi yang digunakan dalam seluruh eksperimen
-         \textcolor{blue}{diagnostik dan prognostik}.}
+         {\color{blue}diagnostik dan prognostik}.}
 \label{tab:bab3_infra}
 \small
 \begin{tabular}{@{}ll@{}}
@@ -983,15 +983,15 @@ Tabel~\ref{tab:bab3_infra}. Pelatihan \emph{single-card} (satu GPU per
 GPU                  & NVIDIA A40 (46~GB VRAM) \\
 \emph{Framework} DL  & PyTorch Lightning 2.x \\
 \emph{Framework} ML  & scikit-learn 1.x, XGBoost 2.x, SHAP \\
-Presisi \textcolor{blue}{(Prognostik)}    & \texttt{bf16-mixed} (AMP, Ampere+) \\
-Presisi \textcolor{blue}{(Diagnostik)}    & FP32 \\
+Presisi {\color{blue}(Prognostik)}    & \texttt{bf16-mixed} (AMP, Ampere+) \\
+Presisi {\color{blue}(Diagnostik)}    & FP32 \\
 Python               & 3.11 (\texttt{virtualenv}) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \textbf{Protokol multi-\emph{seed}.} Untuk menjamin kesamaan statistik pada
-\textcolor{blue}{prognostik}, setiap konfigurasi model × dataset dijalankan dengan tiga
+{\color{blue}prognostik}, setiap konfigurasi model × dataset dijalankan dengan tiga
 \emph{seed} berbeda: 42, 43, dan 44. Total eksperimen pelatihan pada Bab~V:
 
 \begin{equation}\label{eq:bab3_totalruns}
@@ -1003,7 +1003,7 @@ Metrik kinerja dilaporkan sebagai rata-rata dan simpangan baku populasi
 atas tiga \emph{seed}: $\overline{M} \pm \sigma_M$. Simpangan baku
 mencerminkan sensitivitas hasil terhadap inisialisasi bobot, yang merupakan
 sumber variabilitas utama pada \emph{backbone} berbasis memori sekuensial.
-Pada \textcolor{blue}{diagnostik} (\emph{benchmark} kernel/pohon keputusan/\emph{Deep Learning}),
+Pada {\color{blue}diagnostik} (\emph{benchmark} kernel/pohon keputusan/\emph{Deep Learning}),
 \emph{seed} ditetapkan dari masing-masing notebook reproduksi karena
 pelatihan klasifikasi bersifat deterministik dan stabil pada kondisi yang sama.
 

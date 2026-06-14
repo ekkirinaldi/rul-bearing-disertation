@@ -48,7 +48,7 @@ Ketiga arsitektur dilatih dengan protokol bersama (75 \emph{epoch},
 presisi bf16, \emph{batch} 512, jendela 32, tiga \emph{seed}) pada
 dataset PHM2012, XJTU-SY, dan IMS.
 Pemenang berbeda menurut dataset: SparseGate-TCN mencapai RMSE
-$0{,}226 \pm 0{,}030$ pada PHM2012, \textcolor{blue}{Mamba-xLSTM-Net mencapai RMSE
+$0{,}226 \pm 0{,}030$ pada PHM2012, {\color{blue}Mamba-xLSTM-Net mencapai RMSE
 $0{,}213 \pm 0{,}056$ pada XJTU-SY}, dan Mamba-xLSTM mencapai RMSE
 $0{,}407 \pm 0{,}040$ pada IMS.
 Setelah pelatihan, \emph{Top-$k$ Sparse Autoencoder} (SAE,
@@ -57,7 +57,7 @@ $d_{\rm lat} = 1\,024$, $k = 51$) dilatih secara \emph{post-hoc} pada
 Pemetaan ke frekuensi karakteristik melalui korelasi Pearson dan
 spektrum \emph{Hilbert envelope} menunjukkan bahwa 2,3\% fitur SAE
 berkorelasi moderat ($|r| \geq 0{,}30$) dengan BPFI pada PHM2012
-($p < 0{,}001$, $r_{\rm max} = 0{,}507$), \textcolor{blue}{sementara pada XJTU-SY \emph{hit-rate} tersebar pada BPFI, BSF, dan BPFO
+($p < 0{,}001$, $r_{\rm max} = 0{,}507$), {\color{blue}sementara pada XJTU-SY \emph{hit-rate} tersebar pada BPFI, BSF, dan BPFO
 (1{,}5\%, 1{,}6\%, 0{,}7\%; $p < 0{,}001$, $r_{\rm max} = 0{,}468$).}
 Dua \emph{negative control}, yaitu model dengan bobot acak Xavier dan
 \emph{hidden states} berupa derau Gaussian, mengonfirmasi bahwa
