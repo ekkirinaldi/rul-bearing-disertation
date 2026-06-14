@@ -146,3 +146,7 @@ Thumbs.db
 # Cursor IDE workspace files (agent transcripts, project caches, local config)
 # =============================================================================
 .cursor/
+.claude/
+
+# Loose PDFs at repo root (paper drafts, keep locally)
+*.pdf
