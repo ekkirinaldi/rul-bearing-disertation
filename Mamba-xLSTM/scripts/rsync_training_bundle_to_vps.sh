@@ -4,8 +4,9 @@
 #   - Mamba-xLSTM (code + configs + tests; excludes venv, caches, bulky results)
 #   - data-bearing (optional; see below)
 #
-# **VPS default (see .cursor/rules/vps-ssh-key-access.mdc §6):** on the server, download
+# **VPS default (see .cursor/rules/vps-ssh-key-access.mdc §6 + §6.3):** on the server, download
 #   https://dataset-bearing-rul.s3.ap-southeast-2.amazonaws.com/data-bearing/data-bearing.zip
+#   and https://dataset-bearing-rul.s3.ap-southeast-2.amazonaws.com/data-bearing/xtju-sy.zip
 #   into REMOTE_BASE and unzip — do not rsync the dataset from the laptop.
 #   From the laptop use: RSYNC_SKIP_DATA=1 … bash rsync_training_bundle_to_vps.sh
 #
@@ -45,6 +46,9 @@ EXCLUDES=(
   '--exclude=results/_comparison_configs/'
   '--exclude=results/_chapter_assets/'
   '--exclude=results/tables/'
+  '--exclude=results/v1_initial/'
+  '--exclude=results/journal_q2/'
+  '--exclude=results/bpfx_mapping/'
 )
 
 if [[ -z "${REMOTE_BASE}" ]]; then

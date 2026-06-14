@@ -278,6 +278,19 @@ _XJTU_OPERATING = {
 }
 
 
+def _xjtu_fingerprint(folder: Path) -> str:
+    """Fingerprint numbered ``*.csv`` files (XJTU layout), not PHM ``acc_*.csv``."""
+    def _key(p: Path) -> int:
+        m = re.match(r"(\d+)\.csv", p.name)
+        return int(m.group(1)) if m else 1 << 30
+    files = sorted(folder.glob("*.csv"), key=_key)
+    h = hashlib.sha1()
+    for f in files:
+        h.update(f.name.encode())
+        h.update(str(f.stat().st_size).encode())
+    return h.hexdigest()[:8]
+
+
 def _xjtu_load_from_raw(folder: Path) -> np.ndarray:
     """Load all numbered csvs in ``folder`` sorted by integer file name."""
     def _key(p: Path) -> int:
@@ -316,25 +329,37 @@ def load_xjtusy_bearing(
         return None
 
     cache_dir = Path(cache_dir) if cache_dir else (root.parent / "processed" / "xjtusy")
-    fp = _phm_fingerprint(folder)
-    cache_pq = cache_dir / f"{bid}_{fp}.parquet"
-    cache_meta = cache_dir / f"{bid}_{fp}.meta.json"
+    fp = _xjtu_fingerprint(folder)
+    raw_n = len(list(folder.glob("*.csv")))
 
     sig: np.ndarray | None = None
-    if use_cache and cache_pq.exists() and cache_meta.exists():
-        try:
-            import pyarrow.parquet as pq
+    if use_cache:
+        candidates: list[Path] = []
+        exact = cache_dir / f"{bid}_{fp}.parquet"
+        if exact.exists():
+            candidates.append(exact)
+        if not candidates:
+            candidates = sorted(cache_dir.glob(f"{bid}_*.parquet"))
+        for cache_pq in candidates:
+            cache_meta = cache_pq.with_suffix("").with_name(cache_pq.stem + ".meta.json")
+            if not cache_meta.exists():
+                continue
+            try:
+                import pyarrow.parquet as pq
 
-            meta = json.loads(cache_meta.read_text())
-            t = pq.read_table(cache_pq)
-            df = t.to_pandas()
-            T = int(meta["n_acquisitions"])
-            L = int(meta["samples_per_acquisition"])
-            h = df["h"].to_numpy(dtype=np.float32).reshape(T, L)
-            v = df["v"].to_numpy(dtype=np.float32).reshape(T, L)
-            sig = np.stack([h, v], axis=1).astype(np.float32)
-        except Exception:
-            sig = None
+                meta = json.loads(cache_meta.read_text())
+                if int(meta.get("n_acquisitions", -1)) != raw_n:
+                    continue
+                t = pq.read_table(cache_pq)
+                df = t.to_pandas()
+                T = int(meta["n_acquisitions"])
+                L = int(meta["samples_per_acquisition"])
+                h = df["h"].to_numpy(dtype=np.float32).reshape(T, L)
+                v = df["v"].to_numpy(dtype=np.float32).reshape(T, L)
+                sig = np.stack([h, v], axis=1).astype(np.float32)
+                break
+            except Exception:
+                sig = None
     if sig is None:
         sig = _xjtu_load_from_raw(folder)
         if use_cache:

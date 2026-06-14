@@ -21,6 +21,7 @@ from lxml import etree
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from unpack import unpack          # noqa: E402
 from pack import pack              # noqa: E402
+import restyle                     # noqa: E402
 
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 XML_SPACE = "{http://www.w3.org/XML/1998/namespace}space"
@@ -429,6 +430,7 @@ def main():
 
     tree.write(str(docpath), xml_declaration=True, encoding="UTF-8",
                standalone=True)
+    restyle.enable_mirror_margins(workdir / "word" / "settings.xml")
     outdir = BASE / "frontmatter"
     outdir.mkdir(exist_ok=True)
     out = outdir / "frontmatter.docx"

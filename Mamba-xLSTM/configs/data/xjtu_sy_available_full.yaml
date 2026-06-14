@@ -1,16 +1,16 @@
-# XJTU-SY — all bearings available locally (conditions 1 and 2 only).
-# Condition 3 (40Hz10kN) is not present under ../data-bearing/xtju-sy.
+# XJTU-SY — full three-condition dissertation split (35Hz12kN, 37.5Hz11kN, 40Hz10kN).
 #
-# Previous split exposed only ONE training bearing under condition‑2 (`2_1`), while test
-# is dominated by a longlife C2 bearing (`2_3`) → unstable micro‑RMSE + weak C2 supervision.
+# Previously only conditions 1–2 were usable because ``40Hz10kN`` (and parts of C2) were
+# incomplete on disk. With the repaired ``../data-bearing/xtju-sy`` tree, all 15 bearings
+# are available and this split covers every operating condition.
 #
-# **Rebalanced split (dissertation tweak):**
-# - Train: three C1 + **two C2** (`2_1`, `2_2`) → models see more degradation under the speed/load
-#   regime that dominates the test micro‑average.
-# - Val: single C1 bearing `1_4` (checkpoint / early‑stop probe; disjoint from test).
-# - Test: unchanged **two-bearing** eval `1_5` | `2_3` — micro vs macro‑RMSE still distinct.
+# **Per-condition bearing-wise split (no sample leakage):**
+# - Train: three bearings per condition (9 total) — mix of run lengths for HI scaler fit.
+# - Val:   one bearing per condition (3 total) — disjoint from test; checkpoint probe.
+# - Test:  one bearing per condition (3 total) — ``1_5`` (short C1), ``2_3`` (long C2),
+#          ``3_3`` (medium C3; same test bearing as Liu et al. 2026 Table 1 track).
 #
-# stride_eval: 1 → dense validation/test windows.
+# stride_eval: 1 → dense validation/test windows (small per-bearing test sets).
 
 data:
   dataset: xjtusy
@@ -27,6 +27,6 @@ data:
   batch_size: 128
   num_workers: 0
 
-  train_bearings: ["1_1", "1_2", "1_3", "2_1", "2_2"]
-  val_bearings:   ["1_4"]
-  test_bearings:  ["1_5", "2_3"]
+  train_bearings: ["1_1", "1_2", "1_3", "2_1", "2_2", "2_4", "3_1", "3_2", "3_4"]
+  val_bearings:   ["1_4", "2_5", "3_5"]
+  test_bearings:  ["1_5", "2_3", "3_3"]

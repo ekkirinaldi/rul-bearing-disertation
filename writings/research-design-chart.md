@@ -24,9 +24,9 @@ flowchart TD
 
     subgraph SPLIT["✂️ Bearing-wise Split"]
         direction LR
-        TR["Train\nPHM: 7 bantalan\nXJTU: 5 bantalan"]
-        VAL["Validation\nPHM: 2 bantalan\nXJTU: 1 bantalan"]
-        TE["Test\nPHM: 8 bantalan\nXJTU: 2 bantalan"]
+        TR["Train\nPHM: 7 bantalan\nXJTU: 9 bantalan"]
+        VAL["Validation\nPHM: 2 bantalan\nXJTU: 3 bantalan"]
+        TE["Test\nPHM: 8 bantalan\nXJTU: 3 bantalan"]
         TR --- VAL --- TE
     end
 
@@ -112,11 +112,11 @@ flowchart TD
         P_TE["Test: 1_3 · 1_6 · 1_7\n      2_4 · 2_6 · 2_7\n      3_2 · 3_3\n      8 bantalan"]
     end
 
-    subgraph XJTU["XJTU-SY — 10 Bantalan (kondisi 1 & 2)"]
+    subgraph XJTU["XJTU-SY — 15 Bantalan (3 kondisi)"]
         direction LR
-        X_TR["Train: 1_1 · 1_2 · 1_3\n       2_1 · 2_2\n       5 bantalan"]
-        X_V["Val: 1_4\n     1 bantalan"]
-        X_TE["Test: 1_5 · 2_3\n      2 bantalan"]
+        X_TR["Train: 1_1·1_2·1_3\n       2_1·2_2·2_4\n       3_1·3_2·3_4\n       9 bantalan"]
+        X_V["Val: 1_4 · 2_5 · 3_5\n     3 bantalan"]
+        X_TE["Test: 1_5 · 2_3 · 3_3\n      3 bantalan"]
     end
 
     NORM["🔒 Normalisasi stats\ndi-fit HANYA pada train set\nditerapkan ke val + test"]

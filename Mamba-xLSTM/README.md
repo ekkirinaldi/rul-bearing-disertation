@@ -41,6 +41,15 @@ The package is self-contained: PHM2012 and XJTU-SY loaders live in
 either the raw CSV folders or the parquet cache under
 `data-bearing/processed/`.
 
+**Canonical data layout (do not use legacy `data/cache/` at repo root):**
+
+| Role | Path |
+|------|------|
+| Raw PHM2012 | `../data-bearing/ieee-phm-2012/` |
+| Raw XJTU-SY | `../data-bearing/xtju-sy/` (`35Hz12kN`, `37.5Hz11kN`, `40Hz10kN`) |
+| Processed cache | `../data-bearing/processed/{phm2012,xjtusy}/` |
+| Dissertation XJTU split | `configs/data/xjtu_sy_available_full.yaml` (9 train / 3 val / 3 test) |
+
 ## Setup (Mac, no CUDA)
 
 ```bash
@@ -88,10 +97,25 @@ sLSTM. Slower than CUDA but functionally equivalent.
 ```
 ../data-bearing/
 ├── ieee-phm-2012/          PHM2012 raw + cached parquet (in ../processed/phm2012/)
-└── xtju-sy/                XJTU-SY raw (35Hz12kN, 37.5Hz11kN; 40Hz10kN missing)
+└── xtju-sy/                XJTU-SY raw (35Hz12kN, 37.5Hz11kN, 40Hz10kN)
 ```
 
 Loaders point at these paths automatically via the data configs.
+
+**Download on VPS / fresh machine (S3):**
+
+```bash
+cd ..   # parent of Mamba-xLSTM/
+curl -fL -o data-bearing.zip \
+  'https://dataset-bearing-rul.s3.ap-southeast-2.amazonaws.com/data-bearing/data-bearing.zip'
+unzip -q data-bearing.zip && rm -f data-bearing.zip
+mkdir -p data-bearing
+curl -fL -o xtju-sy.zip \
+  'https://dataset-bearing-rul.s3.ap-southeast-2.amazonaws.com/data-bearing/xtju-sy.zip'
+unzip -q -o xtju-sy.zip -d data-bearing/ && rm -f xtju-sy.zip
+```
+
+The repaired XJTU tree (9.216 CSVs, three conditions) ships in **`xtju-sy.zip`** only; the older `data-bearing.zip` does not replace it. See `.cursor/rules/vps-ssh-key-access.mdc` §6.3.
 
 ## Quick smoke test
 
@@ -153,7 +177,9 @@ python scripts/train.py \
 
 For the older **window/batch-only** PHM overlay (dissertation bearing split, 36-D HI, linear labels), use `configs/data/phm2012_window_only.yaml` with `configs/train/paper.yaml`.
 
-**XJTU-SY Liu fair pair (Table 1 + §3.2 ISOMAP + §3.3.1 time index):** use `configs/data/xjtu_sy_paper.yaml` or `configs/data/xjtu_sy_liu2026_strict.yaml` with `configs/train/paper_liu2026.yaml`. The DataModule sets `n_features=2` (HI + normalized time). Condition 3 (`40Hz10kN`) must be present under your `root` for the full 12-train / 3-test split. For the older dissertation XJTU setup (default HI, linear labels, `L=32`), use `configs/data/xjtu_sy.yaml`.
+**Dissertation XJTU-SY (Tier-S, default HI, linear labels, `L=32`):** use `configs/data/xjtu_sy_available_full.yaml` via `--datasets xjtusy` in `run_algorithm_comparison.py` (all three operating conditions; 9 train / 3 val / 3 test bearings).
+
+**XJTU-SY Liu fair pair (Table 1 + §3.2 ISOMAP + §3.3.1 time index):** use `configs/data/xjtu_sy_paper.yaml` or `configs/data/xjtu_sy_liu2026_strict.yaml` with `configs/train/paper_liu2026.yaml` (12 train / 3 test; separate paper track). Legacy 2-condition split: `configs/data/xjtu_sy.yaml`.
 
 ```bash
 # XJTU-SY — baseline xLSTM-Transformer (Liu strict)

@@ -17,13 +17,13 @@ Bab ini membahas tinjauan terhadap literatur yang mendasari penelitian,
 (8)~Kesenjangan literatur yang memposisikan penelitian ini relatif
 terhadap penelitian sebelumnya.}
 Hasil kesenjangan yang teridentifikasi
-pada §\ref{sec:bab2_gap_literatur} menjadi \textcolor{blue}{justifikasi langsung bagi
-ketiga rumusan masalah} yang dirumuskan pada \textcolor{blue}{§\ref{sec:bab1_rumusan}}.
+pada Subbab~\ref{sec:bab2_gap_literatur} menjadi \textcolor{blue}{justifikasi langsung bagi
+ketiga rumusan masalah} yang dirumuskan pada \textcolor{blue}{Subbab~\ref{sec:bab1_rumusan}}.
 
 % Catatan perubahan struktur:
-% - §II.6 (fisika vibrasi) DIPINDAHKAN menjadi §II.2 agar frekuensi
-%   karakteristik sudah terdefinisi sebelum digunakan di §II.3 (diagnostik).
-% - §II.7 baru ditambahkan: tinjauan XAI lintas domain.
+% - Subbab~II.6 (fisika vibrasi) DIPINDAHKAN menjadi Subbab~II.2 agar frekuensi
+%   karakteristik sudah terdefinisi sebelum digunakan di Subbab~II.3 (diagnostik).
+% - Subbab~II.7 baru ditambahkan: tinjauan XAI lintas domain.
 % - Urutan seksi lama digeser satu angka ke bawah.
 
 % -----------------------------------------------------------------
@@ -93,17 +93,17 @@ yang lebih intensif, seperti klasifikasi kondisi dan deteksi anomali, dilakukan 
 RUL dan analisis historis dilakukan dengan sumber daya GPU yang lebih besar
 \citetitb{Cheng2019EdgeCloud}. Arsitektur tiga-tier ini menjadi kerangka
 konseptual yang menyatukan komponen diagnostik dan prognostik dalam penelitian
-ini, sebagaimana diuraikan pada §VI.2.
+ini, sebagaimana diuraikan pada Subbab~VI.2.
 
 Penerapan PdM berbasis IoT pada sistem produksi PT~SKF Indonesia (mesin
 \emph{grinding} OR1/OR2 dengan akuisisi melalui SKF~IMx-8 dan penyimpanan di
 AWS Cloud) menjadi konteks industri yang menajdi motivasi dalam penelitian disertasi ini. Integrasi
 penuh data kualitas heterogen (vibrasi dan \emph{radial clearance checking})
 sebagai masukan multi-modal merupakan \emph{roadmap} jangka panjang yang
-ditetapkan sebagai \emph{future work} pada §VI.5.
+ditetapkan sebagai \emph{future work} pada Subbab~VI.5.
 
 % -----------------------------------------------------------------
-% §II.2 BARU — dipindahkan dari §II.6 lama
+% Subbab~II.2 BARU — dipindahkan dari Subbab~II.6 lama
 % -----------------------------------------------------------------
 \textcolor{blue}{\section{Vibrasi \emph{Rolling Element Bearing}}
 \label{sec:bab2_fisika_vibrasi}}
@@ -115,8 +115,8 @@ SAE $\to$ BPFx pada Bab~V.
 Bagian ini merangkum derivasi frekuensi karakteristik \emph{bearing} dan prosedur
 analisis \emph{envelope} yang digunakan untuk mengukur amplitudo spektrum pada
 tiap frekuensi target.
-Dengan meletakkan dasar fisika sebelum bagian diagnostik (§\ref{sec:bab2_diagnostik})
-dan prognostik (§\ref{sec:bab2_prognostik}), pembaca dapat mengikuti terminologi
+Dengan meletakkan dasar fisika sebelum bagian diagnostik (Subbab~\ref{sec:bab2_diagnostik})
+dan prognostik (Subbab~\ref{sec:bab2_prognostik}), pembaca dapat mengikuti terminologi
 BPFx yang digunakan secara konsisten pada bab-bab selanjutnya.}
 
 \subsection{Frekuensi Karakteristik \emph{Bearing}}
@@ -173,10 +173,10 @@ $f_\text{BPFI} \approx 157{,}9$~Hz, $f_\text{BSF} \approx 68{,}9$~Hz,
 $f_\text{FTF} \approx 13{,}1$~Hz \citetitb{Smith2015CWRU}.}
 Frekuensi-frekuensi ini
 dan harmoniknya menjadi \emph{ground truth} fisika yang digunakan untuk
-memvalidasi pemetaan SAE pada §V.3 dan untuk menginterpretasikan pola impuls
-transien pada FSM di §IV.6.
+memvalidasi pemetaan SAE pada Subbab~V.3 dan untuk menginterpretasikan pola impuls
+transien pada FSM di Subbab~IV.6.
 \textcolor{blue}{Nilai-nilai ini konsisten dengan geometri dan kecepatan
-yang dilaporkan pada §IV.11.}
+yang dilaporkan pada Subbab~IV.11.}
 
 \subsection{Analisis \emph{Envelope} dan Kurtogram Spektral}
 \label{subsec:bab2_envelope}
@@ -271,7 +271,7 @@ kondisi evaluasi yang terkontrol dan seragam; dan (iii)~integrasi metode XAI
 dengan model yang telah di-\emph{fine-tune} melalui domain adaptation
 menambahkan lapisan kompleksitas yang berada di luar cakupan disertasi ini.
 Perluasan kerangka FSM ke skenario \emph{cross-domain} ditetapkan sebagai
-\emph{future work} pada §VI.5.}
+\emph{future work} pada Subbab~VI.5.}
 
 \subsection{Dataset CWRU dan Isu \emph{Temporal Leakage}}
 \label{subsec:bab2_cwru}
@@ -340,7 +340,7 @@ interpretabilitas dari representasi tiap model pendekatan. \textcolor{blue}{Angk
 dari penelitian ini} dilaporkan dari
 \citetitb{TotoSuharto2024Conf1SVM}, \citetitb{TotoSuharto2024Conf2Tree},
 dan \citetitb{TotoSuharto2025Journal1FSM}; detail lengkap dijelaskan pada
-§IV.7--§IV.9.
+Subbab~IV.7--Subbab~IV.9.
 
 \begin{table}[ht]
   \centering
@@ -534,7 +534,7 @@ tanpa informasi arah; varian ini merupakan pilihan utama untuk membentuk
 antar sampel untuk mengukur stabilitas posisi sebagai indikator kelas.
 
 Validitas FSM diukur melalui tiga metrik formal (definisi kuantitatif
-disajikan pada §IV.6): (i)~\emph{discriminability index}: sejauh mana
+disajikan pada Subbab~IV.6): (i)~\emph{discriminability index}: sejauh mana
 FSM antar-kelas dapat dibedakan; (ii)~\emph{severity monotonicity fraction}:
 fraksi posisi yang kepentingannya meningkat monoton seiring tingkat
 keparahan cacat; (iii)~\emph{split-half stability coefficient}: \textcolor{blue}{kemiripan
@@ -584,7 +584,7 @@ Penelitian ini menggunakan label RUL linier yang dikalibrasi per rekaman
 dengan \emph{StandardScaler} yang disesuaikan pada data pelatihan saja,
 untuk mencegah kebocoran informasi dari set uji.
 Hubungan antara konstruksi HI, skema normalisasi, dan arsitektur \emph{backbone}
-RUL yang digunakan dalam penelitian ini diuraikan lebih lanjut pada §III.4.}
+RUL yang digunakan dalam penelitian ini diuraikan lebih lanjut pada Subbab~III.4.}
 
 \subsection{Pendekatan Berbasis Fisika dan \emph{Data-Driven}}
 \label{subsec:bab2_fisika_datadriven}
@@ -619,15 +619,58 @@ kausal berlapis \citetitb{Bai2018TCN} memperluas kemampuan ini. Arsitektur
 Transformer \citetitb{Vaswani2017Attention} memberikan fleksibilitas tangkap
 konteks global, namun kompleksitasnya kuadratik $\mathcal{O}(L^2)$ terhadap
 panjang sekuens menjadi hambatan pada sinyal degradasi yang panjang
-\citetitb{Tay2022LRA}.
+\citetitb{Tay2022LRA}. Gambar~\ref{fig:bab2_lstm_cell} mengilustrasikan
+arsitektur sel LSTM klasik dengan empat mekanisme \emph{gating}.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.88\textwidth]{figures/bab2/fig_lstm_cell.png}
+  \caption{Arsitektur sel LSTM klasik \citetitb{Hochreiter1997LSTM}: empat \emph{gate}
+           (forget, input, candidate, output) mengatur aliran informasi melalui
+           \emph{cell state} $c_t$ yang mengalir horizontal, mengatasi masalah
+           \emph{vanishing gradient} pada jaringan rekuren konvensional.}
+  \label{fig:bab2_lstm_cell}
+\end{figure}
 
 Perkembangan terbaru berpusat pada dua lini paralel yang mengatasi keterbatasan
 Transformer dari sudut berbeda. \emph{State Space Models} (SSM), diwakili
 oleh Mamba \citetitb{Gu2023Mamba} dengan parameter selektif bergantung masukan
 dan kompleksitas $\mathcal{O}(L)$, memberikan efisiensi komputasi superior
-untuk sekuens panjang. xLSTM \citetitb{Beck2024xLSTM} merevitalisasi LSTM
+untuk sekuens panjang (Gambar~\ref{fig:bab2_mamba_ssm}).
+xLSTM \citetitb{Beck2024xLSTM} merevitalisasi LSTM
 dengan \emph{exponential gating} yang menggantikan saturasi sigmoid dan memori
-matriks yang memperluas kapasitas representasi.
+matriks yang memperluas kapasitas representasi
+(Gambar~\ref{fig:bab2_slstm} dan \ref{fig:bab2_mlstm}).
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.80\textwidth]{figures/bab2/fig_mamba_ssm_block.png}
+  \caption{Blok \emph{Selective State Space Model} (Mamba, Gu \& Dao, 2023):
+           parameter $\Delta_t$, $B_t$, $C_t$ bergantung pada masukan $x_t$
+           sehingga model dapat memilih informasi yang dipertahankan, ditolak,
+           atau dilewatkan secara adaptif dengan kompleksitas $\mathcal{O}(L \cdot d)$.}
+  \label{fig:bab2_mamba_ssm}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.78\textwidth]{figures/bab2/fig_slstm_block.png}
+  \caption{Blok \emph{scalar LSTM} (sLSTM) dalam arsitektur xLSTM
+           \citetitb{Beck2024xLSTM}: \emph{exponential gating} ($i_t = \exp(\cdot)$,
+           $f_t = \exp(\cdot)$) menggantikan saturasi sigmoid pada LSTM klasik,
+           memberikan kapasitas memori yang lebih besar.}
+  \label{fig:bab2_slstm}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.78\textwidth]{figures/bab2/fig_mlstm_block.png}
+  \caption{Blok \emph{matrix LSTM} (mLSTM) dalam arsitektur xLSTM
+           \citetitb{Beck2024xLSTM}: memori matriks $C_t \in \mathbb{R}^{d \times d}$
+           menyimpan asosiasi \emph{key-value} dengan kapasitas jauh lebih besar
+           dibanding memori vektor LSTM klasik.}
+  \label{fig:bab2_mlstm}
+\end{figure}
 \textcolor{blue}{Di lini interpretabilitas berbasis arsitektur, kerangka N-BEATS
 \citetitb{Oreshkin2020NBEATS} memperkenalkan dekomposisi basis-blok eksplisit
 (\emph{trend} dan \emph{seasonality}) yang menghasilkan struktur internal yang
@@ -636,7 +679,7 @@ Penelitian ini mengombinasikan
 \textcolor{blue}{ketiga keunggulan tersebut --- efisiensi Mamba, kapasitas memori
 xLSTM, dan dekomposisi interpretabel N-BEATS ---} dalam tiga arsitektur
 \emph{backbone} RUL (Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL, dan SparseGate-TCN-RUL;
-diuraikan pada §V.1).
+diuraikan pada Subbab~V.1).
 
 \textbf{Tren terkini.} Peningkatan akurasi prediksi RUL pada dataset
 \emph{benchmark} mulai mendekati saturasi: beberapa arsitektur terkini sudah
@@ -658,7 +701,7 @@ Penelitian ini tidak mencakup UQ untuk prediksi RUL secara langsung;
 kuantifikasi ketidakpastian yang digunakan — \emph{bootstrap} CI 95\% dan
 \emph{permutation test} — diterapkan pada prosedur pemetaan SAE$\to$BPFx
 (Bab~V), bukan pada distribusi prediksi RUL itu sendiri.
-Perluasan ke UQ prediksi RUL ditetapkan sebagai \emph{future work} pada §VI.5.}
+Perluasan ke UQ prediksi RUL ditetapkan sebagai \emph{future work} pada Subbab~VI.5.}
 
 \subsection{Dataset \emph{Benchmark} RUL: PHM2012, XJTU-SY, dan IMS}
 \label{subsec:bab2_dataset_rul}
@@ -724,7 +767,7 @@ korelasi Pearson (p-value > 0,05 meski nilai \emph{hit-rate} tinggi).
 \label{sec:bab2_mekanistik}
 % -----------------------------------------------------------------
 
-Metode XAI yang dibahas pada §\ref{sec:bab2_xai} beroperasi di tingkat
+Metode XAI yang dibahas pada Subbab~\ref{sec:bab2_xai} beroperasi di tingkat
 \emph{masukan}: mengidentifikasi fitur atau posisi sinyal yang paling berpengaruh
 terhadap prediksi. Pertanyaan yang lebih dalam, yaitu \emph{konsep fisika apa yang
 direpresentasikan model pada lapisan tersembunyinya?}, tidak dapat dijawab
@@ -757,6 +800,21 @@ konvensional, Top-$k$ memberikan kendali langsung atas tingkat \emph{sparsity}
 dan pelatihan yang lebih stabil. \citenameitb{Templeton2024Scaling} mengvalidasi
 pendekatan ini pada model produksi skala besar, menunjukkan bahwa jutaan fitur
 yang dapat diinterpretasi dapat diekstrak.
+Gambar~\ref{fig:bab2_sae_architecture} mengilustrasikan arsitektur
+Top-$k$ SAE yang digunakan dalam penelitian ini.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.86\textwidth]{figures/bab2/fig_sae_architecture.png}
+  \caption{Arsitektur Top-$k$ \emph{Sparse Autoencoder} (SAE)
+           \citetitb{Cunningham2023TopkSAE}: \emph{hidden state} $\mathbf{h} \in \mathbb{R}^d$
+           dari \emph{backbone} RUL dikodekan ke \emph{dictionary} berlapis
+           ($d_{\rm lat} = 8d$), kemudian hanya $k$ fitur teraktif ($k = 51$,
+           $\approx 5\%$) yang dipertahankan sebagai kode \emph{sparse} $\mathbf{z}$.
+           \emph{Loss} rekonstruksi MSE mendorong SAE membangun representasi yang
+           dapat diinterpretasi secara monosemantik.}
+  \label{fig:bab2_sae_architecture}
+\end{figure}
 
 \subsection{Gap: Belum Ada SAE untuk Domain Prognostik \emph{Bearing}}
 \label{subsec:bab2_gap_sae}
@@ -786,9 +844,26 @@ CI~95\% \textcolor{blue}{($B = 1.000$ resampel)} + \emph{permutation test}
 Xavier-init dan \emph{hidden state} Gaussian acak), dan (iii)~mengkonfirmasi
 bahwa korespondensi SAE $\leftrightarrow$ BPFx merupakan properti \emph{emergent}
 dari representasi yang terlatih, bukan artefak arsitektur atau prosedur.
+Gambar~\ref{fig:bab2_sae_pipeline} merangkum \emph{pipeline} interpretabilitas
+mekanistik yang diusulkan secara keseluruhan.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.94\textwidth]{figures/bab2/fig_sae_pipeline.png}
+  \caption{\emph{Pipeline} interpretabilitas mekanistik SAE–BPFx
+           \citetitb{TotoSuharto2025Journal2RUL}: sinyal vibrasi mentah
+           diproses oleh tiga \emph{backbone} RUL beku untuk menghasilkan
+           \emph{pool} \emph{hidden state}, kemudian Top-$k$ SAE
+           mengekstrak kode \emph{sparse}, dan korelasi Pearson terhadap
+           amplitudo Hilbert \emph{envelope} pada empat frekuensi karakteristik
+           (BPFO, BPFI, BSF, FTF) menghasilkan \emph{hit-rate} per BPFx.
+           Validitas dikonfirmasi dengan \emph{bootstrap} 95\% CI,
+           \emph{permutation test}, dan dua \emph{negative control}.}
+  \label{fig:bab2_sae_pipeline}
+\end{figure}
 
 % -----------------------------------------------------------------
-% §II.7 BARU — tinjauan XAI lintas domain sinyal 1-D
+% Subbab~II.7 BARU — tinjauan XAI lintas domain sinyal 1-D
 % -----------------------------------------------------------------
 \textcolor{blue}{\section{XAI pada Domain Sinyal Satu Dimensi: Tinjauan Lintas Domain}
 \label{sec:bab2_xai_lintas_domain}}
@@ -830,11 +905,11 @@ pertama untuk WDCNN pada dataset CWRU \citetitb{TotoSuharto2025Journal1FSM}.}
 \label{sec:bab2_gap_literatur}
 % -----------------------------------------------------------------
 
-\textcolor{blue}{Berdasarkan tinjauan pada §\ref{sec:bab2_pdm_industri}
-hingga §\ref{sec:bab2_xai_lintas_domain}, bagian ini memetakan
+\textcolor{blue}{Berdasarkan tinjauan pada Subbab~\ref{sec:bab2_pdm_industri}
+hingga Subbab~\ref{sec:bab2_xai_lintas_domain}, bagian ini memetakan
 \emph{state of the art} penelitian perawatan prediktif secara komprehensif
 dan mengidentifikasi kesenjangan yang menjadi justifikasi langsung bagi
-ketiga rumusan masalah pada §\ref{sec:bab1_rumusan}.}
+ketiga rumusan masalah pada Subbab~\ref{sec:bab1_rumusan}.}
 
 \textcolor{blue}{Tabel~\ref{tab:bab2_sota_pdm} menyajikan pemaparan detail
 \emph{state of the art} perawatan prediktif \emph{bearing} dari 17 studi
@@ -848,10 +923,10 @@ utama, dan keterbatasan masing-masing studi.}
 \begin{small}
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.15}
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.0cm}
-                     >{\raggedright\arraybackslash}p{3.0cm}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                     >{\raggedright\arraybackslash}p{2.8cm}
                      >{\raggedright\arraybackslash}p{2.4cm}
-                     >{\raggedright\arraybackslash}p{7.8cm}@{}}
+                     >{\raggedright\arraybackslash}p{7.4cm}@{}}
 \caption{\textcolor{blue}{Pemaparan \emph{state of the art} (SotA) penelitian
          perawatan prediktif (PdM) \emph{bearing} dan posisi penelitian
          disertasi ini, dikelompokkan dalam lima grup tematik (A--E) ditambah
@@ -897,7 +972,7 @@ Akurasi $>$~99\,\% pada CWRU tanpa ekstraksi fitur manual.
 Keterbatasan: tidak menyertakan analisis interpretabilitas;
 \emph{black-box} bagi insinyur perawatan. \\[3pt]
 
-\citenameitb{Ayvaz2021PdMML} &
+\citenameitb{Ayvaz2021IoTPdM} &
 Gabungan ANN + SVM untuk klasifikasi kondisi mesin &
 Data sensor produksi otomotif &
 Mendemonstrasikan kelayakan ML pada lingkungan produksi; namun
@@ -1073,8 +1148,8 @@ Tiga \emph{backbone} RUL (Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL,
 SparseGate-TCN-RUL) + \emph{Top-k SAE} dipetakan ke BPFx melalui
 korelasi dengan \emph{Hilbert envelope} &
 PHM2012, XJTU-SY, IMS, CWRU &
-\emph{Hit-rate} BPFI 2,3\,\% (PHM2012, $p < 0{,}001$), BPFO
-2,2\,\% (XJTU-SY, $p < 0{,}001$); konsistensi urutan dominansi BPFx
+\emph{Hit-rate} BPFI 2,3\,\% (PHM2012, $p < 0{,}001$), BSF
+1,6\,\% (XJTU-SY, $p < 0{,}001$); konsistensi urutan dominansi BPFx
 lintas tiga arsitektur; validasi dengan \emph{bootstrap} CI 95\,\%,
 \emph{permutation test}, dan dua \emph{negative controls} (J~2). \\
 
@@ -1185,7 +1260,7 @@ pada data vibrasi PT~SKF Indonesia (RM-3).}
 
 \textcolor{blue}{Keempat} kesenjangan tersebut terhubung langsung dengan
 \textcolor{blue}{tiga} pertanyaan penelitian
-pada §\ref{sec:bab1_rumusan}: \textcolor{blue}{Kesenjangan~1 dan~2
+pada Subbab~\ref{sec:bab1_rumusan}: \textcolor{blue}{Kesenjangan~1 dan~2
 menjustifikasi RM-2 (XAI dua lapis); Kesenjangan~3 dan~4 menjustifikasi
 RM-3 (validasi industri dan arsitektur multi-tier). RM-1 (model PdM
 diagnostik dan prognostik yang akurat) merupakan prasyarat yang memungkinkan
@@ -1258,13 +1333,13 @@ diagnostik pada Bab~IV dan prognostik pada Bab~V.
 %     Lakshminarayanan2017Ensembles, Angelopoulos2022ConformalSurvey,
 %     Strodthoff2021ECGExplainability.
 %   - DITAMBAHKAN putaran ini: Oreshkin2020NBEATS (dipakai Bab V tapi belum
-%     ada di Bab II) -> kini disitir di §II.5.2 (biru).
+%     ada di Bab II) -> kini disitir di Subbab~II.5.2 (biru).
 %   - Loshchilov2019AdamW (dipakai Bab V) sengaja TIDAK dimasukkan ke Bab II:
 %     bersifat detail implementasi optimizer, bukan landasan teori.
 %
 % B. KOREKSI ANGKA agar konsisten dgn sumber otoritatif (Bab IV / Journal FSM):
 %   1. BPFx CWRU: 9 bola/0deg/29,95Hz/107,36;162,18;70,87;11,93
-%      -> 8 bola/15,17deg/1.750rpm/104,6;157,9;68,9;13,1  (sesuai §IV.11)
+%      -> 8 bola/15,17deg/1.750rpm/104,6;157,9;68,9;13,1  (sesuai Subbab~IV.11)
 %   2. WDCNN Var C akurasi: 96,27% -> 96,13% (sesuai Tabel IV CV)
 %   3. Stabilitas FSM Var A: ANGKA OTORITATIF = 0,940 (analisis utama,
 %      300 bg/500 uji; SAMA dengan kolom Stabilitas Tabel IV & Journal FSM
@@ -1280,7 +1355,7 @@ diagnostik pada Bab~IV dan prognostik pada Bab~V.
 %      yg memakai "satu-sisi (greater)" KELIRU dan telah dikoreksi ke "dua-sisi".
 %
 % C. CATATAN LINTAS-DOKUMEN (di luar Bab II, perlu tindak lanjut terpisah):
-%   - Permutasi B=1.000: SUDAH selaras di Pendahuluan (§I, B=1.000), Bab V,
+%   - Permutasi B=1.000: SUDAH selaras di Pendahuluan (Bab~I, B=1.000), Bab V,
 %     Bab VI, dan Bab II. Konflik lama n=10.000 sudah tidak ada.
 %   - Arah uji permutasi: Bab V DIKOREKSI dari "satu-sisi" -> "dua-sisi"
 %     agar konsisten dgn definisi |r_null|>|r_obs| dan Journal RUL.

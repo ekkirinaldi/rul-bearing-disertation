@@ -1,10 +1,10 @@
 %% chapters/04-diagnostik.tex
 %% Bab IV — Deteksi Kerusakan \emph{Bearing}: Metodologi dan Hasil
 %% Sumber utama:
-%%   Conference 1 — SVM/LR + SHAP KernelExplainer (§IV.2, §IV.7)
-%%   Conference 2 — DT/RF/XGBoost + SHAP TreeExplainer (§IV.3, §IV.8)
-%%   Journal 1    — WDCNN + SHAP DeepExplainer + FSM (§IV.4–IV.6, §IV.9–IV.14)
-%% Fase D — dibuat sesuai writings/dissertation-outline.md §Bab IV
+%%   Conference 1 — SVM/LR + SHAP KernelExplainer (Subbab~IV.2, Subbab~IV.7)
+%%   Conference 2 — DT/RF/XGBoost + SHAP TreeExplainer (Subbab~IV.3, Subbab~IV.8)
+%%   Journal 1    — WDCNN + SHAP DeepExplainer + FSM (Subbab~IV.4–IV.6, Subbab~IV.9–IV.14)
+%% Fase D — dibuat sesuai writings/dissertation-outline.md Bab IV
 
 \chapter{Deteksi Kerusakan \emph{Bearing}}
 \label{bab:diagnostik}
@@ -24,7 +24,7 @@ fitur HI~36-D, metrik evaluasi diagnostik dan FSM, serta infrastruktur
 komputasi, telah diuraikan pada Bab~\ref{bab:metodologi-umum}.
 Bab ini tidak mengulang uraian tersebut, melainkan mengembangkan metodologi
 spesifik tiap kelompok dan menyajikan hasil eksperimen beserta interpretasinya.
-Subbab §IV.1 s.d.\ §IV.6 membahas metodologi, sedangkan subbab §IV.7 s.d.\ §IV.14
+Subbab~IV.1 s.d.\ Subbab~IV.6 membahas metodologi; Subbab~IV.7 s.d.\ Subbab~IV.14
 membahas hasil dan analisis.
 
 % =================================================================
@@ -133,8 +133,20 @@ WDCNN, di sisi lain, dioptimalkan untuk akurasi maksimum dengan interpretabilita
 level sinyal yang lebih kaya, yaitu kemampuan yang tidak tersedia pada model
 berbasis kernel maupun algoritma berbasis pohon ketika beroperasi pada
 representasi sinyal mentah.
-Perbandingan antar kedua alur pada subbab §IV.14 mengantarkan pada implikasi desain
+Perbandingan lintas kedua alur pada Subbab~IV.14 mengungkap implikasi desain
 sistem PdM multi-tier yang lebih luas.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.78\textwidth]{figures/bab4/j1_overall_methodology.png}
+  \caption{Alur metodologi diagnostik keseluruhan dari Suharto dkk. (2025):
+           empat tahap sekuensial---persiapan data CWRU, pelatihan WDCNN,
+           analisis SHAP \emph{DeepExplainer}, dan konstruksi serta validasi
+           \emph{Fault Signature Maps}---yang menjadi referensi implementasi
+           eksperimen diagnostik pada bab ini.
+           \citetitb{TotoSuharto2025Journal1FSM}}
+  \label{fig:bab4_j1_methodology}
+\end{figure}
 
 % =================================================================
 \section{Benchmark Model Berbasis Kernel: SVM dan Regresi Logistik}
@@ -281,6 +293,20 @@ kelas kerusakan CWRU.
 Total parameter model mencapai \textasciitilde 60.710, termasuk bobot
 lapisan konvolusi dan FC.
 Tabel lengkap arsitektur per lapisan tersedia di Lampiran~G.
+Gambar~\ref{fig:bab4_wdcnn_arch} memvisualisasikan seluruh blok arsitektur
+WDCNN dari masukan hingga keluaran.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.94\textwidth]{figures/bab4/wdcnn_architecture.png}
+  \caption{Diagram arsitektur WDCNN \citetitb{Zhang2017WDCNN} yang digunakan
+           dalam penelitian ini: input $1 \times 2.048$ diproses melalui
+           lima blok konvolusi (Conv1d, BatchNorm, ReLU, MaxPool) yang
+           secara progresif mengurangi dimensi temporal, diikuti dua lapisan
+           \emph{fully connected} (FC) dan \emph{dropout} sebelum keluaran
+           10-kelas. Sumber: \citetitb{TotoSuharto2025Journal1FSM}.}
+  \label{fig:bab4_wdcnn_arch}
+\end{figure}
 
 \subsection{Tiga Varian Studi Ablasi}
 \label{subsec:bab4_wdcnn_ablasi}
@@ -419,7 +445,7 @@ merekam kontribusi setiap posisi sinyal terhadap logit kelas tersebut.
 Dengan 500 sampel uji dan 10 kelas, total volume nilai SHAP yang dihasilkan
 adalah $500 \times 10 \times 2048 = 10{,}24 \times 10^6$ nilai.
 Kumpulan nilai ini kemudian diagregasi menjadi FSM sebagaimana diformalkan
-pada subbab §IV.6.
+pada Subbab~IV.6.
 
 % =================================================================
 \section{Formalisasi Fault Signature Maps (FSM)}
@@ -490,7 +516,7 @@ Ketiga metrik ini dievaluasi secara terpisah untuk $\text{FSM}^{\text{signed}}$,
 $\text{FSM}^{\text{abs}}$, dan $\text{FSM}^{\text{var}}$, serta dibandingkan
 antar-varian WDCNN (A, B, C) untuk memahami pengaruh desain arsitektur
 terhadap kualitas interpretabilitas.
-Hasil evaluasi disajikan pada §IV.11.
+Hasil evaluasi disajikan pada Subbab~IV.11.
 
 % =================================================================
 \section{Hasil Model Berbasis Kernel: SVM dan Regresi Logistik}
@@ -657,7 +683,7 @@ referensi dengan BN penuh) pada dataset CWRU sepuluh kelas.
 ketat 1.240/310/750 sampel (\emph{training}/\emph{validation}/\emph{test})
 sebagaimana diuraikan pada Bab~\ref{bab:metodologi-umum}, untuk mencegah
 inflasi akurasi akibat kebocoran data antar-segmen.}
-Detail Varian~B dan Varian~C dijelaskan secara komparatif pada studi ablasi di §IV.13.
+Varian~B dan Varian~C dilaporkan secara komparatif pada studi ablasi di Subbab~IV.13.
 
 \begin{table}[ht]
 \caption{Kinerja WDCNN Varian~A pada dataset CWRU sepuluh kelas
@@ -818,7 +844,7 @@ Tabel~\ref{tab:bab4_validasi_fsm} menyajikan nilai tiga metrik validasi FSM
 $\text{FSM}^{\text{abs}}$ Varian~A (konfigurasi referensi WDCNN dengan BN
 penuh), dirata-rata atas sepuluh kelas CWRU. Metrik ini dihitung pada
 analisis FSM utama dengan 300 sampel \emph{background} dan 500 sampel uji;
-perbandingan terhadap Varian~C dibahas tersendiri pada studi ablasi §IV.13.}
+perbandingan terhadap Varian~C dibahas tersendiri pada studi ablasi Subbab~IV.13.}
 
 \begin{table}[ht]
 \caption{\textcolor{blue}{Metrik validasi FSM$^{\text{abs}}$ Varian~A
@@ -848,7 +874,7 @@ yang tertutupi oleh komponen energi latar yang besar dan bersama
 
 \textcolor{blue}{Karena itu, kekhasan FSM lebih efektif dinilai secara visual
 melalui \emph{heatmap} yang menyoroti konsentrasi temporal spesifik, bukan
-semata melalui metrik kemiripan kosinus 2.048-D. Studi ablasi di subbab §IV.13
+semata melalui metrik kemiripan kosinus 2.048-D. Studi ablasi Subbab~IV.13
 menunjukkan bahwa diskriminabilitas ini dapat ditingkatkan secara substansial
 melalui modifikasi arsitektur, khususnya penghapusan \emph{Batch
 Normalization}.}
@@ -962,7 +988,7 @@ Kedua, jika periodisitas BPFx adalah mekanisme klasifikasi, maka Varian~B
 (kernel sempit $k=3$) seharusnya tidak mengalami penurunan akurasi yang
 signifikan karena filter kecil pun mampu mendeteksi frekuensi periodik.
 Nyatanya, Varian~B mengalami penurunan akurasi 0,80 poin persentase (lihat
-§IV.13), konsisten dengan hipotesis bahwa kernel lebar berukuran 64 diperlukan
+Subbab~IV.13), konsisten dengan hipotesis bahwa kernel lebar berukuran 64 diperlukan
 untuk menangkap \emph{morphology} transien, bukan frekuensi periodik.
 Ketiga, FSM kelas Normal memperlihatkan pola atribusi yang merata dan rendah
 tanpa puncak terlokalisasi, sesuai dengan ketiadaan transien impuls pada

@@ -22,6 +22,9 @@
 #   PYTHON          default .venv/bin/python
 #   DATA_ROOT       override path to ../data-bearing if layouts differ on pod
 #
+# Dataset on a fresh pod: .cursor/rules/vps-ssh-key-access.mdc §6 (data-bearing.zip)
+#   + §6.3 (xtju-sy.zip — full three-condition XJTU, 9216 CSVs).
+#
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -56,8 +59,8 @@ fi
 if [[ ! -d "${DATA_ROOT}/xtju-sy" ]]; then
   _die "XJTU-SY folder missing under ${DATA_ROOT}/xtju-sy"
 fi
-if [[ ! -d "${DATA_ROOT}/xtju-sy/35Hz12kN" || ! -d "${DATA_ROOT}/xtju-sy/37.5Hz11kN" ]]; then
-  _die "XJTU expected condition folders missing (need 35Hz12kN and 37.5Hz11kN)"
+if [[ ! -d "${DATA_ROOT}/xtju-sy/35Hz12kN" || ! -d "${DATA_ROOT}/xtju-sy/37.5Hz11kN" || ! -d "${DATA_ROOT}/xtju-sy/40Hz10kN" ]]; then
+  _die "XJTU expected condition folders missing (need 35Hz12kN, 37.5Hz11kN, 40Hz10kN)"
 fi
 
 # Basic CUDA readiness (recommended for bf16 cloud config)

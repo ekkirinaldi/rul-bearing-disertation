@@ -38,7 +38,7 @@ RUNS_ROOT="${ROOT}/results/runs"
 # Update these if new runs with lower RMSE are generated.
 # ---------------------------------------------------------------------------
 MAMBA_PHM_RUN="${RUNS_ROOT}/20260512_151550_algorithm_comparison_phm2012_mamba_xlstm_net_s42"
-MAMBA_XJTU_RUN="${RUNS_ROOT}/20260512_193202_algorithm_comparison_xjtusy_mamba_xlstm_net_s44"
+MAMBA_XJTU_RUN="${RUNS_ROOT}/20260611_104213_algorithm_comparison_xjtusy_mamba_xlstm_net_s42"
 
 # Optional cross-model runs (set INCLUDE_SPARSE=1 to enable)
 SPARSE_PHM_RUN="${RUNS_ROOT}/20260512_163040_algorithm_comparison_phm2012_sparse_gate_tcn_rul_s42"

@@ -71,7 +71,7 @@ echo "[build_cloud_full_reports] Global report (10 runs) → cloud_full_all_algo
   --runs "${ALL_RUNS[@]}" \
   --name "cloud_full_all_algorithms_s${SEED}" \
   --title "Cloud full sweep — all algorithms" \
-  --subtitle "PHM2012 + XJTU-SY (conditions 1–2, dense eval), seed ${SEED}"
+  --subtitle "PHM2012 + XJTU-SY (3 conditions, dense eval), seed ${SEED}"
 
 for m in "${MODELS[@]}"; do
   p="$(_latest "*_algorithm_comparison_phm2012_${m}_s${SEED}")"

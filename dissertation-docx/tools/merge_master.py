@@ -264,6 +264,7 @@ def main():
     # numbering: subbab flush-left fix; chapter Heading1s number naturally
     restyle.fix_numbering(workdir / "word" / "numbering.xml", 1)
     restyle.add_extra_styles(workdir / "word" / "styles.xml")
+    restyle.enable_mirror_margins(workdir / "word" / "settings.xml")
 
     # post-merge assertions
     doc = etree.parse(str(workdir / "word" / "document.xml"))

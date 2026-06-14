@@ -1,6 +1,6 @@
 %% chapters/03-metodologi-umum.tex
 %% Bab III — Metodologi Umum (Fondasi Bersama Diagnostik dan Prognostik)
-%% Sumber: writings/dissertation-outline.md §Bab III
+%% Sumber: writings/dissertation-outline.md Bab III
 %% Fase C — dibuat dari 04-metodologi.tex + 03-dasar-teori.tex
 
 \chapter{Metodologi}
@@ -43,7 +43,7 @@ disesuaikan dengan arsitekturnya: KernelExplainer untuk model berbasis kernel
 (SVM/LR), TreeExplainer untuk algoritma berbasis pohon keputusan
 (DT/RF/XGBoost), dan DeepExplainer untuk \emph{Deep Learning} (WDCNN).
 Rincian implementasi masing-masing modul SHAP dikembangkan pada
-Bab~IV~\S{}IV.2--IV.4.}% [Revisi §3.1 transisi SHAP]
+Bab~IV Subbab~IV.2--IV.4.}% [Revisi Subbab 3.1 transisi SHAP]
 
 Di sisi lain, \textcolor{blue}{pendekatan prognostik} berfokus pada \textbf{estimasi sisa umur pakai}
 (\emph{Remaining Useful Life}, RUL) menggunakan tiga dataset prognostik
@@ -140,6 +140,42 @@ sesuai dengan skala waktu masing-masing. FSM untuk interpretabilitas level
 sinyal dalam satu segmen pendek (\textcolor{blue}{diagnostik}), dan SAE-BPFx untuk
 interpretabilitas konsep laten lintas ratusan rekaman degradasi (\textcolor{blue}{prognostik}).
 
+\textcolor{blue}{Kerangka sistem PdM yang dibangun dalam penelitian ini mengikuti alur
+enam tahap yang bersifat inkremental: setiap keputusan pada satu tahap
+memengaruhi tahap berikutnya secara langsung.}
+
+\textcolor{blue}{
+\begin{enumerate}
+  \item \textbf{Praproses (\emph{Pre-processing}).} Mempersiapkan data sinyal
+        getaran mentah agar siap digunakan oleh model: validasi data sensor,
+        sinkronisasi fitur, pembersihan, segmentasi, penskalaan, dan
+        \emph{noise handling}. Tahap ini diuraikan secara rinci pada
+        subbab-subbab Praproses Sinyal Getaran dalam bab ini.
+  \item \textbf{Rekayasa Fitur (\emph{Feature Engineering}).} Mengekstraksi
+        subset fitur yang relevan sebagai input model: fitur statistik
+        \emph{time domain}/\emph{frequency domain} untuk model berbasis
+        kernel dan pohon keputusan, serta sinyal tersegmentasi langsung untuk
+        model \emph{deep learning}. Detail HI 36-D tersedia pada
+        Subbab~\ref{subsec:bab3_hi36d}.
+  \item \textbf{Deteksi Anomali.} Mengidentifikasi apakah aset beroperasi
+        dalam kondisi normal atau menyimpang. Pada penelitian ini, tahap ini
+        diwujudkan sebagai klasifikasi tiga kelas (normal, peringatan, kritis)
+        untuk jalur diagnostik (Bab~IV).
+  \item \textbf{Diagnosis.} Mengidentifikasi jenis dan lokasi kerusakan melalui
+        analisis \emph{Fault Signature Maps} (FSM) berbasis SHAP DeepExplainer
+        pada WDCNN, serta perbandingan lintas golongan algoritma
+        (Bab~IV Subbab~IV.4--IV.13).
+  \item \textbf{Prognosis.} Memantau evolusi degradasi dan memperkirakan RUL
+        menggunakan tiga arsitektur \emph{backbone} pada dataset PHM2012,
+        XJTU-SY, dan IMS, dengan validasi SAE-BPFx untuk interpretabilitas
+        representasi laten (Bab~V).
+  \item \textbf{Mitigasi.} Merencanakan tindakan perawatan berdasarkan hasil
+        diagnosis dan estimasi RUL dalam kerangka PdM multi-\emph{tier}
+        (Edge~IoT --- Edge~Server --- Cloud/GPU) yang disintetiskan pada
+        Bab~VI.
+\end{enumerate}
+}
+
 % =================================================================
 \section{Dataset}
 \label{sec:bab3_dataset}
@@ -220,11 +256,25 @@ untuk menghindari kebocoran informasi waktu: 54\% pertama dialokasikan untuk
 Z-score dihitung hanya dari \emph{training set} dan diterapkan ke dua set
 lainnya tanpa modifikasi lebih lanjut.
 
+Gambar~\ref{fig:bab3_cwru_rig} menampilkan konfigurasi fisik \emph{test rig}
+CWRU yang digunakan untuk akuisisi data.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.66\textwidth]{figures/bab3/cwru_test_rig.png}
+  \caption{\emph{Test rig} dataset CWRU: foto \emph{test bench} motor Reliance
+           2~HP dengan \emph{bearing} uji pada ujung \emph{drive} (kiri)
+           beserta diagram skematik komponen (kanan). Akselerometer dipasang
+           pada posisi \emph{drive-end} (48~kHz) dan \emph{fan-end} (12~kHz).
+           Sumber: \citetitb{TotoSuharto2025Journal1FSM}.}
+  \label{fig:bab3_cwru_rig}
+\end{figure}
+
 Pada Bab~IV, dataset ini menjadi sumber utama untuk \emph{benchmark}
 beberapa model algoritma. Pada Bab~V, CWRU juga digunakan untuk validasi
 \emph{cross-dataset} SAE; namun hanya tersedia $n = 10$ rekaman, sehingga
 daya statistik terbatas ($p > 0{,}05$). Keterbatasan ini ditandai secara
-eksplisit pada §V.8.
+eksplisit pada Subbab~V.8.
 
 \subsection{PHM2012 / FEMTO-PRONOSTIA \textcolor{blue}{(Prognostik)}}
 \label{subsec:bab3_phm2012}
@@ -274,6 +324,16 @@ Skema ini lebih realistis secara fisik dibandingkan skema linear penuh
 karena mencerminkan fase sehat panjang yang diikuti fase degradasi akseleratif
 yang relatif singkat.
 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.88\textwidth]{figures/bab3/phm2012_rul_label_example.png}
+  \caption{Contoh label target RUL pada \emph{bearing} 1\_1 dataset PHM2012:
+           titik \emph{degradation onset} $t_d$ terletak pada akuisisi ke-1,
+           diikuti penurunan linear ke 0,0 pada \emph{end-of-life} $t_f = 2802$
+           akuisisi.}
+  \label{fig:bab3_rul_label_example}
+\end{figure}
+
 Pembagian data mengikuti konvensi kompetisi PHM2012 secara berbasis \emph{bearing}
 (\emph{bearing-wise}) sebagaimana dirinci pada
 Tabel~\ref{tab:bab3_split_phm}. Pemisahan berbasis \emph{bearing} memastikan
@@ -296,11 +356,36 @@ mencegah terjadinya kebocoran karakteristik degradasi individual.
 \end{tabular}
 \end{table}
 
+Gambar~\ref{fig:bab3_phm2012_rig} mengilustrasikan konfigurasi \emph{test rig}
+PRONOSTIA secara skematik.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.94\textwidth]{figures/bab3/phm2012_test_rig.png}
+  \caption{Skema \emph{test rig} PRONOSTIA untuk dataset PHM2012
+           \citetitb{Nectoux2012PRONOSTIA}: motor AC menggerakkan \emph{bearing} uji
+           (NSK 6804 / NTN) melalui kopling belt; aktuator hidrolik memberikan gaya
+           radial 4.000--5.000~N secara terkontrol; akselerometer dua sumbu (25,6~kHz)
+           merekam getaran setiap 0,1~detik.}
+  \label{fig:bab3_phm2012_rig}
+\end{figure}
+
 Dataset PHM2012 mendefinisikan \emph{scoring function} asimetris yang
 menjadi dasar PHM Score pada Subbab~\ref{subsec:bab3_metrik_prognostik}.
 Pembagian yang mengikuti konvensi kompetisi memungkinkan perbandingan
 langsung hasil penelitian ini dengan literatur \emph{benchmark} yang
 dipublikasikan sebelumnya.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.90\textwidth]{figures/bab3/phm2012_dataset_overview.png}
+  \caption{Distribusi jumlah akuisisi per \emph{bearing} pada dataset PHM2012:
+           biru = \emph{training set} (7 \emph{bearing}), oranye = \emph{validation set}
+           (2 \emph{bearing}), hijau = \emph{test set} (8 \emph{bearing}).
+           Variasi panjang antar-\emph{bearing} mencerminkan perbedaan laju degradasi
+           di tiga kondisi operasi.}
+  \label{fig:bab3_phm2012_dataset_overview}
+\end{figure}
 
 \subsection{XJTU-SY \textcolor{blue}{(Prognostik)}}
 \label{subsec:bab3_xjtusy}
@@ -326,29 +411,44 @@ Sensor                 & Akselerometer horizontal + vertikal (25,6~kHz) \\
 Durasi rekaman         & 1,28 detik; interval 1 menit \\
 Sampel per rekaman     & 32.768 \\
 Mode kegagalan dominan & \emph{Outer-race spalling} (mayoritas \emph{bearing}) \\
-Catatan                & Kondisi 3 tidak digunakan (keterbatasan akses data) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Hanya kondisi 1 dan 2 yang digunakan, menghasilkan 10 \emph{bearing} aktif.
-Pembagian set dirinci pada Tabel~\ref{tab:bab3_split_xjtu}.
+\textcolor{blue}{Ketiga kondisi operasi digunakan (15 \emph{bearing} aktif). Pembagian set
+\emph{bearing-wise} dirinci pada Tabel~\ref{tab:bab3_split_xjtu}; konfigurasi
+pelatihan mengacu pada \texttt{configs/data/xjtu\_sy\_available\_full.yaml}.}
 
 \begin{table}[ht]
 \centering
-\caption{Pembagian set data XJTU-SY (bearing-wise, 2 kondisi aktif).}
+\caption{\textcolor{blue}{Pembagian set data XJTU-SY (bearing-wise, 3 kondisi operasi).}}
 \label{tab:bab3_split_xjtu}
 \small
 \begin{tabular}{@{}lll@{}}
 \toprule
 \textbf{Set} & \textbf{\emph{Bearing}} & \textbf{Jumlah} \\
 \midrule
-\emph{Training}   & 1\_1, 1\_2, 1\_3, 2\_1, 2\_2 & 5 \\
-\emph{Validation} & 1\_4 & 1 \\
-\emph{Test}       & 1\_5, 2\_3 & 2 \\
+\textcolor{blue}{\emph{Training}}   & \textcolor{blue}{1\_1, 1\_2, 1\_3, 2\_1, 2\_2, 2\_4, 3\_1, 3\_2, 3\_4} & \textcolor{blue}{9} \\
+\textcolor{blue}{\emph{Validation}} & \textcolor{blue}{1\_4, 2\_5, 3\_5} & \textcolor{blue}{3} \\
+\textcolor{blue}{\emph{Test}}       & \textcolor{blue}{1\_5, 2\_3, 3\_3} & \textcolor{blue}{3} \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+Gambar~\ref{fig:bab3_xjtusy_rig} mengilustrasikan konfigurasi \emph{test rig}
+XJTU-SY beserta tiga kondisi operasinya.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.94\textwidth]{figures/bab3/xjtu_sy_test_rig.png}
+  \caption{Skema \emph{test rig} XJTU-SY \citetitb{Wang2020XJTU}: motor AC variabel
+           menggerakkan \emph{bearing} uji LDK~UER204 melalui \emph{belt drive};
+           aktuator hidrolik memberikan beban radial 10--12~kN; akselerometer
+           horizontal (25,6~kHz) merekam getaran setiap 1 menit.
+           Tiga kondisi operasi (35~Hz/12~kN, 37,5~Hz/11~kN, 40~Hz/10~kN)
+           menghasilkan 15 rekaman \emph{run-to-failure}.}
+  \label{fig:bab3_xjtusy_rig}
+\end{figure}
 
 Ketersediaan label mode kegagalan per \emph{bearing} pada XJTU-SY menjadi aset
 penting untuk memvalidasi interpretabilitas \textcolor{blue}{prognostik}. Apabila SAE memetakan
@@ -408,7 +508,20 @@ berbeda dari PHM2012 dan XJTU-SY: \emph{bearing} tipe \emph{tapered roller}
 simultan, dan distribusi mode kegagalan yang mencakup \emph{rolling element}
 dan sangkar (\emph{cage}), tidak hanya \emph{outer race}. Keberagaman jenis
 \emph{bearing}, mode kegagalan, dan karakteristik sinyal ini memperkuat uji
-universalitas pada Bab~V.
+universalitas pada Bab~V. Gambar~\ref{fig:bab3_ims_rig} mengilustrasikan
+konfigurasi fisik \emph{test rig} IMS dengan empat \emph{bearing} pada satu poros.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.88\textwidth]{figures/bab3/ims_test_rig.png}
+  \caption{Skema \emph{test rig} IMS -- NASA PrognCenter \citetitb{Qiu2006WaveletBearing}:
+           empat \emph{bearing} Rexnord ZA-2115 beroperasi simultan pada satu poros
+           (2.000~rpm, 33,3~Hz) di bawah beban radial 26,7~kN; empat akselerometer
+           (20~kHz) merekam getaran setiap 10 menit hingga kegagalan.
+           \emph{Bearing}~3 mengalami \emph{outer-race fault} dan
+           \emph{Bearing}~4 mengalami kelelahan elemen bergulir pada \emph{Run}~1.}
+  \label{fig:bab3_ims_rig}
+\end{figure}
 
 % =================================================================
 \section{Praproses Sinyal dan Ekstraksi Fitur HI 36-D}
@@ -421,6 +534,142 @@ untuk model akhirnya, keduanya berbagi tiga tahap praproses awal:
 \emph{training set}, dan (3) ekstraksi fitur atau penggunaan langsung sinyal
 tersegmentasi. Pemisahan pada tahap ketiga bergantung pada pendekatan
 masing-masing model.
+
+% --- NEW SUBSECTIONS (blue) ---
+
+\textcolor{blue}{
+\subsection{Dasar Sinyal Getaran dan Analisis Spektrum}
+\label{subsec:bab3_sinyal_getaran}
+
+Saat mesin beroperasi, komponen bergerak menimbulkan gaya dinamis yang
+menyebabkan struktur bergetar. Getaran ditransmisikan ke sensor akselerometer
+yang dipasang pada \emph{housing} atau \emph{bearing housing}, menghasilkan sinyal percepatan
+dalam satuan $g$ (1~$g$ = 9{,}81~m/s$^2$).
+
+Sinyal getaran dapat dianalisis dalam dua ranah. Pada \emph{time domain},
+sinyal ditampilkan sebagai amplitudo terhadap waktu; informasi yang diperoleh
+meliputi nilai RMS, puncak, dan pola gelombang (periodik, acak, atau impulsif).
+Pada \emph{frequency domain}, sinyal diubah menjadi spektrum amplitudo terhadap
+frekuensi sehingga sumber getaran dapat diidentifikasi: \emph{unbalance}
+memberikan puncak pada 1$\times$ kecepatan putar, \emph{misalignment} pada
+1$\times$ dan 2$\times$, sedangkan kerusakan bearing menghasilkan puncak pada
+frekuensi karakteristik BPFO, BPFI, BSF, dan FTF.
+
+Transformasi dari \emph{time domain} ke \emph{frequency domain} dilakukan
+dengan \emph{Discrete Fourier Transform} (DFT). Untuk sinyal diskret
+$x[n]$, $n = 0, 1, \ldots, N-1$, DFT didefinisikan sebagai:
+}
+
+\textcolor{blue}{
+\begin{equation*}
+  X[k] = \sum_{n=0}^{N-1} x[n]\, e^{-j\,2\pi k n / N},
+  \quad k = 0, 1, \ldots, N-1.
+\end{equation*}
+}
+
+\textcolor{blue}{
+Komputasi DFT langsung memerlukan $\mathcal{O}(N^2)$ operasi, sehingga tidak
+praktis untuk data industri berskala besar. Algoritma \emph{Fast Fourier
+Transform} (FFT) mengurangi kompleksitas menjadi $\mathcal{O}(N \log N)$
+dengan memanfaatkan simetri periodik kernel DFT, sehingga FFT menjadi standar
+de facto pada \emph{predictive maintenance} berbasis getaran.
+
+Getaran mesin dapat dikuantifikasi dalam tiga parameter yang saling berkaitan.
+\emph{Displacement} (satuan $\mu$m) mengukur perpindahan dari posisi nominal
+dan cocok untuk frekuensi rendah seperti \emph{unbalance} dan \emph{misalignment}.
+\emph{Velocity} (satuan mm/s RMS) merupakan parameter yang direkomendasikan
+standar ISO~10816/20816 untuk evaluasi kondisi keseluruhan mesin pada
+frekuensi menengah. \emph{Acceleration} (satuan $g$ atau m/s$^2$) sensitif
+terhadap frekuensi tinggi dan karenanya menjadi parameter utama untuk deteksi
+kerusakan bearing dan \emph{gear mesh}.
+}
+
+\textcolor{blue}{
+\subsection{Enveloping dan Demodulasi Amplitudo}
+\label{subsec:bab3_enveloping}
+
+Kerusakan bearing (aus, \emph{pitting}, atau \emph{spalling} pada \emph{race}
+atau \emph{rolling element}) menimbulkan impuls berulang saat elemen bergulir melewati
+cacat. Impuls tersebut sering tenggelam dalam komponen dominan lain seperti
+\emph{unbalance} atau getaran \emph{gear mesh}. Teknik \emph{enveloping} atau
+demodulasi amplitudo digunakan untuk mengekstraksi impuls tersembunyi tersebut
+sehingga BPFO, BPFI, BSF, dan FTF muncul jelas dalam spektrum. Proses
+\emph{enveloping} terdiri atas langkah-langkah berikut.
+}
+
+\textcolor{blue}{
+\begin{enumerate}
+  \item \textbf{Akuisisi sinyal percepatan.} Sinyal getaran direkam menggunakan
+        akselerometer karena parameter percepatan sensitif pada frekuensi tinggi
+        tempat impuls bearing muncul.
+  \item \textbf{Filter \emph{band-pass} frekuensi tinggi.} Sinyal dilewatkan
+        filter \emph{band-pass} pada rentang 5--20~kHz untuk mengisolasi zona
+        frekuensi tempat impuls termodulasi, sekaligus membuang komponen
+        frekuensi rendah yang mendominasi.
+  \item \textbf{Rektifikasi.} Sinyal hasil filter diubah ke nilai absolut
+        sehingga komponen negatif terlipat ke atas.
+  \item \textbf{\emph{Low-pass filter} atau FFT.} Filter \emph{low-pass}
+        atau FFT diterapkan untuk menghasilkan amplop (\emph{envelope}) sinyal,
+        yakni kurva yang mengikuti puncak-puncak impuls berulang.
+  \item \textbf{Analisis spektrum amplop.} FFT dari amplop menghasilkan
+        \emph{envelope spectrum} di mana puncak pada BPFO, BPFI, BSF, FTF, dan
+        harmoniknya menandai mode kegagalan bearing yang aktif.
+\end{enumerate}
+}
+
+\textcolor{blue}{
+Dalam konteks disertasi ini, \emph{envelope spectrum} digunakan sebagai
+referensi eksperimental untuk memvalidasi interpretabilitas laten
+(\emph{hit-rate} SAE terhadap BPFx) pada Bab~V. Korelasi Pearson antara
+aktivasi fitur SAE dan amplitudo \emph{envelope spectrum} pada pita
+$\pm$2~Hz di sekitar BPFO, BPFI, BSF, dan FTF merupakan metrik kuantitatif
+inti Novelti~N3.
+}
+
+\textcolor{blue}{
+\subsection{Tahapan Praproses Data}
+\label{subsec:bab3_tahapan_praproses}
+
+Sebelum sinyal getaran dapat digunakan untuk melatih model \emph{machine
+learning} atau \emph{deep learning}, diperlukan serangkaian tahap praproses
+yang memproses dan mentransformasikan data agar dapat ditangani secara
+efisien oleh model. Tujuh tahapan praproses yang diterapkan dalam penelitian
+ini adalah sebagai berikut.
+}
+
+\textcolor{blue}{
+\begin{enumerate}
+  \item \textbf{Validasi data sensor.} Data yang terkumpul diperiksa
+        kualitasnya untuk memastikan rekaman tidak mengandung artefak akuisisi,
+        saturasi amplifier, atau kegagalan transmisi.
+  \item \textbf{Sinkronisasi fitur.} Sinyal dari berbagai sumber (akselerometer,
+        temperatur, data kualitas produk) yang direkam pada waktu berbeda
+        diselaraskan ke basis deret waktu yang seragam sebelum pengolahan lebih
+        lanjut.
+  \item \textbf{Pembersihan data.} Nilai yang hilang (\emph{missing values})
+        diinterpolasi atau dihapus; duplikat dibuang; dan \emph{outlier}
+        teridentifikasi melalui metode $3\sigma$ atau IQR diproses sesuai
+        kebijakan per-dataset.
+  \item \textbf{Pengkodean dan diskritisasi.} Fitur kategorikal atau
+        \emph{timestamp} diproyeksikan ke ruang numerik yang dapat ditangani
+        oleh model. Untuk sinyal getaran kontinu, tahap ini umumnya berupa
+        konversi tipe data dan pengaturan presisi numerik.
+  \item \textbf{Segmentasi.} Data panjang dibagi menjadi segmen-segmen
+        menggunakan jendela geser, memungkinkan analisis paralel dan pemrosesan
+        dataset berskala besar. Detail konfigurasi jendela per dataset
+        diuraikan pada Subbab~\ref{subsec:bab3_segmentasi}.
+  \item \textbf{Penskalaan fitur.} Normalisasi atau standardisasi diterapkan
+        agar semua fitur berada pada skala yang sebanding, mencegah dominasi
+        fitur dengan rentang nilai besar. Standardisasi Z-score berbasis
+        \emph{training set} diterapkan pada penelitian ini
+        (Subbab~\ref{subsec:bab3_segmentasi}).
+  \item \textbf{\emph{Noise handling}.} Komponen derau frekuensi tinggi yang
+        tidak berkorelasi dengan degradasi \emph{bearing} diatasi melalui
+        kombinasi filter \emph{band-pass} (untuk \emph{enveloping}) dan
+        pembobotan jendela Hann sebelum FFT pada konstruksi HI
+        (Subbab~\ref{subsec:bab3_hi36d}).
+\end{enumerate}
+}
 
 \subsection{Segmentasi Jendela Geser dan Normalisasi}
 \label{subsec:bab3_segmentasi}
@@ -435,7 +684,7 @@ jendela geser dengan ukuran yang disesuaikan per dataset dan pendekatan model:
   \item \textbf{PHM2012, XJTU-SY, IMS \textcolor{blue}{(Prognostik)}:} jendela temporal berisi
         $L_{\rm win}$ rekaman berurutan (\emph{health indicator} per rekaman);
         konfigurasi $L_{\rm win}$ dan \emph{stride} diuraikan pada
-        Bab~V~§V.1.
+        Bab~V~Subbab~V.1.
 \end{itemize}
 
 Normalisasi Z-score diimplementasikan per kanal menggunakan statistik dari
@@ -476,7 +725,7 @@ untuk mengurangi \emph{spectral leakage} pada fitur domain frekuensi.
 Normalisasi Z-score tambahan diterapkan pada vektor HI 36-D setelah
 ekstraksi, dengan statistik juga bersumber dari \emph{training set}.
 \textcolor{blue}{Penting dicatat: penggunaan dua kanal (DE+FE) berlaku
-khusus untuk model berbasis kernel dan pohon. WDCNN (§\ref{subsec:bab3_input_deep})
+khusus untuk model berbasis kernel dan pohon. WDCNN (Subbab~\ref{subsec:bab3_input_deep})
 menggunakan hanya sinyal mentah kanal \emph{drive-end} (DE) tunggal,
 berdimensi $1 \times 2048$, tanpa ekstraksi fitur dua-kanal.}% [REVISI ISU-09]
 
@@ -497,7 +746,7 @@ input yang berbeda dari HI 36-D:
         lima pita frekuensi. Input berbentuk
         $\mathbf{X} \in \mathbb{R}^{L_{\rm win} \times 5}$ (sekuens $L_{\rm win}$
         rekaman, masing-masing 5 fitur energi). Prosedur praproses prognostik
-        diuraikan pada Bab~V~§V.1.
+        diuraikan pada Bab~V~Subbab~V.1.
 \end{enumerate}
 
 Perbedaan representasi ini mencerminkan perbedaan mendasar antara kedua tugas:
@@ -637,6 +886,16 @@ Karena PHM Score tidak memiliki konvensi resmi untuk XJTU-SY dan IMS, RMSE
 digunakan sebagai satu-satunya metrik yang dapat dibandingkan secara adil
 lintas ketiga dataset prognostik.
 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.80\textwidth]{figures/bab3/fig_phm_scoring.png}
+  \caption{Fungsi \emph{scoring} asimetris PHM Score (Nectoux dkk., 2012):
+           prediksi lebih awal ($E_i < 0$) mendapat penalti lebih ringan
+           dibandingkan prediksi terlambat ($E_i > 0$), mencerminkan
+           konsekuensi operasional yang tidak simetris.}
+  \label{fig:bab3_phm_scoring}
+\end{figure}
+
 \subsection{Metrik Interpretabilitas Laten}
 \label{subsec:bab3_metrik_interpretabilitas}
 
@@ -690,12 +949,22 @@ eksploratif.}% [REVISI ISU-07]
 Dua kelompok kontrol negatif juga digunakan:
 model dengan inisialisasi acak Xavier (kontrol arsitektur) dan \emph{hidden
 states} berupa Gaussian \emph{noise} (kontrol prosedur SAE). Rincian
-eksperimen kontrol negatif dikembangkan pada Bab~V~§V.4.
+eksperimen kontrol negatif dikembangkan pada Bab~V~Subbab~V.4.
 
 % =================================================================
 \section{Infrastruktur dan Protokol Reproduksi}
 \label{sec:bab3_infrastruktur}
 % =================================================================
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.95\textwidth]{figures/bab3/fig_training_protocol.png}
+  \caption{Protokol pelatihan yang diterapkan secara identik pada seluruh model
+           \emph{backbone} Tier-S: fungsi \emph{loss} MSE, optimizer Adam,
+           presisi \texttt{bf16-mixed}, dan reproduksi deterministik melalui
+           tiga seed (42, 43, 44).}
+  \label{fig:bab3_training_protocol}
+\end{figure}
 
 Seluruh eksperimen simulasi dilakukan pada infrastruktur yang dituliskan pada
 Tabel~\ref{tab:bab3_infra}. Pelatihan \emph{single-card} (satu GPU per
@@ -750,8 +1019,8 @@ langkah identik.
 eksperimen, dan skrip evaluasi tersedia secara publik melalui repositori
 yang tercantum pada Lampiran~\ref{lamp:kode}. Notebook
 reproduksi tersedia untuk setiap karya sumber:
-\texttt{Conference1\_Classification\_SVM\_LR.ipynb} (Bab~IV §IV.2),
-\texttt{Conference2\_Classification\_Tree.ipynb} (Bab~IV §IV.3), dan
-\texttt{Journal1\_Fault\_Signature\_Maps.ipynb} (Bab~IV §IV.4–IV.13).
+\texttt{Conference1\_Classification\_SVM\_LR.ipynb} (Bab~IV Subbab~IV.2),
+\texttt{Conference2\_Classification\_Tree.ipynb} (Bab~IV Subbab~IV.3), dan
+\texttt{Journal1\_Fault\_Signature\_Maps.ipynb} (Bab~IV Subbab~IV.4–IV.13).
 Notebook untuk Bab~V akan tersedia setelah publikasi
 \citetitb{TotoSuharto2025Journal2RUL}.

@@ -58,7 +58,7 @@ The dissertation structure, RQ/Tujuan/Novelti mapping, and per-chapter plan are 
 **Local-only directories** (excluded via `.gitignore`):
 
 - `Mamba-xLSTM/` — PyTorch/Lightning training pipeline for the three RUL backbones + Top-*k* SAE.
-- `data-bearing/` — PHM2012 + XJTU-SY raw data (~8.5 GB). Download command below.
+- `data-bearing/` — PHM2012 + XJTU-SY raw data (3 XJTU conditions). Processed parquet cache: `data-bearing/processed/`. Do **not** use legacy `data/cache/`.
 
 ---
 
@@ -122,15 +122,23 @@ For the diagnostic track (CWRU + kernel/tree/deep), reproducibility notebooks in
 
 Bearing datasets are **not committed** to this repository (size + licensing).
 
-**Prognostic — PHM2012 + XJTU-SY** (used by `Mamba-xLSTM/`):
+**Prognostic — PHM2012 + XJTU-SY** (used by `Mamba-xLSTM/`). Place `data-bearing/` at the repository root alongside `Mamba-xLSTM/`.
 
 ```bash
+# PHM2012 (+ base layout)
 curl -fL -o data-bearing.zip \
   'https://dataset-bearing-rul.s3.ap-southeast-2.amazonaws.com/data-bearing/data-bearing.zip'
-unzip -q data-bearing.zip && rm data-bearing.zip
+unzip -q data-bearing.zip && rm -f data-bearing.zip
+
+# XJTU-SY — full three-condition tree (2026-06 repair; required for --datasets xjtusy)
+mkdir -p data-bearing
+curl -fL -o xtju-sy.zip \
+  'https://dataset-bearing-rul.s3.ap-southeast-2.amazonaws.com/data-bearing/xtju-sy.zip'
+unzip -q -o xtju-sy.zip -d data-bearing/ && rm -f xtju-sy.zip
+find data-bearing/xtju-sy -name '*.csv' | wc -l   # expect 9216
 ```
 
-Place the resulting `data-bearing/` directory at the repository root alongside `Mamba-xLSTM/`.
+The legacy `data-bearing.zip` alone does **not** include the repaired XJTU subtree; always add `xtju-sy.zip`. VPS workflow: `.cursor/rules/vps-ssh-key-access.mdc` §6 + §6.3.
 
 **Diagnostic — CWRU** (used by the three notebooks in `Notebook/`): download from the [Case Western Reserve University Bearing Data Center](https://engineering.case.edu/bearingdatacenter). Each notebook documents the exact subset (drive-end + fan-end accelerometer, Load 0–3 HP, 48 kHz, 10 classes).
 

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="RUL inference">
+  <rect width="32" height="32" rx="7" fill="#0f1419"/>
+  <rect x="4" y="22" width="24" height="3" rx="1.5" fill="#2d3a4f"/>
+  <rect x="4" y="22" width="16" height="3" rx="1.5" fill="#22c55e"/>
+  <path d="M4 20 L8 14 L12 17 L16 9 L20 13 L24 7 L28 11" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="24" cy="7" r="2" fill="#3b82f6"/>
+</svg>

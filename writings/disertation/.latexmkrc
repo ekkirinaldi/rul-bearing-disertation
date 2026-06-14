@@ -1,5 +1,5 @@
 # .latexmkrc — Konfigurasi latexmk untuk Disertasi Doktor ITB
-# Aturan lengkap: lihat .cursor/rules/14-build-workflow.mdc §B
+# Aturan lengkap: lihat .cursor/rules/14-build-workflow.mdc  bagian B
 
 # Engine: 4 = LuaLaTeX (preferred); ganti ke 1 untuk pdfLaTeX
 $pdf_mode = 4;

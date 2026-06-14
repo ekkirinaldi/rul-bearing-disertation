@@ -3,7 +3,7 @@
 # Pemeriksaan otomatis kepatuhan format ITB.
 # Exit code != 0 jika ada pelanggaran fatal.
 #
-# Aturan dirinci di .cursor/rules/14-build-workflow.mdc §D
+# Aturan dirinci di .cursor/rules/14-build-workflow.mdc  bagian D
 
 set -uo pipefail
 
@@ -265,7 +265,7 @@ if [ -n "$ABSTRACTS" ]; then
   hits=$(grep -inE '\\(cite|citetitb|citenameitb|parencite|textcite)\{' $ABSTRACTS 2>/dev/null \
     | grep -vE ':[[:space:]]*%' || true)
   if [ -n "$hits" ]; then
-    fatal "Ditemukan sitasi di abstrak. Pedoman ITB §II.2: abstrak tidak boleh memuat rujukan literatur:"
+    fatal "Ditemukan sitasi di abstrak. Pedoman ITB  bagian II.2: abstrak tidak boleh memuat rujukan literatur:"
     echo "$hits"
   else
     ok "Tidak ada sitasi di teks abstrak."

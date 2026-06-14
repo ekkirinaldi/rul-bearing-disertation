@@ -85,12 +85,11 @@ prediksi yang lebih **konservatif** (mengestimasi RUL lebih panjang daripada akt
 yang justru diuntungkan oleh sifat asimetris scoring function PHM2012 di mana
 prediksi terlambat (kesalahan positif) dihukum lebih ringan.
 
-R² negatif pada semua model untuk dataset XJTU-SY adalah artefak dari test split
-ekstrem (2 bantalan) yang menghasilkan high variance pada SS_total. RMSE tetap
-digunakan sebagai metrik primer untuk perbandingan yang adil.
-
-<!-- TODO(verify-with-pembimbing): diskusikan apakah perlu tambah bantalan kondisi 3
-     dari sumber lain, atau cukup dengan 2-bearing test split. -->
+R² pada XJTU-SY dapat negatif pada bearing uji pendek (mis. ``1_5``). RMSE tetap
+digunakan sebagai metrik primer. Split disertasi terbaru: 9 train / 3 val /
+3 test (ketiga kondisi operasi; ``configs/data/xjtu_sy_available_full.yaml``).
+Angka tabel di bawah ini berasal dari run lama (2 kondisi, data ``2_3`` terpotong)
+dan wajib diganti setelah rerun.
 
 ### V.1.3 Analisis Komparatif
 
@@ -217,21 +216,16 @@ kombinasi fitur time-domain (td\_c0\_rms, td\_c1\_kurtosis) dan frequency-domain
 
 Beberapa keterbatasan penelitian ini perlu diakui secara eksplisit:
 
-1. **Test split XJTU-SY yang sangat kecil** (2 bantalan) menyebabkan estimasi
-   metrik yang kurang stabil. Penelitian lanjutan sebaiknya menggunakan lebih
-   banyak bantalan test atau teknik cross-validation berbasis bearing.
+1. **Hasil XJTU-SY pra-perbaikan dataset** (split 2 kondisi, ``Bearing2_3``
+   tidak lengkap) tidak lagi representatif; Bab V perlu angka baru setelah rerun.
 
-2. **Kondisi 3 XJTU-SY tidak diikutsertakan** karena ketidaktersediaan data
-   pada infrastruktur yang digunakan. Hal ini dapat memengaruhi generalisasi
-   hasil pada kondisi beban dan kecepatan yang berbeda.
-
-3. **Budget training 75 epoch** dipilih berdasarkan analisis konvergensi awal
+2. **Budget training 75 epoch** dipilih berdasarkan analisis konvergensi awal
    Mamba-xLSTM-Net. Eksperimen dengan budget lebih panjang untuk N-BEATS-xLSTM
    dan SparseGate-TCN mungkin menghasilkan performa yang berbeda, terutama
    mengingat model-model ini konvergen sangat cepat dan menunjukkan indikasi
    overfitting pada epoch pertengahan.
 
-4. **Interpretabilitas SAE** (§V.2) dijalankan sebagai analisis *post-hoc* dan
+3. **Interpretabilitas SAE** (§V.2) dijalankan sebagai analisis *post-hoc* dan
    belum diintegrasikan ke dalam loop pelatihan model. Pendekatan *integrated
    interpretability* (melatih model dengan regularizer SAE secara end-to-end)
    adalah arah penelitian lanjutan yang menjanjikan.
@@ -240,14 +234,12 @@ Beberapa keterbatasan penelitian ini perlu diakui secara eksplisit:
 
 ## V.4 Saran Penelitian Lanjutan
 
-1. Mengintegrasikan kondisi 3 XJTU-SY setelah dataset tersedia untuk validasi
-   lintas kondisi operasi yang lebih komprehensif.
-2. Eksperimen budget training >100 epoch untuk Mamba-xLSTM-Net guna mengonfirmasi
+1. Eksperimen budget training >100 epoch untuk Mamba-xLSTM-Net guna mengonfirmasi
    apakah performa terus meningkat atau mencapai plato.
-3. Mengembangkan prosedur BPFx mapping yang lebih sistematis dengan uji statistik
+2. Mengembangkan prosedur BPFx mapping yang lebih sistematis dengan uji statistik
    formal (misalnya Pearson correlation dengan bootstrap confidence interval)
    antara aktivasi SAE dan amplitudo frekuensi karakteristik.
-4. Mengevaluasi model pada dataset tambahan (IMS Bearing) untuk memvalidasi
+3. Mengevaluasi model pada dataset tambahan (IMS Bearing) untuk memvalidasi
    generalisasi lintas platform pengujian.
 
 ---

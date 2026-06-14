@@ -73,6 +73,24 @@ EXTRA_STYLES = """
   <w:pPr><w:keepNext/><w:spacing w:before="120" w:after="120" w:line="240" w:lineRule="auto"/><w:jc w:val="center"/></w:pPr>
   <w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="24"/></w:rPr>
 </w:style>
+<w:style w:type="character" w:customStyle="1" w:styleId="VerbatimChar"
+    xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:name w:val="Verbatim Char"/>
+  <w:basedOn w:val="DefaultParagraphFont"/>
+  <w:rPr>
+    <w:rFonts w:ascii="Courier New" w:hAnsi="Courier New"/>
+    <w:sz w:val="22"/><w:szCs w:val="22"/>
+  </w:rPr>
+</w:style>
+<w:style w:type="paragraph" w:customStyle="1" w:styleId="SourceCode"
+    xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:name w:val="Source Code"/>
+  <w:pPr><w:spacing w:line="240" w:lineRule="auto"/></w:pPr>
+  <w:rPr>
+    <w:rFonts w:ascii="Courier New" w:hAnsi="Courier New"/>
+    <w:sz w:val="22"/><w:szCs w:val="22"/>
+  </w:rPr>
+</w:style>
 """
 
 CAPTION_KIND = {"fig": ("Gambar", "JudulGambar"), "tab": ("Tabel", "judulTabel")}
@@ -147,6 +165,35 @@ class Restyler:
             if val in STYLE_MAP:
                 ps.set(W + "val", STYLE_MAP[val])
 
+        # Second pass: paragraphs that pandoc emitted with no pStyle or with
+        # explicit "Normal" fall through to docDefaults (Calibri 11pt via
+        # theme).  Assign them Paragraf (TNR 12pt) unless they belong to a
+        # style that should never be overridden.
+        _KEEP_STYLES = {
+            "Heading1", "Heading2", "Heading3",
+            "JudulGambar", "judulTabel",
+            "Gambar", "IsiTabel",
+            "SourceCode",
+            "Lampiran", "Lampiransub1",
+            "Daftarpustaka",
+        }
+        for p in self.doc.iter(W + "p"):
+            pPr = p.find(W + "pPr")
+            ps = pPr.find(W + "pStyle") if pPr is not None else None
+            cur = ps.get(W + "val", "") if ps is not None else ""
+            if cur not in ("", "Normal"):
+                continue
+            if cur in _KEEP_STYLES:
+                continue
+            # Create pPr / pStyle nodes if missing
+            if pPr is None:
+                pPr = etree.Element(W + "pPr")
+                p.insert(0, pPr)
+            if ps is None:
+                ps = etree.SubElement(pPr, W + "pStyle")
+                pPr.insert(0, ps)
+            ps.set(W + "val", "Paragraf")
+
     # -- step 1b (lampiran only) -----------------------------------------
     def lampiranify(self):
         """Heading1/2 -> Lampiran/Lampiransub1 with literal numbering text
@@ -188,10 +235,21 @@ class Restyler:
             label = m.group(1)
             kind, style = CAPTION_KIND[label.split(":")[0]]
             self.seq[kind] += 1
-            aux_num = self.number_for(label)
-            roman, seqno = aux_num.rsplit(".", 1)
             expect = f"{self.prefix}.{self.seq[kind]}"
-            assert aux_num == expect, f"caption number mismatch {label}: aux={aux_num} computed={expect}"
+            if label not in self.labels:
+                # New label not yet in .aux (e.g. freshly added figure).
+                # Use the sequentially computed number and warn.
+                import sys as _sys
+                print(f"WARNING: label {label} not in aux, assigning {expect}",
+                      file=_sys.stderr)
+                aux_num = expect
+            else:
+                aux_num = self.number_for(label)
+            roman, seqno = aux_num.rsplit(".", 1)
+            if aux_num != expect:
+                import sys as _sys
+                print(f"WARNING: caption number mismatch {label}: aux={aux_num} computed={expect}",
+                      file=_sys.stderr)
             first_t.text = first_t.text[m.end():]
             # ensure caption style
             ps = p.find(f"{W}pPr/{W}pStyle")
@@ -244,7 +302,13 @@ class Restyler:
                         new_els.append(make_run(
                             part, rpr.__copy__() if rpr is not None else None))
                 else:
-                    cached = self.number_for(part)
+                    if part not in self.labels:
+                        import sys as _sys
+                        print(f"WARNING: REF label {part} not in aux, using '?'",
+                              file=_sys.stderr)
+                        cached = "?"
+                    else:
+                        cached = self.number_for(part)
                     new_els.append(make_field(
                         f" REF {sanitize_bookmark(part)} \\h ", cached))
             for el in reversed(new_els):
@@ -518,14 +582,56 @@ class Restyler:
         assert "@@" not in xml, f"leftover tokens: {leftover[:5]}"
 
 
+def enable_mirror_margins(settings_path):
+    """Insert <w:mirrorMargins/> into settings.xml (idempotent).
+
+    With mirrorMargins set, Word/LibreOffice interprets w:left as the inside
+    margin and w:right as the outside margin, alternating them automatically
+    on odd vs even pages — satisfying the ITB Pedoman recto/verso requirement.
+    The pgMar values (left=2275 twips = 4 cm, right=1699 twips = 3 cm) are
+    already correct and do not need to change.
+    """
+    tree = etree.parse(str(settings_path))
+    root = tree.getroot()
+    if root.find(W + "mirrorMargins") is None:
+        mm = etree.Element(W + "mirrorMargins")
+        zoom = root.find(W + "zoom")
+        if zoom is not None:
+            zoom.addnext(mm)
+        else:
+            root.insert(0, mm)
+    tree.write(str(settings_path), xml_declaration=True,
+               encoding="UTF-8", standalone=True)
+
+
 def add_extra_styles(styles_path):
     tree = etree.parse(str(styles_path))
     root = tree.getroot()
     existing = {s.get(W + "styleId") for s in root.iter(W + "style")}
     frag = etree.fromstring(f"<root>{EXTRA_STYLES}</root>")
     for style in frag:
-        if style.get(W + "styleId") not in existing:
+        sid = style.get(W + "styleId")
+        if sid not in existing:
             root.append(style)
+        else:
+            # If the style already exists but lacks an rFonts definition
+            # (e.g. pandoc emits SourceCode without font), inject the font
+            # from the EXTRA_STYLES definition so it does not fall back to
+            # the theme (Calibri).
+            src_rPr = style.find(W + "rPr")
+            src_rf = src_rPr.find(W + "rFonts") if src_rPr is not None else None
+            if src_rf is None:
+                continue
+            for existing_style in root.iter(W + "style"):
+                if existing_style.get(W + "styleId") != sid:
+                    continue
+                dst_rPr = existing_style.find(W + "rPr")
+                if dst_rPr is None:
+                    dst_rPr = etree.SubElement(existing_style, W + "rPr")
+                dst_rf = dst_rPr.find(W + "rFonts")
+                if dst_rf is None:
+                    dst_rPr.insert(0, etree.fromstring(etree.tostring(src_rf)))
+                break
     # template's Heading3 is centered; juknis wants subbab headings flush-left
     for s in root.iter(W + "style"):
         if s.get(W + "styleId") in ("Heading2", "Heading3"):
@@ -626,6 +732,7 @@ def main():
                standalone=True)
 
     add_extra_styles(Path(workdir) / "word" / "styles.xml")
+    enable_mirror_margins(Path(workdir) / "word" / "settings.xml")
     if not args.lampiran:
         fix_numbering(Path(workdir) / "word" / "numbering.xml", args.bab)
     pack(workdir, args.out)

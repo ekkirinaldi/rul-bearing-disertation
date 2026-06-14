@@ -92,6 +92,38 @@ disertasi/
 spec/
 
 # =============================================================================
+# Loose draft DOCX / seminar presentation files at repo root
+# =============================================================================
+*.docx
+*.pptx
+# Re-include tracked dissertation DOCX tree
+!dissertation-docx/**/*.docx
+!dissertation-docx/**/*.pptx
+
+# =============================================================================
+# writings/disertation/figures/bab* — generated copies of dissertation-docx assets
+# The source of truth lives in dissertation-docx/assets/figures/
+# =============================================================================
+writings/disertation/figures/bab2/
+writings/disertation/figures/bab3/
+writings/disertation/figures/bab4/
+writings/disertation/figures/bab5/
+writings/disertation/figures/bab6/
+writings/disertation/figures/research_flow.png
+
+# dissertation-docx PDF build output (regenerable via make build)
+dissertation-docx/build/
+
+# journal-q2 working draft (separate publication, not dissertation core)
+writings/journal-q2/
+
+# =============================================================================
+# Inference engine — keep source, exclude Python caches
+# =============================================================================
+inference-engine/**/__pycache__/
+inference-engine/**/*.py[cod]
+
+# =============================================================================
 # OS / IDE / temporary files
 # =============================================================================
 .DS_Store

@@ -13,7 +13,7 @@ data:
   batch_size: 128
   num_workers: 0
 
-  # NOTE: condition 3 (40Hz10kN) folder is missing on disk; only conditions 1 and 2 are usable.
+  # Legacy single-test split. For dissertation / Tier-S work use ``xjtu_sy_available_full.yaml``.
   train_bearings: ["1_1", "1_2", "1_3", "2_1", "2_2"]
   val_bearings:   ["1_4", "2_3"]
   test_bearings:  ["1_5"]

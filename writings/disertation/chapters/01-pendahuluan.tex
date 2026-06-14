@@ -340,7 +340,7 @@ di atas, dengan kontribusi penelitian disangga oleh dua artikel jurnal utama
 
     Pendekatan model diagnostik &
     Model tunggal atau 2--3 algoritma: ANN+SVM
-    \citetitb{Ayvaz2021PdMML}; SVM+k-NN
+    \citetitb{Ayvaz2021IoTPdM}; SVM+k-NN
     \citetitb{Cui2022AnomalyML}; ANFIS
     \citetitb{Marani2020ANFIS} &
     Belum ada evaluasi komprehensif lintas golongan (ML tradisional vs.\
@@ -384,8 +384,8 @@ di atas, dengan kontribusi penelitian disangga oleh dua artikel jurnal utama
     (BPFO, BPFI, BSF, FTF) &
     SAE-BPFx: \emph{Top-k Sparse Autoencoder} dipetakan ke frekuensi
     karakteristik BPFx melalui korelasi Pearson dengan spektrum
-    \emph{Hilbert envelope}; \emph{hit-rate} BPFI 2{,}3\,\% pada PHM2012,
-    BPFO 2{,}2\,\% pada XJTU-SY ($p < 0{,}001$) [J~2] \\[3pt]
+    \emph{Hilbert envelope};     \emph{hit-rate} BPFI 2{,}3\,\% pada PHM2012,
+    BSF 1{,}6\,\% pada XJTU-SY ($p < 0{,}001$) [J~2] \\[3pt]
 
     Validasi statistik &
     Akurasi dan F1 saja tanpa inferensi statistik
@@ -622,7 +622,7 @@ Prosedur falsifikasi menggunakan \emph{bootstrap} CI 95\,\%,
 Xavier dan \emph{Gaussian noise}) untuk memastikan korespondensi adalah
 properti representasi terlatih, bukan artefak arsitektur.
 Hasil utama: \emph{hit-rate} BPFI 2{,}3\,\% pada PHM2012
-($p < 0{,}001$); BPFO 2{,}2\,\% pada XJTU-SY ($p < 0{,}001$);
+($p < 0{,}001$); BSF 1{,}6\,\% pada XJTU-SY ($p < 0{,}001$);
 BPFI 1{,}76\,\% dan BSF 0{,}49\,\% pada IMS; korelasi tertinggi
 $r_{\max} = 0{,}507$.
 Urutan dominansi BPFx konsisten lintas tiga arsitektur \emph{backbone}
@@ -661,8 +661,147 @@ validasi RUL pada data industri real memberikan bukti awal kelayakan
 Penelitian disertasi ini telah melalui tahap-tahap penelitian sesuai
 dengan standar pelaksanaan penelitian doktoral di bidang \textcolor{blue}{teknik
 dan manajemen industri}.
-Metodologi penelitian yang telah dilakukan secara terinci dijelaskan
-pada poin-poin berikut.
+Metodologi penelitian dirancang mengikuti enam tahap makro berikut,
+kemudian dijabarkan secara operasional pada rincian pelaksanaan di akhir
+subbab ini.
+
+\textcolor{blue}{
+\subsection{Tahap Perencanaan}
+\label{subsec:bab1_tahap_perencanaan}
+
+Tahap perencanaan dimulai dengan identifikasi permasalahan melalui studi
+literatur, perumusan \emph{state of the art}, rumusan masalah dan tujuan
+penelitian, penetapan ruang lingkup (batasan dan asumsi), serta
+pemahaman objek kajian.
+Kajian literatur difokuskan pada penerapan \emph{big data}, \emph{machine
+learning}, \emph{deep learning}, dan \emph{explainable AI} dalam
+perawatan prediktif \emph{bearing}.
+Celah teori (\emph{gap}) yang teridentifikasi---interpretabilitas sinyal
+mentah pada diagnostik dan interpretabilitas mekanistik laten pada
+prognostik---menjadi landasan perumusan tiga butir rumusan masalah pada
+Subbab~\ref{sec:bab1_rumusan}.
+Posisi penelitian dipetakan terhadap literatur SoTA yang telah diuraikan
+pada Bab~\ref{bab:tinjauan-pustaka}, sementara skema pendekatan keseluruhan
+diilustrasikan pada Gambar~\ref{fig:bab1_skema}.
+Objek empiris utama meliputi dataset \emph{benchmark} publik (CWRU,
+PHM2012, XJTU-SY, IMS) dan validasi terbatas pada data vibrasi industri
+PT~SKF~Indonesia.
+
+\subsection{Rancangan dan Persiapan Penelitian}
+\label{subsec:bab1_rancangan_persiapan}
+
+Pada tahap ini dilakukan perancangan dan persiapan penelitian sebelum
+pelatihan model.
+Langkah pertama adalah pengumpulan dan kurasi data penelitian dari
+dataset publik dan sumber industri, disertai dokumentasi protokol
+pemisahan \emph{bearing}-wise agar tidak terjadi kebocoran informasi
+antar set pelatihan, validasi, dan uji.
+Langkah kedua adalah menyusun kerangka praproses dan rekayasa fitur yang
+konsisten untuk jalur diagnostik dan prognostik.
+Kerangka tersebut mengikuti alur berikut.
+}
+
+\textcolor{blue}{
+\begin{enumerate}
+  \item \textbf{Ekstraksi fitur (\emph{feature generation}).}
+        Data mentah sinyal getaran diubah menjadi representasi yang siap
+        dimodelkan: segmen jendela geser untuk diagnostik CWRU, vektor
+        HI~36-D untuk model berbasis kernel/pohon, serta tensor jendela
+        HI untuk model \emph{deep learning} prognostik.
+        Detail teknis diuraikan pada Bab~\ref{bab:metodologi-umum}
+        Subbab~\ref{sec:bab3_praproses}.
+  \item \textbf{Pembersihan dan normalisasi fitur (\emph{feature cleaning
+        and normalization}).}
+        Rekaman dengan artefak akuisisi, nilai hilang, duplikat, dan
+        \emph{outlier} ditangani sebelum pemodelan; normalisasi
+        Z-score/\emph{StandardScaler} dikalibrasi hanya pada data
+        pelatihan.
+  \item \textbf{Penskalaan fitur (\emph{feature scaling}).}
+        Fitur dari ranah waktu dan frekuensi diseragamkan skalanya agar
+        tidak ada fitur yang dominan semata karena rentang numeriknya
+        lebih besar.
+  \item \textbf{Seleksi fitur (\emph{feature selection}).}
+        Subset fitur relevan dipilih untuk model berbasis kernel dan
+        pohon keputusan; model \emph{deep learning} menggunakan
+        representasi tersegmentasi langsung.
+  \item \textbf{Transformasi data (\emph{data transformation}).}
+        Pelabelan RUL (\emph{piecewise} atau linear), segmentasi temporal,
+        dan penyiapan \emph{batch} pelatihan disesuaikan per dataset
+        (PHM2012, XJTU-SY, IMS, CWRU).
+\end{enumerate}
+}
+
+\textcolor{blue}{
+Dua kelompok tugas pemodelan dirancang paralel.
+Untuk \textbf{regresi} (prognostik RUL), metrik evaluasi utama adalah
+RMSE, MAE, $R^2$, dan PHM~Score (PHM2012).
+Untuk \textbf{klasifikasi} (diagnostik CWRU), metrik utama adalah akurasi,
+\emph{precision}, \emph{recall}, dan F1.
+Perbaikan model (\emph{model improvement}) meliputi \emph{hyperparameter
+tuning}, validasi silang (\emph{k-fold cross-validation} pada jalur
+klasifikasi), pelatihan multi-\emph{seed} (42, 43, 44) pada jalur
+prognostik, dan protokol \emph{fixed-budget training} (75 epoch,
+\texttt{bf16-mixed}).
+}
+
+\textcolor{blue}{
+\subsection{Pengembangan Model}
+\label{subsec:bab1_pengembangan_model}
+
+Pengembangan model dilakukan berdasarkan hasil \emph{benchmark} awal dan
+karakteristik masing-masing dataset.
+Pada jalur diagnostik, tiga golongan algoritma (statistik-\emph{kernel},
+\emph{tree-based}, \emph{deep learning}) dibandingkan sebelum WDCNN dan
+kerangka FSM dikembangkan.
+Pada jalur prognostik, dua belas arsitektur disaring melalui praskrining
+30~epoch; tiga \emph{backbone} Tier-S (Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL,
+SparseGate-TCN-RUL) dilatih 75~epoch dengan tiga \emph{seed}.
+Adaptasi \emph{Top-k Sparse Autoencoder} (\emph{SAEBearing}) dilakukan
+\emph{post-hoc} pada \emph{hidden states} model terbaik untuk pemetaan
+BPFx.
+}
+
+\textcolor{blue}{
+\subsection{Komparasi Model dengan Dunia Nyata}
+\label{subsec:bab1_komparasi_dunia_nyata}
+
+Komparasi model dengan dunia nyata merupakan langkah validasi untuk
+menguji sejauh mana model yang dikembangkan pada dataset \emph{benchmark}
+dapat digeneralisasi.
+Validasi lintas domain dilakukan dengan menerapkan model prognostik terbaik
+pada data vibrasi mesin \emph{grinding} OR1/OR2 PT~SKF~Indonesia.
+Komparasi sebelum--sesudah pengembangan model dievaluasi melalui metrik
+RUL dan analisis residual per \emph{bearing}.
+}
+
+\textcolor{blue}{
+\subsection{Aksi untuk Perbaikan Situasi}
+\label{subsec:bab1_aksi_perbaikan}
+
+Tahap aksi perbaikan situasi mensintesiskan temuan diagnostik dan
+prognostik ke dalam kerangka perawatan prediktif multi-\emph{tier}
+(Edge~IoT --- Edge~Server --- Cloud/GPU) yang dapat diadopsi pada
+lini produksi \emph{ball bearing}.
+Kerangka ini menghubungkan deteksi kerusakan berbasis FSM, estimasi RUL
+berbasis \emph{backbone} Tier-S, dan interpretabilitas mekanistik
+SAE-BPFx ke dalam alur keputusan perawatan yang dapat diaudit insinyur
+pabrik.
+}
+
+\textcolor{blue}{
+\subsection{Tahap Kesimpulan dan Saran Penelitian}
+\label{subsec:bab1_tahap_kesimpulan}
+
+Tahap penutup penelitian merumuskan jawaban terhadap tujuan penelitian
+berdasarkan bukti empiris Bab~IV dan Bab~V, mengidentifikasi
+keterbatasan metodologis, serta memberikan rekomendasi penelitian
+lanjutan---termasuk integrasi data kualitas produk \emph{real-time} dan
+perluasan validasi industri.
+Uraian lengkap disajikan pada Bab~\ref{bab:kesimpulan}.
+}
+
+\textcolor{blue}{Rincian operasional pelaksanaan metodologi dijabarkan
+pada poin-poin berikut.}
 
 \begin{enumerate}
 

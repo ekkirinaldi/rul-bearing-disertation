@@ -50,13 +50,60 @@ data SKF hanya digunakan untuk inferensi dengan model yang telah
 dilatih pada CWRU.
 
 % -----------------------------------------------------------------
+\section{\textcolor{blue}{Praproses Data Sensor PT~SKF}}
+\label{lamp:skf_praproses}
+% -----------------------------------------------------------------
+
+\textcolor{blue}{Data sensor yang diperoleh dari platform AWS Cloud melalui unit akuisisi
+SKF~IMx-8 tidak dapat langsung digunakan sebagai input model tanpa melewati
+tahap praproses. Alur praproses data sensor PT~SKF Indonesia terdiri atas
+langkah-langkah berikut.}
+
+\textcolor{blue}{
+\begin{enumerate}
+  \item \textbf{Ekspor dan pembacaan data.} Rekaman sinyal getaran dan data
+        kualitas produk diekspor dari platform AWS Cloud dalam format XLSX,
+        kemudian dibaca ke dalam \emph{workstation} menggunakan \emph{library}
+        pandas Python.
+  \item \textbf{Sinkronisasi sinyal getaran dan data kualitas.} Rekaman
+        spindel dari akselerometer (OR1 dan OR2) diselaraskan secara temporal
+        dengan hasil pengukuran dari dua stasiun pemeriksaan akhir lini:
+        stasiun \emph{Vibration Checking} (VC) dan stasiun \emph{Radial
+        Clearance Checking} (RCC). Sinkronisasi dilakukan berdasarkan
+        \emph{timestamp} rekaman dan nomor lot produksi.
+  \item \textbf{Pembersihan data.} Rekaman dengan nilai yang hilang akibat
+        gangguan transmisi OPC-UA atau kegagalan sensor diinterpolasi secara
+        linier jika jurang celah data tidak melebihi 5 titik berurutan; bila
+        melebihi ambang tersebut, rekaman dibuang dari analisis.
+        Duplikat \emph{timestamp} dihapus dengan mempertahankan entri pertama.
+  \item \textbf{Penskalaan fitur.} Vektor HI~18-D yang diekstraksi dari
+        setiap rekaman spindel (sembilan fitur \emph{time-domain} dan
+        sembilan fitur \emph{frequency-domain}, identik dengan definisi pada
+        Bab~III Subbab~III.2.3) dinormalisasi menggunakan parameter
+        Z-score yang diperoleh dari \emph{fit} pada set pelatihan CWRU.
+        Pendekatan ini memungkinkan inferensi lintas dataset tanpa pelatihan
+        ulang model.
+  \item \textbf{Pelabelan kondisi.} Setiap rekaman yang lolos pembersihan
+        diberi label kondisi (normal, peringatan, atau kritis) berdasarkan
+        anotasi dari tim PdM PT~SKF Indonesia. Karena volume data yang
+        tersedia tidak mencukupi untuk split pelatihan/uji yang independen,
+        label ini hanya digunakan sebagai referensi \emph{sanity check}
+        kualitatif pada tahap inferensi.
+\end{enumerate}
+}
+
+\textcolor{blue}{Alur praproses di atas mengikuti kerangka tujuh tahapan yang diuraikan
+pada Bab~III Subbab~III.2.5, dengan penyesuaian pada langkah sinkronisasi
+VC/RCC yang spesifik untuk konfigurasi lini produksi PT~SKF Indonesia.}
+
+% -----------------------------------------------------------------
 \section{Skema Pengujian Eksternal: Inferensi dengan Model CWRU}
 \label{lamp:skf_skema}
 % -----------------------------------------------------------------
 
 Skema yang diterapkan adalah sebagai berikut. Model berbasis kernel
 (SVM-RBF) yang telah dilatih pada dataset CWRU (Bab~\ref{bab:diagnostik},
-§\ref{sec:bab4_kernel}) diterapkan secara langsung untuk menginferensi
+Subbab~\ref{sec:bab4_kernel}) diterapkan secara langsung untuk menginferensi
 label kondisi pada rekaman spindel OR1/OR2. Fitur input mengikuti
 definisi HI~18-D yang sama (sembilan fitur \emph{time-domain}~+
 sembilan fitur \emph{frequency-domain}) per rekaman, dihitung dengan
@@ -105,14 +152,14 @@ PdM pada rekaman-rekaman yang dikategorikan sebagai \emph{normal}
 dan rekaman yang menunjukkan tanda-tanda keausan dini (\emph{early
 wear}). Rekaman pada kondisi kritis menunjukkan atribusi fitur
 yang berkonsentrasi pada energi pita BPFO dan kurtosis, konsisten
-dengan temuan Bab~\ref{bab:diagnostik} §\ref{subsec:bab4_shap_hasil_kernel}.
+dengan temuan Bab~\ref{bab:diagnostik} Subbab~\ref{subsec:bab4_shap_hasil_kernel}.
 
 Perlu ditekankan bahwa temuan ini bersifat kualitatif dan tidak
 mendukung klaim kuantitatif mengenai akurasi lintas mesin. Perbedaan
 antara kondisi \emph{seeded fault} CWRU dan keausan natural pada OR1/OR2
 menjadi faktor pembatas yang tidak dapat diabaikan. Studi perbandingan
 formal memerlukan pengumpulan data berlabel dalam volume yang memadai
-(lihat §\ref{lamp:skf_roadmap}).
+(lihat Subbab~\ref{lamp:skf_roadmap}).
 
 % -----------------------------------------------------------------
 \section{Peta Jalan Pengumpulan Data dan Integrasi Multi-Modal}
@@ -152,7 +199,7 @@ sumber.
 Langkah keempat adalah validasi statistik lintas mesin menggunakan
 dataset multi-rig (Paderborn atau MFPT sebagai referensi eksternal)
 untuk mengkalibrasi transferabilitas model multi-modal. Rekomendasi
-penelitian lanjutan ini selaras dengan §\ref{sec:bab6_rekomendasi}
+penelitian lanjutan ini selaras dengan Subbab~\ref{sec:bab6_rekomendasi}
 Bab~VI.
 
 \begin{table}[ht]

@@ -12,7 +12,8 @@ SOFFICE  := /Applications/LibreOffice.app/Contents/MacOS/soffice
 
 PANDOC_FLAGS := -f latex -t docx --citeproc --csl $(CSL) --bibliography $(BIB) \
   --metadata lang=id-ID --metadata suppress-bibliography=true \
-  --resource-path .:assets/figures --reference-doc $(TEMPLATE)
+  --resource-path .:assets/figures --reference-doc $(TEMPLATE) \
+  --lua-filter assets/color-spans.lua
 
 # chapter metadata: number, source tex, chapter label
 BAB1_SRC := $(TEXDIR)/chapters/01-pendahuluan.tex
