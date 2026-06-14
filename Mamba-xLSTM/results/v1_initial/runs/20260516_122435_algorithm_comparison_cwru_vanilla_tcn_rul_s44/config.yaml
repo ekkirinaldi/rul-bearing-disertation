@@ -1,0 +1,53 @@
+data:
+  dataset: cwru
+  root: ../data-bearing/cwru
+  cache_dir: ../data-bearing/processed/cwru
+  window_length: 32
+  stride_train: 2
+  stride_eval: 16
+  label_scheme: fault_severity
+  smoothing_alpha: 0.05
+  n_bands: 5
+  batch_size: 512
+  num_workers: 8
+  train_bearings:
+  - IR007_0_109
+  - IR014_0_174
+  - B007_0_122
+  - B014_0_189
+  - OR007_6_3_138
+  - OR014_6_3_204
+  - Time_Normal_0_097
+  - Time_Normal_1_098
+  val_bearings:
+  - IR021_0_213
+  - B021_0_226
+  - OR021_6_3_241
+  - Time_Normal_2_099
+  test_bearings:
+  - IR007_1_110
+  - B007_1_123
+  - OR007_6_0_135
+  - Time_Normal_3_100
+model:
+  name: vanilla_tcn_rul
+  d_model: 128
+  num_blocks: 4
+  kernel_size: 3
+  head_hidden: 64
+  dropout: 0.1
+train:
+  max_epochs: 75
+  lr: 0.0008
+  weight_decay: 0.0003
+  xlstm_lr_mult: 0.75
+  freeze_xlstm_epochs: 5
+  scheduler: cosine
+  warmup_epochs: 5
+  monotonicity_weight: 0.05
+  gradient_clip_val: 1.0
+  early_stopping_patience: 9999
+  precision: bf16-mixed
+  seed: 42
+  results_root: results
+  run_id: null

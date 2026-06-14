@@ -1,0 +1,20 @@
+{
+  "run_id": "algorithm_comparison_xjtusy_vanilla_lstm_rul_s43",
+  "seed": 43,
+  "n_params": 409601,
+  "fit_seconds": 14.198285102844238,
+  "test_metrics": {
+    "test/loss": 0.06592509150505066,
+    "test/rmse": 0.25675880908966064,
+    "test/mae": 0.22308865189552307,
+    "test/r2": 0.01814146712422371,
+    "test/phm_score": 0.8654829263687134,
+    "test/phm_score_paper": 5.533036708831787,
+    "test/rmse_per_bearing": 0.25216737389564514,
+    "test/phm_per_bearing": 0.8031297326087952,
+    "test/phm_paper_per_bearing": 2.7665183544158936
+  },
+  "best_checkpoint": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_121106_algorithm_comparison_xjtusy_vanilla_lstm_rul_s43/checkpoints/000.ckpt",
+  "dataset": "xjtusy",
+  "model_name": "vanilla_lstm_rul"
+}

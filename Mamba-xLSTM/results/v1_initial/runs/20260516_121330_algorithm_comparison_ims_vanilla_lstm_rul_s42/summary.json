@@ -1,0 +1,20 @@
+{
+  "run_id": "algorithm_comparison_ims_vanilla_lstm_rul_s42",
+  "seed": 42,
+  "n_params": 409601,
+  "fit_seconds": 19.426620960235596,
+  "test_metrics": {
+    "test/loss": 0.2189044952392578,
+    "test/rmse": 0.4678723216056824,
+    "test/mae": 0.3930719196796417,
+    "test/r2": -1.694088101387024,
+    "test/phm_score": 0.9541915655136108,
+    "test/phm_score_paper": 4.124725818634033,
+    "test/rmse_per_bearing": 0.4678723216056824,
+    "test/phm_per_bearing": 0.9541915655136108,
+    "test/phm_paper_per_bearing": 4.124725818634033
+  },
+  "best_checkpoint": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_121330_algorithm_comparison_ims_vanilla_lstm_rul_s42/checkpoints/005.ckpt",
+  "dataset": "ims",
+  "model_name": "vanilla_lstm_rul"
+}

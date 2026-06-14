@@ -1,0 +1,20 @@
+{
+  "run_id": "algorithm_comparison_ims_vanilla_tcn_rul_s44",
+  "seed": 44,
+  "n_params": 409601,
+  "fit_seconds": 20.420690298080444,
+  "test_metrics": {
+    "test/loss": 0.16374064981937408,
+    "test/rmse": 0.4046487808227539,
+    "test/mae": 0.3314444422721863,
+    "test/r2": -1.015178918838501,
+    "test/phm_score": 0.9659548401832581,
+    "test/phm_score_paper": 3.4630653858184814,
+    "test/rmse_per_bearing": 0.4046487808227539,
+    "test/phm_per_bearing": 0.9659548401832581,
+    "test/phm_paper_per_bearing": 3.4630653858184814
+  },
+  "best_checkpoint": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_121943_algorithm_comparison_ims_vanilla_tcn_rul_s44/checkpoints/036.ckpt",
+  "dataset": "ims",
+  "model_name": "vanilla_tcn_rul"
+}

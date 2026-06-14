@@ -1,0 +1,20 @@
+{
+  "run_id": "algorithm_comparison_phm2012_vanilla_tcn_rul_s44",
+  "seed": 44,
+  "n_params": 409601,
+  "fit_seconds": 77.20869708061218,
+  "test_metrics": {
+    "test/loss": 0.03725818917155266,
+    "test/rmse": 0.19302380084991455,
+    "test/mae": 0.14718054234981537,
+    "test/r2": 0.5241779685020447,
+    "test/phm_score": 0.9400490522384644,
+    "test/phm_score_paper": 4.116940498352051,
+    "test/rmse_per_bearing": 0.1970362812280655,
+    "test/phm_per_bearing": 0.9181624054908752,
+    "test/phm_paper_per_bearing": 0.5146175622940063
+  },
+  "best_checkpoint": "/root/disertation-rul-prediction/Mamba-xLSTM/results/runs/20260516_120630_algorithm_comparison_phm2012_vanilla_tcn_rul_s44/checkpoints/044.ckpt",
+  "dataset": "phm2012",
+  "model_name": "vanilla_tcn_rul"
+}

@@ -1,0 +1,28 @@
+lr: 0.0008
+weight_decay: 0.0003
+warmup_epochs: 5
+max_epochs: 75
+monotonicity_weight: 0.05
+scheduler: cosine
+model_specific_loss: false
+xlstm_lr_mult: 0.75
+freeze_xlstm_epochs: 5
+dataset: ims
+train_bearings:
+- '1'
+- '2'
+val_bearings:
+- '3'
+test_bearings:
+- '4'
+window_length: 32
+stride_train: 2
+stride_eval: 16
+label_scheme: linear
+smoothing_alpha: 0.1
+n_bands: 5
+hi_pipeline: default
+phm_horizontal_only: false
+allow_train_val_overlap: false
+batch_size: 512
+num_workers: 8

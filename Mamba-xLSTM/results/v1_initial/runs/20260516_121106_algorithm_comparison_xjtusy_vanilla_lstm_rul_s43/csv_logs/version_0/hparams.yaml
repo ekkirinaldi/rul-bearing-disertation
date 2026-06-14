@@ -1,0 +1,32 @@
+lr: 0.0008
+weight_decay: 0.0003
+warmup_epochs: 5
+max_epochs: 75
+monotonicity_weight: 0.05
+scheduler: cosine
+model_specific_loss: false
+xlstm_lr_mult: 0.75
+freeze_xlstm_epochs: 5
+dataset: xjtusy
+train_bearings:
+- '1_1'
+- '1_2'
+- '1_3'
+- '2_1'
+- '2_2'
+val_bearings:
+- '1_4'
+test_bearings:
+- '1_5'
+- '2_3'
+window_length: 32
+stride_train: 1
+stride_eval: 1
+label_scheme: linear
+smoothing_alpha: 0.1
+n_bands: 5
+hi_pipeline: default
+phm_horizontal_only: false
+allow_train_val_overlap: false
+batch_size: 512
+num_workers: 8

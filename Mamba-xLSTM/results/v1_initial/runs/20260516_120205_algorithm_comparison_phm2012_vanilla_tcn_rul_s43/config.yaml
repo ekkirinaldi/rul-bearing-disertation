@@ -1,0 +1,54 @@
+data:
+  dataset: phm2012
+  root: ../data-bearing/ieee-phm-2012
+  cache_dir: ../data-bearing/processed/phm2012
+  window_length: 64
+  stride_train: 1
+  stride_eval: 32
+  label_scheme: linear
+  smoothing_alpha: 0.1
+  n_bands: 5
+  batch_size: 512
+  num_workers: 8
+  train_bearings:
+  - '1_1'
+  - '1_2'
+  - '1_4'
+  - '2_1'
+  - '2_3'
+  - '2_5'
+  - '3_1'
+  val_bearings:
+  - '1_5'
+  - '2_2'
+  test_bearings:
+  - '1_3'
+  - '1_6'
+  - '1_7'
+  - '2_4'
+  - '2_6'
+  - '2_7'
+  - '3_2'
+  - '3_3'
+model:
+  name: vanilla_tcn_rul
+  d_model: 128
+  num_blocks: 4
+  kernel_size: 3
+  head_hidden: 64
+  dropout: 0.1
+train:
+  max_epochs: 75
+  lr: 0.0008
+  weight_decay: 0.0003
+  xlstm_lr_mult: 0.75
+  freeze_xlstm_epochs: 5
+  scheduler: cosine
+  warmup_epochs: 5
+  monotonicity_weight: 0.05
+  gradient_clip_val: 1.0
+  early_stopping_patience: 9999
+  precision: bf16-mixed
+  seed: 42
+  results_root: results
+  run_id: null
