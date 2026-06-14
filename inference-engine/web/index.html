@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RUL Streaming Inference Engine</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">RUL</span>
+      <div>
+        <h1>Streaming Inference Engine</h1>
+        <p class="sub">Mamba-xLSTM-Net &middot; live health-indicator prognostics</p>
+      </div>
+    </div>
+    <div id="conn-status" class="conn offline">offline</div>
+  </header>
+
+  <main class="layout">
+    <section class="panel controls">
+      <h2>Stream control</h2>
+      <form id="control-form" autocomplete="off" onsubmit="return false;">
+        <label for="dataset-select">Dataset</label>
+        <select id="dataset-select" name="dataset"></select>
+
+        <label for="bearing-select">Bearing / channel</label>
+        <select id="bearing-select" name="bearing"></select>
+
+        <label for="speed-range">Speed (<span id="speed-value">50</span> ms/frame)</label>
+        <input type="range" id="speed-range" name="speed" min="10" max="500" step="10" value="50" />
+
+        <div class="btn-row">
+          <button id="btn-start" type="button" class="primary">Start</button>
+          <button id="btn-pause" type="button">Pause</button>
+          <button id="btn-resume" type="button">Resume</button>
+        </div>
+        <div class="btn-row">
+          <button id="btn-step" type="button">Step</button>
+          <button id="btn-reset" type="button">Reset</button>
+          <button id="btn-stop" type="button">Stop</button>
+        </div>
+        <button id="btn-explain" type="button" class="explain">Explain (Integrated Gradients)</button>
+      </form>
+
+      <div id="transfer-note" class="note hidden"></div>
+
+      <h2>Run metadata</h2>
+      <dl class="meta">
+        <dt>Model</dt><dd id="meta-model">&mdash;</dd>
+        <dt>Checkpoint</dt><dd id="meta-checkpoint">&mdash;</dd>
+        <dt>Device</dt><dd id="meta-device">&mdash;</dd>
+        <dt>Window</dt><dd id="meta-window">&mdash;</dd>
+        <dt>Interval</dt><dd id="meta-interval">&mdash;</dd>
+      </dl>
+    </section>
+
+    <section class="panel status">
+      <h2>Live status</h2>
+      <div class="progress-wrap">
+        <div id="progress-bar" class="progress-bar"></div>
+        <span id="progress-label" class="progress-label">idle</span>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric">
+          <span class="metric-label">Predicted RUL</span>
+          <span id="metric-pred-rul" class="metric-value">&mdash;</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Ground-truth RUL</span>
+          <span id="metric-gt-rul" class="metric-value">&mdash;</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Predicted time left</span>
+          <span id="metric-remaining" class="metric-value">&mdash;</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Predicted failure (EOL)</span>
+          <span id="metric-eol" class="metric-value">&mdash;</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Elapsed (sim)</span>
+          <span id="metric-elapsed" class="metric-value">&mdash;</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Acquisition</span>
+          <span id="metric-acq" class="metric-value">&mdash;</span>
+        </div>
+      </div>
+
+      <div id="warmup-banner" class="banner hidden">Warming up the window&hellip;</div>
+
+      <h3>Fusion branch gate</h3>
+      <div class="gate">
+        <div class="gate-bar">
+          <div id="gate-xlstm" class="gate-xlstm" style="width:50%">xLSTM</div>
+          <div id="gate-mamba" class="gate-mamba" style="width:50%">Mamba</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel chart-panel wide">
+      <h2>RUL trajectory</h2>
+      <canvas id="rul-chart" height="120"></canvas>
+    </section>
+
+    <section class="panel chart-panel">
+      <h2>Health indicators (raw)</h2>
+      <canvas id="hi-chart" height="160"></canvas>
+    </section>
+
+    <section class="panel chart-panel">
+      <h2>Waveform (downsampled)</h2>
+      <canvas id="wave-chart" height="160"></canvas>
+    </section>
+
+    <section class="panel">
+      <h2>Top driving features <span class="muted">(live |grad&times;input|)</span></h2>
+      <ul id="drivers-list" class="drivers"></ul>
+    </section>
+
+    <section class="panel">
+      <h2>Integrated Gradients</h2>
+      <div id="ig-status" class="muted">Press <em>Explain</em> on a running stream to attribute the current window.</div>
+      <canvas id="ig-chart" height="180"></canvas>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
