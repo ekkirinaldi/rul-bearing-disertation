@@ -349,13 +349,11 @@ class StreamSession:
                 with torch.no_grad():
                     pred_rul = float(self.loaded.lit(x).squeeze().cpu().item())
 
-        # For SKF data, replace the neural-network output with an envelope-based
-        # health-index prediction.  The PHM2012-trained backbone does not transfer
-        # to gE trending scalars from a different machine type; the envelope value
-        # is itself the industry-standard bearing condition indicator and gives a
-        # far more accurate RUL estimate without any retraining.
+        # For SKF data the gE envelope IS the health indicator — there is no
+        # separate "prediction" step.  Use the time-normalised ground-truth
+        # directly so predicted and truth overlap on the chart as one curve.
         if self.skf_run is not None:
-            pred_rul = self.skf_run.envelope_rul(next_t)
+            pred_rul = self.skf_run.rul_fraction(next_t)
 
         gt_rul = self._ground_truth_rul(next_t) if self.spec.has_gt_rul else None
         elapsed_s = next_t * self.interval_s
