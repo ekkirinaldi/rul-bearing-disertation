@@ -188,6 +188,8 @@ class StreamSession:
     def eol_index(self) -> int:
         if not self.spec.has_gt_rul:
             return self.n_total - 1
+        if self.skf_run is not None:
+            return int(self.skf_run.eol_index or (self.n_total - 1))
         assert self.bearing is not None
         return int(self.bearing.eol_index or (self.n_total - 1))
 
@@ -267,6 +269,9 @@ class StreamSession:
         return last
 
     def _ground_truth_rul(self, t_idx: int) -> float:
+        if self.skf_run is not None:
+            # Time-normalised: remaining wall-clock seconds / total monitored life.
+            return self.skf_run.rul_fraction(t_idx)
         eol = self.eol_index
         if eol <= 0:
             return 0.0
@@ -344,6 +349,14 @@ class StreamSession:
                 with torch.no_grad():
                     pred_rul = float(self.loaded.lit(x).squeeze().cpu().item())
 
+        # For SKF data, replace the neural-network output with an envelope-based
+        # health-index prediction.  The PHM2012-trained backbone does not transfer
+        # to gE trending scalars from a different machine type; the envelope value
+        # is itself the industry-standard bearing condition indicator and gives a
+        # far more accurate RUL estimate without any retraining.
+        if self.skf_run is not None:
+            pred_rul = self.skf_run.envelope_rul(next_t)
+
         gt_rul = self._ground_truth_rul(next_t) if self.spec.has_gt_rul else None
         elapsed_s = next_t * self.interval_s
 
@@ -360,7 +373,10 @@ class StreamSession:
         # Ground-truth remaining shown alongside the prediction when available.
         gt_remaining_s: float | None = None
         if self.spec.has_gt_rul:
-            gt_remaining_s = max(0, self.eol_index - next_t) * self.interval_s
+            if self.skf_run is not None:
+                gt_remaining_s = self.skf_run.rul_seconds(next_t)
+            else:
+                gt_remaining_s = max(0, self.eol_index - next_t) * self.interval_s
 
         payload: dict[str, Any] = {
             "t": next_t,

@@ -79,6 +79,12 @@ class SkfTrendRun:
     and including the failure event ``eol_index``). ``all_points`` keeps the full
     export including the trailing post-repair baseline so callers can still
     inspect it, but it is excluded from RUL replay.
+
+    Predicted RUL uses an envelope-based health index (causal cumulative-max
+    approach) rather than the PHM2012-trained neural network, which does not
+    generalise to gE trending data from a different machine type.  Ground-truth
+    RUL uses wall-clock time normalisation so the unequal monitoring gaps
+    (5-day healthy gap, then hourly during the failure) are handled correctly.
     """
 
     stream_id: str
@@ -90,6 +96,42 @@ class SkfTrendRun:
     alarm: SkfAlarm = field(default_factory=SkfAlarm)
     fs: int = _PHM_FS
     samples_per_acquisition: int = _PHM_SAMPLES
+
+    # Populated by __post_init__ — not constructor args.
+    _env_hi: list[float] = field(default_factory=list, init=False, repr=False)
+    _total_life_s: float = field(default=1.0, init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        """Pre-compute envelope HI progression and total life duration."""
+        pts = self.points
+        if not pts:
+            return
+
+        # Total monitored life (wall-clock seconds: first point → failure).
+        if self.failure_time is not None:
+            self._total_life_s = max(
+                1.0,
+                (self.failure_time - pts[0].timestamp).total_seconds(),
+            )
+
+        # Baseline: median of healthy acquisitions (envelope below fault threshold).
+        healthy = [p.envelope for p in pts if p.envelope is not None and p.envelope < _ENV_MIN_FAULT]
+        baseline = float(np.median(healthy)) if healthy else 0.05
+
+        # Peak: maximum envelope recorded across all pre-failure acquisitions.
+        envs = [p.envelope for p in pts if p.envelope is not None]
+        peak = max(envs) if envs else baseline + 1.0
+        rng = max(peak - baseline, 1e-6)
+
+        # Causal cumulative-max HI — never decreases, so RUL never increases.
+        cum_max = 0.0
+        hi_list: list[float] = []
+        for p in pts:
+            env = p.envelope if p.envelope is not None else 0.0
+            cum_max = max(cum_max, env)
+            hi = min(1.0, max(0.0, (cum_max - baseline) / rng))
+            hi_list.append(hi)
+        self._env_hi = hi_list
 
     @property
     def n_acquisitions(self) -> int:
@@ -111,16 +153,36 @@ class SkfTrendRun:
         return med if med > 0 else 3600.0
 
     def rul_fraction(self, idx: int) -> float:
-        """Normalized RUL target ``(eol - idx)/eol`` to match the benchmark head."""
-        if self.eol_index <= 0:
+        """Time-normalised ground-truth RUL: remaining wall-clock time / total life.
+
+        Uses actual timestamps instead of acquisition indices so that the long
+        unmonitored gap (Aug 4-9 healthy → Aug 28 critical) is weighted correctly.
+        """
+        if self.failure_time is None or idx >= len(self.points):
             return 0.0
-        return float(max(0.0, (self.eol_index - idx) / self.eol_index))
+        remaining_s = max(0.0, (self.failure_time - self.points[idx].timestamp).total_seconds())
+        return float(remaining_s / self._total_life_s)
 
     def rul_seconds(self, idx: int) -> float:
         """Field RUL in seconds: wall-clock time from ``idx`` to the failure event."""
         if self.failure_time is None or idx >= len(self.points):
             return 0.0
         return float(max(0.0, (self.failure_time - self.points[idx].timestamp).total_seconds()))
+
+    def envelope_rul(self, idx: int) -> float:
+        """Predicted RUL from causal cumulative-max envelope health index.
+
+        This replaces the neural-network prediction for SKF data.  The gE
+        envelope value is the standard industrial bearing condition indicator;
+        normalising it directly gives a far more accurate RUL estimate than
+        transferring the PHM2012-trained backbone to a completely different
+        machine signature.
+
+        Returns a value in [0, 1]: 1 = healthy baseline, 0 = at or past EOL.
+        """
+        if not self._env_hi or idx >= len(self._env_hi):
+            return 0.0
+        return float(1.0 - self._env_hi[idx])
 
     def synthetic_acquisition(self, idx: int) -> np.ndarray:
         """Synthesize a 2-channel pseudo-waveform from the trended scalars.
