@@ -287,11 +287,7 @@ class StreamSession:
             acq = self.skf_run.synthetic_acquisition(next_t)
             fs = self.skf_run.fs
             pt = self.skf_run.points[next_t]
-            hi_snap = {
-                "rms_h": pt.accel,
-                "rms_v": pt.velocity,
-                "kurtosis_h": pt.envelope if pt.envelope is not None else 0.0,
-            }
+            hi_snap = None  # computed from raw_hi below, then envelope is injected
         else:
             assert self.bearing is not None
             acq = self.bearing.signal[next_t]
@@ -317,8 +313,13 @@ class StreamSession:
             self.hi_buffer.popleft()
 
         self.t = next_t
-        if hi_snap is None:
-            hi_snap = _hi_snapshot(raw_hi)
+        hi_snap = _hi_snapshot(raw_hi)
+        if self.skf_run is not None:
+            # Replace the kurtosis slot with the actual gE envelope value —
+            # it is the industry-standard bearing health indicator for this
+            # export and tracks the fault progression directly.
+            pt = self.skf_run.points[next_t]
+            hi_snap["kurtosis_h"] = float(pt.envelope) if pt.envelope is not None else 0.0
         self.hi_history.append(hi_snap)
 
         warmup = len(self.hi_buffer) < self.window_length

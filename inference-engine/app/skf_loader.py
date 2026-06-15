@@ -219,7 +219,11 @@ class SkfTrendRun:
         sig = base + noise
 
         rms = float(np.sqrt(np.mean(sig ** 2))) or 1.0
-        target = max(pt.accel, 1e-4)
+        # During a fault regime, normalise to the envelope value so the
+        # waveform amplitude — and all derived HI features (RMS, kurtosis,
+        # band energy) — scale with fault severity.  In the healthy regime,
+        # normalise to the actual acceleration reading as before.
+        target = env if env > _ENV_MIN_FAULT else max(pt.accel, 1e-4)
         h = (sig * (target / rms)).astype(np.float32)
         v = (h * 0.6).astype(np.float32)
         return np.stack([h, v], axis=0)
