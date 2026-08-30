@@ -48,7 +48,8 @@ slides:
     top: 1.72
     blocks:
       - type: agenda
-        flex: true
+        gap: 0.55
+        h: 3.60
         columns: 3
         items:
           - num: "01"
