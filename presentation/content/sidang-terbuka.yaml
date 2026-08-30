@@ -1,10 +1,13 @@
 # Presentasi Sidang Disertasi — Toto Suharto (NIM 33420002)
 #
-# Angka dan klaim pada berkas ini bersumber langsung dari naskah disertasi:
-#   writings/disertation/chapters/00-abstrak-id.tex
-#   writings/disertation/chapters/05-prognostik.tex  (tabel evaluasi RUL dan hit-rate)
-#   writings/dissertation-outline.md
+# Angka, klaim, dan nomor gambar/tabel pada berkas ini bersumber dari naskah
+# disertasi V14 (presentation/V14 *.docx) — naskah rujukan sejak Agustus 2026.
+# Struktur dek mengikuti empat rumusan masalah (RM-1 sampai RM-4, Subbab I.2):
+# setiap babak dibuka pembatas berisi pertanyaannya dan ditutup slide jawaban.
+# Slide cadangan untuk sesi tanya jawab ditempatkan setelah slide penutup.
+#
 # Perbarui berkas ini, bukan .pptx-nya; jalankan `make build` untuk merender.
+# Gambar dari media V14 diekstrak lewat `make v14-assets` ke assets/v14/.
 #
 # Markup teks:  **tebal**  ·  *miring*  ·  ***tebal miring***  ·  ~~redup~~
 
@@ -24,6 +27,8 @@ meta:
 slides:
 
   # ======================================================================
+  # 1 · SAMPUL
+  # ======================================================================
   - layout: cover
     logo: ../assets/logo-itb.png
     logo_h: 1.18
@@ -35,39 +40,38 @@ slides:
     occasion: "Sidang Terbuka  ·  Bandung, Juni 2026"
 
   # ======================================================================
+  # 2 · AGENDA — enam babak, empat di antaranya menjawab satu RM
+  # ======================================================================
   - layout: content
     eyebrow: Alur Presentasi
-    title: Delapan Babak Pemaparan
+    title: "Empat Pertanyaan Penelitian, Empat Babak Jawaban"
     top: 1.72
     blocks:
       - type: agenda
         flex: true
+        columns: 3
         items:
           - num: "01"
-            title: Latar Belakang dan Urgensi
-            body: "Bearing, downtime industri, dan tantangan Industri 4.0"
+            title: Pembuka
+            body: "Latar belakang, kesenjangan literatur, dan empat rumusan masalah"
           - num: "02"
-            title: Kesenjangan dan Rumusan Masalah
-            body: "Empat kesenjangan literatur dan tiga rumusan masalah"
+            title: "Babak 1 · RM-1 Akurasi"
+            body: "Benchmark diagnostik CWRU dan tiga backbone prognostik RUL"
           - num: "03"
-            title: Kontribusi dan Kebaruan
-            body: "Lima novelti dalam tiga jalur penelitian (N1 sampai N5)"
+            title: "Babak 2 · RM-2 XAI Diagnostik"
+            body: "Fault Signature Maps langsung dari raw signal 2.048 titik"
           - num: "04"
-            title: Metodologi dan Dataset
-            body: "Dua jalur, lima sumber data, protokol reproduksi bersama"
+            title: "Babak 3 · RM-3 Fisika Laten"
+            body: "SAE-BPFx: membedah isi model RUL dengan uji statistik"
           - num: "05"
-            title: Hasil Diagnostik (Bab IV)
-            body: "Benchmark multi-model, FSM, dan ablasi BatchNorm"
+            title: "Babak 4 · RM-4 Validasi Industri"
+            body: "Transfer diagnostik dan prognostik ke PT SKF Indonesia"
           - num: "06"
-            title: Hasil Prognostik (Bab V)
-            body: "Tiga backbone RUL, SAE-BPFx, dan validasi industri"
-          - num: "07"
-            title: Kerangka PdM Multi-Tier
-            body: "Cetak biru Edge IoT, Edge Server, hingga Cloud"
-          - num: "08"
-            title: Kesimpulan dan Rekomendasi
-            body: "Status pembuktian dan agenda penelitian lanjutan"
+            title: Kesimpulan
+            body: "Jawaban per RM, keterbatasan, dan rekomendasi lanjutan"
 
+  # ======================================================================
+  # 3 · GLOSARIUM
   # ======================================================================
   - layout: content
     eyebrow: Referensi
@@ -103,14 +107,15 @@ slides:
               - ["STFT", "Short-Time Fourier Transform"]
               - ["CWT", "Continuous Wavelet Transform"]
               - ["CWRU", "Case Western Reserve Univ. (dataset)"]
-              - ["IMS", "Intelligent Maintenance Systems (dataset)"]
-              - ["SKF", "Swedish ball bearing manufacturer"]
+              - ["IMx-8", "Unit akuisisi vibrasi SKF"]
+              - ["RCC", "Radial Clearance Checking (data kualitas)"]
           - title: MODEL dan INTERPRETABILITAS (XAI)
             items:
               - ["XAI", "Explainable AI (AI yang dapat dijelaskan)"]
               - ["FSM", "Fault Signature Maps"]
               - ["SHAP", "SHapley Additive exPlanations"]
               - ["SAE", "Sparse Autoencoder (Top-k)"]
+              - ["IG", "Integrated Gradients (atribusi fitur)"]
               - ["WDCNN", "Wide first-layer kernel CNN"]
               - ["BN", "Batch Normalization (BatchNorm)"]
               - ["SVM / RBF", "Support Vector Machine / RBF kernel"]
@@ -118,8 +123,9 @@ slides:
               - ["DT / RF", "Decision Tree / Random Forest"]
               - ["TCN / SSM", "Temporal Conv. Net / State-Space Model"]
               - ["xLSTM", "extended LSTM (mLSTM: matrix LSTM)"]
-              - ["N-BEATS", "Neural Basis Expansion (deret waktu)"]
 
+  # ======================================================================
+  # 4 · LATAR BELAKANG
   # ======================================================================
   - layout: content
     eyebrow: Latar Belakang
@@ -138,20 +144,21 @@ slides:
                 text: >-
                   Pada hampir setiap mesin rotasi industri, mulai dari motor, pompa, kompresor,
                   hingga lini otomasi, ***rolling element bearing*** menjadi tumpuan.
-                  Justru komponen inilah yang paling sering gagal: studi empiris mencatat
-                  bearing menyumbang sekitar 40 sampai 50% dari seluruh kerusakan mesin
-                  rotasi, sekaligus menjadi penyebab utama *downtime* yang tidak terencana
-                  di industri manufaktur.
+                  Justru komponen inilah yang paling sering gagal: survei keandalan IEEE dan
+                  EPRI mencatat bearing menyumbang sekitar 40 sampai 50% dari seluruh kerusakan
+                  motor industri, sekaligus menjadi penyebab utama *downtime* yang tidak
+                  terencana di industri manufaktur.
               - type: text
                 size: 13
                 gap: 0.14
                 flex: true
                 text: >-
-                  Inisiatif ***Making Indonesia 4.0*** mendorong industri beralih ke perawatan
-                  cerdas: memanfaatkan sensor dan kecerdasan buatan untuk mengenali tanda
-                  kerusakan sebelum mesin berhenti. Perawatan prediktif berbasis kondisi hadir
-                  sebagai paradigma baru, karena keputusan intervensi tidak lagi berpijak pada
-                  jadwal tetap melainkan pada kondisi aktual mesin yang diukur secara real-time.
+                  Inisiatif ***Making Indonesia 4.0*** (April 2018) mendorong industri beralih
+                  ke perawatan cerdas: memanfaatkan sensor dan kecerdasan buatan untuk mengenali
+                  tanda kerusakan sebelum mesin berhenti. Perawatan prediktif berbasis kondisi
+                  hadir sebagai paradigma baru, karena keputusan intervensi tidak lagi berpijak
+                  pada jadwal tetap melainkan pada kondisi aktual mesin yang diukur secara
+                  real-time.
           - blocks:
               - type: stats
                 tone: dark
@@ -162,7 +169,7 @@ slides:
                 note_size: 11.5
                 items:
                   - value: "40–50%"
-                    note: "kerusakan mesin rotasi industri berakar pada kegagalan bearing  (Lei, 2018)"
+                    note: "kerusakan motor industri berakar pada kegagalan bearing  (Nandi dkk., 2005)"
               - type: cards
                 gap: 0.14
                 align: center
@@ -193,267 +200,15 @@ slides:
         vpad: 0.16
         body: >-
           Penelitian ini berangkat dari kasus nyata di **PT SKF Indonesia (Cikarang)**:
-          mesin grinding outer ring (OR-1) yang memproduksi cincin luar bearing untuk sektor
-          otomotif. Sasarannya menekan downtime tak terencana sekaligus mencegah masalah
-          kualitas akibat keausan.
+          mesin grinding outer ring (OR1 dan OR2) yang memproduksi cincin luar bearing untuk
+          sektor otomotif. Sasarannya menekan downtime tak terencana sekaligus mencegah
+          masalah kualitas akibat keausan.
 
   # ======================================================================
-  - layout: content
-    eyebrow: Kesenjangan dan Rumusan Masalah
-    title: Empat Kesenjangan Literatur, Tiga Rumusan Masalah
-    top: 1.72
-    blocks:
-      - type: cards
-        h: 2.16
-        gutter: 0.18
-        pad: 0.16
-        title_size: 12
-        body_size: 10
-        items:
-          - badge: G1
-            title: XAI diagnostik masih di tingkat fitur agregat
-            body: >-
-              Metode explainable AI bekerja pada fitur turunan (kurtosis, RMS) dan belum
-              menjangkau sinyal mentah 2.048 titik.
-          - badge: G2
-            title: Representasi laten prognostik belum terbukti fisis
-            body: >-
-              Model RUL akurat, namun belum ada bukti statistik bahwa model
-              menginternalisasi BPFO/BPFI/BSF/FTF.
-          - badge: G3
-            title: Diagnostik dan prognostik belum terintegrasi
-            body: >-
-              Belum ada kerangka yang menyatukan keduanya menjadi satu sistem PdM
-              yang dapat diaudit lapis demi lapis.
-          - badge: G4
-            title: Validasi pada industri nyata masih terbatas
-            body: >-
-              Model yang akurat pada benchmark laboratorium belum tentu bekerja pada
-              data produksi dengan keausan alami.
-      - type: text
-        gap: 0.18
-        h: 0.30
-        size: 11.5
-        italic: true
-        color: "6B7689"
-        text: "Keempat kesenjangan mengerucut menjadi tiga rumusan masalah:"
-      - type: cards
-        gap: 0.08
-        h: 1.86
-        tone: dark
-        gutter: 0.22
-        title_size: 12.5
-        body_size: 10
-        items:
-          - key: RM-1
-            title: Model PdM yang akurat dan konsisten
-            body: >-
-              ~~Benchmark diagnostik (kernel, tree, deep) dan pengembangan prognostik RUL:
-              prasyarat seluruh kontribusi.~~
-            title_color: FFFFFF
-          - key: RM-2
-            title: XAI dua lapis yang selaras fisika
-            body: >-
-              ~~Fault signature dari sinyal mentah (diagnostik) dan pemetaan representasi
-              laten ke BPFx (prognostik).  ← G1, G2~~
-            title_color: FFFFFF
-          - key: RM-3
-            title: Validasi industri dan arsitektur multi-tier
-            body: >-
-              ~~Pengujian pada data PT SKF Indonesia dan cetak biru PdM tiga-tier
-              untuk adopsi.  ← G3, G4~~
-            title_color: FFFFFF
-
+  # 5 · PENGANTAR OBJEK — jembatan istilah untuk pembaca non-informatika
   # ======================================================================
   - layout: content
-    eyebrow: Kontribusi dan Kebaruan
-    title: Lima Novelti dalam Tiga Jalur Penelitian
-    top: 1.74
-    blocks:
-      - type: columns
-        flex: true
-        gutter: 0.22
-        items:
-          - blocks:
-              - type: heading
-                h: 0.56
-                text: "JALUR DIAGNOSTIK"
-                sub: "Bab IV"
-                size: 13
-                align: center
-              - type: cards
-                gap: 0.02
-                flex: true
-                row_gap: 0.14
-                columns: 1
-                pad: 0.16
-                items:
-                  - badge: N1
-                    tag: EMPIRIS
-                    title: Fault Signature Maps (FSM)
-                    body: >-
-                      XAI pertama langsung pada sinyal mentah 2.048 titik untuk WDCNN:
-                      tiga varian, tiga metrik validasi.
-                    body_color: "1F2A3D"
-                  - badge: N2
-                    tag: EMPIRIS
-                    title: Trade-off BatchNorm
-                    body: >-
-                      Untuk pertama kalinya: menghapus BatchNorm menaikkan diskriminabilitas
-                      FSM, dengan kompromi akurasi.
-                    body_color: "1F2A3D"
-          - blocks:
-              - type: heading
-                h: 0.56
-                text: "JALUR PROGNOSTIK"
-                sub: "Bab V"
-                size: 13
-                align: center
-              - type: cards
-                gap: 0.02
-                flex: true
-                row_gap: 0.14
-                columns: 1
-                pad: 0.16
-                items:
-                  - badge: N3
-                    tag: EMPIRIS
-                    title: SAEBearing
-                    body: >-
-                      Adaptasi pertama Top-k Sparse Autoencoder (interpretabilitas mekanistik)
-                      ke prognostik RUL bearing.
-                    body_color: "1F2A3D"
-                  - badge: N4
-                    tag: EMPIRIS
-                    title: Universalitas dan rigor statistik
-                    body: >-
-                      Dominasi BPFx konsisten lintas tiga arsitektur, diuji bootstrap CI,
-                      permutation test, dua negative control.
-                    body_color: "1F2A3D"
-          - blocks:
-              - type: heading
-                h: 0.56
-                text: "JALUR SISTEM"
-                sub: "Bab VI"
-                size: 13
-                align: center
-              - type: cards
-                gap: 0.02
-                flex: true
-                columns: 1
-                pad: 0.16
-                items:
-                  - badge: N5
-                    tag: KONSEPTUAL
-                    title: Kerangka PdM Multi-Tier
-                    body: >-
-                      Sintesis FSM dan SAE-BPFx menjadi cetak biru tiga-tier yang dapat
-                      diaudit: Edge IoT, Edge Server, hingga Cloud/GPU. Setiap tier berdiri
-                      sendiri namun memperkaya tier berikutnya.
-                    body_color: "1F2A3D"
-      - type: text
-        gap: 0.20
-        h: 0.30
-        size: 11.5
-        italic: true
-        align: center
-        text: >-
-          Bersama-sama, kelima novelti membangun **jembatan pertama yang terverifikasi
-          secara statistik** antara deep learning berbasis data dan teori getaran bearing klasik.
-
-  # ======================================================================
-  - layout: content
-    eyebrow: Metodologi
-    title: Dua Jalur, Lima Sumber Data, Protokol Bersama
-    top: 1.72
-    blocks:
-      - type: columns
-        h: 2.70
-        gutter: 0.23
-        items:
-          - blocks:
-              - type: panel
-                flex: true
-                band: true
-                title: "JALUR DIAGNOSTIK  ·  BAB IV"
-                blocks:
-                  - type: kvrows
-                    label_w: 1.15
-                    items:
-                      - label: DATASET
-                        value: "CWRU: 10 kelas, sinyal 2.048 titik, split temporal 54/13/33%"
-                      - label: MODEL
-                        value: "Kernel (SVM, LR) · Pohon keputusan (DT, RF, XGBoost) · Deep (WDCNN)"
-                      - label: XAI
-                        value: "SHAP DeepExplainer → Fault Signature Maps (FSM)"
-          - blocks:
-              - type: panel
-                flex: true
-                band: true
-                title: "JALUR PROGNOSTIK  ·  BAB V"
-                blocks:
-                  - type: kvrows
-                    label_w: 1.15
-                    items:
-                      - label: DATASET
-                        value: "PHM2012 · XJTU-SY · IMS (run-to-failure) + industri SKF"
-                      - label: MODEL
-                        value: "Mamba-xLSTM-Net · N-BEATS-xLSTM-RUL · SparseGate-TCN-RUL"
-                      - label: XAI
-                        value: "Top-k Sparse Autoencoder → pemetaan BPFx"
-      - type: banner
-        gap: 0.20
-        tone: light
-        label: PROTOKOL BERSAMA dan REPRODUKSI
-        label_size: 12
-        size: 11
-        vpad: 0.16
-        body: >-
-          75 epoch · presisi bf16-mixed · batch 512 · jendela 32 · tiga seed (42/43/44) ·
-          bootstrap CI 95% (B = 1.000) · permutation test dua-sisi · dua negative control ·
-          pipeline open-source
-      - type: banner
-        gap: 0.14
-        tone: dark
-        label: VALIDASI CROSS-DOMAIN
-        label_size: 12
-        size: 11
-        vpad: 0.16
-        body: >-
-          Model RUL diuji pada vibrasi mesin grinding OR-1 PT SKF Indonesia tanpa pelatihan
-          ulang, sebagai demonstrasi kualitatif transfer domain.
-
-  # ======================================================================
-  - layout: content
-    eyebrow: "Metodologi · Dataset"
-    title: "Lima Sumber Data: Benchmark Publik dan Industri Nyata"
-    top: 1.78
-    blocks:
-      - type: table
-        flex: true
-        header_h: 0.44
-        header_size: 11.5
-        size: 10.5
-        widths: [1.25, 1.15, 3.60, 1.75, 1.85]
-        columns: [Dataset, Peran, Spesifikasi, Sumber, Jalur]
-        rows:
-          - ["CWRU", "Validasi metode", "10 kelas · 2.048 titik · 48 kHz · split 54/13/33%", "CWRU Bearing Data Center", "Diagnostik"]
-          - ["PHM2012", "Validasi metode", "FEMTO-PRONOSTIA · 17 bearing · run-to-failure", "Nectoux dkk. (2012)", "Prognostik"]
-          - ["XJTU-SY", "Validasi metode", "LDK UER204 · 10 bearing · tiga kondisi operasi", "Wang dkk. (2020)", "Prognostik"]
-          - ["IMS", "Uji universalitas", "Rexnord ZA-2115 · empat bearing simultan · 2.000 rpm", "Qiu dkk. (2006)", "Prognostik"]
-          - ["SKF Indonesia", "Validasi industri", "Grinding OR-1 · kanal NDE dan DE · lintasan run-to-failure", "SKF Group (2017)", "Prognostik (cross-domain)"]
-      - type: text
-        gap: 0.22
-        h: 0.42
-        size: 11.5
-        italic: true
-        text: >-
-          Empat dataset publik memvalidasi metode; data ***PT SKF Indonesia*** menguji transfer
-          ke kondisi produksi nyata dan bersifat kualitatif pada satu mesin.
-
-  # ======================================================================
-  - layout: content
-    eyebrow: Pengantar untuk Membaca Hasil
+    eyebrow: "Pengantar · Objek Penelitian"
     title: Bearing dan Istilah Inti dalam Bahasa Sederhana
     top: 1.74
     blocks:
@@ -461,16 +216,21 @@ slides:
         flex: true
         gutter: 0.30
         items:
-          - width: 4.30
+          - width: 4.60
             blocks:
               - type: figure
-                h: 3.30
-                glyph_size: 44
-                caption:
-                  - "Skema bearing: cincin luar, cincin dalam,"
-                  - "elemen gelinding (bola), dan sangkar"
+                h: 2.30
+                image: ../../dissertation-docx/assets/figures/bab1/ball_bearing_components.png
+              - type: text
+                gap: 0.08
+                h: 0.30
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Gambar I.1 Komponen utama rolling element bearing (SKF Group, 2017)"
               - type: bullets
-                gap: 0.16
+                gap: 0.14
                 flex: true
                 size: 11
                 marker: 0.12
@@ -515,126 +275,236 @@ slides:
                     body_color: "1F2A3D"
 
   # ======================================================================
-  - layout: content
-    eyebrow: "Panduan Metrik · 1 dari 2"
-    title: Cara Membaca Angka pada Jalur Diagnostik
-    top: 1.60
-    blocks:
-      - type: banner
-        tone: light
-        h: 0.56
-        vpad: 0.13
-        size: 11
-        label: "Panduan:"
-        label_w: 0.85
-        body: >-
-          ↑ makin tinggi makin baik   ·   ↓ makin rendah makin baik   ·   rentang 0–1 bila
-          disebut   ·   semua metrik dilaporkan dengan tiga seed dan selang kepercayaan.
-      - type: metrics
-        gap: 0.26
-        columns: 2
-        row_gap: 0.44
-        items:
-          - value: "99,87%"
-            title: Akurasi
-            hint: "↑ lebih baik"
-            body: >-
-              Dari 750 sinyal uji, 749 ditebak benar (macro F1 = 0,997). Istilah “pp”
-              (poin persentase): turun 3,60 pp berarti turun 3,60 angka pada skala 0–100
-              (99,73 menjadi 96,13), bukan 3,6% relatif.
-          - value: "0,940"
-            title: Split-half stability
-            hint: "↑ · skala 0–1"
-            body: >-
-              Apakah “peta perhatian” model konsisten? Data uji dibelah dua, peta dibuat di
-              tiap belahan, lalu dibandingkan. Nilai 0,940 berarti dua belahan mirip 94%,
-              sehingga penjelasan stabil dan bukan kebetulan.
-          - value: "17,6%"
-            title: Severity monotonicity
-            hint: "↑ lebih baik"
-            body: >-
-              Kerusakan datang dalam ukuran kecil hingga besar; model yang baik bereaksi makin
-              kuat saat makin parah. Angka ini adalah porsi yang patuh pola tersebut.
-              Bola 17,6% > cincin dalam 13,8% > cincin luar 8,6%.
-          - value: "0,735"
-            title: Discriminability index
-            hint: "↑ · skala 0–1"
-            body: >-
-              Seberapa beda “sidik jari” antar jenis kerusakan. Tinggi berarti mudah dibedakan.
-              Mematikan komponen BatchNorm menajamkan sidik jari: 0,216 menjadi 0,735
-              (naik 2,3 kali).
-
+  # 6 · KESENJANGAN LITERATUR
   # ======================================================================
   - layout: content
-    eyebrow: "Panduan Metrik · 2 dari 2"
-    title: Cara Membaca Angka pada Prognostik dan Validasi
-    top: 1.60
+    eyebrow: Kesenjangan Literatur
+    title: Empat Kesenjangan yang Belum Terjawab
+    top: 1.72
     blocks:
-      - type: banner
-        tone: light
-        h: 0.56
-        vpad: 0.13
-        size: 11
-        label: "Panduan:"
-        label_w: 0.85
-        body: >-
-          model menebak sisa umur (RUL) pada skala 0–1   ·   diperiksa apakah “detektor”
-          internal model mengunci “ketukan” kerusakan (BPFx)   ·   semua diuji ulang agar
-          bukan kebetulan.
-      - type: metrics
-        gap: 0.20
-        columns: 2
-        row_gap: 0.16
-        badge_size: 1.00
+      - type: cards
+        h: 2.30
+        gutter: 0.18
+        pad: 0.16
+        title_size: 12
+        body_size: 10
         items:
-          - value: "0,226"
-            title: "RMSE (rata-rata galat)"
-            hint: "↓ lebih baik"
+          - badge: K1
+            title: XAI diagnostik berhenti di fitur agregat
             body: >-
-              Seberapa meleset tebakan sisa umur, pada skala 0–1 (0 = sempurna).
-              Notasi “± 0,030” adalah goyangan hasil saat diulang tiga kali; kecil = andal.
-          - value: "2,3%"
-            title: Hit-rate
-            hint: "↑ lebih baik"
+              Metode explainable AI bekerja pada fitur turunan (kurtosis, RMS) atau
+              spektrogram, belum menyentuh raw signal 2.048 titik dengan validasi
+              multi-metrik.
+          - badge: K2
+            title: Representasi laten prognostik belum terbukti fisis
             body: >-
-              Dari sekitar 1.024 “detektor” internal, berapa persen yang mengunci satu
-              “ketukan” kerusakan (BPFx). Nilai 2,3% berarti puluhan detektor menemukan
-              ritme cincin dalam.
-          - value: "0,447"
-            title: "rmax (kecocokan terbaik)"
-            hint: "↑ · skala 0–1"
+              Model RUL akurat, namun belum ada bukti statistik bahwa model
+              menginternalisasi BPFO/BPFI/BSF/FTF, bukan sekadar korelasi.
+          - badge: K3
+            title: Perbandingan setara dan integrasi belum tersedia
             body: >-
-              Di antara semua detektor, yang paling cocok menyamai “ketukan” kerusakan
-              sebesar 0,447; kecocokan sedang hingga kuat untuk satu unit.
-          - value: "p<0,004"
-            value_size: 15
-            title: p-value dan koreksi Bonferroni
-            hint: "↓ lebih baik"
+              Benchmark antarjenis algoritma pada protokol evaluasi yang sama belum ada,
+              dan diagnostik–prognostik belum menyatu dalam sistem yang dapat diaudit.
+          - badge: K4
+            title: Validasi pada industri nyata masih terbatas
             body: >-
-              Peluang hasil muncul karena kebetulan; makin kecil makin meyakinkan.
-              Karena 12 uji dijalankan sekaligus, ambang lulus diperketat ke 0,004
-              (bukan 0,05).
-          - value: "≈0%"
-            title: "Negative control (uji tandingan)"
-            hint: "harus ≈ 0"
-            body: >-
-              Analisis yang sama dijalankan pada model berbobot acak dan derau murni.
-              Jika metode hanya menemukan pola dalam keacakan, angka ini ikut tinggi.
-              Hasilnya ≈0%, sehingga temuan sejati.
-          - value: "10,3%"
-            title: Sisa umur (RUL) dan EoL
-            hint: "↓ = dekat rusak"
-            body: >-
-              Sisa umur dalam persen. Ambang peringatan 40% dan ambang kritis 20%; di
-              bawah 20% status berpindah ke Critical. EoL adalah perkiraan tanggal dan jam
-              bearing mencapai akhir umur.
-          - value: "53%"
-            title: "Fusion gate (perpaduan)"
-            hint: konteks
-            body: >-
-              Model memiliki dua “ahli” (xLSTM dan Mamba). Gate adalah perpaduan yang
-              dipilih; “Mamba 53%” berarti sedikit condong ke ahli Mamba pada channel itu.
+              Model yang akurat pada benchmark laboratorium belum tentu bekerja pada
+              data produksi dengan keausan alami.
+      - type: banner
+        gap: 0.22
+        tone: dark
+        label: POSISI PENELITIAN
+        label_size: 12
+        size: 11.5
+        vpad: 0.16
+        body: >-
+          Pada enam parameter posisi penelitian di Tabel I.1 (fitur, raw signal, SAE, RUL,
+          uji statistik, data industri), **hanya baris “Penelitian ini” yang memenuhi
+          keenamnya**; setiap rujukan landasan memenuhi paling banyak satu parameter.
+      - type: text
+        gap: 0.18
+        h: 0.30
+        size: 11.5
+        italic: true
+        color: "6B7689"
+        text: "Keempat kesenjangan tersebut melahirkan empat rumusan masalah (Subbab I.2):"
 
+  # ======================================================================
+  # 7 · RUMUSAN MASALAH — tulang punggung dek
+  # ======================================================================
+  - layout: content
+    eyebrow: Rumusan Masalah
+    title: "Empat Rumusan Masalah dan Peta Pembuktiannya"
+    top: 1.68
+    blocks:
+      - type: maprows
+        flex: true
+        row_h: 1.06
+        gap: 0.10
+        items:
+          - key: RM-1
+            title: Model diagnostik dan prognostik yang akurat
+            body: >-
+              Bagaimana mengembangkan model perawatan prediktif berbasis sensor vibrasi
+              (machine learning dan deep learning) yang akurat untuk deteksi kerusakan dan
+              prediksi RUL?  ~~→ N4, N5 · Bab IV, V, VI~~
+          - key: RM-2
+            title: Peta kerusakan yang stabil, diskriminatif, dan fisis
+            body: >-
+              Bagaimana XAI menghasilkan peta karakteristik kerusakan dari raw signal, dan
+              apakah peta itu sesuai mekanisme fisik degradasi bearing?
+              ~~→ N1, N2 · Bab IV~~
+          - key: RM-3
+            title: Bukti fisika pada representasi laten model RUL
+            body: >-
+              Bagaimana membuktikan representasi laten model RUL mempertimbangkan fisika
+              degradasi (BPFO, BPFI, BSF, FTF), bukan sekadar korelasi statistik?
+              ~~→ N3, N4 · Bab V~~
+          - key: RM-4
+            title: Transferabilitas ke lini produksi nyata
+            body: >-
+              Sejauh mana model terlatih benchmark dapat dipindahkan ke data vibrasi
+              industri nyata, dan bukti apa yang diperlukan untuk menilai kelayakannya?
+              ~~→ N5 · Subbab IV.15 dan V.5.3~~
+      - type: text
+        gap: 0.16
+        h: 0.30
+        size: 11
+        italic: true
+        align: center
+        color: "6B7689"
+        text: >-
+          Pemetaan lengkap tujuan–RM–kesenjangan–novelti–bab pembuktian tersaji pada
+          Tabel I.3; lima novelti (N1 sampai N5) dirinci pada slide cadangan.
+
+  # ======================================================================
+  # 8 · KERANGKA PENELITIAN
+  # ======================================================================
+  - layout: content
+    eyebrow: Metodologi
+    title: Kerangka Konseptual Dua Jalur yang Berkonvergensi
+    top: 1.72
+    blocks:
+      - type: figure
+        h: 3.16
+        image: ../../dissertation-docx/assets/figures/bab3/kerangka_terintegrasi.png
+      - type: text
+        gap: 0.08
+        h: 0.28
+        size: 9.5
+        italic: true
+        align: center
+        color: "6B7689"
+        text: >-
+          Gambar III.1 Jalur diagnostik (biru) dan jalur prognostik berbagi fondasi data,
+          lalu berkonvergensi pada kerangka PdM multi-tier Bab VI
+      - type: banner
+        gap: 0.18
+        tone: light
+        label: PROTOKOL BERSAMA
+        label_size: 12
+        size: 11
+        vpad: 0.16
+        body: >-
+          75 epoch · presisi bf16-mixed · batch 512 · jendela 32 · tiga seed (42/43/44) ·
+          bootstrap CI 95% (B = 1.000) · permutation test dua-sisi · dua negative control ·
+          pipeline open-source
+
+  # ======================================================================
+  # 9 · DATASET
+  # ======================================================================
+  - layout: content
+    eyebrow: "Metodologi · Dataset"
+    title: "Tiga Benchmark Publik dan Satu Sumber Data Industri"
+    top: 1.78
+    blocks:
+      - type: table
+        flex: true
+        header_h: 0.44
+        header_size: 11.5
+        size: 10.5
+        widths: [1.35, 1.20, 3.85, 1.75, 1.65]
+        columns: [Dataset, Peran, Spesifikasi, Sumber, Jalur]
+        rows:
+          - ["CWRU", "Validasi metode", "10 kelas · 2.048 titik · 48 kHz · split temporal 54/13/33%", "CWRU Bearing Data Center", "Diagnostik"]
+          - ["PHM2012", "Validasi metode", "FEMTO-PRONOSTIA · 17 bearing · run-to-failure", "Nectoux dkk. (2012)", "Prognostik"]
+          - ["XJTU-SY", "Validasi metode", "LDK UER204 · 15 bearing · tiga kondisi operasi", "Wang dkk. (2020)", "Prognostik"]
+          - ["SKF Indonesia", "Validasi industri", "Grinding OR-1 · kanal NDE dan DE · 1 April hingga 31 Agustus 2023", "SKF Group (2017)", "Cross-domain"]
+      - type: text
+        gap: 0.22
+        h: 0.56
+        size: 11.5
+        italic: true
+        text: >-
+          Tiga dataset benchmark memvalidasi metode; data ***PT SKF Indonesia*** menguji
+          transfer ke kondisi produksi nyata secara kualitatif. CWRU juga dipakai pada Bab V
+          sebagai validasi silang SAE, dengan catatan underpowered (n = 10 rekaman).
+
+  # ======================================================================
+  # 10 · PEMBATAS BABAK 1 — RM-1
+  # ======================================================================
+  - layout: section
+    eyebrow: "Babak 1 dari 4 · Rumusan Masalah 1"
+    title: Seberapa Akurat Model Diagnostik dan Prognostiknya?
+    body: >-
+      **RM-1.** Bagaimana mengembangkan model perawatan prediktif berbasis data sensor
+      vibrasi dengan pendekatan berbagai model machine learning dan deep learning yang
+      mampu melakukan deteksi kerusakan dan prediksi remaining useful life bearing akurat,
+      sehingga mendukung pengurangan waktu henti yang tidak terencana pada sistem produksi
+      manufaktur?
+
+  # ======================================================================
+  # 11 · JEMBATAN A — machine learning vs deep learning
+  # ======================================================================
+  - layout: content
+    eyebrow: "Pengantar · Cara Kerja Model"
+    title: "Dua Cara Mesin Belajar Mengenali Kerusakan"
+    top: 1.72
+    blocks:
+      - type: cards
+        h: 1.52
+        gutter: 0.22
+        pad: 0.16
+        title_size: 12.5
+        body_size: 10.5
+        items:
+          - title: "Machine learning klasik: fitur dirancang manusia"
+            body: >-
+              Seperti inspektur dengan lembar periksa: manusia memilih indikator (RMS,
+              kurtosis, energi pita frekuensi, 36 dimensi), lalu model menimbang
+              indikator itu. Transparan, ringan, tetapi bergantung pada kejelian
+              perancang fitur.
+            body_color: "1F2A3D"
+          - title: "Deep learning: fitur dipelajari model"
+            body: >-
+              Seperti operator berpengalaman yang belajar dari ribuan contoh sinyal
+              mentah: WDCNN membaca langsung 2.048 titik getaran dan menemukan sendiri
+              pola yang relevan, tanpa perhitungan fitur perantara.
+            body_color: "1F2A3D"
+      - type: figure
+        gap: 0.16
+        h: 1.90
+        image: ../../dissertation-docx/assets/figures/bab2/fig_evolution_timeline.png
+      - type: text
+        gap: 0.08
+        h: 0.26
+        size: 9.5
+        italic: true
+        align: center
+        color: "6B7689"
+        text: "Evolusi arsitektur pemodelan sekuens, dari LSTM hingga Mamba dan xLSTM"
+      - type: banner
+        gap: 0.16
+        tone: light
+        size: 11.5
+        vpad: 0.14
+        body: >-
+          Alasan raw signal dipertahankan adalah agar **bukti fisik tidak hilang** saat
+          diringkas menjadi fitur; konsekuensinya, model menjadi kotak hitam yang harus
+          dibuka kembali dengan XAI (Babak 2 dan 3).
+
+  # ======================================================================
+  # 12 · HASIL RM-1 — benchmark diagnostik CWRU
   # ======================================================================
   - layout: content
     eyebrow: "Hasil Diagnostik · Bab IV"
@@ -673,15 +543,16 @@ slides:
                   - type: bullets
                     flex: true
                     size: 11.5
-                    gap: 0.32
+                    gap: 0.30
                     color: E4E9F2
                     items:
                       - >-
-                        WDCNN keliru pada satu dari 750 sampel uji (macro F1 = 0,997),
-                        melampaui XGBoost 97,1% dan SVM-RBF 96,4%.
+                        WDCNN keliru pada satu dari 750 sampel uji (macro F1 = 0,997):
+                        Ball_014 terbaca sebagai IR_014, dua kelas dengan morfologi
+                        impuls paling mirip.
                       - >-
-                        Selisih 3,4 pp dari DT ke RF berasal dari reduksi variansi oleh bagging
-                        atas 100 pohon; XGBoost menambah 1,3 pp lewat boosting.
+                        Selisih 3,4 pp dari DT ke RF berasal dari reduksi variansi oleh
+                        bagging atas 100 tree; XGBoost menambah 1,3 pp lewat boosting.
                       - >-
                         Keunggulan SVM-RBF atas LR-OvR sebesar 2,1 pp bersumber dari batas
                         keputusan non-linear pada ruang fitur HI 36-D.
@@ -692,97 +563,304 @@ slides:
         gap: 0.20
         body: >-
           WDCNN (Zhang dkk., 2017) · XGBoost (Chen dan Guestrin, 2016) · SVM/LR dengan SHAP
-          (Lundberg dan Lee, 2017) · dataset CWRU Bearing Data Center.
+          (Lundberg dan Lee, 2017) · dataset CWRU Bearing Data Center · rincian per model
+          pada Lampiran D dan E.
 
   # ======================================================================
+  # 13 · JEMBATAN D — cara membaca prediksi RUL
+  # ======================================================================
   - layout: content
-    eyebrow: "Hasil Diagnostik · Novelti N1"
-    title: Fault Signature Maps sebagai XAI pada Sinyal Mentah
+    eyebrow: "Pengantar · Membaca Prediksi RUL"
+    title: "Menaksir Sisa Umur dari Pola Getaran, Bukan dari Usia"
+    top: 1.72
+    blocks:
+      - type: columns
+        h: 2.72
+        gutter: 0.28
+        items:
+          - width: 6.60
+            blocks:
+              - type: figure
+                flex: true
+                image: ../../dissertation-docx/assets/figures/bab3/phm2012_rul_label_example.png
+              - type: text
+                gap: 0.08
+                h: 0.28
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: >-
+                  Gambar III.3 Label RUL bearing 1_1 PHM2012: menurun linear dari titik
+                  awal degradasi menuju 0,0 pada end-of-life
+              - type: text
+                gap: 0.10
+                flex: true
+                size: 11.5
+                text: >-
+                  Analoginya seperti menaksir sisa umur ban dari pola getarannya, bukan dari
+                  lama pemakaiannya. Model membaca jendela indikator kesehatan terbaru, lalu
+                  menebak posisi bearing pada kurva 1 (baru) sampai 0 (rusak).
+          - blocks:
+              - type: cards
+                flex: true
+                columns: 1
+                row_gap: 0.10
+                pad: 0.14
+                title_size: 12
+                body_size: 10
+                items:
+                  - title: "RMSE  ↓ makin kecil makin baik"
+                    body: >-
+                      Rata-rata simpangan tebakan terhadap kurva referensi, skala 0 sampai 1.
+                    body_color: "1F2A3D"
+                  - title: "PHM Score  ↑ dan asimetris"
+                    body: >-
+                      Terlambat memprediksi dihukum lebih berat daripada terlalu dini,
+                      karena konsekuensi operasionalnya tidak simetris.
+                    body_color: "1F2A3D"
+                  - title: "Ambang lampu lalu lintas"
+                    body: >-
+                      Fraksi RUL di atas 40% berarti Healthy; 40% ke bawah Warning;
+                      20% ke bawah Critical dan intervensi disiapkan.
+                    body_color: "1F2A3D"
+      - type: banner
+        gap: 0.20
+        tone: light
+        size: 11.5
+        vpad: 0.14
+        body: >-
+          Setiap angka RUL pada babak ini dilaporkan sebagai **mean ± simpangan baku atas
+          tiga seed** (42/43/44), sehingga keandalannya dapat dinilai, bukan hasil sekali
+          jalan.
+
+  # ======================================================================
+  # 14 · HASIL RM-1 — tiga backbone RUL
+  # ======================================================================
+  - layout: content
+    eyebrow: "Hasil Prognostik · Bab V"
+    title: Tiga Backbone RUL pada Dua Benchmark Run-to-Failure
     top: 1.74
     blocks:
-      - type: text
-        size: 13
-        h: 0.70
-        text: >-
-          SHAP DeepExplainer diterapkan langsung pada 2.048 titik sinyal (300 sampel
-          *background* dan 500 sampel uji, menghasilkan lebih dari 10 juta nilai SHAP),
-          lalu diagregasi menjadi FSM per kelas dalam tiga varian: Signed, Absolute,
-          dan Variance.
-      - type: stats
+      - type: cards
+        h: 1.34
+        gutter: 0.22
+        pad: 0.18
+        title_size: 13.5
+        body_size: 10.5
+        items:
+          - title: Mamba-xLSTM-Net
+            body: "**±898 ribu parameter**\nSSM selektif Mamba dan memori matrix-LSTM"
+          - title: N-BEATS-xLSTM-RUL
+            body: "**±459 ribu parameter**\nBasis-blok struktural kurva degradasi"
+          - title: SparseGate-TCN-RUL
+            body: "**±249 ribu parameter**\nTCN ringan untuk deployment edge"
+      - type: columns
+        gap: 0.20
+        flex: true
+        gutter: 0.28
+        items:
+          - width: 6.80
+            blocks:
+              - type: table
+                h: 1.42
+                header_h: 0.42
+                size: 11
+                widths: [1.35, 2.30, 1.55, 1.30]
+                columns: [Dataset, Backbone Pemenang, RMSE, PHM Score]
+                rows:
+                  - ["PHM2012", "SparseGate-TCN-RUL", "0,226 ± 0,030", "0,904"]
+                  - ["XJTU-SY", "Mamba-xLSTM-Net", "0,213 ± 0,056", "0,938"]
+              - type: text
+                gap: 0.14
+                flex: true
+                size: 11
+                text: >-
+                  **Tidak ada arsitektur yang unggul mutlak.** Pada XJTU-SY selisih RMSE
+                  Mamba-xLSTM-Net terhadap SparseGate-TCN-RUL hanya 0,003 (0,213 dan 0,216),
+                  sehingga ketiganya tetap menjadi substrat analisis SAE-BPFx.
+                  Mamba-xLSTM-Net dipakai sebagai backbone utama demonstrasi streaming dan
+                  interpretabilitas.
+          - blocks:
+              - type: figure
+                h: 2.06
+                image: ../../dissertation-docx/assets/figures/bab5/pred_phm2012_1_3.png
+              - type: text
+                gap: 0.08
+                h: 0.44
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: >-
+                  Gambar V.7 Kurva prediksi RUL terhadap referensi, bearing uji PHM2012
+                  (SparseGate-TCN-RUL, seed 42)
+      - type: source
+        gap: 0.16
+        body: >-
+          Mamba (Gu dan Dao, 2023) · xLSTM (Beck dkk., 2024) · N-BEATS (Oreshkin dkk., 2020) ·
+          TCN (Bai dkk., 2018) · hyperparameter lengkap pada Lampiran B.
+
+  # ======================================================================
+  # 15 · JAWABAN RM-1
+  # ======================================================================
+  - layout: content
+    eyebrow: "Jawaban · Rumusan Masalah 1"
+    title: "RM-1 Terjawab: Model Akurat di Kedua Jalur"
+    top: 1.80
+    blocks:
+      - type: banner
+        tone: dark
+        label: JAWABAN
+        label_size: 12
+        size: 12.5
+        vpad: 0.20
+        body: >-
+          Model perawatan prediktif yang akurat **dapat dikembangkan pada kedua jalur**:
+          diagnostik mencapai 99,87% pada sepuluh kelas CWRU dan prognostik mencapai
+          RMSE 0,213 sampai 0,226 pada dua benchmark run-to-failure, di bawah protokol
+          evaluasi temporal yang sama.
+      - type: kvrows
+        gap: 0.24
+        label_w: 1.60
+        row_h: 0.66
+        items:
+          - label: DIAGNOSTIK
+            value: >-
+              WDCNN Varian A 99,87% (749/750 benar, macro F1 0,997), melampaui XGBoost
+              97,1% dan SVM-RBF 96,4% pada protokol split temporal 54/13/33%.
+          - label: PROGNOSTIK
+            value: >-
+              SparseGate-TCN-RUL 0,226 ± 0,030 pada PHM2012; Mamba-xLSTM-Net 0,213 ± 0,056
+              pada XJTU-SY; tiga seed per model, tanpa arsitektur yang unggul mutlak.
+          - label: IMPLIKASI
+            value: >-
+              Gradien akurasi dan bobot komputasi antargolongan model menjadi dasar
+              penempatan per tier pada kerangka PdM Bab VI (Babak 4).
+      - type: banner
+        gap: 0.22
+        tone: light
+        size: 11.5
+        vpad: 0.14
+        body: >-
+          **Status pembuktian: empiris** · Bab IV dan Bab V · menopang novelti N4 dan N5 ·
+          akurasi saja belum cukup untuk diadopsi insinyur perawatan, sehingga Babak 2
+          membuka kotak hitamnya.
+
+  # ======================================================================
+  # 16 · PEMBATAS BABAK 2 — RM-2
+  # ======================================================================
+  - layout: section
+    eyebrow: "Babak 2 dari 4 · Rumusan Masalah 2"
+    title: Dapatkah Keputusan Model Dijelaskan dan Diverifikasi?
+    body: >-
+      **RM-2.** Bagaimana menerapkan metode explainable artificial intelligence (XAI) pada
+      model diagnostik bearing berbasis deep learning sehingga dapat menghasilkan peta
+      karakteristik kerusakan (fault signature) yang stabil dan diskriminatif dengan masukan
+      raw signal, dan apakah peta tersebut sesuai dengan mekanisme fisik degradasi bearing
+      yang dapat diverifikasi oleh insinyur perawatan?
+
+  # ======================================================================
+  # 17 · JEMBATAN B — cara membaca atribusi SHAP
+  # ======================================================================
+  - layout: content
+    eyebrow: "Pengantar · Membaca Atribusi"
+    title: "SHAP: Stabilo yang Menandai Bagian Sinyal Penentu Keputusan"
+    top: 1.72
+    blocks:
+      - type: columns
+        flex: true
+        gutter: 0.30
+        items:
+          - width: 7.30
+            blocks:
+              - type: figure
+                flex: true
+                image: ../../dissertation-docx/assets/figures/bab4/shap_signal_ir21.png
+              - type: text
+                gap: 0.08
+                h: 0.44
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: >-
+                  Gambar IV.7 Atribusi SHAP kelas IR-21 pada 2.048 posisi sinyal:
+                  (a) Varian A dengan BatchNorm, (b) Varian C tanpa BatchNorm;
+                  garis merah menandai posisi puncak BPFI teoretis
+          - blocks:
+              - type: panel
+                flex: true
+                tone: white
+                title: TIGA LANGKAH MEMBACA
+                blocks:
+                  - type: numbered
+                    flex: true
+                    size: 11.3
+                    gap: 0.30
+                    items:
+                      - >-
+                        Sumbu datar adalah waktu di dalam satu jendela sinyal
+                        (2.048 titik ≈ 42,67 ms pada 48 kHz).
+                      - >-
+                        Kurva adalah sinyal getaran asli yang masuk ke model.
+                      - >-
+                        Sorotan (nilai SHAP) menandai bukti yang dipakai model; bila
+                        sorotan jatuh pada impuls fisik, model menalar seperti insinyur.
+      - type: banner
         gap: 0.18
-        h: 1.50
+        tone: light
+        size: 11.5
+        vpad: 0.14
+        body: >-
+          Atribusi per sinyal kemudian **diagregasi per kelas** menjadi Fault Signature
+          Maps (FSM), sehingga pola satu kelas kerusakan dapat dibaca sekali pandang.
+
+  # ======================================================================
+  # 18 · HASIL RM-2 — FSM dan validasinya
+  # ======================================================================
+  - layout: content
+    eyebrow: "Hasil XAI · Novelti N1"
+    title: "Fault Signature Maps: Tervalidasi pada Tiga Metrik"
+    top: 1.74
+    blocks:
+      - type: figure
+        h: 3.02
+        image: ../../dissertation-docx/assets/figures/bab4/fsm_comparison.png
+      - type: text
+        gap: 0.08
+        h: 0.28
+        size: 9.5
+        italic: true
+        align: center
+        color: "6B7689"
+        text: >-
+          Gambar IV.8 FSM tiga varian (Signed, Absolute, Variance), Varian A (kiri) dan
+          Varian C (kanan); garis putus-putus menandai frekuensi karakteristik teoretis
+      - type: stats
+        gap: 0.16
+        h: 1.16
         items:
           - value: "0,940"
             label: Split-half stability
-            note: "Kemiripan kosinus 94%, sehingga pola FSM sangat reproducible lintas subset uji."
+            note: "Kemiripan kosinus antarbelahan data uji 94%: pola reproducible."
           - value: "17,6%"
             label: Severity monotonicity
             note: "Gradasi keparahan terjaga: Ball 17,6% > IR 13,8% > OR 8,6%."
           - value: "0,216"
             label: Discriminability index
-            note: "Perbedaan antarkelas terukur pada ruang atribusi 2.048 dimensi."
-      - type: panel
-        gap: 0.22
-        tone: dark
-        title: "TEMUAN KUNCI: MORFOLOGI, BUKAN PERIODISITAS"
-        title_color: B8923B
-        blocks:
-          - type: text
-            size: 12.5
-            color: D8E0EE
-            accent: FFFFFF
-            text: >-
-              Puncak FSM ternyata tidak sejajar dengan periode teoretis BPFO/BPFI/BSF.
-              WDCNN mengenali kerusakan dari **morfologi transien impuls**, yang tertangkap
-              utuh oleh jendela reseptif kernel pertama (≈ 42,67 ms pada 48 kHz),
-              bukan dari periodisitas frekuensi. Karena itu FSM bersifat *transferable*
-              tanpa perlu mengetahui BPFx target: model yang dilatih pada satu jenis bearing
-              berpotensi dipindahkan ke geometri lain tanpa kalibrasi BPFx terlebih dahulu.
+            note: "Perbedaan antarkelas pada ruang atribusi 2.048 dimensi."
       - type: source
-        gap: 0.16
+        gap: 0.14
         body: >-
-          SHAP DeepExplainer (Lundberg dan Lee, 2017) berbasis DeepLIFT (Shrikumar dkk., 2017);
-          formalisasi Fault Signature Maps (Suharto dkk., 2025).
+          SHAP DeepExplainer (Lundberg dan Lee, 2017) pada analisis utama 300 background /
+          500 sampel uji; formalisasi FSM (Suharto dkk., 2025).
 
   # ======================================================================
-  - layout: content
-    eyebrow: "Hasil Diagnostik · Bab IV"
-    title: Visualisasi FSM per Kelas Kerusakan
-    top: 1.78
-    blocks:
-      - type: columns
-        flex: true
-        gutter: 0.25
-        items:
-          - width: 7.70
-            blocks:
-              - type: figure
-                flex: true
-                glyph_size: 54
-                caption:
-                  - "Sisipkan Gambar IV.8: heatmap FSM (Signed / Absolute / Variance)"
-                  - "Varian A dibandingkan Varian C, dengan garis putus-putus posisi BPFI/BPFO"
-          - blocks:
-              - type: panel
-                flex: true
-                tone: white
-                title: CARA MEMBACA
-                blocks:
-                  - type: bullets
-                    flex: true
-                    size: 11.5
-                    gap: 0.34
-                    marker: 0.11
-                    items:
-                      - "Sumbu-x menunjukkan posisi sinyal (0 sampai 2.048 titik)."
-                      - "Puncak menandai posisi yang paling mendorong klasifikasi suatu kelas."
-                      - "Garis putus-putus menandai posisi BPFx teoretis."
-                      - "Varian C (tanpa BatchNorm) menampilkan puncak yang lebih tajam dan terlokalisasi."
-                      - "Pada kelas Normal, atribusi tampak datar tanpa puncak yang menonjol."
-
+  # 19 · HASIL RM-2 — ablasi BatchNorm (N2)
   # ======================================================================
   - layout: content
-    eyebrow: "Hasil Diagnostik · Novelti N2"
+    eyebrow: "Hasil XAI · Novelti N2"
     title: "Trade-off BatchNorm: Akurasi dan Interpretabilitas"
     top: 1.78
     blocks:
@@ -880,218 +958,340 @@ slides:
           diskriminabilitas dihitung pada subset ablasi 30 background / 50 sampel uji.
 
   # ======================================================================
-  - layout: content
-    eyebrow: "Hasil Prognostik · Bab V"
-    title: Tiga Backbone RUL dan Pemenang Lintas Dataset
-    top: 1.74
-    blocks:
-      - type: cards
-        h: 1.50
-        gutter: 0.22
-        pad: 0.20
-        title_size: 14
-        body_size: 11
-        items:
-          - title: Mamba-xLSTM-Net
-            body: "**898K parameter**\nSSM selektif Mamba dan memori rekuren matrix-LSTM"
-          - title: N-BEATS-xLSTM-RUL
-            body: "**459K parameter**\nBasis-blok struktural kurva degradasi"
-          - title: SparseGate-TCN-RUL
-            body: "**249K parameter**\nTCN ringan untuk deployment edge"
-      - type: heading
-        gap: 0.20
-        h: 0.30
-        text: "KINERJA RUL PER DATASET  (mean ± std, tiga seed)"
-        size: 12.5
-      - type: columns
-        gap: 0.06
-        flex: true
-        gutter: 0.25
-        items:
-          - width: 7.40
-            blocks:
-              - type: table
-                h: 1.70
-                header_h: 0.42
-                size: 11
-                widths: [1.2, 2.2, 1.5, 1.9]
-                columns: [Dataset, Backbone Pemenang, RMSE, Runner-up]
-                rows:
-                  - ["PHM2012", "SparseGate-TCN-RUL", "0,226 ± 0,030", "—"]
-                  - ["XJTU-SY", "Mamba-xLSTM-Net", "0,213 ± 0,056", "SparseGate-TCN 0,216"]  # PHM Score 0,938
-                  - ["IMS", "Mamba-xLSTM-Net", "0,407 ± 0,040", "—"]
-          - blocks:
-              - type: panel
-                h: 2.12
-                tone: alt
-                blocks:
-                  - type: text
-                    flex: true
-                    size: 11.5
-                    text: >-
-                      **Tidak ada arsitektur yang unggul mutlak.** Pada XJTU-SY persaingan jauh
-                      lebih rapat (selisih RMSE Mamba-xLSTM-Net dan SparseGate-TCN-RUL hanya
-                      0,003), sehingga ketiga backbone tetap layak menjadi substrat analisis
-                      SAE-BPFx. Mamba-xLSTM-Net dipilih sebagai backbone utama interpretabilitas
-                      karena unggul pada dua dari tiga dataset.
-      - type: source
-        gap: 0.18
-        body: >-
-          Mamba (Gu dan Dao, 2023) · xLSTM (Beck dkk., 2024) · N-BEATS (Oreshkin dkk., 2020) ·
-          TCN (Bai dkk., 2018) · optimizer AdamW (Loshchilov dan Hutter, 2019).
-
+  # 20 · JAWABAN RM-2
   # ======================================================================
   - layout: content
-    eyebrow: "Hasil Prognostik · Novelti N3 dan N4"
-    title: "SAE-BPFx: Interpretabilitas Mekanistik Berjangkar Fisika"
+    eyebrow: "Jawaban · Rumusan Masalah 2"
+    title: "RM-2 Terjawab: Peta Stabil, Diskriminatif, dan Bermakna Fisis"
+    top: 1.80
+    blocks:
+      - type: banner
+        tone: dark
+        label: JAWABAN
+        label_size: 12
+        size: 12.5
+        vpad: 0.20
+        body: >-
+          FSM dari raw signal terbukti **stabil** (split-half 0,940), **diskriminatif**
+          (0,216; naik menjadi 0,735 tanpa BatchNorm), dan **selaras keparahan** (Ball 17,6%
+          > IR 13,8% > OR 8,6%), sehingga keputusan WDCNN dapat diverifikasi insinyur
+          perawatan.
+      - type: panel
+        gap: 0.24
+        tone: white
+        title: "TEMUAN KUNCI: MORFOLOGI IMPULS, BUKAN PERIODISITAS BPFx"
+        title_size: 12.5
+        blocks:
+          - type: text
+            flex: true
+            size: 12
+            text: >-
+              Puncak FSM ternyata tidak menumpuk pada kelipatan periode teoretis
+              BPFO/BPFI/BSF. WDCNN mengenali kerusakan dari **morfologi transien impuls**
+              yang tertangkap utuh oleh jendela reseptif ≈ 42,67 ms, bukan dari periodisitas
+              frekuensi. Kesesuaian fisisnya justru pada bentuk impuls; karena itu FSM
+              berpotensi *transferable* ke geometri bearing lain tanpa kalibrasi BPFx.
+      - type: banner
+        gap: 0.20
+        tone: light
+        size: 11.5
+        vpad: 0.14
+        body: >-
+          **Status pembuktian: empiris** · Bab IV · novelti N1 dan N2 · pertanyaan lanjutan:
+          apakah model *prognostik* juga menangkap fisika? Itulah Babak 3.
+
+  # ======================================================================
+  # 21 · PEMBATAS BABAK 3 — RM-3
+  # ======================================================================
+  - layout: section
+    eyebrow: "Babak 3 dari 4 · Rumusan Masalah 3"
+    title: Apakah Model RUL Benar-Benar Menangkap Fisika Bearing?
+    body: >-
+      **RM-3.** Bagaimana membuktikan bahwa representasi laten model prediksi RUL bearing
+      berbasis deep learning telah mempertimbangkan fisika degradasi bearing, khususnya
+      frekuensi karakteristik BPFO, BPFI, BSF, dan FTF, bukan sekadar mempelajari korelasi
+      statistik?
+
+  # ======================================================================
+  # 22 · JEMBATAN C — sparse autoencoder sebagai kamus konsep
+  # ======================================================================
+  - layout: content
+    eyebrow: "Pengantar · Membedah Isi Model"
+    title: "Sparse Autoencoder: Menyalin Catatan Model ke Kamus Konsep"
     top: 1.72
     blocks:
-      - type: text
-        h: 0.60
-        size: 12.5
-        text: >-
-          **Top-k Sparse Autoencoder** (d_lat = 1.024, k = 51) dilatih post-hoc pada hidden
-          states yang dibekukan, lalu fitur latennya dipetakan ke frekuensi karakteristik
-          melalui korelasi Pearson dengan spektrum Hilbert envelope.
-      - type: stats
-        gap: 0.14
-        h: 1.42
-        tone: dark
-        items:
-          - value: "2,3%"
-            label: "Hit-rate BPFI · PHM2012"
-            note: "p < 0,001 · rmax = 0,447"
-          - value: "1,6%"
-            label: "Hit-rate BSF · XJTU-SY"
-            note: "BPFI 1,5% · BPFO 0,7% · p < 0,001"
-          - value: "≈ 0%"
-            label: Dua negative control
-            note: "Xavier-init dan derau Gaussian"
       - type: columns
-        gap: 0.22
         flex: true
-        gutter: 0.23
+        gutter: 0.30
         items:
-          - blocks:
-              - type: panel
+          - width: 6.60
+            blocks:
+              - type: figure
                 flex: true
-                tone: white
-                title: "UNIVERSALITAS  (N4)"
-                title_size: 12.5
-                blocks:
-                  - type: text
-                    flex: true
-                    size: 11.5
-                    text: >-
-                      Dominasi BPFx konsisten lintas tiga arsitektur backbone, meski
-                      magnitudonya bervariasi empat hingga delapan kali. Pada XJTU-SY dengan
-                      tiga kondisi operasi lengkap, hit-rate justru tersebar dan bukan terpusat
-                      pada satu frekuensi: **BSF** 1,6%, **BPFI** 1,5%, BPFO 0,7%. Pola tersebut
-                      lahir dari proses pelatihan RUL, bukan artefak arsitektur.
+                image: ../../dissertation-docx/assets/figures/bab2/fig_sae_architecture.png
+              - type: text
+                gap: 0.08
+                h: 0.28
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: >-
+                  Gambar II.8 Konsep Top-k Sparse Autoencoder (Cunningham dkk., 2023),
+                  diadaptasi ke backbone RUL penelitian ini
           - blocks:
-              - type: panel
+              - type: text
+                h: 1.50
+                size: 11.5
+                text: >-
+                  Catatan internal model (hidden state) ibarat tulisan cepat yang padat dan
+                  sulit dibaca. SAE menyalinnya ke **kamus besar berisi 1.024 entri**, tetapi
+                  setiap "kalimat" hanya boleh memakai **51 entri** (k = 51, sekitar 5%).
+                  Dengan paksaan hemat itu, tiap entri cenderung bermakna satu hal saja.
+              - type: kvrows
+                gap: 0.14
                 flex: true
-                tone: white
-                title: RIGOR STATISTIK
-                title_size: 12.5
-                blocks:
-                  - type: text
-                    flex: true
-                    size: 11.5
-                    text: >-
-                      Bootstrap CI 95% (B = 1.000) dan permutation test dua-sisi (B = 1.000).
-                      Ambang **Bonferroni p < 0,004** untuk 12 uji primer (empat dataset dikali
-                      tiga arsitektur). Dua negative control menutup hipotesis artefak
-                      arsitektur maupun prosedur SAE.
+                label_w: 1.55
+                items:
+                  - label: DIMENSI
+                    value: "hidden state d = 128  →  kamus laten 1.024 entri"
+                  - label: SPARSITAS
+                    value: "k = 51 entri aktif per sampel (≈ 5%)"
+                  - label: REKONSTRUKSI
+                    value: "MSE < 0,001 pada 20.000 hidden state beku"
+      - type: banner
+        gap: 0.18
+        tone: light
+        size: 11.5
+        vpad: 0.14
+        body: >-
+          Pertanyaan risetnya menjadi konkret: **adakah entri kamus yang mengunci "ketukan"
+          kerusakan fisik** (BPFO, BPFI, BSF, FTF)? Bila ada dan lolos uji statistik, model
+          terbukti menangkap fisika, bukan sekadar korelasi.
+
+  # ======================================================================
+  # 23 · METODE RM-3 — prosedur SAE→BPFx
+  # ======================================================================
+  - layout: content
+    eyebrow: "Metode · Novelti N3"
+    title: "Prosedur Tiga Tahap Memetakan Fitur SAE ke BPFx"
+    top: 1.72
+    blocks:
+      - type: columns
+        flex: true
+        gutter: 0.30
+        items:
+          - width: 6.90
+            blocks:
+              - type: figure
+                flex: true
+                image: ../assets/v14/gambar_v6_prosedur_sae_bpfx.png
+              - type: text
+                gap: 0.08
+                h: 0.28
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Gambar V.6 Prosedur tiga tahap pemetaan fitur SAE ke BPFx"
+          - blocks:
+              - type: numbered
+                flex: true
+                size: 11.3
+                gap: 0.26
+                items:
+                  - >-
+                    **Envelope spectrum** tiap rekaman: filter band-pass berbasis kurtogram
+                    spektral, transformasi Hilbert, FFT.
+                  - >-
+                    **Amplitudo BPFx**: integral spektrum pada pita ±2 Hz di sekitar BPFO,
+                    BPFI, BSF, dan FTF.
+                  - >-
+                    **Korelasi dan hit-rate**: korelasi Pearson aktivasi fitur SAE terhadap
+                    amplitudo BPFx; hit bila |r| ≥ 0,30.
+              - type: banner
+                gap: 0.16
+                tone: dark
+                size: 10.8
+                vpad: 0.14
+                body: >-
+                  **Rigor statistik.** Bootstrap CI 95% dan permutation test dua-sisi
+                  (masing-masing B = 1.000); 12 uji primer dengan ambang setara Bonferroni
+                  p < 0,004; dua negative control (bobot Xavier acak dan derau Gaussian).
+
+  # ======================================================================
+  # 24 · HASIL RM-3 — hit-rate dan kontrol negatif
+  # ======================================================================
+  - layout: content
+    eyebrow: "Hasil · Novelti N3 dan N4"
+    title: "Hit-Rate BPFx Lolos Uji, Kontrol Negatif Mendekati Nol"
+    top: 1.74
+    blocks:
+      - type: columns
+        flex: true
+        gutter: 0.30
+        items:
+          - width: 6.30
+            blocks:
+              - type: figure
+                flex: true
+                image: ../../dissertation-docx/assets/figures/bab5/hitrate_panel.png
+              - type: text
+                gap: 0.08
+                h: 0.28
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: >-
+                  Gambar V.15 Hit-rate fitur SAE per dataset dengan nilai p permutation test
+          - blocks:
+              - type: figure
+                h: 2.10
+                image: ../../dissertation-docx/assets/figures/bab5/negative_controls.png
+              - type: text
+                gap: 0.08
+                h: 0.28
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Kontrol negatif: model terlatih vs bobot acak vs derau Gaussian"
+              - type: text
+                gap: 0.12
+                flex: true
+                size: 11
+                text: >-
+                  **PHM2012**: BPFI 2,3%, BPFO 2,0% (p < 0,001; rmax = 0,447).
+                  **XJTU-SY**: tersebar — BSF 1,6%, BPFI 1,5%, BPFO 0,7% (p < 0,001;
+                  rmax = 0,468). **CWRU**: 5,08% namun underpowered (n = 10; p > 0,05),
+                  dikeluarkan dari klaim falsifikasi formal. Kedua kontrol negatif ≈ 0%.
       - type: source
         gap: 0.16
         body: >-
-          Sparse Autoencoder dan mechanistic interpretability (Bricken dkk., 2023);
-          Top-k SAE (Cunningham dkk., 2023); analisis envelope dan BPFx (Randall dan Antoni, 2011).
+          Tabel V.6 (hit-rate utama) · Subbab V.7 (kontrol negatif) · Subbab V.8 (lintas
+          arsitektur: urutan dominansi konsisten, magnitudo bervariasi 4 sampai 8 kali).
 
   # ======================================================================
+  # 25 · JAWABAN RM-3
+  # ======================================================================
   - layout: content
-    eyebrow: "Hasil Prognostik · Novelti N4"
-    title: Hit-rate BPFx Lintas Empat Dataset dan Batas Klaimnya
+    eyebrow: "Jawaban · Rumusan Masalah 3"
+    title: "RM-3 Terjawab: Fisika Terbukti pada Representasi Laten"
+    top: 1.80
+    blocks:
+      - type: banner
+        tone: dark
+        label: JAWABAN
+        label_size: 12
+        size: 12.5
+        vpad: 0.20
+        body: >-
+          Sebagian fitur laten model RUL **terbukti mengunci frekuensi karakteristik
+          bearing** dan lolos permutation test (p < 0,001) dengan dua kontrol negatif
+          mendekati nol; korespondensi ini properti representasi terlatih, bukan artefak
+          arsitektur, dan konsisten lintas tiga backbone.
+      - type: panel
+        gap: 0.24
+        tone: white
+        title: "INTERPRETABILITAS DUA LAPIS: BEDA HORIZON, BUKAN KONTRADIKSI"
+        title_size: 12.5
+        blocks:
+          - type: text
+            flex: true
+            size: 12
+            text: >-
+              FSM (Babak 2) menyorot **morfologi impuls** pada jendela 42,67 ms dan tidak
+              menemukan periodisitas BPFx; SAE-BPFx justru menemukan korelasi frekuensi
+              karakteristik pada horizon **ratusan akuisisi**. Keduanya tidak bertentangan:
+              diagnostik membaca bentuk kejadian sesaat, prognostik mengakumulasi ritme
+              degradasi jangka panjang. Dua lapis ini saling melengkapi sebagai audit model.
+      - type: banner
+        gap: 0.20
+        tone: light
+        size: 11.5
+        vpad: 0.14
+        body: >-
+          **Status pembuktian: empiris** (dengan catatan CWRU underpowered) · Bab V ·
+          novelti N3 dan N4 · tersisa satu pertanyaan: apakah semua ini bekerja di pabrik
+          sungguhan? Babak 4.
+
+  # ======================================================================
+  # 26 · PEMBATAS BABAK 4 — RM-4
+  # ======================================================================
+  - layout: section
+    eyebrow: "Babak 4 dari 4 · Rumusan Masalah 4"
+    title: Apakah Model Berpindah ke Lini Produksi Nyata?
+    body: >-
+      **RM-4.** Sejauh mana model diagnostik dan prognostik yang dilatih pada dataset
+      benchmark laboratorium dapat dipindahkan ke data vibrasi industri nyata, dan bukti
+      apa yang diperlukan untuk menilai kelayakan penerapannya pada lini produksi
+      ball bearing?
+
+  # ======================================================================
+  # 27 · HASIL RM-4 — transfer diagnostik (Subbab IV.15)
+  # ======================================================================
+  - layout: content
+    eyebrow: "Validasi Industri · Subbab IV.15"
+    title: "Transfer Diagnostik: SVM-RBF CWRU pada Spindel SKF"
     top: 1.74
     blocks:
+      - type: figure
+        h: 1.72
+        image: ../assets/v14/gambar_iv11_skema_transfer_skf.png
       - type: text
-        h: 0.44
-        size: 12.5
+        gap: 0.08
+        h: 0.28
+        size: 9.5
+        italic: true
+        align: center
+        color: "6B7689"
         text: >-
-          Uji universalitas dijalankan pada empat dataset. Hasil yang tidak sepenuhnya selaras
-          dilaporkan apa adanya, karena justru menentukan batas klaim penelitian.
-      - type: table
-        gap: 0.16
-        h: 2.18
-        header_h: 0.44
-        size: 10.5
-        widths: [1.15, 0.85, 0.85, 0.85, 0.85, 0.95, 3.60]
-        align: [left, center, center, center, center, center, left]
-        columns: [Dataset, BPFI, BPFO, BSF, FTF, p, Konsistensi Fisika]
-        rows:
-          - ["PHM2012", "2,3%", "2,0%", "0", "0", "< 0,001", "IR dan OR spalling campuran"]
-          - ["XJTU-SY", "1,5%", "0,7%", "1,6%", "0,2%", "< 0,001", "Keragaman mode kegagalan lintas kondisi"]
-          - ["IMS", "1,76%", "0", "0,49%", "0", "0,001", "IR (Run 2) dan rolling element"]
-          - ["CWRU", "5,08%", "0", "0", "0", "> 0,05", "IR dominan; underpowered (n = 10)"]
-      - type: columns
-        gap: 0.20
-        flex: true
-        gutter: 0.23
+          Gambar IV.11 Skema pengujian eksternal: model terlatih CWRU menginferensi
+          rekaman spindel OR1/OR2 tanpa pelatihan ulang
+      - type: kvrows
+        gap: 0.18
+        label_w: 1.60
+        row_h: 0.62
         items:
-          - blocks:
-              - type: panel
-                flex: true
-                tone: alt
-                title: KETIDAKCOCOKAN PARSIAL PADA IMS
-                title_size: 12.5
-                blocks:
-                  - type: text
-                    flex: true
-                    size: 11.3
-                    text: >-
-                      Kegagalan yang terdokumentasi pada run IMS yang dianalisis adalah fatik
-                      rolling element dan sangkar, sedangkan sparsity sweep justru memperlihatkan
-                      FTF naik monoton hingga 7,81% pada k = 205. IMS menjadi satu-satunya
-                      dataset dengan BPFx dominan yang **tidak sepenuhnya selaras** dengan mode
-                      kegagalan terdokumentasi, dan dicatat sebagai agenda lanjutan.
-          - blocks:
-              - type: panel
-                flex: true
-                tone: alt
-                title: CWRU DIKELUARKAN DARI KLAIM FALSIFIKASI
-                title_size: 12.5
-                blocks:
-                  - type: text
-                    flex: true
-                    size: 11.3
-                    text: >-
-                      CWRU menunjukkan hit-rate BPFI tertinggi secara numerik (5,08%) namun tidak
-                      mencapai signifikansi statistik (p > 0,05) karena hanya tersedia sepuluh
-                      rekaman pada tingkat berkas. Atas dasar itu CWRU **dikeluarkan dari klaim
-                      falsifikasi formal Novelti N4** dan diperlakukan sebagai hasil rintisan
-                      yang bersifat kualitatif.
-      - type: source
-        gap: 0.16
-        label: "Sumber:"
-        body: "Bab V, Tabel V.6 (hit-rate utama) dan Subbab V.9 (sparsity sweep)."
+          - label: PIPELINE
+            value: >-
+              Fitur health indicator 18 dimensi per rekaman; frekuensi karakteristik
+              diaproksimasi dari geometri bearing SKF 6205; normalisasi Z-score
+              fit-on-train dari CWRU.
+          - label: HASIL
+            value: >-
+              Label kondisi hasil inferensi konsisten dengan observasi tim perawatan
+              prediktif PT SKF Indonesia; atribusi fitur selaras dengan pola SHAP pada
+              dataset benchmark.
+      - type: banner
+        gap: 0.20
+        tone: light
+        size: 11.5
+        vpad: 0.14
+        body: >-
+          Pengujian ini bersifat **sanity check eksternal yang kualitatif**: satu mesin,
+          tanpa label ground-truth independen, sehingga belum menggantikan validasi lintas
+          mesin yang sistematis.
 
   # ======================================================================
+  # 28 · HASIL RM-4 — inferensi RUL streaming (Subbab V.5.3)
+  # ======================================================================
   - layout: content
-    eyebrow: "Validasi Lapangan · Subbab V.5.3"
-    title: Transfer ke Data Industri PT SKF Indonesia
+    eyebrow: "Validasi Industri · Subbab V.5.3"
+    title: Inferensi RUL Streaming pada Mesin Grinding OR-1
     top: 1.70
     blocks:
       - type: text
         h: 0.40
         size: 12.5
         text: >-
-          Mamba-xLSTM-Net yang dilatih pada PHM2012 diuji secara streaming pada mesin grinding
-          OR-1 **tanpa pelatihan ulang**, pada dua kanal dengan jendela 64 akuisisi, interval
-          satu jam, serta ambang peringatan 40% dan ambang kritis 20%.
+          Mamba-xLSTM-Net terlatih PHM2012 diuji streaming pada dua kanal mesin grinding
+          OR-1 **tanpa pelatihan ulang**: jendela 64 akuisisi, interval pengambilan satu
+          jam, ambang peringatan 40% dan ambang kritis 20%.
       - type: columns
         gap: 0.12
-        h: 2.62
+        h: 2.50
         gutter: 0.23
         items:
           - blocks:
@@ -1105,7 +1305,7 @@ slides:
                     h: 0.26
                     size: 11
                     color: "6B7689"
-                    text: "158 akuisisi ≈ 6 hari 13 jam · penurunan bertahap lalu kolaps"
+                    text: "158 akuisisi ≈ enam hari 13 jam pemantauan"
                   - type: stats
                     gap: 0.10
                     h: 0.92
@@ -1125,8 +1325,8 @@ slides:
                     flex: true
                     size: 11
                     items:
-                      - "Gerbang fusi berimbang, sekitar 50 : 50 (xLSTM / Mamba)."
-                      - "Atribusi didominasi skewness (td_c1 26,5%; td_c0 17,7%)."
+                      - "Menurun bertahap, kolaps menjelang akhir trajektori."
+                      - "Gerbang fusi xLSTM/Mamba berimbang."
           - blocks:
               - type: panel
                 flex: true
@@ -1138,7 +1338,7 @@ slides:
                     h: 0.26
                     size: 11
                     color: "6B7689"
-                    text: "78 akuisisi ≈ 3 hari 5 jam · anjlok sejak awal lalu bertahan rendah"
+                    text: "78 akuisisi ≈ tiga hari lima jam pemantauan"
                   - type: stats
                     gap: 0.10
                     h: 0.92
@@ -1158,20 +1358,17 @@ slides:
                     flex: true
                     size: 11
                     items:
-                      - "Gerbang fusi condong ke Mamba (xLSTM 47% : Mamba 53%)."
-                      - "Atribusi didominasi entropy ranah frekuensi (fd_c1 39,6%)."
+                      - "Anjlok sejak awal; gerbang fusi condong ke Mamba (47% berbanding 53%)."
+                      - "Atribusi fitur didominasi entropy spektral."
       - type: banner
         gap: 0.18
         tone: dark
         size: 11.5
         vpad: 0.14
         body: >-
-          **Kedua kanal berakhir pada status Critical, dan waktu akhir-hayat terprediksi jatuh
-          pada tanggal peristiwa kegagalan yang diamati di lapangan.** Sisa umur pakai
-          terprediksi pada akuisisi terakhir masih menyisakan 34 menit (NDE) dan 40 menit (DE)
-          terhadap sisa umur sebenarnya nol detik. Titik akhir-hayat ditambatkan pada kegagalan
-          lapangan, sehingga hasil ini merupakan **demonstrasi perilaku transfer**, bukan klaim
-          akurasi prognostik lintas mesin.
+          **Kedua kanal berakhir pada status Critical dengan estimasi end-of-life terpaut
+          sekitar satu hari dari kejadian kerusakan aktual di penghujung Agustus 2023**;
+          sisa umur terprediksi pada akuisisi terakhir 34 menit (NDE) dan 40 menit (DE).
       - type: banner
         gap: 0.12
         tone: light
@@ -1179,13 +1376,16 @@ slides:
         vpad: 0.12
         flex: true
         body: >-
-          **Catatan.** Ekspor SKF Observer hanya berisi nilai tren Overall (A/V/ENV); bentuk
-          gelombang direkonstruksi menjadi pseudo-waveform sebelum masuk pipeline HI 18-D,
-          sehingga bukan getaran resolusi penuh.
+          **Catatan.** Ekspor SKF Observer hanya berisi nilai tren Overall (A/V/ENV);
+          bentuk gelombang adalah rekonstruksi sintetis dari nilai tren (pseudo-waveform),
+          dua kanal pada satu mesin, tanpa pelatihan ulang — temuan diposisikan sebagai
+          **demonstrasi kualitatif** transferabilitas perilaku prognostik.
 
   # ======================================================================
+  # 29 · HASIL RM-4 — dasbor mesin inferensi
+  # ======================================================================
   - layout: content
-    eyebrow: "Validasi Lapangan · Subbab V.5.3"
+    eyebrow: "Validasi Industri · Subbab V.5.3"
     title: Dasbor Inference Engine Streaming
     top: 1.70
     blocks:
@@ -1193,36 +1393,49 @@ slides:
         h: 0.50
         size: 12
         text: >-
-          Tangkapan layar mesin inferensi Mamba-xLSTM-Net (WebSocket) pada akuisisi terakhir
-          tiap channel: kurva RUL, status kondisi, pembagian fusion gate, dan atribusi fitur.
+          Tangkapan layar mesin inferensi Mamba-xLSTM-Net (aplikasi web, WebSocket) pada
+          akuisisi terakhir tiap kanal: kurva RUL, status kondisi, pembagian fusion gate,
+          dan fitur paling berpengaruh.
       - type: columns
         gap: 0.14
         flex: true
-        gutter: 0.40
+        gutter: 0.36
         items:
           - blocks:
               - type: figure
                 flex: true
-                glyph_size: 48
-                caption:
-                  - "Gambar V.8: panel inferensi Channel 1-01 OR-1 NDE"
-                  - "(akuisisi terakhir)"
+                image: ../../dissertation-docx/assets/figures/lampD/skf_ch1_dashboard.png
+              - type: text
+                gap: 0.08
+                h: 0.30
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Gambar V.8 Panel inferensi Channel 1-01 OR-1 NDE (akuisisi terakhir)"
           - blocks:
               - type: figure
                 flex: true
-                glyph_size: 48
-                caption:
-                  - "Gambar V.9: panel inferensi Channel 3-02 OR-1 DE"
-                  - "(akuisisi terakhir)"
+                image: ../../dissertation-docx/assets/figures/lampD/skf_ch3_dashboard.png
+              - type: text
+                gap: 0.08
+                h: 0.30
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Gambar V.9 Panel inferensi Channel 3-02 OR-1 DE (akuisisi terakhir)"
       - type: banner
-        gap: 0.22
+        gap: 0.18
         tone: light
         size: 11
         vpad: 0.14
         body: >-
-          **Tip.** Panel analisis interpretabilitas Integrated Gradients dapat
-          disiapkan sebagai slide cadangan untuk sesi tanya-jawab.
+          Mesin yang sama juga didemonstrasikan pada dataset benchmark (PHM2012 dan
+          XJTU-SY, Subbab V.5.4) — tangkapan layarnya tersedia pada slide cadangan.
 
+  # ======================================================================
+  # 30 · SINTESIS — kerangka PdM tiga tier (N5)
   # ======================================================================
   - layout: content
     eyebrow: "Sintesis · Novelti N5"
@@ -1268,56 +1481,104 @@ slides:
         size: 11.5
         vpad: 0.16
         body: >-
-          Beban komputasi meningkat bertahap: triage di sensor, identifikasi kerusakan di
-          gateway, dan estimasi RUL di cloud. Setiap tier dapat berdiri sendiri namun
-          memperkaya tier berikutnya, dan umpan balik Tier 3 ke ERP/CMMS mengintegrasikan RUL
-          dengan jadwal produksi.  **Status: konseptual / sintesis.**
+          Beban komputasi meningkat bertahap (Tabel VI.1): triage di sensor, identifikasi
+          kerusakan di gateway, estimasi RUL di cloud. Setiap tier berdiri sendiri namun
+          memperkaya tier berikutnya; umpan balik Tier 3 ke ERP/CMMS mengintegrasikan RUL
+          dengan jadwal produksi.
 
+  # ======================================================================
+  # 31 · JAWABAN RM-4
+  # ======================================================================
+  - layout: content
+    eyebrow: "Jawaban · Rumusan Masalah 4"
+    title: "RM-4 Terjawab: Bukti Awal Kelayakan, dengan Batas yang Jelas"
+    top: 1.80
+    blocks:
+      - type: banner
+        tone: dark
+        label: JAWABAN
+        label_size: 12
+        size: 12.5
+        vpad: 0.20
+        body: >-
+          Pipeline diagnostik dan prognostik **dapat dijalankan pada data lini produksi
+          tanpa pelatihan ulang** dan menghasilkan keluaran yang konsisten dengan observasi
+          lapangan; bukti yang tersedia bersifat kualitatif dan menjadi bukti awal
+          kelayakan deployment, bukan validasi lintas mesin.
+      - type: kvrows
+        gap: 0.24
+        label_w: 2.30
+        row_h: 0.62
+        items:
+          - label: DIAGNOSTIK (IV.15)
+            value: >-
+              Label SVM-RBF konsisten dengan observasi tim PdM; status
+              **empiris-kualitatif**.
+          - label: PROGNOSTIK (V.5.3)
+            value: >-
+              EoL kedua kanal terpaut sekitar satu hari dari kerusakan aktual; status
+              **empiris-kualitatif** (pseudo-waveform, satu mesin).
+          - label: ARSITEKTUR (Bab VI)
+            value: >-
+              Kerangka tiga-tier N5 berstatus **konseptual / sintesis**, diperkuat bukti
+              empiris N1 sampai N4.
+      - type: banner
+        gap: 0.22
+        tone: light
+        size: 11.5
+        vpad: 0.14
+        body: >-
+          **Batas klaim.** Integrasi informasi kualitas produk real-time (radial clearance
+          checking) yang tercantum pada judul disertasi berstatus **peta jalan penelitian
+          lanjutan** (Tabel VI.2, seluruh langkah bertanda future work), bukan hasil
+          empiris disertasi ini.
+
+  # ======================================================================
+  # 32 · KESIMPULAN — empat pertanyaan, empat jawaban
   # ======================================================================
   - layout: content
     eyebrow: Kesimpulan
-    title: Pemetaan Rumusan Masalah ke Novelti
-    top: 1.76
+    title: Empat Pertanyaan, Empat Jawaban
+    top: 1.72
     blocks:
       - type: maprows
-        h: 3.24
-        row_h: 1.00
-        gap: 0.12
+        h: 3.60
+        row_h: 0.82
+        gap: 0.10
         items:
           - key: RM-1
-            title: Model PdM yang akurat dan konsisten
+            title: Model akurat di kedua jalur
             body: >-
-              Benchmark multi-model (WDCNN 99,87%) dan N4 universalitas lintas arsitektur ·
-              Sub-RQ2.1 diagnostik
+              WDCNN 99,87% · RMSE 0,213 sampai 0,226 · protokol setara  ~~· N4, N5 ·
+              status empiris~~
           - key: RM-2
-            title: XAI dua lapis yang selaras fisika
+            title: FSM stabil, diskriminatif, bermakna fisis
             body: >-
-              N1 atribusi masukan (FSM)  ·  N2 ablasi arsitektur (BatchNorm)  ·
-              N3 konsep laten (SAE-BPFx)
+              Split-half 0,940 · D 0,216 → 0,735 tanpa BN · morfologi impuls  ~~· N1, N2 ·
+              status empiris~~
           - key: RM-3
-            title: Validasi industri dan arsitektur multi-tier
+            title: Fisika terbukti pada representasi laten
             body: >-
-              N5 cetak biru PdM tiga-tier, diperkuat validasi cross-domain pada data
-              PT SKF Indonesia
+              Hit-rate BPFx p < 0,001 · kontrol negatif ≈ 0 · lintas arsitektur  ~~· N3, N4 ·
+              status empiris~~
+          - key: RM-4
+            title: Bukti awal kelayakan industri
+            body: >-
+              EoL terpaut sekitar satu hari · tiga-tier sebagai cetak biru  ~~· N5 ·
+              status empiris-kualitatif / konseptual~~
       - type: banner
         gap: 0.20
         tone: dark
         size: 12
         vpad: 0.16
         body: >-
-          **Kontribusi inti.** Jembatan pertama yang terverifikasi secara statistik antara deep
-          learning berbasis data dan teori getaran bearing klasik, melalui jalur diagnostik
-          (sinyal mentah ke FSM) dan prognostik (representasi laten ke BPFx).
-      - type: text
-        gap: 0.18
-        h: 0.34
-        size: 11.5
-        align: center
-        color: "6B7689"
-        text: >-
-          ~~Status pembuktian:~~  **N1 sampai N4 EMPIRIS**   ·   **N5 KONSEPTUAL / SINTESIS**
-          ~~  (bukan klaim deployment lapangan).~~
+          **Kontribusi inti.** Jembatan pertama yang terverifikasi secara statistik antara
+          deep learning berbasis data dan teori getaran bearing klasik: jalur diagnostik
+          (raw signal ke FSM) dan jalur prognostik (representasi laten ke BPFx), dipetakan
+          utuh pada Tabel I.3.
 
+  # ======================================================================
+  # 33 · KETERBATASAN dan REKOMENDASI
   # ======================================================================
   - layout: content
     eyebrow: Penutup
@@ -1332,7 +1593,7 @@ slides:
               - type: panel
                 flex: true
                 tone: white
-                title: KETERBATASAN
+                title: "KETERBATASAN  (Subbab VI.4)"
                 blocks:
                   - type: bullets
                     flex: true
@@ -1340,28 +1601,28 @@ slides:
                     gap: 0.30
                     items:
                       - >-
-                        Setiap dataset hanya mencakup satu kondisi operasi, dengan partisi
-                        bearing-wise pada kondisi yang sama.
+                        Kondisi operasi terbatas per dataset, dengan partisi bearing-wise
+                        pada kondisi yang sama.
                       - >-
                         CWRU memakai kerusakan buatan (EDM) yang morfologinya lebih teratur
                         dibanding fatik alami.
                       - >-
                         SAE bersifat post-hoc; pelatihan in-loop berpotensi menghasilkan
-                        korespondensi yang lebih kuat.
+                        korespondensi lebih kuat.
                       - >-
-                        CWRU kurang bertenaga secara statistik untuk SAE (p > 0,05 meski
-                        hit-rate 5,08%).
+                        CWRU kurang bertenaga statistik untuk SAE (p > 0,05 meski hit-rate
+                        5,08%).
                       - >-
-                        Integrasi data kualitas (radial clearance) belum dieksekusi dan
-                        menjadi prioritas utama.
+                        Integrasi data kualitas (radial clearance checking) belum
+                        dieksekusi.
                       - >-
-                        Validasi industri masih kualitatif: satu mesin, dua channel,
+                        Validasi industri masih kualitatif: satu mesin, dua kanal,
                         pseudo-waveform.
           - blocks:
               - type: panel
                 flex: true
                 tone: dark
-                title: REKOMENDASI
+                title: "REKOMENDASI  (Subbab VI.5)"
                 title_color: B8923B
                 blocks:
                   - type: numbered
@@ -1370,14 +1631,16 @@ slides:
                     gap: 0.26
                     color: E4E9F2
                     items:
-                      - "Validasi lintas-rig (Paderborn, MFPT)."
+                      - "Validasi lintas rig (Paderborn, MFPT)."
                       - "Pelatihan SAE in-loop dengan sparsity penalty."
-                      - "Normalizer-Free Networks sebagai pengganti BatchNorm."
+                      - "Normalizer-Free Networks sebagai alternatif BatchNorm."
                       - "XAI domain waktu-frekuensi (STFT / CWT)."
-                      - "Deployment edge real-time (Jetson, INT8)."
+                      - "Deployment edge real-time (Jetson Orin, RK3588)."
                       - "Integrasi ERP / CMMS melalui API."
-                      - "Integrasi data kualitas multi-modal (vibrasi dan radial clearance)."
+                      - "Akuisisi data berlabel SKF dan model multi-modal (vibrasi dan radial clearance)."
 
+  # ======================================================================
+  # 34 · REFERENSI
   # ======================================================================
   - layout: content
     eyebrow: Referensi
@@ -1391,11 +1654,11 @@ slides:
           - title: DATASET dan INDUSTRI
             items:
               - "**CWRU Bearing Data Center**"
+              - "**Smith dan Randall (2015)**~~  ulasan dataset CWRU~~"
               - "**Nectoux dkk. (2012)**~~  PHM2012 / PRONOSTIA~~"
               - "**Wang dkk. (2020)**~~  XJTU-SY~~"
-              - "**Qiu dkk. (2006)**~~  IMS / Rexnord ZA-2115~~"
+              - "**Nandi dkk. (2005)**~~  survei kegagalan motor~~"
               - "**SKF Group (2017)**~~  IMx-8 dan industri~~"
-              - "**Smith dan Randall (2015)**~~  ulasan dataset CWRU~~"
           - title: ARSITEKTUR
             items:
               - "**Zhang dkk. (2017)**~~  WDCNN~~"
@@ -1411,18 +1674,18 @@ slides:
             items:
               - "**Lundberg dan Lee (2017)**~~  SHAP~~"
               - "**Shrikumar dkk. (2017)**~~  DeepLIFT~~"
-              - "**Ribeiro dkk. (2016)**~~  LIME~~"
+              - "**Lundberg dkk. (2020)**~~  TreeExplainer~~"
               - "**Bricken dkk. (2023)**~~  Sparse Autoencoder~~"
+              - "**Makhzani dan Frey (2014)**~~  k-Sparse AE~~"
               - "**Cunningham dkk. (2023)**~~  Top-k SAE~~"
-              - "**Elhage dkk. (2022)**~~  superposisi~~"
-              - "**Suharto dkk. (2025)**~~  FSM (karya penulis)~~"
-          - title: FISIKA, STANDAR dan OPTIMASI
+              - "**Suharto dkk. (2025)**~~  FSM dan SAE-BPFx (karya penulis)~~"
+          - title: FISIKA, STANDAR dan KONTEKS
             items:
               - "**Randall dan Antoni (2011)**~~  envelope dan BPFx~~"
               - "**ISO 13374 / ISO 13381**~~  standar PdM~~"
               - "**Loshchilov dan Hutter (2019)**~~  AdamW~~"
-              - "**Lei (2018) · Mobley (2002)**~~  konteks PdM~~"
-              - "**Kemenperin (2018)**~~  Making Indonesia 4.0~~"
+              - "**Lei (2016) · Mobley (2002)**~~  konteks PdM~~"
+              - "**Kementerian Perindustrian (2018)**~~  Making Indonesia 4.0~~"
       - type: text
         gap: 0.18
         h: 0.30
@@ -1434,6 +1697,632 @@ slides:
           penulis dan tahun.
 
   # ======================================================================
+  # 35 · PENUTUP
+  # ======================================================================
   - layout: closing
     title: Terima Kasih
     subtitle: Sesi diskusi dan pertanyaan dewan penguji dipersilakan
+
+  # ======================================================================
+  # ======================================================================
+  #   C A D A N G A N  —  materi pendukung sesi tanya jawab
+  # ======================================================================
+  # ======================================================================
+  - layout: section
+    eyebrow: Cadangan
+    title: Materi Pendukung Sesi Tanya Jawab
+    body: >-
+      Rincian novelti, arsitektur model, panduan metrik, analisis sensitivitas,
+      test rig dataset, rantai akuisisi SKF, dan demonstrasi mesin inferensi
+      pada dataset benchmark.
+
+  # ======================================================================
+  # B2 · NOVELTI N1–N5
+  # ======================================================================
+  - layout: content
+    eyebrow: "Cadangan · Kontribusi"
+    title: Lima Novelti dan Status Pembuktiannya
+    top: 1.74
+    blocks:
+      - type: columns
+        flex: true
+        gutter: 0.22
+        items:
+          - blocks:
+              - type: heading
+                h: 0.56
+                text: "JALUR DIAGNOSTIK"
+                sub: "Bab IV"
+                size: 13
+                align: center
+              - type: cards
+                gap: 0.02
+                flex: true
+                row_gap: 0.14
+                columns: 1
+                pad: 0.16
+                items:
+                  - badge: N1
+                    tag: EMPIRIS
+                    title: Fault Signature Maps (FSM)
+                    body: >-
+                      XAI pertama langsung pada raw signal 2.048 titik untuk WDCNN:
+                      tiga varian, tiga metrik validasi.
+                    body_color: "1F2A3D"
+                  - badge: N2
+                    tag: EMPIRIS
+                    title: Trade-off BatchNorm
+                    body: >-
+                      Pelaporan pertama: menghapus BatchNorm menaikkan diskriminabilitas
+                      FSM 133%, dengan kompromi akurasi 3,60 pp.
+                    body_color: "1F2A3D"
+          - blocks:
+              - type: heading
+                h: 0.56
+                text: "JALUR PROGNOSTIK"
+                sub: "Bab V"
+                size: 13
+                align: center
+              - type: cards
+                gap: 0.02
+                flex: true
+                row_gap: 0.14
+                columns: 1
+                pad: 0.16
+                items:
+                  - badge: N3
+                    tag: EMPIRIS
+                    title: SAE-BPFx (SAEBearing)
+                    body: >-
+                      Adaptasi pertama Top-k Sparse Autoencoder (interpretabilitas
+                      mekanistik) ke prognostik RUL bearing.
+                    body_color: "1F2A3D"
+                  - badge: N4
+                    tag: EMPIRIS
+                    title: Konsistensi lintas arsitektur
+                    body: >-
+                      Benchmark setara tiga golongan algoritma; dominasi BPFx konsisten
+                      lintas tiga backbone dengan uji statistik lengkap.
+                    body_color: "1F2A3D"
+          - blocks:
+              - type: heading
+                h: 0.56
+                text: "JALUR SISTEM"
+                sub: "Bab VI"
+                size: 13
+                align: center
+              - type: cards
+                gap: 0.02
+                flex: true
+                columns: 1
+                pad: 0.16
+                items:
+                  - badge: N5
+                    tag: KONSEPTUAL
+                    title: Kerangka PdM multi-tier dan uji industri
+                    body: >-
+                      Sintesis FSM dan SAE-BPFx menjadi cetak biru tiga-tier yang dapat
+                      diaudit, disertai pengujian diagnostik dan prognostik pada data
+                      PT SKF Indonesia serta peta jalan integrasi data kualitas.
+                    body_color: "1F2A3D"
+      - type: text
+        gap: 0.20
+        h: 0.30
+        size: 11.5
+        italic: true
+        align: center
+        text: >-
+          Basis publikasi: dua artikel jurnal (J1 FSM, J2 SAE-BPFx) dan dua makalah
+          konferensi (Tabel I.2).
+
+  # ======================================================================
+  # B3 · ARSITEKTUR WDCNN
+  # ======================================================================
+  - layout: content
+    eyebrow: "Cadangan · Diagnostik"
+    title: Arsitektur WDCNN dan Kurva Konvergensinya
+    top: 1.74
+    blocks:
+      - type: figure
+        h: 2.10
+        image: ../../dissertation-docx/assets/figures/bab4/wdcnn_architecture.png
+      - type: text
+        gap: 0.08
+        h: 0.28
+        size: 9.5
+        italic: true
+        align: center
+        color: "6B7689"
+        text: >-
+          Gambar IV.3 Input 1 × 2.048 → lima blok konvolusi → dua fully connected →
+          sepuluh kelas (Zhang dkk., 2017)
+      - type: columns
+        gap: 0.16
+        flex: true
+        gutter: 0.28
+        items:
+          - width: 6.40
+            blocks:
+              - type: figure
+                h: 2.06
+                image: ../../dissertation-docx/assets/figures/bab4/wdcnn_training_curves.png
+              - type: text
+                gap: 0.06
+                h: 0.28
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Gambar IV.6 Kurva akurasi validasi tiga varian WDCNN"
+          - blocks:
+              - type: kvrows
+                flex: true
+                label_w: 1.70
+                items:
+                  - label: PARAMETER
+                    value: "±60.710 parameter (Tabel F.1), ringan untuk edge server"
+                  - label: KERNEL PERTAMA
+                    value: "lebar 64, stride 16: jendela reseptif ≈ 42,67 ms"
+                  - label: STUDI AWAL
+                    value: >-
+                      LSTM, Transformer, dan Informer dikaji sebagai studi pendahuluan
+                      dan tidak dilatih pada eksperimen utama (Lampiran B).
+
+  # ======================================================================
+  # B4 · ARSITEKTUR MAMBA-XLSTM
+  # ======================================================================
+  - layout: content
+    eyebrow: "Cadangan · Prognostik"
+    title: Arsitektur Mamba-xLSTM-Net
+    top: 1.74
+    blocks:
+      - type: columns
+        flex: true
+        gutter: 0.32
+        items:
+          - width: 4.30
+            blocks:
+              - type: figure
+                flex: true
+                image: ../assets/v14/gambar_v1_arsitektur_mamba_xlstm.png
+          - blocks:
+              - type: text
+                h: 1.60
+                size: 12
+                text: >-
+                  Vektor indikator kesehatan diproyeksikan ke dimensi model, lalu diproses
+                  tiga pasang blok hibrid Mamba (selective state space) dan mLSTM (memori
+                  matriks). Keluaran kedua cabang disatukan **gated fusion** menjadi
+                  representasi laten h yang dibaca regression head RUL.
+              - type: kvrows
+                gap: 0.16
+                flex: true
+                label_w: 1.70
+                items:
+                  - label: KOMPLEKSITAS
+                    value: "±898 ribu parameter; inferensi sekuens linear O(n)"
+                  - label: GERBANG FUSI
+                    value: >-
+                      Bobot xLSTM/Mamba adaptif per sampel; teramati berimbang pada kanal
+                      NDE dan condong ke Mamba pada kanal DE data SKF.
+                  - label: PERAN
+                    value: >-
+                      Backbone utama demonstrasi streaming dan analisis SAE-BPFx.
+      - type: text
+        gap: 0.08
+        h: 0.26
+        size: 9.5
+        italic: true
+        align: center
+        color: "6B7689"
+        text: "Gambar V.1 Arsitektur Mamba-xLSTM-Net dengan rincian blok inti"
+
+  # ======================================================================
+  # B5 · PANDUAN METRIK DIAGNOSTIK (lengkap)
+  # ======================================================================
+  - layout: content
+    eyebrow: "Cadangan · Panduan Metrik 1 dari 2"
+    title: Cara Membaca Angka pada Jalur Diagnostik
+    top: 1.60
+    blocks:
+      - type: banner
+        tone: light
+        h: 0.56
+        vpad: 0.13
+        size: 11
+        label: "Panduan:"
+        label_w: 0.85
+        body: >-
+          ↑ makin tinggi makin baik   ·   ↓ makin rendah makin baik   ·   rentang 0–1 bila
+          disebut   ·   semua metrik dilaporkan dengan tiga seed dan selang kepercayaan.
+      - type: metrics
+        gap: 0.26
+        columns: 2
+        row_gap: 0.44
+        items:
+          - value: "99,87%"
+            title: Akurasi
+            hint: "↑ lebih baik"
+            body: >-
+              Dari 750 sinyal uji, 749 ditebak benar (macro F1 = 0,997). Istilah “pp”
+              (poin persentase): turun 3,60 pp berarti turun 3,60 angka pada skala 0–100
+              (99,73 menjadi 96,13), bukan 3,6% relatif.
+          - value: "0,940"
+            title: Split-half stability
+            hint: "↑ · skala 0–1"
+            body: >-
+              Apakah “peta perhatian” model konsisten? Data uji dibelah dua, peta dibuat di
+              tiap belahan, lalu dibandingkan. Nilai 0,940 berarti dua belahan mirip 94%,
+              sehingga penjelasan stabil dan bukan kebetulan.
+          - value: "17,6%"
+            title: Severity monotonicity
+            hint: "↑ lebih baik"
+            body: >-
+              Kerusakan datang dalam ukuran kecil hingga besar; model yang baik bereaksi makin
+              kuat saat makin parah. Angka ini adalah porsi yang patuh pola tersebut.
+              Bola 17,6% > cincin dalam 13,8% > cincin luar 8,6%.
+          - value: "0,735"
+            title: Discriminability index
+            hint: "↑ · skala 0–1"
+            body: >-
+              Seberapa beda “sidik jari” antar jenis kerusakan. Tinggi berarti mudah dibedakan.
+              Mematikan komponen BatchNorm menajamkan sidik jari: 0,315 menjadi 0,735
+              (naik 2,3 kali).
+
+  # ======================================================================
+  # B6 · PANDUAN METRIK PROGNOSTIK (lengkap)
+  # ======================================================================
+  - layout: content
+    eyebrow: "Cadangan · Panduan Metrik 2 dari 2"
+    title: Cara Membaca Angka pada Prognostik dan Validasi
+    top: 1.60
+    blocks:
+      - type: banner
+        tone: light
+        h: 0.56
+        vpad: 0.13
+        size: 11
+        label: "Panduan:"
+        label_w: 0.85
+        body: >-
+          model menebak sisa umur (RUL) pada skala 0–1   ·   diperiksa apakah “detektor”
+          internal model mengunci “ketukan” kerusakan (BPFx)   ·   semua diuji ulang agar
+          bukan kebetulan.
+      - type: metrics
+        gap: 0.20
+        columns: 2
+        row_gap: 0.16
+        badge_size: 1.00
+        items:
+          - value: "0,226"
+            title: "RMSE (rata-rata galat)"
+            hint: "↓ lebih baik"
+            body: >-
+              Seberapa meleset tebakan sisa umur, pada skala 0–1 (0 = sempurna).
+              Notasi “± 0,030” adalah goyangan hasil saat diulang tiga kali; kecil = andal.
+          - value: "2,3%"
+            title: Hit-rate
+            hint: "↑ lebih baik"
+            body: >-
+              Dari 1.024 “detektor” internal, berapa persen yang mengunci satu
+              “ketukan” kerusakan (BPFx). Nilai 2,3% berarti puluhan detektor menemukan
+              ritme cincin dalam.
+          - value: "0,447"
+            title: "rmax (kecocokan terbaik)"
+            hint: "↑ · skala 0–1"
+            body: >-
+              Di antara semua detektor, yang paling cocok menyamai “ketukan” kerusakan
+              sebesar 0,447; kecocokan sedang hingga kuat untuk satu unit.
+          - value: "p<0,004"
+            value_size: 15
+            title: p-value dan koreksi Bonferroni
+            hint: "↓ lebih baik"
+            body: >-
+              Peluang hasil muncul karena kebetulan; makin kecil makin meyakinkan.
+              Karena 12 uji primer dijalankan sekaligus, ambang lulus diperketat ke 0,004
+              (bukan 0,05).
+          - value: "≈0%"
+            title: "Negative control (uji tandingan)"
+            hint: "harus ≈ 0"
+            body: >-
+              Analisis yang sama dijalankan pada model berbobot acak dan derau murni.
+              Jika metode hanya menemukan pola dalam keacakan, angka ini ikut tinggi.
+              Hasilnya ≈0%, sehingga temuan sejati.
+          - value: "10,3%"
+            title: Sisa umur (RUL) dan EoL
+            hint: "↓ = dekat rusak"
+            body: >-
+              Sisa umur dalam persen. Ambang peringatan 40% dan ambang kritis 20%; di
+              bawah 20% status berpindah ke Critical. EoL adalah perkiraan tanggal dan jam
+              bearing mencapai akhir umur.
+          - value: "53%"
+            title: "Fusion gate (perpaduan)"
+            hint: konteks
+            body: >-
+              Model memiliki dua “ahli” (xLSTM dan Mamba). Gate adalah perpaduan yang
+              dipilih; “Mamba 53%” berarti sedikit condong ke ahli Mamba pada kanal itu.
+
+  # ======================================================================
+  # B7 · SPARSITY SWEEP dan KORELASI
+  # ======================================================================
+  - layout: content
+    eyebrow: "Cadangan · Analisis Sensitivitas"
+    title: "Sparsity Sweep dan Korelasi Fitur Terbaik"
+    top: 1.72
+    blocks:
+      - type: columns
+        flex: true
+        gutter: 0.30
+        items:
+          - width: 6.60
+            blocks:
+              - type: figure
+                flex: true
+                image: ../../dissertation-docx/assets/figures/bab5/sparsity_sweep.png
+              - type: text
+                gap: 0.06
+                h: 0.28
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Gambar V.17 Hit-rate BPFx sebagai fungsi anggaran fitur aktif k"
+          - blocks:
+              - type: figure
+                h: 2.40
+                image: ../../dissertation-docx/assets/figures/bab5/corr_scatter_phm2012.png
+              - type: text
+                gap: 0.06
+                h: 0.40
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: >-
+                  Gambar V.16 Aktivasi fitur SAE ke-443 terhadap amplitudo BPFI PHM2012
+                  (r = 0,447, n = 304)
+              - type: text
+                gap: 0.10
+                flex: true
+                size: 10.8
+                text: >-
+                  Kurva non-nol naik **monoton** hingga k = 205: hit-rate BPFI PHM2012 dari
+                  0,68% menjadi 7,13%, BPFO XJTU-SY dari 0,59% menjadi 8,30%. Kamus 1.024
+                  belum jenuh; k = 51 adalah titik operasi konservatif, bukan puncak.
+
+  # ======================================================================
+  # B8 · HIT-RATE LENGKAP
+  # ======================================================================
+  - layout: content
+    eyebrow: "Cadangan · Hit-Rate Lengkap"
+    title: Hit-Rate BPFx per Dataset dan Batas Klaimnya
+    top: 1.76
+    blocks:
+      - type: table
+        h: 1.90
+        header_h: 0.44
+        size: 10.5
+        widths: [1.30, 0.90, 0.90, 0.90, 0.90, 1.00, 3.30]
+        align: [left, center, center, center, center, center, left]
+        columns: [Dataset, BPFI, BPFO, BSF, FTF, p, Konsistensi Fisika]
+        rows:
+          - ["PHM2012", "2,3%", "2,0%", "0", "0", "< 0,001", "IR dan OR spalling campuran"]
+          - ["XJTU-SY", "1,5%", "0,7%", "1,6%", "0,2%", "< 0,001", "Keragaman mode kegagalan lintas kondisi"]
+          - ["CWRU", "5,08%", "0", "0", "0", "> 0,05", "IR dominan; underpowered (n = 10)"]
+      - type: columns
+        gap: 0.20
+        flex: true
+        gutter: 0.23
+        items:
+          - blocks:
+              - type: panel
+                flex: true
+                tone: alt
+                title: UNIVERSALITAS LINTAS ARSITEKTUR
+                title_size: 12.5
+                blocks:
+                  - type: text
+                    flex: true
+                    size: 11.3
+                    text: >-
+                      Urutan dominansi BPFx konsisten pada ketiga backbone dengan SAE yang
+                      dilatih terpisah, meski magnitudo hit-rate bervariasi empat hingga
+                      delapan kali. Universalitas diklaim **parsial, bukan mutlak**.
+          - blocks:
+              - type: panel
+                flex: true
+                tone: alt
+                title: CWRU DIKELUARKAN DARI KLAIM FALSIFIKASI
+                title_size: 12.5
+                blocks:
+                  - type: text
+                    flex: true
+                    size: 11.3
+                    text: >-
+                      Hit-rate BPFI CWRU tertinggi secara numerik (5,08%) namun tidak
+                      signifikan (p > 0,05) karena hanya sepuluh rekaman. CWRU diperlakukan
+                      sebagai hasil rintisan kualitatif di luar klaim falsifikasi formal N4.
+      - type: source
+        gap: 0.16
+        body: "Tabel V.6 · ambang |r| ≥ 0,30 · bootstrap CI 95% dan permutation test (B = 1.000)."
+
+  # ======================================================================
+  # B9 · TEST RIG DATASET
+  # ======================================================================
+  - layout: content
+    eyebrow: "Cadangan · Dataset"
+    title: Test Rig Tiga Dataset Benchmark
+    top: 1.74
+    blocks:
+      - type: columns
+        h: 3.10
+        gutter: 0.26
+        items:
+          - blocks:
+              - type: figure
+                flex: true
+                image: ../../dissertation-docx/assets/figures/bab3/cwru_test_rig.png
+              - type: text
+                gap: 0.06
+                h: 0.44
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Gambar III.2 CWRU: motor 2 HP, bearing SKF 6205, cacat EDM"
+          - blocks:
+              - type: figure
+                flex: true
+                image: ../../dissertation-docx/assets/figures/bab3/phm2012_test_rig.png
+              - type: text
+                gap: 0.06
+                h: 0.44
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Gambar III.4 PRONOSTIA (PHM2012): beban radial 4.000–5.000 N, 25,6 kHz"
+          - blocks:
+              - type: figure
+                flex: true
+                image: ../../dissertation-docx/assets/figures/bab3/xjtu_sy_test_rig.png
+              - type: text
+                gap: 0.06
+                h: 0.44
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Gambar III.6 XJTU-SY: LDK UER204, tiga kondisi operasi, 15 bearing"
+      - type: banner
+        gap: 0.20
+        tone: light
+        size: 11.5
+        vpad: 0.14
+        body: >-
+          Ketiga rig menghasilkan degradasi run-to-failure (PHM2012, XJTU-SY) dan sepuluh
+          kelas kerusakan artifisial EDM (CWRU); karakteristik lengkap pada Tabel III.1.
+
+  # ======================================================================
+  # B10 · RANTAI AKUISISI SKF
+  # ======================================================================
+  - layout: content
+    eyebrow: "Cadangan · Data Industri"
+    title: Rantai Akuisisi Data Lapangan PT SKF Indonesia
+    top: 1.72
+    blocks:
+      - type: figure
+        h: 1.40
+        image: ../assets/v14/gambar_iii8_rantai_akuisisi_skf.png
+      - type: text
+        gap: 0.06
+        h: 0.28
+        size: 9.5
+        italic: true
+        align: center
+        color: "6B7689"
+        text: >-
+          Gambar III.8 Sensor mesin grinding → SKF IMx-8 → router → SKF AWS Cloud →
+          ekspor XLSX; data kualitas diekspor terpisah
+      - type: columns
+        gap: 0.16
+        flex: true
+        gutter: 0.30
+        items:
+          - width: 7.10
+            blocks:
+              - type: figure
+                h: 2.20
+                image: ../assets/v14/gambar_iii9_skf_observer.png
+              - type: text
+                gap: 0.06
+                h: 0.28
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Gambar III.9 Penempatan sensor OR-1 dan OR-2 pada antarmuka SKF Observer"
+          - blocks:
+              - type: figure
+                h: 2.20
+                image: ../assets/v14/gambar_iii7_akselerometer.png
+              - type: text
+                gap: 0.06
+                h: 0.40
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Gambar III.7 Akselerometer piezoelectric SKF CMSS2200"
+
+  # ======================================================================
+  # B11 · MESIN INFERENSI PADA BENCHMARK (V.5.4)
+  # ======================================================================
+  - layout: content
+    eyebrow: "Cadangan · Subbab V.5.4"
+    title: Mesin Inferensi Streaming pada Dataset Benchmark
+    top: 1.70
+    blocks:
+      - type: columns
+        flex: true
+        gutter: 0.36
+        items:
+          - blocks:
+              - type: figure
+                flex: true
+                image: ../../dissertation-docx/assets/figures/lampD/phm2012_engine_dashboard.png
+              - type: text
+                gap: 0.08
+                h: 0.42
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: >-
+                  Gambar V.10 PHM2012 Bearing 1_3, akuisisi ke-1.344 dari 2.375: prediksi
+                  RUL 4 jam 5 menit, status Healthy
+          - blocks:
+              - type: figure
+                flex: true
+                image: ../../dissertation-docx/assets/figures/lampD/xjtusy_engine_dashboard.png
+              - type: text
+                gap: 0.08
+                h: 0.42
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: >-
+                  Gambar V.12 XJTU-SY Bearing 3_3 (40 Hz, 10 kN), akuisisi ke-175 dari 371:
+                  prediksi 2 jam 50 menit, aktual 3 jam 16 menit
+      - type: banner
+        gap: 0.18
+        tone: light
+        size: 11.5
+        vpad: 0.16
+        body: >-
+          Pola lintas dataset konsisten: fitur domain frekuensi dominan pada fase Healthy
+          (entropy spektral), fitur domain waktu mengambil alih menjelang end-of-life.
+          Gerbang fusi PHM2012 terbagi 54% xLSTM dan 46% Mamba.
+
+  # ======================================================================
+  # B12 · PETA STATE OF THE ART
+  # ======================================================================
+  - layout: content
+    eyebrow: "Cadangan · Tinjauan Pustaka"
+    title: Peta State of the Art dan Posisi Penelitian
+    top: 1.70
+    blocks:
+      - type: figure
+        flex: true
+        image: ../assets/v14/gambar_ii11_peta_sota.png
+      - type: text
+        gap: 0.08
+        h: 0.42
+        size: 9.5
+        italic: true
+        align: center
+        color: "6B7689"
+        text: >-
+          Gambar II.11 Enam kelompok tematik literatur, kesenjangan per kelompok, dan
+          posisi empat kontribusi disertasi (Subbab II.8)

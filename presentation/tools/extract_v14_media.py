@@ -28,6 +28,7 @@ MAP = {
     24: "gambar_iii8_rantai_akuisisi_skf.png",  # Gambar III.8 IMx-8 -> AWS -> XLSX
     25: "gambar_iii9_skf_observer.png",         # Gambar III.9 penempatan sensor OR-1/OR-2
     40: "gambar_iv11_skema_transfer_skf.png",   # Gambar IV.11 skema pengujian eksternal
+    41: "gambar_v1_arsitektur_mamba_xlstm.png", # Gambar V.1  arsitektur Mamba-xLSTM-Net
     45: "gambar_v5_integrasi_sae.png",          # Gambar V.5  integrasi SAE-backbone
     46: "gambar_v6_prosedur_sae_bpfx.png",      # Gambar V.6  prosedur tiga tahap
     54: "gambar_v14_perbandingan_backbone.png", # Gambar V.14 RMSE + PHM Score
