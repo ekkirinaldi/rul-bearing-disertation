@@ -1,0 +1,5 @@
+# Build artifacts — the deck is generated from content/*.yaml
+out/
+__pycache__/
+*.pyc
+.pytest_cache/
