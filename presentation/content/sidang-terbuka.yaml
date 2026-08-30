@@ -44,7 +44,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: Alur Presentasi
-    title: "Empat Rumusan Masalah, Empat Bagian Jawaban"
+    title: "Agenda Pemaparan"
     top: 1.72
     blocks:
       - type: agenda
@@ -130,7 +130,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: Latar Belakang
-    title: "Bearing: Tumpuan Setiap Mesin, Sekaligus Titik Paling Rentan"
+    title: "Bearing sebagai Komponen Paling Kritis pada Mesin Rotasi"
     top: 1.74
     blocks:
       - type: columns
@@ -583,7 +583,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar · Membaca Prediksi RUL"
-    title: "Menaksir Sisa Umur dari Pola Getaran, Bukan dari Usia"
+    title: "Cara Membaca Kurva dan Metrik RUL"
     top: 1.72
     blocks:
       - type: columns
@@ -1026,7 +1026,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar · Membedah Isi Model"
-    title: "Sparse Autoencoder: Menyalin Catatan Model ke Kamus Konsep"
+    title: "Cara Kerja Top-k Sparse Autoencoder (SAE)"
     top: 1.72
     blocks:
       - type: columns
@@ -1129,7 +1129,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Hasil · Novelti N3 dan N4"
-    title: "Hit-Rate BPFx Lolos Uji, Kontrol Negatif Mendekati Nol"
+    title: "Hasil Hit-Rate BPFx dan Kontrol Negatif"
     top: 1.74
     blocks:
       - type: columns
@@ -1494,7 +1494,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Jawaban · Rumusan Masalah 4"
-    title: "RM-4 Terjawab: Bukti Awal Kelayakan, dengan Batas yang Jelas"
+    title: "RM-4 Terjawab: Bukti Awal Kelayakan Industri"
     top: 1.80
     blocks:
       - type: banner
@@ -1541,7 +1541,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: Kesimpulan
-    title: Empat Pertanyaan, Empat Jawaban
+    title: Jawaban atas Empat Rumusan Masalah
     top: 1.72
     blocks:
       - type: maprows
