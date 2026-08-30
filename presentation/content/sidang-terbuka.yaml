@@ -48,9 +48,9 @@ slides:
     top: 1.72
     blocks:
       - type: agenda
-        gap: 0.55
-        h: 3.60
-        columns: 3
+        gap: 0.16
+        h: 4.80
+        columns: 1
         items:
           - num: "01"
             title: Pembuka
