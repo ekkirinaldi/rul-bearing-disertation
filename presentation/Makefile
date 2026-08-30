@@ -2,7 +2,7 @@ SPEC ?= content/sidang-terbuka.yaml
 OUT  ?= out/Sidang_Disertasi_Toto_Suharto.pptx
 PY   ?= python3
 
-.PHONY: help build lint preview png test inspect clean install
+.PHONY: help build lint preview png test inspect clean install v14-assets
 
 help:
 	@echo "make build              render $(SPEC) -> $(OUT)"
@@ -11,6 +11,7 @@ help:
 	@echo "make png                build, then convert to per-slide PNG"
 	@echo "make test               run the renderer test suite"
 	@echo "make inspect FILE=x.ppt dump an existing deck's geometry and type"
+	@echo "make v14-assets         extract deck figures from the V14 manuscript DOCX"
 	@echo "make clean              remove out/"
 	@echo ""
 	@echo "Override SPEC= and OUT= to build a different deck."
@@ -34,6 +35,9 @@ png: preview
 
 test:
 	$(PY) -m pytest tests -q
+
+v14-assets:
+	$(PY) tools/extract_v14_media.py
 
 inspect:
 	@test -n "$(FILE)" || { echo "usage: make inspect FILE=deck.pptx"; exit 1; }
