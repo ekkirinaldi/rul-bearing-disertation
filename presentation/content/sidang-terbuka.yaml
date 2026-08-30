@@ -3,7 +3,7 @@
 # Angka, klaim, dan nomor gambar/tabel pada berkas ini bersumber dari naskah
 # disertasi V14 (presentation/V14 *.docx) — naskah rujukan sejak Agustus 2026.
 # Struktur dek mengikuti empat rumusan masalah (RM-1 sampai RM-4, Subbab I.2):
-# setiap babak dibuka pembatas berisi pertanyaannya dan ditutup slide jawaban.
+# setiap bagian dibuka pembatas berisi pertanyaannya dan ditutup slide jawaban.
 # Slide cadangan untuk sesi tanya jawab ditempatkan setelah slide penutup.
 #
 # Perbarui berkas ini, bukan .pptx-nya; jalankan `make build` untuk merender.
@@ -40,11 +40,11 @@ slides:
     occasion: "Sidang Terbuka  ·  Bandung, Juni 2026"
 
   # ======================================================================
-  # 2 · AGENDA — enam babak, empat di antaranya menjawab satu RM
+  # 2 · AGENDA — enam bagian, empat di antaranya menjawab satu RM
   # ======================================================================
   - layout: content
     eyebrow: Alur Presentasi
-    title: "Empat Pertanyaan Penelitian, Empat Babak Jawaban"
+    title: "Empat Rumusan Masalah, Empat Bagian Jawaban"
     top: 1.72
     blocks:
       - type: agenda
@@ -56,16 +56,16 @@ slides:
             title: Pembuka
             body: "Latar belakang, kesenjangan literatur, dan empat rumusan masalah"
           - num: "02"
-            title: "Babak 1 · RM-1 Akurasi"
+            title: "RM-1 · Akurasi Model"
             body: "Benchmark diagnostik CWRU dan tiga backbone prognostik RUL"
           - num: "03"
-            title: "Babak 2 · RM-2 XAI Diagnostik"
+            title: "RM-2 · XAI Diagnostik"
             body: "Fault Signature Maps langsung dari raw signal 2.048 titik"
           - num: "04"
-            title: "Babak 3 · RM-3 Fisika Laten"
+            title: "RM-3 · Fisika Laten"
             body: "SAE-BPFx: membedah isi model RUL dengan uji statistik"
           - num: "05"
-            title: "Babak 4 · RM-4 Validasi Industri"
+            title: "RM-4 · Validasi Industri"
             body: "Transfer diagnostik dan prognostik ke PT SKF Indonesia"
           - num: "06"
             title: Kesimpulan
@@ -260,8 +260,8 @@ slides:
                     body_color: "1F2A3D"
                   - title: RUL, sisa umur pakai
                     body: >-
-                      Berapa lama lagi bearing sanggup bekerja sebelum rusak. Dibuat skala
-                      0 sampai 1: 1 = baru, 0 = rusak.
+                      Perkiraan lamanya bearing masih sanggup bekerja sebelum rusak,
+                      dinyatakan pada skala 0 sampai 1: 1 = baru, 0 = rusak.
                     body_color: "1F2A3D"
                   - title: FSM, peta panas atribusi
                     body: >-
@@ -443,7 +443,7 @@ slides:
   # 10 · PEMBATAS BABAK 1 — RM-1
   # ======================================================================
   - layout: section
-    eyebrow: "Babak 1 dari 4 · Rumusan Masalah 1"
+    eyebrow: "Rumusan Masalah 1 dari 4"
     title: Akurasi Model Diagnostik dan Prognostik
     body: >-
       **RM-1.** Bagaimana mengembangkan model perawatan prediktif berbasis data sensor
@@ -513,7 +513,7 @@ slides:
                       Alasan raw signal dipertahankan adalah agar **bukti fisik tidak
                       hilang** saat diringkas menjadi fitur. Konsekuensinya, model menjadi
                       kotak hitam yang harus dibuka kembali dengan XAI: itulah pokok
-                      Babak 2 dan Babak 3.
+                      bagian RM-2 dan RM-3.
 
   # ======================================================================
   # 12 · HASIL RM-1 — benchmark diagnostik CWRU
@@ -640,7 +640,7 @@ slides:
         size: 11.5
         vpad: 0.14
         body: >-
-          Setiap angka RUL pada babak ini dilaporkan sebagai **mean ± simpangan baku atas
+          Setiap angka RUL pada bagian ini dilaporkan sebagai **mean ± simpangan baku atas
           tiga seed** (42/43/44), sehingga keandalannya dapat dinilai, bukan hasil sekali
           jalan.
 
@@ -746,7 +746,7 @@ slides:
           - label: IMPLIKASI
             value: >-
               Gradien akurasi dan bobot komputasi antargolongan model menjadi dasar
-              penempatan per tier pada kerangka PdM Bab VI (Babak 4).
+              penempatan per tier pada kerangka PdM Bab VI (bagian RM-4).
       - type: banner
         gap: 0.22
         tone: light
@@ -754,14 +754,14 @@ slides:
         vpad: 0.14
         body: >-
           **Status pembuktian: empiris** · Bab IV dan Bab V · menopang novelti N4 dan N5 ·
-          akurasi saja belum cukup untuk diadopsi insinyur perawatan, sehingga Babak 2
+          akurasi saja belum cukup untuk diadopsi insinyur perawatan, sehingga bagian RM-2
           membuka kotak hitamnya.
 
   # ======================================================================
   # 16 · PEMBATAS BABAK 2 — RM-2
   # ======================================================================
   - layout: section
-    eyebrow: "Babak 2 dari 4 · Rumusan Masalah 2"
+    eyebrow: "Rumusan Masalah 2 dari 4"
     title: Menjelaskan dan Memverifikasi Keputusan Model
     body: >-
       **RM-2.** Bagaimana menerapkan metode explainable artificial intelligence (XAI) pada
@@ -1007,13 +1007,13 @@ slides:
         size: 11.5
         vpad: 0.14
         body: >-
-          **Status pembuktian: empiris** · Bab IV · novelti N1 dan N2 · Babak 3 menguji hal yang sama pada model prognostik.
+          **Status pembuktian: empiris** · Bab IV · novelti N1 dan N2 · bagian RM-3 menguji hal yang sama pada model prognostik.
 
   # ======================================================================
   # 21 · PEMBATAS BABAK 3 — RM-3
   # ======================================================================
   - layout: section
-    eyebrow: "Babak 3 dari 4 · Rumusan Masalah 3"
+    eyebrow: "Rumusan Masalah 3 dari 4"
     title: Bukti Fisika pada Representasi Laten Model RUL
     body: >-
       **RM-3.** Bagaimana membuktikan bahwa representasi laten model prediksi RUL bearing
@@ -1206,7 +1206,7 @@ slides:
             flex: true
             size: 12
             text: >-
-              FSM (Babak 2) menyorot **morfologi impuls** pada jendela 42,67 ms dan tidak
+              FSM (bagian RM-2) menyorot **morfologi impuls** pada jendela 42,67 ms dan tidak
               menemukan periodisitas BPFx; SAE-BPFx justru menemukan korelasi frekuensi
               karakteristik pada horizon **ratusan akuisisi**. Keduanya tidak bertentangan:
               diagnostik membaca bentuk kejadian sesaat, prognostik mengakumulasi pola degradasi jangka panjang. Dua lapis ini saling melengkapi sebagai audit model.
@@ -1217,13 +1217,13 @@ slides:
         vpad: 0.14
         body: >-
           **Status pembuktian: empiris** (dengan catatan CWRU underpowered) · Bab V ·
-          novelti N3 dan N4 · Babak 4 menguji penerapannya pada data lini produksi nyata.
+          novelti N3 dan N4 · bagian RM-4 menguji penerapannya pada data lini produksi nyata.
 
   # ======================================================================
   # 26 · PEMBATAS BABAK 4 — RM-4
   # ======================================================================
   - layout: section
-    eyebrow: "Babak 4 dari 4 · Rumusan Masalah 4"
+    eyebrow: "Rumusan Masalah 4 dari 4"
     title: Transfer Model ke Lini Produksi Nyata
     body: >-
       **RM-4.** Sejauh mana model diagnostik dan prognostik yang dilatih pada dataset
