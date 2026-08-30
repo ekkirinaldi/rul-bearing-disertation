@@ -1,15 +1,19 @@
 """Every figure on a slide must be traceable to the manuscript.
 
 The deck is a summary of the dissertation, so any number it shows has to
-appear in `dissertation-docx/` (the manuscript of record). This test reads
-the DOCX chapters and lampiran and asserts each headline claim is present.
+appear in the V14 manuscript DOCX at the top of `presentation/` — the
+manuscript of record since August 2026. The older `dissertation-docx/` tree
+is deliberately NOT part of the corpus: its numbers conflict with V14 in
+places (XJTU-SY 15 rekaman vs 10 bearing, IMS dropped entirely, SKF moved
+from Lampiran D into Subbab IV.15 / V.5.3), and a claim passing via the
+stale tree would defeat the guard.
 
 It is the automated form of the manual audit that caught, among others, a
 wrong bearing count for XJTU-SY, a wrong citation for the 40–50% figure, a
 wrong Critical threshold, and a set of benchmark findings that were never in
 the manuscript at all.
 
-Skips cleanly when the manuscript tree is absent (e.g. a shallow checkout).
+Skips cleanly when the V14 DOCX is absent (it is a gitignored binary).
 """
 
 from __future__ import annotations
@@ -25,7 +29,6 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-MANUSCRIPT = ROOT.parent / "dissertation-docx"
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 
 
@@ -40,12 +43,10 @@ def _docx_text(path: Path) -> str:
 
 @pytest.fixture(scope="module")
 def manuscript() -> str:
-    sources = (sorted(MANUSCRIPT.glob("chapters/*.docx"))
-               + sorted(MANUSCRIPT.glob("lampiran/*.docx"))
-               + sorted(MANUSCRIPT.glob("frontmatter/*.docx")))
+    sources = sorted(ROOT.glob("V14 *.docx"))
     if not sources:
-        pytest.skip(f"manuscript not found under {MANUSCRIPT}")
-    text = "\n".join(_docx_text(p) for p in sources)
+        pytest.skip(f"V14 manuscript DOCX not found under {ROOT}")
+    text = _docx_text(sources[0])
     # The manuscript writes "17,6 %" and "1 024"; normalise so a slide that
     # writes "17,6%" still matches.
     text = re.sub(r"\s+", " ", text)
@@ -53,26 +54,28 @@ def manuscript() -> str:
     return text
 
 
+def _spec_text() -> str:
+    return (ROOT / "content" / "sidang-terbuka.yaml").read_text(encoding="utf-8")
+
+
 # (claim, one-or-more accepted spellings) — grouped by the slide that shows it
 CLAIMS: list[tuple[str, list[str]]] = [
     # s4 latar belakang
-    ("40–50% kegagalan bearing", ["40–50%"]),
-    ("dikutip ke Lei (2018)", ["(Lei, 2018)"]),
-    ("PT SKF Cikarang", ["Cikarang"]),
+    ("40–50% kegagalan bearing", ["40–50%", "40–50 %"]),
+    ("dikutip ke Nandi dkk. (2005)", ["(Nandi dkk., 2005)"]),
+    ("PT SKF Indonesia", ["PT SKF Indonesia"]),
     # s7–s8 metodologi & dataset
     ("split temporal CWRU", ["54/13/33"]),
     ("CWRU 48 kHz", ["48 kHz"]),
     ("PHM2012 17 bearing", ["17 bearing"]),
-    ("XJTU-SY 10 bearing", ["10 bearing"]),
-    ("IMS empat bearing Rexnord", ["empat bearing Rexnord"]),
-    ("IMS ZA-2115", ["ZA-2115"]),
-    ("IMS dikutip ke Qiu dkk. (2006)", ["Qiu dkk. (2006)"]),
+    ("XJTU-SY 15 bearing", ["15 bearing"]),
     ("protokol 75 epoch", ["75 epoch"]),
     ("presisi bf16", ["bf16"]),
     ("seed 42, 43, 44", ["(42, 43, 44)"]),
     # s10 metrik diagnostik
     ("akurasi WDCNN 99,87%", ["99,87%"]),
-    ("749 dari 750", ["749 dari 750"]),
+    ("749 dari 750", ["749/750"]),
+    ("satu-satunya salah kelas Ball_014 ke IR_014", ["Ball_014 diklasifikasi sebagai IR_014"]),
     ("macro F1 0,997", ["0,997"]),
     ("split-half 0,940", ["0,940"]),
     ("severity Ball 17,6%", ["17,6%"]),
@@ -108,19 +111,17 @@ CLAIMS: list[tuple[str, list[str]]] = [
     ("SparseGate-TCN 249K parameter", ["249"]),
     ("PHM2012 RMSE 0,226", ["0,226"]),
     ("XJTU-SY RMSE 0,213", ["0,213"]),
-    ("IMS RMSE 0,407", ["0,407"]),
     ("runner-up XJTU 0,216", ["0,216"]),
     # s17–s18 SAE-BPFx
     ("SAE k = 51", ["k = 51"]),
     ("hit-rate BPFI PHM2012 2,3%", ["2,3%"]),
     ("hit-rate BSF XJTU 1,6%", ["1,6%"]),
     ("rmax 0,447", ["0,447"]),
-    ("ambang Bonferroni 0,004", ["0,004"]),
-    ("IMS BPFI 1,76%", ["1,76%"]),
-    ("IMS BSF 0,49%", ["0,49%"]),
+    ("rmax BPFO XJTU 0,468", ["0,468"]),
     ("CWRU 5,08%", ["5,08%"]),
-    ("FTF naik ke 7,81%", ["7,81%"]),
-    ("sparsity sweep k = 205", ["205"]),
+    ("sparsity sweep k = 205", ["k = 205"]),
+    ("sweep BPFI 0,68% ke 7,13%", ["menjadi 7,13%"]),
+    ("sweep BPFO 0,59% ke 8,30%", ["menjadi 8,30%"]),
     # s19 validasi SKF
     ("NDE 158 akuisisi", ["158 akuisisi"]),
     ("NDE enam hari 13 jam", ["enam hari 13 jam"]),
@@ -134,12 +135,11 @@ CLAIMS: list[tuple[str, list[str]]] = [
     ("EoL DE 1 September 2023 07.23", ["1 September 2023 pukul 07.23"]),
     ("sisa umur NDE 34 menit", ["34 menit"]),
     ("sisa umur DE 40 menit", ["40 menit"]),
-    ("gerbang fusi DE xLSTM 47% : Mamba 53%", ["xLSTM 47% berbanding Mamba 53%"]),
-    ("atribusi NDE skewness 26,5%", ["26,5%"]),
-    ("atribusi DE entropy 39,6%", ["39,6%"]),
-    ("pipeline HI 18-D", ["HI 18-D"]),
-    ("EoL ditambatkan ke kegagalan lapangan", ["ditambatkan pada peristiwa kegagalan lapangan"]),
-    ("jendela 64 akuisisi", ["jendela 64 akuisisi"]),
+    ("pipeline HI 18 fitur", ["18 fitur"]),
+    ("EoL terpaut sekitar satu hari", ["terpaut sekitar satu hari"]),
+    ("status demonstrasi kualitatif", ["demonstrasi kualitatif"]),
+    ("pseudo-waveform dari nilai tren", ["rekonstruksi sintetis dari nilai tren"]),
+    ("jendela 64 akuisisi", ["jendela 64 akuisisi", "window 64"]),
 ]
 
 
@@ -151,8 +151,19 @@ def test_claim_appears_in_manuscript(manuscript, claim, spellings):
     )
 
 
-def test_skf_figures_are_cited_to_lampiran_d():
-    """The SKF streaming validation lives in Lampiran D.5, not Bab V."""
-    spec = (ROOT / "content" / "sidang-terbuka.yaml").read_text(encoding="utf-8")
-    for bad in ("Gambar V.3", "Gambar V.4", "Gambar V.5", "Gambar V.6"):
-        assert bad not in spec, f"{bad} does not exist; SKF panels are Gambar D.2–D.5"
+def test_cited_figures_and_tables_exist_in_v14(manuscript):
+    """Every figure or table number a slide cites must exist in V14."""
+    spec = _spec_text()
+    cited = set(re.findall(r"(Gambar [IVX]+\.\d+|Tabel [IVX]+\.\d+)", spec))
+    missing = sorted(ref for ref in cited if ref not in manuscript)
+    assert missing == [], f"cited on slides but not in the V14 manuscript: {missing}"
+
+
+def test_no_stale_pre_v14_references():
+    """V14 moved the SKF validation from Lampiran D into Subbab IV.15 / V.5.3."""
+    spec = _spec_text()
+    for stale in ("Lampiran D.5", "Gambar D.2", "Gambar D.4", "Gambar D.5"):
+        assert stale not in spec, (
+            f"{stale} is pre-V14 numbering; the SKF material is Subbab IV.15 / "
+            f"V.5.3 and its panels are Gambar V.8/V.9"
+        )

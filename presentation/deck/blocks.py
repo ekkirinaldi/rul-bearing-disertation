@@ -800,12 +800,24 @@ def m_figure(spec: dict, width: float) -> float:
 def r_figure(slide, spec: dict, box: Box) -> None:
     shapes.card(slide, box.x, box.y, box.w, box.h, fill=Color.PANEL, line=Color.LINE)
     if spec.get("image"):
+        from PIL import Image as _Image
         from pptx.util import Inches as _In
 
+        # Fit inside the card in both directions, centred — a width-only
+        # scale would let a tall image overrun the card and the body band.
         inset = spec.get("inset", 0.14)
+        avail_w = box.w - 2 * inset
+        avail_h = box.h - 2 * inset
+        with _Image.open(spec["image"]) as source:
+            aspect = source.height / source.width
+        w = avail_w
+        h = w * aspect
+        if h > avail_h:
+            h = avail_h
+            w = h / aspect
         slide.shapes.add_picture(
-            spec["image"], _In(box.x + inset), _In(box.y + inset),
-            width=_In(box.w - 2 * inset),
+            spec["image"], _In(box.x + (box.w - w) / 2), _In(box.y + (box.h - h) / 2),
+            width=_In(w),
         )
         return
     shapes.label(slide, box.x, box.y + box.h * 0.28, box.w, 0.90, "⊞",

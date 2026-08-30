@@ -139,9 +139,9 @@ def test_nothing_escapes_the_canvas(deck):
             assert bottom <= Grid.SLIDE_H + tol, f"slide {index}: {shape.name} bottom={bottom:.2f}"
 
 
-def test_content_slides_carry_footer_and_page_number(deck):
-    for index, slide in enumerate(deck.slides, 1):
-        if index in (1, len(deck.slides._sldIdLst)):  # cover and closing have none
+def test_content_slides_carry_footer_and_page_number(spec, deck):
+    for index, (slide_spec, slide) in enumerate(zip(spec["slides"], deck.slides), 1):
+        if slide_spec.get("layout", "content") in ("cover", "closing"):
             continue
         texts = [s.text_frame.text for s in slide.shapes if s.has_text_frame]
         assert any("NIM 33420002" in t for t in texts), f"slide {index} missing footer"

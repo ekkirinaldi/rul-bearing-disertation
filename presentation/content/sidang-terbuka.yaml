@@ -2,7 +2,7 @@
 #
 # Angka dan klaim pada berkas ini bersumber langsung dari naskah disertasi:
 #   writings/disertation/chapters/00-abstrak-id.tex
-#   writings/disertation/chapters/05-prognostik.tex  (Tabel V.9, V.12)
+#   writings/disertation/chapters/05-prognostik.tex  (tabel evaluasi RUL dan hit-rate)
 #   writings/dissertation-outline.md
 # Perbarui berkas ini, bukan .pptx-nya; jalankan `make build` untuk merender.
 #
@@ -1074,11 +1074,11 @@ slides:
       - type: source
         gap: 0.16
         label: "Sumber:"
-        body: "Bab V, Tabel V.12 (hit-rate utama) dan Subbab V.9 (sparsity sweep)."
+        body: "Bab V, Tabel V.6 (hit-rate utama) dan Subbab V.9 (sparsity sweep)."
 
   # ======================================================================
   - layout: content
-    eyebrow: "Validasi Lapangan · Lampiran D.5"
+    eyebrow: "Validasi Lapangan · Subbab V.5.3"
     title: Transfer ke Data Industri PT SKF Indonesia
     top: 1.70
     blocks:
@@ -1185,7 +1185,7 @@ slides:
 
   # ======================================================================
   - layout: content
-    eyebrow: "Validasi Lapangan · Lampiran D.5"
+    eyebrow: "Validasi Lapangan · Subbab V.5.3"
     title: Dasbor Inference Engine Streaming
     top: 1.70
     blocks:
@@ -1205,14 +1205,14 @@ slides:
                 flex: true
                 glyph_size: 48
                 caption:
-                  - "Gambar D.2: panel inferensi Channel 1-01 OR-1 NDE"
+                  - "Gambar V.8: panel inferensi Channel 1-01 OR-1 NDE"
                   - "(akuisisi terakhir)"
           - blocks:
               - type: figure
                 flex: true
                 glyph_size: 48
                 caption:
-                  - "Gambar D.4: panel inferensi Channel 3-02 OR-1 DE"
+                  - "Gambar V.9: panel inferensi Channel 3-02 OR-1 DE"
                   - "(akuisisi terakhir)"
       - type: banner
         gap: 0.22
@@ -1220,7 +1220,7 @@ slides:
         size: 11
         vpad: 0.14
         body: >-
-          **Tip.** Gambar D.3 dan D.5 (analisis interpretabilitas Integrated Gradients) dapat
+          **Tip.** Panel analisis interpretabilitas Integrated Gradients dapat
           disiapkan sebagai slide cadangan untuk sesi tanya-jawab.
 
   # ======================================================================
