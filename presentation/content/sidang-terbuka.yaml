@@ -12,7 +12,7 @@
 # Markup teks:  **tebal**  ·  *miring*  ·  ***tebal miring***  ·  ~~redup~~
 
 meta:
-  deck_title: Sidang Disertasi — Perawatan Prediktif Berbasis AI yang Dapat Dijelaskan
+  deck_title: Sidang Disertasi · Perawatan Prediktif Berbasis AI yang Dapat Dijelaskan
   institution: Institut Teknologi Bandung
   faculty: "Fakultas Teknologi Industri  ·  Program Studi Doktor Teknik dan Manajemen Industri"
   author: Toto Suharto
@@ -481,27 +481,40 @@ slides:
               mentah: WDCNN membaca langsung 2.048 titik getaran dan menemukan sendiri
               pola yang relevan, tanpa perhitungan fitur perantara.
             body_color: "1F2A3D"
-      - type: figure
+      - type: columns
         gap: 0.16
-        h: 1.90
-        image: ../../dissertation-docx/assets/figures/bab2/fig_evolution_timeline.png
-      - type: text
-        gap: 0.08
-        h: 0.26
-        size: 9.5
-        italic: true
-        align: center
-        color: "6B7689"
-        text: "Evolusi arsitektur pemodelan sekuens, dari LSTM hingga Mamba dan xLSTM"
-      - type: banner
-        gap: 0.16
-        tone: light
-        size: 11.5
-        vpad: 0.14
-        body: >-
-          Alasan raw signal dipertahankan adalah agar **bukti fisik tidak hilang** saat
-          diringkas menjadi fitur; konsekuensinya, model menjadi kotak hitam yang harus
-          dibuka kembali dengan XAI (Babak 2 dan 3).
+        flex: true
+        gutter: 0.30
+        items:
+          - width: 7.40
+            blocks:
+              - type: figure
+                flex: true
+                h: 3.00
+                image: ../../dissertation-docx/assets/figures/bab2/fig_evolution_timeline.png
+              - type: text
+                gap: 0.06
+                h: 0.26
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Evolusi arsitektur pemodelan sekuens, dari LSTM hingga Mamba dan xLSTM"
+          - blocks:
+              - type: panel
+                flex: true
+                tone: alt
+                title: MENGAPA RAW SIGNAL
+                title_size: 12.5
+                blocks:
+                  - type: text
+                    flex: true
+                    size: 11.5
+                    text: >-
+                      Alasan raw signal dipertahankan adalah agar **bukti fisik tidak
+                      hilang** saat diringkas menjadi fitur. Konsekuensinya, model menjadi
+                      kotak hitam yang harus dibuka kembali dengan XAI: itulah pokok
+                      Babak 2 dan Babak 3.
 
   # ======================================================================
   # 12 · HASIL RM-1 — benchmark diagnostik CWRU
@@ -575,17 +588,17 @@ slides:
     top: 1.72
     blocks:
       - type: columns
-        h: 2.72
+        h: 3.92
         gutter: 0.28
         items:
           - width: 6.60
             blocks:
               - type: figure
-                flex: true
+                h: 2.56
                 image: ../../dissertation-docx/assets/figures/bab3/phm2012_rul_label_example.png
               - type: text
                 gap: 0.08
-                h: 0.28
+                h: 0.42
                 size: 9.5
                 italic: true
                 align: center
@@ -594,8 +607,8 @@ slides:
                   Gambar III.3 Label RUL bearing 1_1 PHM2012: menurun linear dari titik
                   awal degradasi menuju 0,0 pada end-of-life
               - type: text
-                gap: 0.10
-                flex: true
+                gap: 0.08
+                h: 0.78
                 size: 11.5
                 text: >-
                   Analoginya seperti menaksir sisa umur ban dari pola getarannya, bukan dari
@@ -825,7 +838,7 @@ slides:
     top: 1.74
     blocks:
       - type: figure
-        h: 3.02
+        h: 2.78
         image: ../../dissertation-docx/assets/figures/bab4/fsm_comparison.png
       - type: text
         gap: 0.08
@@ -835,21 +848,22 @@ slides:
         align: center
         color: "6B7689"
         text: >-
-          Gambar IV.8 FSM tiga varian (Signed, Absolute, Variance), Varian A (kiri) dan
-          Varian C (kanan); garis putus-putus menandai frekuensi karakteristik teoretis
+          Gambar IV.8 FSM tiga varian (Signed, Absolute, Variance) untuk sepuluh kelas
+          CWRU pada 2.048 posisi sinyal
       - type: stats
         gap: 0.16
-        h: 1.16
+        h: 1.36
+        note_size: 10
         items:
           - value: "0,940"
             label: Split-half stability
-            note: "Kemiripan kosinus antarbelahan data uji 94%: pola reproducible."
+            note: "Kemiripan kosinus antarbelahan 94%: reproducible."
           - value: "17,6%"
             label: Severity monotonicity
-            note: "Gradasi keparahan terjaga: Ball 17,6% > IR 13,8% > OR 8,6%."
+            note: "Ball 17,6% > IR 13,8% > OR 8,6%."
           - value: "0,216"
             label: Discriminability index
-            note: "Perbedaan antarkelas pada ruang atribusi 2.048 dimensi."
+            note: "Perbedaan antarkelas pada 2.048 dimensi."
       - type: source
         gap: 0.14
         body: >-
@@ -1163,7 +1177,7 @@ slides:
                 size: 11
                 text: >-
                   **PHM2012**: BPFI 2,3%, BPFO 2,0% (p < 0,001; rmax = 0,447).
-                  **XJTU-SY**: tersebar — BSF 1,6%, BPFI 1,5%, BPFO 0,7% (p < 0,001;
+                  **XJTU-SY**: tersebar, yaitu BSF 1,6%, BPFI 1,5%, BPFO 0,7% (p < 0,001;
                   rmax = 0,468). **CWRU**: 5,08% namun underpowered (n = 10; p > 0,05),
                   dikeluarkan dari klaim falsifikasi formal. Kedua kontrol negatif ≈ 0%.
       - type: source
@@ -1378,7 +1392,7 @@ slides:
         body: >-
           **Catatan.** Ekspor SKF Observer hanya berisi nilai tren Overall (A/V/ENV);
           bentuk gelombang adalah rekonstruksi sintetis dari nilai tren (pseudo-waveform),
-          dua kanal pada satu mesin, tanpa pelatihan ulang — temuan diposisikan sebagai
+          dua kanal pada satu mesin, tanpa pelatihan ulang; temuan diposisikan sebagai
           **demonstrasi kualitatif** transferabilitas perilaku prognostik.
 
   # ======================================================================
@@ -1432,7 +1446,7 @@ slides:
         vpad: 0.14
         body: >-
           Mesin yang sama juga didemonstrasikan pada dataset benchmark (PHM2012 dan
-          XJTU-SY, Subbab V.5.4) — tangkapan layarnya tersedia pada slide cadangan.
+          XJTU-SY, Subbab V.5.4); tangkapan layarnya tersedia pada slide cadangan.
 
   # ======================================================================
   # 30 · SINTESIS — kerangka PdM tiga tier (N5)

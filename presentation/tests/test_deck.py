@@ -96,6 +96,14 @@ def test_no_ampersand_conjunction(spec):
     assert " & " not in raw
 
 
+def test_no_em_dash_in_prose(spec):
+    """ITB style forbids em dashes in prose; use koma/titik koma or an en dash."""
+    import yaml
+
+    raw = yaml.safe_dump(spec, allow_unicode=True)
+    assert "—" not in raw, "em dash found in a rendered string"
+
+
 def test_decimal_comma_in_numbers(spec):
     """Indonesian decimal separator is a comma, never a period."""
     import re

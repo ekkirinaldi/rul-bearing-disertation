@@ -34,10 +34,11 @@ MAP = {
     54: "gambar_v14_perbandingan_backbone.png", # Gambar V.14 RMSE + PHM Score
 }
 
-# These three carry a stale figure number baked into the pixels (the art was
-# generated for an earlier manuscript revision: D.1 / V.3 / V.4). Cut the
-# caption strip off at the given row, then trim the white margins.
-CROP_BOTTOM = {40: 520, 45: 860, 46: 860}
+# These carry a caption baked into the pixels — three with a stale figure
+# number from an earlier manuscript revision (D.1 / V.3 / V.4), one merely
+# duplicating the slide caption. Cut the strip off at the given row, then
+# trim the white margins.
+CROP_BOTTOM = {40: 520, 41: 1235, 45: 860, 46: 860}
 
 
 def _clean(data: bytes, bottom: int) -> bytes:

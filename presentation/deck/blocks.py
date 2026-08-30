@@ -898,7 +898,7 @@ def m_source(spec: dict, width: float) -> float:
 
 
 def r_source(slide, spec: dict, box: Box) -> None:
-    text = f"**{spec.get('label', 'Sumber & metode:')}**  ~~{spec['body']}~~"
+    text = f"**{spec.get('label', 'Sumber dan metode:')}**  ~~{spec['body']}~~"
     shapes.label(slide, box.x, box.y, box.w, 0.26, text,
                  size=Size.SOURCE, color=Color.MUTED, accent=Color.MUTED, italic=False)
 

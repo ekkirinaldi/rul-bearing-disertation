@@ -9,11 +9,29 @@ from the approved reference deck in [`reference/`](reference/) and
 frozen in [`deck/theme.py`](deck/theme.py), so regenerated decks stay visually
 identical to the version Pak Toto approved.
 
+**Manuscript of record: the V14 DOCX** at the top of this directory
+(`V14 PERAWATAN PREDIKTIF … .docx`, gitignored binary). Every number, figure
+citation, and claim in the deck traces to it — not to the older
+`dissertation-docx/` tree, whose numbers conflict with V14 in places.
+
+## Deck structure (47 slides)
+
+The main deck (35 slides) is organised around V14's **four rumusan masalah**:
+an intro arc (latar belakang, istilah inti untuk penguji non-informatika,
+kesenjangan, the RM spine slide reprising Tabel I.3, kerangka, dataset), then
+four acts — one per RM — each opened by a `section` divider restating the
+question and closed by a "Jawaban RM-N" slide with its epistemic status
+(empiris / empiris-kualitatif / konseptual). Bridging slides for the
+industrial-engineering panel sit just-in-time: ML vs DL, cara membaca RUL,
+analogi stabilo for SHAP, kamus konsep for the SAE. Twelve backup slides
+("Cadangan") follow the closing slide for the Q&A session.
+
 ## Quick start
 
 ```bash
 cd presentation
-make install          # python-pptx, PyYAML, lxml
+make install          # python-pptx, PyYAML, lxml, Pillow
+make v14-assets       # extract deck figures from the V14 DOCX media
 make build            # content/sidang-terbuka.yaml -> out/…​.pptx
 make preview          # build + PDF via LibreOffice
 make png              # build + one PNG per slide (needs poppler)
@@ -30,14 +48,18 @@ make build SPEC=content/seminar-kemajuan.yaml OUT=out/Seminar.pptx
 
 ```
 presentation/
+├── V14 PERAWATAN PREDIKTIF ….docx   ★ manuscript of record (gitignored binary)
 ├── build.py                    CLI: build · lint · preview · inspect
 ├── Makefile
 ├── assets/
-│   └── logo-itb.png            ITB seal used on the cover
+│   ├── logo-itb.png            ITB seal used on the cover
+│   └── v14/                    figures extracted from the V14 DOCX media
 ├── content/
 │   └── sidang-terbuka.yaml     ★ the deck content — this is what you edit
 ├── reference/
 │   └── Sidang_Disertasi_…_v2.pptx   approved template the design was derived from
+├── tools/
+│   └── extract_v14_media.py    pulls figures out of the V14 DOCX by media index
 ├── deck/
 │   ├── theme.py                design tokens: palette, type scale, grid
 │   ├── shapes.py               primitives + inline markup + text measurement
@@ -48,7 +70,7 @@ presentation/
 │   └── builder.py              spec loading, linting, rendering
 ├── tests/
 │   ├── test_deck.py            renderer + layout regressions
-│   └── test_provenance.py      every slide figure must exist in the manuscript
+│   └── test_provenance.py      every slide figure must exist in the V14 manuscript
 └── out/                        build artifacts (git-ignored)
 ```
 
@@ -142,13 +164,20 @@ hold (no `&` standing in for `dan`, decimal commas on percentages).
 
 ### Provenance guard
 
-`tests/test_provenance.py` is the important one. It reads the DOCX chapters,
-lampiran and frontmatter under `dissertation-docx/` and asserts that **every
-headline figure on a slide actually appears in the manuscript** — accuracies,
-RMSE values, hit-rates, thresholds, acquisition counts, citations. A claim that
+`tests/test_provenance.py` is the important one. It reads the **V14 DOCX** and
+asserts that **every headline figure on a slide actually appears in the
+manuscript** — accuracies, RMSE values, hit-rates, thresholds, acquisition
+counts, citations (90 claims). Two further tests assert that every
+`Gambar X.N` / `Tabel X.N` cited on a slide exists in V14, and that no
+pre-V14 reference (Lampiran D.5, Gambar D.2/D.4) survives. A claim that
 drifts from the dissertation fails the build rather than reaching the defence.
 
-It skips cleanly when the manuscript tree is absent. When a number legitimately
+The older `dissertation-docx/` tree is deliberately **not** in the corpus:
+its numbers conflict with V14 (XJTU-SY 15 rekaman vs 10 bearing, IMS dropped,
+SKF moved from Lampiran D into Subbab IV.15 / V.5.3, figures renumbered), and
+a claim passing via the stale tree would defeat the guard.
+
+It skips cleanly when the V14 DOCX is absent. When a number legitimately
 changes in the manuscript, update the YAML and the matching entry in `CLAIMS`.
 
 ## Re-deriving the template
@@ -163,32 +192,37 @@ make inspect FILE=reference/Sidang_Disertasi_Toto_Suharto_v2.pptx
 ## Content provenance
 
 Figures and claims in `content/sidang-terbuka.yaml` are sourced from the
-manuscript, not re-derived here:
+**V14 manuscript**, not re-derived here:
 
-| Slide content | Source |
+| Slide content | Source in V14 |
 |---|---|
-| Bearing 40–50%, WDCNN 99,87%, FSM 0,940 / 0,216 / 0,735 | `writings/disertation/chapters/00-abstrak-id.tex` |
-| RUL winners per dataset (PHM2012 / XJTU-SY / IMS) | `chapters/05-prognostik.tex`, Tabel V.9 |
-| BPFx hit-rate across four datasets, IMS partial mismatch, CWRU underpowered | `chapters/05-prognostik.tex`, Tabel V.12 + §V.9 |
-| Chapter and novelty structure (N1–N5, RM-1…3) | `writings/dissertation-outline.md` |
-| SKF streaming validation (158/78 acquisitions, EoL, fusion gate, attributions) | `lampiran/lampD.docx`, Subbab D.5 |
+| Empat RM verbatim, Tabel I.3 lattice (Tujuan–RM–Kesenjangan–Novelti–Bab) | Subbab I.2, I.3, I.5 |
+| Bearing 40–50% (Nandi dkk., 2005), Making Indonesia 4.0, PT SKF Cikarang | Bab I |
+| Benchmark CWRU (DT 92,40 → WDCNN 99,87%), Ball_014→IR_014, HI 36-D | Bab IV |
+| FSM 0,940 / 0,216 / 17,6%, ablasi BatchNorm +133% / −3,60 pp, 42,67 ms | Subbab IV.6–IV.13 |
+| RUL winners (SparseGate 0,226 PHM2012; Mamba 0,213 XJTU-SY), PHM Score | Tabel V.2/V.4/V.5 |
+| SAE (128→1.024, k=51), hit-rate, kontrol negatif, Bonferroni 0,004, sweep k=205 | Subbab V.2–V.4, V.6–V.9 |
+| SKF: IV.15 transfer diagnostik; V.5.3 streaming (158/78 akuisisi, EoL ±1 hari) | Subbab IV.15, V.5.3, V.5.4 |
+| Keterbatasan (6) dan rekomendasi (7) | Subbab VI.4, VI.5 |
 
 When those numbers change in the manuscript, update the YAML **and** the
 matching entry in `tests/test_provenance.py`, then rebuild.
 
-### Corrections found during the audit
+### V14-internal inconsistencies (flagged for the manuscript, not fixable here)
 
-The first draft inherited several figures from the reference deck that the
-manuscript does not support. These are fixed and now guarded by tests:
+The deck follows V14's Bab-body values wherever V14 disagrees with itself:
 
-| Was | Is | Source |
-|---|---|---|
-| 40–50% cited to Nectoux dkk. (2012) | Lei (2018) | Bab I |
-| XJTU-SY "15 bearing" | 10 bearing | Bab III |
-| IMS cited to Lee dkk. (2007) | Qiu dkk. (2006), Rexnord ZA-2115, empat bearing | Bab III |
-| Critical threshold "< 15%" | peringatan 40%, kritis 20% | Lampiran D.5.1 |
-| "Ball-14 terbaca sebagai IR-14" · "27 kesalahan SVM → 1" | not in the manuscript; replaced with the Bab IV findings (3,4 pp bagging, 1,3 pp boosting, 2,1 pp non-linearity) | Bab IV |
-| Receptive field "42,7 ms" | 42,67 ms | Bab IV |
-| "EoL terpaut ~1 hari dari kerusakan aktual" | EoL is *anchored* to the observed failure; residual 34 min (NDE) / 40 min (DE) vs zero | Lampiran D.5 |
-| SKF panels "Gambar V.3–V.6" | Gambar D.2–D.5 | Lampiran D.5 |
-| Ablation accuracies presented without context | flagged as the 50-epoch ablation protocol, subset 30/50 | Bab IV |
+| Inconsistency in V14 | Deck's choice |
+|---|---|
+| "tiga permasalahan" leftovers (I.1, I.6.1) vs four RMs in I.2 | four RMs |
+| LR accuracy 94,3% (Tabel IV.1) vs 94,4% (Gambar D.2 caption) | 94,3% |
+| DT/RF/XGB 92,40/95,8/97,1 (Bab IV) vs 94,0/94,9/95,3 (appendix captions) | Bab IV values |
+| Var-C 96,13% (Tabel IV.5) vs 92,0% (Gambar F.2 caption) | 96,13% |
+| WDCNN best epoch 54 (body) vs 47 (Gambar IV.6 caption) | epoch not cited |
+| "empat dataset publik" (III.2) vs "tiga dataset benchmark dan satu sumber industri" (I.8) | tiga + SKF |
+| Gambar III.1 / V.15 / IV.8 artwork still shows IMS or mismatches its caption | art kept as-is (it is V14's own), captions describe what is shown |
+
+The figure artwork itself (Gambar III.1 kerangka, V.15 hitrate panel, the
+negative-controls chart) still contains IMS panels from before IMS was dropped;
+regenerating those PNGs in the manuscript pipeline will fix the deck too, since
+the deck references the same files.
