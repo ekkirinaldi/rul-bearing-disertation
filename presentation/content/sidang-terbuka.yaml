@@ -676,8 +676,8 @@ slides:
                 flex: true
                 size: 11
                 text: >-
-                  **Tidak ada arsitektur yang unggul mutlak.** Pada XJTU-SY selisih RMSE
-                  Mamba-xLSTM-Net terhadap SparseGate-TCN-RUL hanya 0,003 (0,213 dan 0,216),
+                  **Tidak ada arsitektur yang unggul mutlak.** Pada XJTU-SY persaingan
+                  sangat rapat (RMSE 0,213 berbanding 0,216 pada SparseGate-TCN-RUL),
                   sehingga ketiganya tetap menjadi substrat analisis SAE-BPFx.
                   Mamba-xLSTM-Net dipakai sebagai backbone utama demonstrasi streaming dan
                   interpretabilitas.
@@ -1170,7 +1170,7 @@ slides:
         gap: 0.16
         body: >-
           Tabel V.6 (hit-rate utama) · Subbab V.7 (kontrol negatif) · Subbab V.8 (lintas
-          arsitektur: urutan dominansi konsisten, magnitudo bervariasi 4 sampai 8 kali).
+          arsitektur: urutan dominansi konsisten dengan variasi magnituda 4–8 kali lipat).
 
   # ======================================================================
   # 25 · JAWABAN RM-3
@@ -2126,8 +2126,8 @@ slides:
                     size: 11.3
                     text: >-
                       Urutan dominansi BPFx konsisten pada ketiga backbone dengan SAE yang
-                      dilatih terpisah, meski magnitudo hit-rate bervariasi empat hingga
-                      delapan kali. Universalitas diklaim **parsial, bukan mutlak**.
+                      dilatih terpisah, meski dengan variasi magnituda 4–8 kali lipat.
+                      Universalitas diklaim **parsial, bukan mutlak**.
           - blocks:
               - type: panel
                 flex: true

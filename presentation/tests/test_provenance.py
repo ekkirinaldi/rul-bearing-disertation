@@ -93,6 +93,8 @@ CLAIMS: list[tuple[str, list[str]]] = [
     ("XGBoost unggul 1,3 pp", ["1,3 poin persentase"]),
     ("SVM unggul 2,1 pp atas LR", ["2,1 poin persentase"]),
     ("ruang fitur HI 36-D", ["HI 36-D"]),
+    ("bagging 100 tree", ["100 tree"]),
+    ("WDCNN ±60.710 parameter", ["60.710"]),
     # s13 FSM
     ("300 sampel background", ["300 sampel"]),
     ("500 sampel uji", ["500 sampel"]),
@@ -112,10 +114,19 @@ CLAIMS: list[tuple[str, list[str]]] = [
     ("PHM2012 RMSE 0,226", ["0,226"]),
     ("XJTU-SY RMSE 0,213", ["0,213"]),
     ("runner-up XJTU 0,216", ["0,216"]),
+    ("PHM Score SparseGate 0,904", ["0,904"]),
+    ("PHM Score Mamba XJTU 0,938", ["0,938"]),
     # s17–s18 SAE-BPFx
     ("SAE k = 51", ["k = 51"]),
+    ("SAE 20.000 hidden state", ["20.000 hidden state"]),
+    ("pita integrasi ±2 Hz", ["±2 Hz"]),
+    ("ambang hit |r| ≥ 0,30", ["≥ 0,30"]),
+    ("12 uji primer, Bonferroni 0,004", ["12 uji primer"]),
+    ("ambang Bonferroni p < 0,004", ["p < 0,004"]),
+    ("variasi magnituda 4–8 kali lipat", ["4–8 kali lipat"]),
     ("hit-rate BPFI PHM2012 2,3%", ["2,3%"]),
     ("hit-rate BSF XJTU 1,6%", ["1,6%"]),
+    ("corr scatter n = 304", ["n = 304"]),
     ("rmax 0,447", ["0,447"]),
     ("rmax BPFO XJTU 0,468", ["0,468"]),
     ("CWRU 5,08%", ["5,08%"]),
@@ -136,10 +147,21 @@ CLAIMS: list[tuple[str, list[str]]] = [
     ("sisa umur NDE 34 menit", ["34 menit"]),
     ("sisa umur DE 40 menit", ["40 menit"]),
     ("pipeline HI 18 fitur", ["18 fitur"]),
+    ("geometri bearing SKF 6205", ["SKF 6205"]),
+    ("akselerometer SKF CMSS2200", ["CMSS2200"]),
     ("EoL terpaut sekitar satu hari", ["terpaut sekitar satu hari"]),
     ("status demonstrasi kualitatif", ["demonstrasi kualitatif"]),
     ("pseudo-waveform dari nilai tren", ["rekonstruksi sintetis dari nilai tren"]),
     ("jendela 64 akuisisi", ["jendela 64 akuisisi", "window 64"]),
+    ("interval pengambilan satu jam", ["interval pengambilan satu jam"]),
+    # cadangan: mesin inferensi benchmark (V.5.4)
+    ("PHM2012 demo akuisisi ke-1.344", ["ke-1.344"]),
+    ("PHM2012 demo prediksi 4 jam 5 menit", ["4 jam 5 menit"]),
+    ("XJTU demo 2 jam 50 menit", ["2 jam 50 menit"]),
+    ("XJTU aktual 3 jam 16 menit", ["3 jam 16 menit"]),
+    ("gerbang fusi PHM 54% xLSTM", ["54%"]),
+    # cadangan: rig PRONOSTIA
+    ("beban radial 4.000–5.000 N", ["4.000–5.000 N"]),
 ]
 
 
