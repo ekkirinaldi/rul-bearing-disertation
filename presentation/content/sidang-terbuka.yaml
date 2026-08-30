@@ -254,10 +254,9 @@ slides:
                       Komponen yang menopang poros agar berputar mulus; tersusun atas cincin
                       luar, cincin dalam, bola, dan sangkar.
                     body_color: "1F2A3D"
-                  - title: "“Ketukan” kerusakan (BPFx)"
+                  - title: "Frekuensi khas kerusakan (BPFx)"
                     body: >-
-                      Cacat di tiap bagian menimbulkan benturan berulang pada frekuensi khas,
-                      semacam ritme unik tiap jenis kerusakan: BPFO, BPFI, BSF, FTF.
+                      Cacat pada tiap komponen menimbulkan benturan berulang pada frekuensi yang khas untuk komponen itu: BPFO, BPFI, BSF, FTF.
                     body_color: "1F2A3D"
                   - title: RUL, sisa umur pakai
                     body: >-
@@ -269,10 +268,9 @@ slides:
                       Gambar yang menandai bagian sinyal getaran mana yang paling dipakai
                       model untuk mengenali jenis kerusakan.
                     body_color: "1F2A3D"
-                  - title: "“Detektor” laten (SAE)"
+                  - title: "Fitur laten (SAE)"
                     body: >-
-                      Ribuan unit internal di dalam model; diperiksa apakah ada yang diam-diam
-                      mengunci ketukan kerusakan, sebagai bukti model menangkap fisika nyata.
+                      Ribuan unit internal model; korelasinya terhadap frekuensi kerusakan diperiksa sebagai bukti model menangkap fisika nyata.
                     body_color: "1F2A3D"
 
   # ======================================================================
@@ -446,7 +444,7 @@ slides:
   # ======================================================================
   - layout: section
     eyebrow: "Babak 1 dari 4 · Rumusan Masalah 1"
-    title: Seberapa Akurat Model Diagnostik dan Prognostiknya?
+    title: Akurasi Model Diagnostik dan Prognostik
     body: >-
       **RM-1.** Bagaimana mengembangkan model perawatan prediktif berbasis data sensor
       vibrasi dengan pendekatan berbagai model machine learning dan deep learning yang
@@ -612,9 +610,7 @@ slides:
                 h: 0.78
                 size: 11.5
                 text: >-
-                  Analoginya seperti menaksir sisa umur ban dari pola getarannya, bukan dari
-                  lama pemakaiannya. Model membaca jendela indikator kesehatan terbaru, lalu
-                  menebak posisi bearing pada kurva 1 (baru) sampai 0 (rusak).
+                  Prinsipnya sama dengan menaksir sisa umur ban dari pola getarannya, bukan dari lama pemakaiannya. Model membaca jendela indikator kesehatan terbaru, lalu memperkirakan posisi bearing pada kurva 1 (baru) sampai 0 (rusak).
           - blocks:
               - type: cards
                 flex: true
@@ -626,14 +622,14 @@ slides:
                 items:
                   - title: "RMSE  ↓ makin kecil makin baik"
                     body: >-
-                      Rata-rata simpangan tebakan terhadap kurva referensi, skala 0 sampai 1.
+                      Rata-rata simpangan prediksi terhadap kurva referensi, skala 0 sampai 1.
                     body_color: "1F2A3D"
                   - title: "PHM Score  ↑ dan asimetris"
                     body: >-
                       Terlambat memprediksi dihukum lebih berat daripada terlalu dini,
                       karena konsekuensi operasionalnya tidak simetris.
                     body_color: "1F2A3D"
-                  - title: "Ambang lampu lalu lintas"
+                  - title: "Ambang status kondisi"
                     body: >-
                       Fraksi RUL di atas 40% berarti Healthy; 40% ke bawah Warning;
                       20% ke bawah Critical dan intervensi disiapkan.
@@ -766,7 +762,7 @@ slides:
   # ======================================================================
   - layout: section
     eyebrow: "Babak 2 dari 4 · Rumusan Masalah 2"
-    title: Dapatkah Keputusan Model Dijelaskan dan Diverifikasi?
+    title: Menjelaskan dan Memverifikasi Keputusan Model
     body: >-
       **RM-2.** Bagaimana menerapkan metode explainable artificial intelligence (XAI) pada
       model diagnostik bearing berbasis deep learning sehingga dapat menghasilkan peta
@@ -779,7 +775,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar · Membaca Atribusi"
-    title: "SHAP: Stabilo yang Menandai Bagian Sinyal Penentu Keputusan"
+    title: "SHAP Menandai Bagian Sinyal yang Menentukan Keputusan"
     top: 1.72
     blocks:
       - type: columns
@@ -819,8 +815,7 @@ slides:
                       - >-
                         Kurva adalah sinyal getaran asli yang masuk ke model.
                       - >-
-                        Sorotan (nilai SHAP) menandai bukti yang dipakai model; bila
-                        sorotan jatuh pada impuls fisik, model menalar seperti insinyur.
+                        Sorotan (nilai SHAP) menandai bukti yang dipakai model; bila sorotan jatuh pada impuls fisik, model memakai bukti yang sama dengan insinyur perawatan.
       - type: banner
         gap: 0.18
         tone: light
@@ -1012,15 +1007,14 @@ slides:
         size: 11.5
         vpad: 0.14
         body: >-
-          **Status pembuktian: empiris** · Bab IV · novelti N1 dan N2 · pertanyaan lanjutan:
-          apakah model *prognostik* juga menangkap fisika? Itulah Babak 3.
+          **Status pembuktian: empiris** · Bab IV · novelti N1 dan N2 · Babak 3 menguji hal yang sama pada model prognostik.
 
   # ======================================================================
   # 21 · PEMBATAS BABAK 3 — RM-3
   # ======================================================================
   - layout: section
     eyebrow: "Babak 3 dari 4 · Rumusan Masalah 3"
-    title: Apakah Model RUL Benar-Benar Menangkap Fisika Bearing?
+    title: Bukti Fisika pada Representasi Laten Model RUL
     body: >-
       **RM-3.** Bagaimana membuktikan bahwa representasi laten model prediksi RUL bearing
       berbasis deep learning telah mempertimbangkan fisika degradasi bearing, khususnya
@@ -1060,9 +1054,7 @@ slides:
                 size: 11.5
                 text: >-
                   Catatan internal model (hidden state) ibarat tulisan cepat yang padat dan
-                  sulit dibaca. SAE menyalinnya ke **kamus besar berisi 1.024 entri**, tetapi
-                  setiap "kalimat" hanya boleh memakai **51 entri** (k = 51, sekitar 5%).
-                  Dengan paksaan hemat itu, tiap entri cenderung bermakna satu hal saja.
+                  sulit dibaca. SAE menyalinnya ke **kamus laten berisi 1.024 entri**, tetapi setiap sampel hanya boleh mengaktifkan **51 entri** (k = 51, sekitar 5%). Batasan hemat ini membuat tiap entri cenderung bermakna satu hal saja.
               - type: kvrows
                 gap: 0.14
                 flex: true
@@ -1080,9 +1072,7 @@ slides:
         size: 11.5
         vpad: 0.14
         body: >-
-          Pertanyaan risetnya menjadi konkret: **adakah entri kamus yang mengunci "ketukan"
-          kerusakan fisik** (BPFO, BPFI, BSF, FTF)? Bila ada dan lolos uji statistik, model
-          terbukti menangkap fisika, bukan sekadar korelasi.
+          Analisis berikutnya memeriksa **apakah ada entri kamus yang berkorelasi kuat dengan frekuensi kerusakan fisik** (BPFO, BPFI, BSF, FTF). Entri yang lolos uji statistik menjadi bukti bahwa model menangkap fisika degradasi, bukan pola kebetulan.
 
   # ======================================================================
   # 23 · METODE RM-3 — prosedur SAE→BPFx
@@ -1202,7 +1192,7 @@ slides:
         size: 12.5
         vpad: 0.20
         body: >-
-          Sebagian fitur laten model RUL **terbukti mengunci frekuensi karakteristik
+          Sebagian fitur laten model RUL **terbukti berkorelasi dengan frekuensi karakteristik
           bearing** dan lolos permutation test (p < 0,001) dengan dua kontrol negatif
           mendekati nol; korespondensi ini properti representasi terlatih, bukan artefak
           arsitektur, dan konsisten lintas tiga backbone.
@@ -1219,8 +1209,7 @@ slides:
               FSM (Babak 2) menyorot **morfologi impuls** pada jendela 42,67 ms dan tidak
               menemukan periodisitas BPFx; SAE-BPFx justru menemukan korelasi frekuensi
               karakteristik pada horizon **ratusan akuisisi**. Keduanya tidak bertentangan:
-              diagnostik membaca bentuk kejadian sesaat, prognostik mengakumulasi ritme
-              degradasi jangka panjang. Dua lapis ini saling melengkapi sebagai audit model.
+              diagnostik membaca bentuk kejadian sesaat, prognostik mengakumulasi pola degradasi jangka panjang. Dua lapis ini saling melengkapi sebagai audit model.
       - type: banner
         gap: 0.20
         tone: light
@@ -1228,15 +1217,14 @@ slides:
         vpad: 0.14
         body: >-
           **Status pembuktian: empiris** (dengan catatan CWRU underpowered) · Bab V ·
-          novelti N3 dan N4 · tersisa satu pertanyaan: apakah semua ini bekerja di pabrik
-          sungguhan? Babak 4.
+          novelti N3 dan N4 · Babak 4 menguji penerapannya pada data lini produksi nyata.
 
   # ======================================================================
   # 26 · PEMBATAS BABAK 4 — RM-4
   # ======================================================================
   - layout: section
     eyebrow: "Babak 4 dari 4 · Rumusan Masalah 4"
-    title: Apakah Model Berpindah ke Lini Produksi Nyata?
+    title: Transfer Model ke Lini Produksi Nyata
     body: >-
       **RM-4.** Sejauh mana model diagnostik dan prognostik yang dilatih pada dataset
       benchmark laboratorium dapat dipindahkan ke data vibrasi industri nyata, dan bukti
@@ -1959,16 +1947,14 @@ slides:
             title: Akurasi
             hint: "↑ lebih baik"
             body: >-
-              Dari 750 sinyal uji, 749 ditebak benar (macro F1 = 0,997). Istilah “pp”
+              Dari 750 sinyal uji, 749 diklasifikasikan benar (macro F1 = 0,997). Istilah “pp”
               (poin persentase): turun 3,60 pp berarti turun 3,60 angka pada skala 0–100
               (99,73 menjadi 96,13), bukan 3,6% relatif.
           - value: "0,940"
             title: Split-half stability
             hint: "↑ · skala 0–1"
             body: >-
-              Apakah “peta perhatian” model konsisten? Data uji dibelah dua, peta dibuat di
-              tiap belahan, lalu dibandingkan. Nilai 0,940 berarti dua belahan mirip 94%,
-              sehingga penjelasan stabil dan bukan kebetulan.
+              Konsistensi peta atribusi diuji dengan membelah dua data uji: peta dibuat di tiap belahan lalu dibandingkan. Nilai 0,940 berarti kedua belahan mirip 94%, sehingga penjelasan stabil dan bukan kebetulan.
           - value: "17,6%"
             title: Severity monotonicity
             hint: "↑ lebih baik"
@@ -1980,9 +1966,7 @@ slides:
             title: Discriminability index
             hint: "↑ · skala 0–1"
             body: >-
-              Seberapa beda “sidik jari” antar jenis kerusakan. Tinggi berarti mudah dibedakan.
-              Mematikan komponen BatchNorm menajamkan sidik jari: 0,315 menjadi 0,735
-              (naik 2,3 kali).
+              Ukuran perbedaan *fingerprint* atribusi antarjenis kerusakan; makin tinggi makin mudah dibedakan. Menghapus BatchNorm menajamkan *fingerprint* tersebut: 0,315 menjadi 0,735 (naik 2,3 kali).
 
   # ======================================================================
   # B6 · PANDUAN METRIK PROGNOSTIK (lengkap)
@@ -2000,9 +1984,7 @@ slides:
         label: "Panduan:"
         label_w: 0.85
         body: >-
-          model menebak sisa umur (RUL) pada skala 0–1   ·   diperiksa apakah “detektor”
-          internal model mengunci “ketukan” kerusakan (BPFx)   ·   semua diuji ulang agar
-          bukan kebetulan.
+          model memprediksi sisa umur (RUL) pada skala 0–1   ·   fitur laten model diperiksa korelasinya terhadap frekuensi kerusakan (BPFx)   ·   seluruh temuan diuji ulang secara statistik.
       - type: metrics
         gap: 0.20
         columns: 2
@@ -2013,36 +1995,32 @@ slides:
             title: "RMSE (rata-rata galat)"
             hint: "↓ lebih baik"
             body: >-
-              Seberapa meleset tebakan sisa umur, pada skala 0–1 (0 = sempurna).
-              Notasi “± 0,030” adalah goyangan hasil saat diulang tiga kali; kecil = andal.
+              Rata-rata selisih prediksi sisa umur terhadap nilai referensi, skala 0–1 (0 = sempurna). Notasi “± 0,030” adalah variasi hasil antar tiga seed; makin kecil makin andal.
           - value: "2,3%"
             title: Hit-rate
             hint: "↑ lebih baik"
             body: >-
-              Dari 1.024 “detektor” internal, berapa persen yang mengunci satu
-              “ketukan” kerusakan (BPFx). Nilai 2,3% berarti puluhan detektor menemukan
-              ritme cincin dalam.
+              Persentase fitur laten (dari 1.024) yang berkorelasi dengan satu frekuensi kerusakan (BPFx). Nilai 2,3% berarti puluhan fitur menangkap frekuensi cincin dalam (BPFI).
           - value: "0,447"
-            title: "rmax (kecocokan terbaik)"
+            title: "rmax (korelasi tertinggi)"
             hint: "↑ · skala 0–1"
             body: >-
-              Di antara semua detektor, yang paling cocok menyamai “ketukan” kerusakan
-              sebesar 0,447; kecocokan sedang hingga kuat untuk satu unit.
+              Korelasi tertinggi satu fitur laten terhadap amplitudo frekuensi kerusakan adalah 0,447, tergolong sedang menuju kuat untuk satu unit.
           - value: "p<0,004"
             value_size: 15
             title: p-value dan koreksi Bonferroni
             hint: "↓ lebih baik"
             body: >-
               Peluang hasil muncul karena kebetulan; makin kecil makin meyakinkan.
-              Karena 12 uji primer dijalankan sekaligus, ambang lulus diperketat ke 0,004
+              Karena 12 uji primer dijalankan sekaligus, ambang signifikansi diperketat ke 0,004
               (bukan 0,05).
           - value: "≈0%"
-            title: "Negative control (uji tandingan)"
+            title: "Negative control (kontrol negatif)"
             hint: "harus ≈ 0"
             body: >-
               Analisis yang sama dijalankan pada model berbobot acak dan derau murni.
               Jika metode hanya menemukan pola dalam keacakan, angka ini ikut tinggi.
-              Hasilnya ≈0%, sehingga temuan sejati.
+              Hasilnya ≈0%, sehingga temuan bukan artefak metode.
           - value: "10,3%"
             title: Sisa umur (RUL) dan EoL
             hint: "↓ = dekat rusak"
@@ -2051,11 +2029,10 @@ slides:
               bawah 20% status berpindah ke Critical. EoL adalah perkiraan tanggal dan jam
               bearing mencapai akhir umur.
           - value: "53%"
-            title: "Fusion gate (perpaduan)"
+            title: "Fusion gate (gerbang fusi)"
             hint: konteks
             body: >-
-              Model memiliki dua “ahli” (xLSTM dan Mamba). Gate adalah perpaduan yang
-              dipilih; “Mamba 53%” berarti sedikit condong ke ahli Mamba pada kanal itu.
+              Gate menimbang kontribusi dua cabang model (xLSTM dan Mamba); “Mamba 53%” berarti keluaran pada kanal itu sedikit condong ke cabang Mamba.
 
   # ======================================================================
   # B7 · SPARSITY SWEEP dan KORELASI
