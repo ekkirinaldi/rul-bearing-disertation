@@ -105,13 +105,15 @@ def cover(prs, spec: dict, meta: dict) -> None:
 def section(prs, spec: dict, meta: dict, page: int) -> None:
     slide = blank(prs)
     shapes.set_background(slide, Color.NAVY)
-    shapes.label(slide, G.MARGIN + 0.45, 2.55, G.CONTENT_W - 0.90, 0.40,
+    shapes.label(slide, G.MARGIN + 0.45, 2.20, G.CONTENT_W - 0.90, 0.40,
                  spec.get("eyebrow", "").upper(), size=12, bold=True, color=Color.GOLD)
-    shapes.hrule(slide, G.MARGIN + 0.45, 3.02, 2.40, color=Color.GOLD)
-    shapes.label(slide, G.MARGIN + 0.45, 3.24, G.CONTENT_W - 0.90, 0.90, spec["title"],
+    shapes.hrule(slide, G.MARGIN + 0.45, 2.67, 2.40, color=Color.GOLD)
+    # The title box holds two lines at 38 pt; the body sits below it so a
+    # question-style title cannot collide with the restated rumusan masalah.
+    shapes.label(slide, G.MARGIN + 0.45, 2.89, G.CONTENT_W - 0.90, 1.44, spec["title"],
                  size=38, font=Font.DISPLAY, bold=True, color=Color.WHITE)
     if spec.get("body"):
-        shapes.label(slide, G.MARGIN + 0.45, 4.30, 8.40, 0.80, spec["body"],
+        shapes.label(slide, G.MARGIN + 0.45, 4.52, 10.30, 1.20, spec["body"],
                      size=13, color=Color.ON_DARK_2, accent=Color.WHITE)
     add_footer(slide, meta["footer"], page)
 
