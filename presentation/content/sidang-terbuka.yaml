@@ -680,21 +680,23 @@ slides:
                 inset: 0.06
                 image: ../assets/diagrams/mamba_xlstm_full.png
           - blocks:
-              - type: kvrows
+              - type: panel
                 flex: true
-                label_w: 1.55
-                items:
-                  - label: KOMPLEKSITAS
-                    value: >-
-                      ±898 ribu parameter (PHM2012) dan ±811 ribu (XJTU-SY);
-                      inferensi sekuens linear O(n).
-                  - label: GERBANG FUSI
-                    value: >-
-                      Bobot cabang xLSTM/Mamba adaptif per sampel, dapat dibaca
-                      sebagai indikator internal model.
-                  - label: PERAN
-                    value: >-
-                      Backbone utama demonstrasi streaming dan analisis SAE-BPFx.
+                tone: alt
+                title: RINGKASAN
+                title_size: 12
+                blocks:
+                  - type: bullets
+                    flex: true
+                    size: 10.5
+                    gap: 0.22
+                    items:
+                      - "±898 ribu parameter pada PHM2012, ±811 ribu pada XJTU-SY."
+                      - "Inferensi sekuens linear O(n), sesuai konteks panjang."
+                      - >-
+                        Gerbang fusi membagi bobot cabang xLSTM/Mamba per sampel
+                        dan dapat dibaca sebagai indikator internal.
+                      - "Backbone utama demonstrasi streaming dan analisis SAE-BPFx."
       - type: source
         gap: 0.14
         body: >-
@@ -1164,7 +1166,7 @@ slides:
           - width: 6.60
             blocks:
               - type: figure
-                flex: true
+                h: 2.80
                 inset: 0.06
                 image: ../assets/diagrams/topk_sae.png
               - type: text
@@ -1218,7 +1220,7 @@ slides:
           - width: 6.90
             blocks:
               - type: figure
-                flex: true
+                h: 3.05
                 inset: 0.06
                 image: ../assets/diagrams/sae_bpfx_pipeline.png
               - type: text
@@ -1957,7 +1959,7 @@ slides:
     top: 1.74
     blocks:
       - type: figure
-        h: 2.28
+        h: 2.50
         inset: 0.06
         image: ../assets/diagrams/wdcnn_full.png
       - type: text
@@ -1978,7 +1980,7 @@ slides:
           - width: 6.40
             blocks:
               - type: figure
-                h: 1.94
+                h: 1.72
                 image: ../../dissertation-docx/assets/figures/bab4/wdcnn_training_curves.png
               - type: text
                 gap: 0.06

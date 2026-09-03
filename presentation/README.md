@@ -14,9 +14,9 @@ identical to the version Pak Toto approved.
 citation, and claim in the deck traces to it — not to the older
 `dissertation-docx/` tree, whose numbers conflict with V14 in places.
 
-## Deck structure (47 slides)
+## Deck structure (52 slides)
 
-The main deck (35 slides) is organised around V14's **four rumusan masalah**:
+The main deck (40 slides) is organised around V14's **four rumusan masalah**:
 an intro arc (latar belakang, istilah inti untuk penguji non-informatika,
 kesenjangan, the RM spine slide reprising Tabel I.3, kerangka, dataset), then
 four acts — one per RM — each opened by a `section` divider restating the
@@ -26,12 +26,19 @@ industrial-engineering panel sit just-in-time: ML vs DL, cara membaca RUL,
 analogi stabilo for SHAP, kamus konsep for the SAE. Twelve backup slides
 ("Cadangan") follow the closing slide for the Q&A session.
 
+Every algorithm carries a **paper-style block diagram** rendered by
+`make diagrams` (see below): the classic-ML trio, one architecture slide per
+RUL backbone (Mamba-xLSTM-Net, N-BEATS-xLSTM-RUL, SparseGate-TCN-RUL), the
+sinyal→FSM pipeline, the Top-k SAE, the SAE→BPFx procedure, WDCNN (backup),
+and the streaming inference engine (backup).
+
 ## Quick start
 
 ```bash
 cd presentation
 make install          # python-pptx, PyYAML, lxml, Pillow
 make v14-assets       # extract deck figures from the V14 DOCX media
+make diagrams         # render the paper-style algorithm diagrams (matplotlib)
 make build            # content/sidang-terbuka.yaml -> out/…​.pptx
 make preview          # build + PDF via LibreOffice
 make png              # build + one PNG per slide (needs poppler)
@@ -53,13 +60,15 @@ presentation/
 ├── Makefile
 ├── assets/
 │   ├── logo-itb.png            ITB seal used on the cover
+│   ├── diagrams/               algorithm diagrams rendered by make diagrams
 │   └── v14/                    figures extracted from the V14 DOCX media
 ├── content/
 │   └── sidang-terbuka.yaml     ★ the deck content — this is what you edit
 ├── reference/
 │   └── Sidang_Disertasi_…_v2.pptx   approved template the design was derived from
 ├── tools/
-│   └── extract_v14_media.py    pulls figures out of the V14 DOCX by media index
+│   ├── extract_v14_media.py    pulls figures out of the V14 DOCX by media index
+│   └── render_diagrams.py      draws the 9 algorithm diagrams (matplotlib)
 ├── deck/
 │   ├── theme.py                design tokens: palette, type scale, grid
 │   ├── shapes.py               primitives + inline markup + text measurement
@@ -70,6 +79,7 @@ presentation/
 │   └── builder.py              spec loading, linting, rendering
 ├── tests/
 │   ├── test_deck.py            renderer + layout regressions
+│   ├── test_diagrams.py        diagram set complete, sized, and referenced
 │   └── test_provenance.py      every slide figure must exist in the V14 manuscript
 └── out/                        build artifacts (git-ignored)
 ```
@@ -179,6 +189,20 @@ a claim passing via the stale tree would defeat the guard.
 
 It skips cleanly when the V14 DOCX is absent. When a number legitimately
 changes in the manuscript, update the YAML and the matching entry in `CLAIMS`.
+
+## Algorithm diagrams
+
+`tools/render_diagrams.py` (`make diagrams`) draws one PNG per method into
+`assets/diagrams/`, in the block-diagram idiom of Jiang dkk. (2026),
+*Sensors* **26**:1578: rounded colour-coded blocks, dashed "n×" repeat
+containers, zoom-in panels for cell internals, and a legend row per figure.
+One master palette maps component function to colour across all nine figures
+(kuning masukan · ungu proyeksi/konvolusi · biru pemodelan sekuens · hijau
+memori/state · merah muda gating · hijau tua keluaran · emas fitur aktif),
+with the deck navy as ink. Every number drawn is asserted against the V14
+text by `tests/test_provenance.py`, and the slides that carry a redrawn
+figure cite it as "Digambar ulang berdasarkan Gambar X.N". Iterate with
+`python3 tools/render_diagrams.py --only <name>`.
 
 ## Re-deriving the template
 

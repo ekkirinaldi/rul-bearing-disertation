@@ -391,9 +391,9 @@ def sparsegate_tcn_full():
         if i < 3:
             arrow(ax, (6.44 + i * 0.94, my), (6.54 + i * 0.94, my), shrink=0, lw=0.9)
     arrow(ax, (9.40, my), (9.66, my))
-    box(ax, 10.24, my, 1.08, 0.62, "Langkah\nterakhir", kind="util", fs=8.5)
-    arrow(ax, (10.80, my), (11.02, my))
-    box(ax, 11.52, my, 0.96, 0.78, "Quantile\nhead", kind="out", fs=8.5, sub="median = RUL")
+    box(ax, 10.20, my, 1.04, 0.62, "Langkah\nterakhir", kind="util", fs=8.5)
+    arrow(ax, (10.74, my), (10.92, my))
+    box(ax, 11.42, my, 0.94, 0.78, "Quantile\nhead", kind="out", fs=8.5, sub="median = RUL")
 
     # ---- zoom panel: dilated receptive field ------------------------------
     px, py, pw, ph = 1.60, 2.55, 8.60, 2.55
@@ -460,8 +460,8 @@ def sparsegate_tcn_full():
 # 4 · WDCNN
 # --------------------------------------------------------------------------
 def wdcnn_full():
-    fig, ax = new_fig(12.0, 3.9)
-    my = 2.30
+    fig, ax = new_fig(12.0, 3.55)
+    my = 1.95
 
     box(ax, 1.05, my, 1.70, 1.10, "Raw signal\n1 × 2.048", kind="input", sub="channel drive-end")
     waveform(ax, 0.40, my - 0.34, 1.30, 0.28, seed=11)
@@ -485,9 +485,9 @@ def wdcnn_full():
     arrow(ax, (10.43, my), (10.73, my))
     box(ax, 11.28, my, 1.02, 0.72, "Softmax\n10 kelas", kind="out", fs=8.5, bold=True)
 
-    ax.text(0.45, 3.62, "WDCNN (Wide First-layer Kernels)", ha="left", va="center",
+    ax.text(0.45, 3.30, "WDCNN (Wide First-layer Kernels)", ha="left", va="center",
             fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
-    ax.text(9.05, 3.62, "lima blok konvolusi mereduksi dimensi temporal",
+    ax.text(8.95, 3.30, "lima blok mereduksi dimensi temporal",
             ha="left", va="center", fontsize=FS_NOTE, color=MUTED, style="italic")
 
     legend_row(ax, 0.45, 0.40, [
@@ -533,9 +533,9 @@ def topk_sae():
     ax.text(gx + nx * cell / 2, gy - 0.14, "hanya k = 51 fitur (sekitar 5 %)\naktif per sampel",
             ha="center", va="top", fontsize=FS_TINY, color=MUTED)
     arrow(ax, (gx + nx * cell + 0.06, my), (gx + nx * cell + 0.40, my))
-    box(ax, 10.34, my, 1.24, 0.62, "Decoder\nlinear", kind="proj", fs=8.5, sub="$W_{dec}$")
-    arrow(ax, (10.98, my), (11.24, my))
-    box(ax, 11.62, my, 0.72, 0.92, "$\\hat{h}$", kind="out", fs=10, sub="MSE\n< 0,001")
+    box(ax, 10.30, my, 1.24, 0.62, "Decoder\nlinear", kind="proj", fs=8.5, sub="$W_{dec}$")
+    arrow(ax, (10.94, my), (11.16, my))
+    box(ax, 11.54, my, 0.72, 0.92, "$\\hat{h}$", kind="out", fs=10, sub="MSE\n< 0,001")
 
     ax.text(0.45, 4.38, "Top-k Sparse Autoencoder (SAE)", ha="left", va="center",
             fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
