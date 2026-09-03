@@ -1,0 +1,854 @@
+"""Render the paper-style algorithm diagrams for the defence deck.
+
+Every method in the deck gets a block diagram in the visual idiom of
+Jiang dkk. (2026), Sensors 26:1578 — rounded colour-coded blocks, dashed
+repeat containers, zoom-in panels, and a legend row decoding the colours.
+One master palette is shared across all figures so the family reads as one
+system, harmonised with the deck theme (navy ink, gold accents).
+
+Content is grounded in the V14 manuscript: every number drawn here appears
+in V14 (Subbab IV.4, V.1, V.2, V.3, V.5.3). Structure-only detail follows
+Gu dan Dao (2023), Beck dkk. (2024), Oreshkin dkk. (2020), Bai dkk. (2018).
+
+Usage: python3 tools/render_diagrams.py [--only name1,name2]  (or ``make diagrams``)
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+import matplotlib
+
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.patches import Circle, FancyArrowPatch, FancyBboxPatch, Rectangle
+
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "assets" / "diagrams"
+
+# --------------------------------------------------------------------------
+# Palette — one master mapping from component function to pastel fill
+# --------------------------------------------------------------------------
+INK = "#16284B"      # deck navy: text, arrows, outlines
+MUTED = "#6B7689"
+GOLD = "#B8923B"
+GOLD_FILL = "#E6D6A8"
+
+KIND = {
+    "input":  {"fc": "#FBF0D3", "ec": "#C9B06B"},   # kuning  — masukan / embedding
+    "proj":   {"fc": "#E7E1F4", "ec": "#A79BCF"},   # ungu    — proyeksi / konvolusi / FC
+    "seq":    {"fc": "#D9EAF7", "ec": "#7FA3C4"},   # biru    — pemodelan sekuens
+    "mem":    {"fc": "#DFEEDF", "ec": "#7FAF8A"},   # hijau   — memori / state
+    "gate":   {"fc": "#F8E1E6", "ec": "#CE9AA8"},   # merah muda — gating / normalisasi
+    "out":    {"fc": "#CBE3D3", "ec": "#3E8E5B"},   # hijau tua — keluaran / head
+    "util":   {"fc": "#EEF1F5", "ec": "#9AA5B5"},   # abu     — pooling / utilitas
+    "active": {"fc": GOLD_FILL, "ec": GOLD},        # emas    — fitur aktif
+}
+
+FS_TITLE = 11.5   # panel / container titles
+FS_BLOCK = 9.5    # block labels
+FS_NOTE = 8.5     # annotations, legend
+FS_TINY = 7.5
+
+
+# --------------------------------------------------------------------------
+# Primitives
+# --------------------------------------------------------------------------
+def new_fig(w: float, h: float):
+    fig = plt.figure(figsize=(w, h))
+    ax = fig.add_axes((0.0, 0.0, 1.0, 1.0))
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
+    ax.set_aspect("equal")
+    ax.axis("off")
+    ax.add_patch(Rectangle((0, 0), w, h, fc="white", ec="none", zorder=-10))
+    return fig, ax
+
+
+def box(ax, cx, cy, w, h, text, kind="seq", fs=FS_BLOCK, bold=False, sub=None, zorder=3):
+    c = KIND[kind]
+    ax.add_patch(FancyBboxPatch(
+        (cx - w / 2, cy - h / 2), w, h,
+        boxstyle="round,pad=0.015,rounding_size=0.07",
+        fc=c["fc"], ec=c["ec"], lw=1.2, zorder=zorder,
+    ))
+    ty = cy if sub is None else cy + 0.11
+    ax.text(cx, ty, text, ha="center", va="center", fontsize=fs, color=INK,
+            fontweight="bold" if bold else "normal", zorder=zorder + 1, linespacing=1.25)
+    if sub:
+        ax.text(cx, cy - 0.16, sub, ha="center", va="center", fontsize=FS_TINY,
+                color=MUTED, zorder=zorder + 1, linespacing=1.2)
+
+
+def arrow(ax, p1, p2, color=INK, lw=1.2, style="-|>", shrink=3, zorder=2, ls="solid"):
+    ax.add_patch(FancyArrowPatch(
+        p1, p2, arrowstyle=style, mutation_scale=11, color=color, lw=lw,
+        shrinkA=shrink, shrinkB=shrink, zorder=zorder, linestyle=ls,
+    ))
+
+
+def container(ax, x, y, w, h, title=None, times=None, ec=MUTED, zorder=1):
+    ax.add_patch(FancyBboxPatch(
+        (x, y), w, h, boxstyle="round,pad=0.02,rounding_size=0.09",
+        fc="none", ec=ec, lw=1.1, ls=(0, (5, 3)), zorder=zorder,
+    ))
+    if title:
+        ax.text(x + 0.10, y + h - 0.06, title, ha="left", va="top",
+                fontsize=FS_NOTE, color=MUTED, zorder=zorder + 1, style="italic")
+    if times:
+        ax.text(x + w - 0.02, y + h + 0.07, times, ha="right", va="bottom",
+                fontsize=FS_TITLE, color=INK, fontweight="bold", zorder=zorder + 1)
+
+
+def gate_glyph(ax, cx, cy, symbol, kind="gate", r=0.15, fs=8):
+    c = KIND[kind]
+    ax.add_patch(Circle((cx, cy), r, fc=c["fc"], ec=c["ec"], lw=1.2, zorder=4))
+    ax.text(cx, cy, symbol, ha="center", va="center", fontsize=fs, color=INK, zorder=5)
+
+
+def matrix_glyph(ax, cx, cy, s=0.52, n=3, kind="mem", zorder=4):
+    c = KIND[kind]
+    ax.add_patch(Rectangle((cx - s / 2, cy - s / 2), s, s, fc=c["fc"], ec=c["ec"],
+                           lw=1.2, zorder=zorder))
+    for i in range(1, n):
+        t = i * s / n
+        ax.plot([cx - s / 2 + t] * 2, [cy - s / 2, cy + s / 2],
+                color=c["ec"], lw=0.7, ls=(0, (2, 2)), zorder=zorder + 1)
+        ax.plot([cx - s / 2, cx + s / 2], [cy - s / 2 + t] * 2,
+                color=c["ec"], lw=0.7, ls=(0, (2, 2)), zorder=zorder + 1)
+
+
+def zoom_link(ax, small_pt_top, small_pt_bot, panel_pt_top, panel_pt_bot):
+    for a, b in ((small_pt_top, panel_pt_top), (small_pt_bot, panel_pt_bot)):
+        ax.plot([a[0], b[0]], [a[1], b[1]], color=MUTED, lw=0.9,
+                ls=(0, (4, 3)), zorder=0)
+
+
+def legend_row(ax, x, y, entries, dx=None, glyph_s=0.17):
+    """entries: list of (kind-or-glyph, label). Laid out left-to-right from x."""
+    cx = x
+    for kind, text in entries:
+        if kind in KIND:
+            c = KIND[kind]
+            ax.add_patch(Rectangle((cx, y - glyph_s / 2), glyph_s, glyph_s,
+                                   fc=c["fc"], ec=c["ec"], lw=1.1, zorder=4))
+            off = glyph_s + 0.09
+        elif kind == "sigmoid":
+            gate_glyph(ax, cx + 0.09, y, "σ", kind="proj", r=0.10, fs=7)
+            off = 0.28
+        elif kind == "exp":
+            gate_glyph(ax, cx + 0.09, y, "e", kind="gate", r=0.10, fs=7)
+            off = 0.28
+        elif kind == "matrix":
+            matrix_glyph(ax, cx + 0.11, y, s=0.22, n=3)
+            off = 0.32
+        else:
+            off = 0.0
+        ax.text(cx + off, y, text, ha="left", va="center", fontsize=FS_NOTE, color=INK)
+        cx += off + 0.13 * len(text) * 0.55 + 0.42 if dx is None else dx
+    return cx
+
+
+def waveform(ax, x, y, w, h, seed=7, decay=False, color=INK, lw=0.8):
+    rng = np.random.default_rng(seed)
+    t = np.linspace(0, 1, 400)
+    sig = 0.5 * np.sin(2 * np.pi * 9 * t) + 0.35 * rng.standard_normal(t.size)
+    if decay:
+        sig *= 0.25 + 0.75 * t**2
+    sig = sig / np.max(np.abs(sig))
+    ax.plot(x + t * w, y + sig * h / 2, color=color, lw=lw, zorder=5)
+
+
+def spectrum(ax, x, y, w, h, peaks, seed=3, color=INK, lw=0.9):
+    """Baseline noise floor with peaks at given fractional positions."""
+    rng = np.random.default_rng(seed)
+    f = np.linspace(0, 1, 500)
+    s = 0.06 + 0.04 * rng.random(f.size)
+    for p, amp in peaks:
+        s += amp * np.exp(-((f - p) ** 2) / (2 * 0.006**2))
+    s = s / s.max()
+    ax.plot(x + f * w, y + s * h, color=color, lw=lw, zorder=5)
+    ax.plot([x, x + w], [y, y], color=MUTED, lw=0.7, zorder=4)
+
+
+# --------------------------------------------------------------------------
+# 1 · Mamba-xLSTM-Net (zoom-in idiom)
+# --------------------------------------------------------------------------
+def mamba_xlstm_full():
+    fig, ax = new_fig(12.0, 6.9)
+
+    # ---- right column: the stack -----------------------------------------
+    sx, bw = 10.35, 2.55
+    box(ax, sx, 1.28, bw, 0.56, "Masukan HI", kind="input", sub="jendela 32 rekaman")
+    arrow(ax, (sx, 1.58), (sx, 1.90))
+    box(ax, sx, 2.16, bw, 0.52, "Proyeksi linear\nke dimensi model", kind="proj", fs=8.5)
+    arrow(ax, (sx, 2.44), (sx, 2.76))
+    container(ax, sx - bw / 2 - 0.14, 2.78, bw + 0.28, 1.94, times="3×")
+    box(ax, sx, 3.28, bw - 0.18, 0.62, "Blok Mamba", kind="seq", sub="Selective State-Space")
+    arrow(ax, (sx, 3.62), (sx, 3.92))
+    box(ax, sx, 4.26, bw - 0.18, 0.62, "Blok mLSTM", kind="mem", sub="memori matriks")
+    arrow(ax, (sx, 4.74), (sx, 5.02))
+    box(ax, sx, 5.28, bw, 0.52, "Gated fusion", kind="gate", sub="bobot dapat dilatih")
+    arrow(ax, (sx, 5.56), (sx, 5.88))
+    ax.text(sx + 0.24, 5.72, r"$h \in \mathbb{R}^{128}$", ha="left", va="center",
+            fontsize=8.5, color=MUTED)
+    box(ax, sx, 6.18, bw, 0.60, "MLP dua lapis", kind="out", sub="estimasi RUL", bold=True)
+    ax.text(sx, 6.72, "Mamba-xLSTM-Net", ha="center", va="center",
+            fontsize=FS_TITLE, color=INK, fontweight="bold")
+
+    # ---- bottom-left panel: Mamba block internals ------------------------
+    p1x, p1y, p1w, p1h = 0.35, 0.72, 8.10, 2.70
+    container(ax, p1x, p1y, p1w, p1h, ec=KIND["seq"]["ec"])
+    ax.add_patch(FancyBboxPatch((p1x, p1y), p1w, p1h,
+                                boxstyle="round,pad=0.02,rounding_size=0.09",
+                                fc=KIND["seq"]["fc"], ec="none", alpha=0.25, zorder=0))
+    ax.text(p1x + p1w / 2, p1y + p1h - 0.22, "Blok Mamba (Selective State-Space Model)",
+            ha="center", va="center", fontsize=FS_TITLE, color=INK, fontweight="bold")
+    my = p1y + 1.62                                   # main path
+    gy = p1y + 0.62                                   # gate branch
+    ax.plot([p1x + 0.28], [my], marker="o", ms=4, color=INK)
+    arrow(ax, (p1x + 0.30, my), (p1x + 0.72, my))
+    box(ax, p1x + 1.22, my, 0.96, 0.5, "Proyeksi", kind="proj", fs=8.5)
+    arrow(ax, (p1x + 1.72, my), (p1x + 2.06, my))
+    box(ax, p1x + 2.56, my, 0.96, 0.5, "Conv1D", kind="proj", fs=8.5)
+    arrow(ax, (p1x + 3.06, my), (p1x + 3.38, my))
+    box(ax, p1x + 3.80, my, 0.80, 0.5, "SiLU", kind="util", fs=8.5)
+    arrow(ax, (p1x + 4.22, my), (p1x + 4.54, my))
+    box(ax, p1x + 5.32, my, 1.52, 0.72, "SSM selektif", kind="seq", fs=9,
+        sub="B, C, Δ bergantung\npada masukan")
+    matrix_glyph(ax, p1x + 5.32, my - 0.82, s=0.40)
+    ax.text(p1x + 5.62, my - 0.82, "state", ha="left", va="center",
+            fontsize=FS_TINY, color=MUTED)
+    arrow(ax, (p1x + 5.32, my - 0.60), (p1x + 5.32, my - 0.38), lw=0.9)
+    arrow(ax, (p1x + 6.10, my), (p1x + 6.50, my))
+    gate_glyph(ax, p1x + 6.66, my, "×", kind="gate")
+    # gate branch: input -> proyeksi+SiLU -> multiplicative gate
+    ax.plot([p1x + 0.28, p1x + 0.28], [my - 0.04, gy], color=INK, lw=1.0)
+    arrow(ax, (p1x + 0.28, gy), (p1x + 1.30, gy))
+    box(ax, p1x + 2.14, gy, 1.66, 0.5, "Proyeksi + SiLU", kind="proj", fs=8.5)
+    ax.plot([p1x + 2.98, p1x + 6.66], [gy, gy], color=INK, lw=1.0)
+    arrow(ax, (p1x + 6.66, gy), (p1x + 6.66, my - 0.16), shrink=1)
+    arrow(ax, (p1x + 6.82, my), (p1x + 7.10, my))
+    box(ax, p1x + 7.56, my, 0.86, 0.5, "Proyeksi", kind="proj", fs=8.5)
+    ax.text(p1x + p1w / 2, p1y + 0.16, "gerbang multiplikatif memilih informasi yang diteruskan",
+            ha="center", va="bottom", fontsize=FS_TINY, color=MUTED, style="italic")
+
+    # ---- top-left panel: mLSTM cell internals ----------------------------
+    p2x, p2y, p2w, p2h = 0.35, 3.72, 8.10, 2.70
+    container(ax, p2x, p2y, p2w, p2h, ec=KIND["mem"]["ec"])
+    ax.add_patch(FancyBboxPatch((p2x, p2y), p2w, p2h,
+                                boxstyle="round,pad=0.02,rounding_size=0.09",
+                                fc=KIND["mem"]["fc"], ec="none", alpha=0.25, zorder=0))
+    ax.text(p2x + p2w / 2, p2y + p2h - 0.22, "Sel mLSTM (matrix LSTM)",
+            ha="center", va="center", fontsize=FS_TITLE, color=INK, fontweight="bold")
+    cyc = p2y + 1.22
+    ax.plot([p2x + 0.28], [cyc], marker="o", ms=4, color=INK)
+    for lbl, dy in (("q", 0.85), ("k", 0.0), ("v", -0.85)):
+        box(ax, p2x + 1.30, cyc + dy, 0.86, 0.46, f"Proyeksi {lbl}", kind="proj", fs=8)
+        ax.plot([p2x + 0.28, p2x + 0.60], [cyc, cyc], color=INK, lw=1.0)
+        arrow(ax, (p2x + 0.60, cyc), (p2x + 0.85, cyc + dy), lw=0.9, shrink=1)
+    Cx = p2x + 3.66
+    matrix_glyph(ax, Cx, cyc - 0.20, s=0.94, n=4)
+    ax.text(Cx, cyc - 0.98, "memori matriks  $C_t = f_t\\,C_{t-1} + i_t\\,v_t k_t^{\\top}$",
+            ha="center", va="center", fontsize=8, color=INK)
+    arrow(ax, (p2x + 1.74, cyc), (Cx - 0.52, cyc - 0.10), shrink=2)         # k
+    arrow(ax, (p2x + 1.74, cyc - 0.85), (Cx - 0.52, cyc - 0.42), shrink=2)  # v
+    gate_glyph(ax, Cx - 0.30, cyc + 0.60, "e", kind="gate")     # input gate (exp)
+    gate_glyph(ax, Cx + 0.30, cyc + 0.60, "e", kind="gate")     # forget gate (exp)
+    ax.text(Cx - 0.54, cyc + 0.60, "$i_t$", ha="right", va="center", fontsize=8, color=INK)
+    ax.text(Cx + 0.54, cyc + 0.60, "$f_t$", ha="left", va="center", fontsize=8, color=INK)
+    arrow(ax, (Cx - 0.30, cyc + 0.44), (Cx - 0.30, cyc + 0.29), lw=0.9, shrink=0)
+    arrow(ax, (Cx + 0.30, cyc + 0.44), (Cx + 0.30, cyc + 0.29), lw=0.9, shrink=0)
+    arrow(ax, (Cx + 0.48, cyc - 0.20), (Cx + 1.14, cyc - 0.20))
+    box(ax, p2x + 5.34, cyc - 0.20, 1.14, 0.5, "Baca via q", kind="util", fs=8.5,
+        sub="normalisasi")
+    ax.plot([p2x + 1.74, p2x + 5.34], [cyc + 0.85, cyc + 0.85], color=INK, lw=1.0)  # q path
+    arrow(ax, (p2x + 5.34, cyc + 0.85), (p2x + 5.34, cyc + 0.14), lw=0.9, shrink=1)
+    arrow(ax, (p2x + 5.92, cyc - 0.20), (p2x + 6.30, cyc - 0.20))
+    gate_glyph(ax, p2x + 6.46, cyc - 0.20, "σ", kind="proj")
+    ax.text(p2x + 6.46, cyc + 0.12, "$o_t$", ha="center", fontsize=8, color=INK)
+    arrow(ax, (p2x + 6.62, cyc - 0.20), (p2x + 7.00, cyc - 0.20))
+    box(ax, p2x + 7.42, cyc - 0.20, 0.72, 0.5, "$h_t$", kind="out", fs=9)
+
+    # ---- zoom links (Mamba block -> bottom panel, mLSTM block -> top) ----
+    zoom_link(ax, (sx - bw / 2 + 0.09, 3.59), (sx - bw / 2 + 0.09, 2.97),
+              (p1x + p1w, p1y + p1h), (p1x + p1w, p1y))
+    zoom_link(ax, (sx - bw / 2 + 0.09, 4.57), (sx - bw / 2 + 0.09, 3.95),
+              (p2x + p2w, p2y + p2h), (p2x + p2w, p2y))
+
+    # ---- legend (two rows) ------------------------------------------------
+    legend_row(ax, 0.45, 0.44, [
+        ("input", "masukan"), ("proj", "proyeksi / konvolusi"),
+        ("seq", "pemodelan sekuens"), ("mem", "memori / state"),
+        ("gate", "gerbang"), ("out", "keluaran"),
+    ])
+    legend_row(ax, 0.45, 0.15, [
+        ("exp", "gerbang eksponensial"), ("sigmoid", "gerbang sigmoid"),
+        ("matrix", "memori matriks"),
+    ])
+    save(fig, "mamba_xlstm_full")
+
+
+# --------------------------------------------------------------------------
+# 2 · N-BEATS-xLSTM-RUL
+# --------------------------------------------------------------------------
+def nbeats_xlstm_full():
+    fig, ax = new_fig(12.0, 5.4)
+    my = 2.30
+
+    box(ax, 1.15, my, 1.75, 0.78, "Masukan HI", kind="input", sub="jendela 32 rekaman")
+    arrow(ax, (2.03, my), (2.42, my))
+    container(ax, 2.46, my - 0.62, 1.62, 1.24, times="2×")
+    box(ax, 3.27, my, 1.34, 0.66, "Blok xLSTM", kind="seq", sub="front-end")
+    arrow(ax, (4.24, my), (4.62, my))
+    ax.text(3.27, my - 0.92, "konteks sekuens memodulasi\nkeluaran basis",
+            ha="center", va="top", fontsize=FS_TINY, color=MUTED, style="italic")
+
+    # three basis blocks with mini curve glyphs
+    basis = [
+        (5.55, "Blok Trend", "polinomial Bernstein", "trend"),
+        (7.55, "Blok Wear", "frekuensi karakteristik", "wear"),
+        (9.55, "Blok Shock", "wavelet Gabor", "shock"),
+    ]
+    t = np.linspace(0, 1, 160)
+    for bx, name, subname, glyph in basis:
+        box(ax, bx, my, 1.72, 1.46, "", kind="seq")
+        ax.text(bx, my + 0.50, name, ha="center", va="center", fontsize=FS_BLOCK,
+                color=INK, fontweight="bold", zorder=6)
+        ax.text(bx, my - 0.54, subname, ha="center", va="center",
+                fontsize=FS_TINY, color=MUTED, zorder=6)
+        gx, gy, gw, gh = bx - 0.62, my - 0.24, 1.24, 0.52
+        if glyph == "trend":
+            ax.plot(gx + t * gw, gy + gh * (0.92 - 0.7 * t - 0.15 * t**2),
+                    color=INK, lw=1.3, zorder=6)
+        elif glyph == "wear":
+            ax.plot(gx + t * gw, gy + gh * (0.15 + 0.75 * t**4), color=INK, lw=1.3,
+                    zorder=6)
+        else:
+            spike = 0.12 + 0.8 * np.exp(-((t - 0.62) ** 2) / (2 * 0.02**2))
+            ax.plot(gx + t * gw, gy + gh * spike, color=INK, lw=1.3, zorder=6)
+
+    # doubly-residual plumbing: backcast chain + forecast bus into the sum
+    for bx, *_ in basis[:-1]:
+        arrow(ax, (bx + 0.86, my), (bx + 2.00 - 0.86, my))
+    ax.text(6.55, my - 0.98, "residu diteruskan: masukan berikutnya = masukan − backcast",
+            ha="center", va="top", fontsize=FS_TINY, color=MUTED, style="italic")
+    sumx, sumy = 10.15, 4.30
+    for bx, *_ in basis:
+        ax.plot([bx, bx], [my + 0.73, sumy], color=INK, lw=1.0)
+    ax.plot([basis[0][0], sumx - 0.20], [sumy, sumy], color=INK, lw=1.0)
+    gate_glyph(ax, sumx, sumy, "+", kind="mem", r=0.20, fs=10)
+    arrow(ax, (sumx - 0.30, sumy), (sumx - 0.21, sumy), shrink=0, lw=1.0)
+    ax.text(5.62, sumy + 0.14, "forecast tiap blok", ha="left", va="bottom",
+            fontsize=FS_TINY, color=MUTED, style="italic")
+    arrow(ax, (sumx + 0.21, sumy), (10.66, sumy), shrink=0)
+    box(ax, 11.28, sumy, 1.14, 0.80, "Estimasi\nRUL", kind="out", fs=9, bold=True,
+        sub="clamp fraksi RUL")
+
+    ax.text(0.45, 5.08, "N-BEATS-xLSTM-RUL", ha="left", va="center",
+            fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
+    ax.text(0.45, 4.74, "dekomposisi kurva degradasi ke tiga basis terstruktur "
+                        "(agregasi aditif, doubly residual)",
+            ha="left", va="center", fontsize=FS_NOTE, color=MUTED)
+
+    legend_row(ax, 0.45, 0.42, [
+        ("input", "masukan"), ("seq", "pemodelan sekuens / basis blok"),
+        ("mem", "agregasi aditif"), ("out", "keluaran"),
+    ])
+    save(fig, "nbeats_xlstm_full")
+
+
+# --------------------------------------------------------------------------
+# 3 · SparseGate-TCN-RUL
+# --------------------------------------------------------------------------
+def sparsegate_tcn_full():
+    fig, ax = new_fig(12.0, 5.6)
+    my = 1.30
+
+    box(ax, 1.05, my, 1.65, 0.78, "Masukan HI", kind="input", sub="jendela 32 rekaman")
+    ax.plot([1.88, 2.16], [my, my], color=INK, lw=1.1)
+    ax.plot([2.16, 2.16], [my - 0.55, my + 0.55], color=INK, lw=1.1)
+    arrow(ax, (2.16, my + 0.55), (2.52, my + 0.55), shrink=0)
+    arrow(ax, (2.16, my - 0.55), (2.52, my - 0.55), shrink=0)
+    box(ax, 3.42, my + 0.55, 1.80, 0.5, "Sparse feature gate", kind="gate", fs=8.5)
+    box(ax, 3.42, my - 0.55, 1.80, 0.5, "Cross-feature attention", kind="seq", fs=8.5)
+    ax.plot([4.32, 4.62], [my + 0.55, my + 0.55], color=INK, lw=1.1)
+    ax.plot([4.32, 4.62], [my - 0.55, my - 0.55], color=INK, lw=1.1)
+    arrow(ax, (4.62, my + 0.55), (4.86, my + 0.10), shrink=1)
+    arrow(ax, (4.62, my - 0.55), (4.86, my - 0.10), shrink=1)
+    gate_glyph(ax, 4.94, my, "+", kind="mem", r=0.17, fs=10)
+    ax.text(4.94, my - 0.60, "masukan tergerbang", ha="center", va="top",
+            fontsize=FS_TINY, color=MUTED)
+    arrow(ax, (5.11, my), (5.42, my))
+
+    container(ax, 5.46, my - 0.52, 3.92, 1.14, title="stack TCN")
+    for i, d in enumerate((1, 2, 4, 8)):
+        box(ax, 6.02 + i * 0.94, my, 0.84, 0.56, f"d = {d}", kind="proj", fs=8.5)
+        if i < 3:
+            arrow(ax, (6.44 + i * 0.94, my), (6.54 + i * 0.94, my), shrink=0, lw=0.9)
+    arrow(ax, (9.40, my), (9.66, my))
+    box(ax, 10.24, my, 1.08, 0.62, "Langkah\nterakhir", kind="util", fs=8.5)
+    arrow(ax, (10.80, my), (11.02, my))
+    box(ax, 11.52, my, 0.96, 0.78, "Quantile\nhead", kind="out", fs=8.5, sub="median = RUL")
+
+    # ---- zoom panel: dilated receptive field ------------------------------
+    px, py, pw, ph = 1.60, 2.55, 8.60, 2.55
+    container(ax, px, py, pw, ph, ec=KIND["proj"]["ec"])
+    ax.add_patch(FancyBboxPatch((px, py), pw, ph,
+                                boxstyle="round,pad=0.02,rounding_size=0.09",
+                                fc=KIND["proj"]["fc"], ec="none", alpha=0.22, zorder=0))
+    ax.text(px + pw / 2, py + ph - 0.20, "Konvolusi kausal terdilatasi: "
+            "jangkauan reseptif menutup seluruh jendela",
+            ha="center", va="center", fontsize=FS_TITLE - 0.5, color=INK, fontweight="bold")
+    n = 17
+    xs = np.linspace(px + 0.85, px + pw - 0.30, n)
+    rows = [(py + 0.52, 1), (py + 0.99, 2), (py + 1.46, 4), (py + 1.93, 8)]
+    for ry, d in rows:
+        ax.text(px + 0.14, ry, f"d = {d}", fontsize=FS_TINY, color=MUTED, va="center")
+    ax.text(px + 0.14, py + 0.18, "masukan", fontsize=FS_TINY, color=MUTED, va="center")
+    # receptive-field cone of the last output node
+    active = {3: {n - 1}}
+    for level in (3, 2, 1, 0):
+        d = rows[level][1]
+        prev = set()
+        for j in active.get(level, set()):
+            prev.update({j, j - d} & set(range(n)))
+        if level > 0:
+            active[level - 1] = prev
+        for j in active.get(level, set()):
+            for src in ({j, j - d} & set(range(n))):
+                if level == 0:
+                    ax.plot([xs[src], xs[j]], [rows[0][0] - 0.34, rows[0][0]],
+                            color=KIND["proj"]["ec"], lw=0.9, zorder=2)
+                else:
+                    ax.plot([xs[src], xs[j]], [rows[level - 1][0], rows[level][0]],
+                            color=KIND["proj"]["ec"], lw=0.9, zorder=2)
+    base = active.get(0, set())
+    inputs = set()
+    for j in base:
+        inputs.update({j, j - 1} & set(range(n)))
+    for level, (ry, d) in enumerate(rows):
+        for j in range(n):
+            on = j in active.get(level, set())
+            ax.plot([xs[j]], [ry], marker="o", ms=5 if on else 3.5,
+                    color=INK if on else "#B9C2D2", zorder=3)
+    for j in range(n):
+        ax.plot([xs[j]], [rows[0][0] - 0.34], marker="s", ms=4,
+                color=GOLD if j in inputs else "#D8DEE8", zorder=3)
+    zoom_link(ax, (5.60, my + 0.62), (9.24, my + 0.62), (px, py), (px + pw, py))
+
+    ax.text(0.45, 5.32, "SparseGate-TCN-RUL", ha="left", va="center",
+            fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
+    ax.text(10.42, py + ph - 0.28,
+            "gerbang sparse hanya\nmeneruskan channel\npaling informatif;\n"
+            "model paling ringan,\nsesuai untuk tier edge",
+            ha="left", va="top", fontsize=8, color=MUTED)
+
+    legend_row(ax, 0.45, 0.32, [
+        ("input", "masukan"), ("gate", "gerbang"), ("seq", "atensi"),
+        ("proj", "konvolusi terdilatasi"), ("out", "keluaran"),
+        ("active", "rekaman yang dijangkau satu keluaran teratas"),
+    ])
+    save(fig, "sparsegate_tcn_full")
+
+
+# --------------------------------------------------------------------------
+# 4 · WDCNN
+# --------------------------------------------------------------------------
+def wdcnn_full():
+    fig, ax = new_fig(12.0, 3.9)
+    my = 2.30
+
+    box(ax, 1.05, my, 1.70, 1.10, "Raw signal\n1 × 2.048", kind="input", sub="channel drive-end")
+    waveform(ax, 0.40, my - 0.34, 1.30, 0.28, seed=11)
+    arrow(ax, (1.92, my), (2.24, my))
+
+    def conv_block(cx, title, conv_label):
+        container(ax, cx - 1.06, my - 1.02, 2.12, 2.04, title=title)
+        box(ax, cx, my + 0.52, 1.82, 0.5, conv_label, kind="proj", fs=8.5)
+        arrow(ax, (cx, my + 0.26), (cx, my + 0.12), shrink=0, lw=0.9)
+        box(ax, cx, my - 0.14, 1.82, 0.44, "BatchNorm + ReLU", kind="gate", fs=8.5)
+        arrow(ax, (cx, my - 0.37), (cx, my - 0.50), shrink=0, lw=0.9)
+        box(ax, cx, my - 0.74, 1.82, 0.44, "MaxPool", kind="util", fs=8.5)
+
+    conv_block(3.42, "Blok 1: kernel lebar", "Conv1D 64, stride 16")
+    arrow(ax, (4.60, my), (4.94, my))
+    conv_block(6.12, "Blok 2 sampai 5 (4×)", "Conv1D kernel 3")
+    arrow(ax, (7.30, my), (7.66, my))
+    box(ax, 8.16, my, 0.94, 0.52, "Flatten", kind="util", fs=8.5)
+    arrow(ax, (8.65, my), (8.95, my))
+    box(ax, 9.70, my, 1.42, 0.72, "Dua lapis FC\n+ dropout", kind="proj", fs=8.5)
+    arrow(ax, (10.43, my), (10.73, my))
+    box(ax, 11.28, my, 1.02, 0.72, "Softmax\n10 kelas", kind="out", fs=8.5, bold=True)
+
+    ax.text(0.45, 3.62, "WDCNN (Wide First-layer Kernels)", ha="left", va="center",
+            fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
+    ax.text(9.05, 3.62, "lima blok konvolusi mereduksi dimensi temporal",
+            ha="left", va="center", fontsize=FS_NOTE, color=MUTED, style="italic")
+
+    legend_row(ax, 0.45, 0.40, [
+        ("input", "masukan"), ("proj", "konvolusi / FC"),
+        ("gate", "normalisasi"), ("util", "pooling / utilitas"), ("out", "keluaran"),
+    ])
+    save(fig, "wdcnn_full")
+
+
+# --------------------------------------------------------------------------
+# 5 · Top-k Sparse Autoencoder
+# --------------------------------------------------------------------------
+def topk_sae():
+    fig, ax = new_fig(12.0, 4.7)
+    my = 2.55
+
+    box(ax, 1.20, my, 1.95, 0.92, "$h \\in \\mathbb{R}^{128}$", kind="input", fs=10,
+        sub="hidden state backbone\n(bobot dibekukan)")
+    arrow(ax, (2.20, my), (2.52, my))
+    box(ax, 3.10, my, 1.10, 0.56, "Bias\npra-enkoder", kind="util", fs=8)
+    arrow(ax, (3.67, my), (3.95, my))
+    box(ax, 4.60, my, 1.24, 0.62, "Encoder\nlinear", kind="proj", fs=8.5, sub="$W_{enc}$")
+    arrow(ax, (5.24, my), (5.52, my))
+    box(ax, 6.16, my, 1.22, 0.62, "ReLU +\nTop-k", kind="gate", fs=8.5, sub="k = 51")
+    arrow(ax, (6.79, my), (7.07, my))
+
+    # latent grid: 16 x 8 cells drawn to represent the 1.024 features
+    gx, gy = 7.20, my - 0.72
+    cell, nx, ny = 0.145, 16, 8
+    rng = np.random.default_rng(20)
+    lit = set(map(tuple, rng.integers(0, [nx, ny], size=(6, 2))))
+    while len(lit) < 6:
+        lit.add((int(rng.integers(0, nx)), int(rng.integers(0, ny))))
+    for i in range(nx):
+        for j in range(ny):
+            on = (i, j) in lit
+            c = KIND["active"] if on else {"fc": "#E9EDF3", "ec": "#C7CFDC"}
+            ax.add_patch(Rectangle((gx + i * cell, gy + j * cell), cell * 0.88,
+                                   cell * 0.88, fc=c["fc"], ec=c["ec"], lw=0.6))
+    ax.text(gx + nx * cell / 2, gy + ny * cell + 0.16,
+            "$z$: 1.024 fitur laten (ekspansi 8×)", ha="center", va="bottom",
+            fontsize=FS_BLOCK, color=INK, fontweight="bold")
+    ax.text(gx + nx * cell / 2, gy - 0.14, "hanya k = 51 fitur (sekitar 5 %)\naktif per sampel",
+            ha="center", va="top", fontsize=FS_TINY, color=MUTED)
+    arrow(ax, (gx + nx * cell + 0.06, my), (gx + nx * cell + 0.40, my))
+    box(ax, 10.34, my, 1.24, 0.62, "Decoder\nlinear", kind="proj", fs=8.5, sub="$W_{dec}$")
+    arrow(ax, (10.98, my), (11.24, my))
+    box(ax, 11.62, my, 0.72, 0.92, "$\\hat{h}$", kind="out", fs=10, sub="MSE\n< 0,001")
+
+    ax.text(0.45, 4.38, "Top-k Sparse Autoencoder (SAE)", ha="left", va="center",
+            fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
+    ax.text(0.45, 4.04, "dilatih pasca-hoc pada 20.000 hidden state; "
+                        "satu fitur laten idealnya mengkodekan satu konsep fisika "
+                        "(monosemantisitas)",
+            ha="left", va="center", fontsize=FS_NOTE, color=MUTED)
+
+    legend_row(ax, 0.45, 0.40, [
+        ("input", "masukan"), ("proj", "proyeksi linear"), ("gate", "seleksi sparsitas"),
+        ("active", "fitur aktif"), ("util", "fitur nonaktif (nol)"), ("out", "rekonstruksi"),
+    ])
+    save(fig, "topk_sae")
+
+
+# --------------------------------------------------------------------------
+# 6 · SAE -> BPFx procedure
+# --------------------------------------------------------------------------
+def _panel(ax, x, y, w, h, title, tint="seq"):
+    container(ax, x, y, w, h, ec=KIND[tint]["ec"])
+    ax.add_patch(FancyBboxPatch((x, y), w, h,
+                                boxstyle="round,pad=0.02,rounding_size=0.09",
+                                fc=KIND[tint]["fc"], ec="none", alpha=0.20, zorder=0))
+    ax.text(x + w / 2, y + h - 0.24, title, ha="center", va="center",
+            fontsize=FS_TITLE - 0.5, color=INK, fontweight="bold")
+
+
+def sae_bpfx_pipeline():
+    fig, ax = new_fig(12.0, 5.1)
+    py, ph, pw = 1.42, 3.30, 3.55
+
+    _panel(ax, 0.40, py, pw, ph, "Tahap 1: Envelope spectrum", tint="seq")
+    x1 = 0.40 + pw / 2
+    waveform(ax, 0.85, py + 2.42, 2.60, 0.42, seed=5)
+    box(ax, x1, py + 1.78, 2.60, 0.42, "Band-pass (kurtogram spektral)", kind="proj", fs=8)
+    arrow(ax, (x1, py + 1.55), (x1, py + 1.42), shrink=0, lw=0.9)
+    box(ax, x1, py + 1.19, 2.60, 0.42, "Transformasi Hilbert", kind="proj", fs=8)
+    arrow(ax, (x1, py + 0.96), (x1, py + 0.83), shrink=0, lw=0.9)
+    box(ax, x1, py + 0.60, 2.60, 0.42, "FFT amplop getaran", kind="proj", fs=8)
+    arrow(ax, (x1, py + 2.20), (x1, py + 2.01), shrink=1, lw=0.9)
+
+    arrow(ax, (4.02, py + ph / 2), (4.38, py + ph / 2), lw=2.2, style="-|>")
+
+    _panel(ax, 4.42, py, pw, ph, "Tahap 2: Amplitudo BPFx", tint="mem")
+    x2, sy = 4.42 + 0.35, py + 1.10
+    peaks = [(0.18, 0.85), (0.38, 0.62), (0.58, 0.48), (0.78, 0.35)]
+    for (p, _), name in zip(peaks, ("BPFO", "BPFI", "BSF", "FTF")):
+        ax.add_patch(Rectangle((x2 + (p - 0.035) * (pw - 0.7), sy), 0.07 * (pw - 0.7),
+                               1.15, fc=GOLD_FILL, ec="none", alpha=0.75, zorder=1))
+        ax.text(x2 + p * (pw - 0.7), sy - 0.10, name, ha="center", va="top",
+                fontsize=FS_TINY, color=INK)
+    spectrum(ax, x2, sy, pw - 0.7, 1.05, peaks)
+    ax.text(4.42 + pw / 2, py + 0.38, "integral spektrum pada pita ±2 Hz\n"
+            "di sekitar tiap frekuensi karakteristik",
+            ha="center", va="center", fontsize=FS_TINY, color=MUTED)
+
+    arrow(ax, (8.04, py + ph / 2), (8.40, py + ph / 2), lw=2.2, style="-|>")
+
+    _panel(ax, 8.44, py, pw, ph, "Tahap 3: Korelasi dan hit-rate", tint="gate")
+    x3 = 8.44 + pw / 2
+    box(ax, x3, py + 2.28, 3.05, 0.60, "Korelasi Pearson $r$\naktivasi fitur SAE × amplitudo BPFx",
+        kind="proj", fs=8)
+    arrow(ax, (x3, py + 1.95), (x3, py + 1.80), shrink=0, lw=0.9)
+    box(ax, x3, py + 1.44, 3.05, 0.56, "Hit-rate: proporsi fitur\ndengan |r| ≥ 0,30",
+        kind="out", fs=8)
+    ax.text(x3, py + 0.62, "korelasi maksimum 0,447 (BPFI, PHM2012)\ndan 0,468 (BPFO, XJTU-SY)",
+            ha="center", va="center", fontsize=FS_TINY, color=MUTED)
+
+    ax.text(0.45, 4.90, "Prosedur pemetaan fitur SAE ke frekuensi karakteristik bearing (BPFx)",
+            ha="left", va="center", fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
+
+    box(ax, 6.0, 0.70, 11.2, 0.74,
+        "Validasi statistik:  bootstrap 95% CI (B = 1.000)  ·  permutation test dua sisi "
+        "(B = 1.000)  ·  12 uji primer, ambang Bonferroni p < 0,004\n"
+        "dua kontrol negatif: backbone inisialisasi Xavier dan hidden state Gaussian noise",
+        kind="util", fs=8.5)
+    save(fig, "sae_bpfx_pipeline")
+
+
+# --------------------------------------------------------------------------
+# 7 · SHAP -> FSM procedure
+# --------------------------------------------------------------------------
+def shap_fsm_pipeline():
+    fig, ax = new_fig(12.0, 4.6)
+    py, ph, pw, gap = 1.30, 2.55, 2.55, 0.36
+
+    xs = [0.40 + i * (pw + gap) for i in range(4)]
+
+    _panel(ax, xs[0], py, pw, ph, "Raw signal", tint="input")
+    waveform(ax, xs[0] + 0.30, py + 1.45, pw - 0.6, 0.70, seed=13)
+    ax.text(xs[0] + pw / 2, py + 0.55, "2.048 titik per segmen\nchannel drive-end CWRU",
+            ha="center", va="center", fontsize=FS_NOTE, color=MUTED)
+
+    _panel(ax, xs[1], py, pw, ph, "WDCNN terlatih", tint="proj")
+    cx = xs[1] + pw / 2
+    for i, lbl in enumerate(("Conv blok 1–5", "FC + dropout", "Softmax 10 kelas")):
+        box(ax, cx, py + 1.62 - i * 0.52, 1.95, 0.42, lbl, kind="proj", fs=8)
+        if i < 2:
+            arrow(ax, (cx, py + 1.62 - i * 0.52 - 0.22), (cx, py + 1.62 - i * 0.52 - 0.31),
+                  shrink=0, lw=0.8)
+
+    _panel(ax, xs[2], py, pw, ph, "SHAP DeepExplainer", tint="gate")
+    cx = xs[2] + pw / 2
+    rng = np.random.default_rng(4)
+    t = np.linspace(0, 1, 90)
+    vals = rng.standard_normal(90) * np.exp(-((t - 0.5) ** 2) / 0.05)
+    bx, bw2 = xs[2] + 0.30, pw - 0.6
+    for i, v in enumerate(vals):
+        color = "#C0392B" if v > 0 else "#7FA3C4"
+        ax.plot([bx + i / 90 * bw2] * 2, [py + 1.55, py + 1.55 + v * 0.28],
+                color=color, lw=0.7, zorder=4)
+    ax.plot([bx, bx + bw2], [py + 1.55, py + 1.55], color=MUTED, lw=0.6)
+    ax.text(cx, py + 0.55, "atribusi per titik waktu\n300 background · 500 sampel uji",
+            ha="center", va="center", fontsize=FS_NOTE, color=MUTED)
+
+    _panel(ax, xs[3], py, pw, ph, "Fault Signature Maps", tint="mem")
+    hx, hy = xs[3] + 0.34, py + 0.98
+    rng = np.random.default_rng(9)
+    cmap = matplotlib.colormaps["YlGnBu"]
+    for r in range(10):
+        for ci in range(24):
+            v = rng.random() * np.exp(-((ci / 24 - (0.2 + 0.06 * r) % 1) ** 2) / 0.02)
+            ax.add_patch(Rectangle((hx + ci * 0.081, hy + r * 0.115), 0.075, 0.105,
+                                   fc=cmap(0.15 + 0.8 * min(v, 1)), ec="none"))
+    ax.text(xs[3] + pw / 2, py + 0.55, "peta atribusi 10 kelas × 2.048 titik\n"
+            "3 varian: Signed, Absolute, Variance",
+            ha="center", va="center", fontsize=FS_NOTE, color=MUTED)
+
+    for i in range(3):
+        arrow(ax, (xs[i] + pw + 0.04, py + ph / 2), (xs[i + 1] - 0.04, py + ph / 2),
+              lw=2.0)
+
+    ax.text(0.45, 4.32, "Dari sinyal mentah ke Fault Signature Maps (FSM)",
+            ha="left", va="center", fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
+    ax.text(0.45, 3.98, "agregasi atribusi per kelas menghasilkan array 500 × 2.048 × 10 "
+                        "(lebih dari 10 juta nilai SHAP)",
+            ha="left", va="center", fontsize=FS_NOTE, color=MUTED)
+
+    box(ax, 6.0, 0.62, 11.2, 0.56,
+        "Validasi FSM:  diskriminabilitas D = 0,216  ·  stabilitas split-half 0,940  ·  "
+        "monotonisitas keparahan (Ball 17,6 % · IR 13,8 % · OR 8,6 %)",
+        kind="util", fs=8.5)
+    save(fig, "shap_fsm_pipeline")
+
+
+# --------------------------------------------------------------------------
+# 8 · Classic ML trio
+# --------------------------------------------------------------------------
+def classic_ml_trio():
+    fig, ax = new_fig(12.0, 4.9)
+    py, ph, pw, gap = 1.30, 2.80, 3.48, 0.38
+    xs = [0.40 + i * (pw + gap) for i in range(3)]
+
+    # --- SVM ---------------------------------------------------------------
+    _panel(ax, xs[0], py, pw, ph, "SVM dengan kernel RBF", tint="seq")
+    rng = np.random.default_rng(2)
+    cxp, cyp = xs[0] + pw / 2, py + 1.45
+    a = rng.normal([-0.72, 0.12], 0.30, size=(16, 2))
+    b = rng.normal([0.78, -0.10], 0.30, size=(16, 2))
+    t = np.linspace(-1.05, 1.05, 120)
+    boundary = 0.55 * np.sin(1.8 * t) * 0.4
+    ax.plot(cxp + boundary + 0.03 * t, cyp + t * 0.75, color=INK, lw=1.4, zorder=4)
+    for off, ls in ((0.22, (0, (4, 3))), (-0.22, (0, (4, 3)))):
+        ax.plot(cxp + boundary + off, cyp + t * 0.75, color=MUTED, lw=0.8, ls=ls, zorder=3)
+    ax.scatter(cxp + a[:, 0], cyp + a[:, 1], s=14, c=KIND["seq"]["ec"], zorder=5)
+    ax.scatter(cxp + b[:, 0], cyp + b[:, 1], s=14, c=GOLD, marker="s", zorder=5)
+    for pt in (a[np.argmax(a[:, 0])], b[np.argmin(b[:, 0])]):
+        ax.add_patch(Circle((cxp + pt[0], cyp + pt[1]), 0.09, fc="none", ec=INK,
+                            lw=1.1, zorder=6))
+    ax.text(cxp, py + 0.32, "batas pemisah bermargin maksimum;\nkernel RBF menekuk batas "
+            "untuk pola nonlinier", ha="center", va="center", fontsize=FS_TINY, color=MUTED)
+
+    # --- Logistic Regression ----------------------------------------------
+    _panel(ax, xs[1], py, pw, ph, "Regresi Logistik (one-vs-rest)", tint="mem")
+    gx, gy, gw, gh = xs[1] + 0.55, py + 0.85, pw - 1.1, 1.35
+    z = np.linspace(-6, 6, 150)
+    sig = 1 / (1 + np.exp(-z))
+    ax.plot([gx, gx + gw], [gy, gy], color=MUTED, lw=0.7)
+    ax.plot([gx, gx], [gy, gy + gh], color=MUTED, lw=0.7)
+    ax.plot(gx + (z + 6) / 12 * gw, gy + sig * gh, color=INK, lw=1.5, zorder=4)
+    ax.plot([gx, gx + gw], [gy + gh / 2, gy + gh / 2], color=GOLD, lw=0.9,
+            ls=(0, (4, 3)), zorder=3)
+    ax.text(gx + gw + 0.06, gy + gh / 2, "0,5", fontsize=FS_TINY, color=GOLD, va="center")
+    ax.text(gx + gw / 2, gy - 0.14, "skor linear fitur", ha="center", va="top",
+            fontsize=FS_TINY, color=MUTED)
+    ax.text(xs[1] + pw / 2, py + 0.32, "sigmoid memetakan skor ke probabilitas;\n"
+            "satu model per kelas (OvR)", ha="center", va="center",
+            fontsize=FS_TINY, color=MUTED)
+
+    # --- Trees -------------------------------------------------------------
+    _panel(ax, xs[2], py, pw, ph, "Pohon Keputusan dan Ensemble", tint="gate")
+
+    def tree(cx, cy, s=1.0, lw=1.0, ms=4.0):
+        pts = {(0, 0): (cx, cy)}
+        for depth in (1, 2):
+            for k in range(2 ** depth):
+                px_, py_ = cx + (k - (2 ** depth - 1) / 2) * 0.42 * s / depth, cy - 0.34 * s * depth
+                pts[(depth, k)] = (px_, py_)
+        for (d, k), (x0, y0) in pts.items():
+            if d < 2:
+                for kk in (2 * k, 2 * k + 1):
+                    x1, y1 = pts[(d + 1, kk)]
+                    ax.plot([x0, x1], [y0, y1], color=KIND["gate"]["ec"], lw=lw, zorder=3)
+        for (d, k), (x0, y0) in pts.items():
+            ax.plot([x0], [y0], marker="o", ms=ms, color=INK, zorder=4)
+
+    tree(xs[2] + 0.75, py + 2.15, s=1.0)
+    ax.text(xs[2] + 0.75, py + 1.10, "DT", ha="center", fontsize=FS_TINY, color=INK)
+    arrow(ax, (xs[2] + 1.30, py + 1.80), (xs[2] + 1.72, py + 1.80), lw=1.0)
+    for i in range(3):
+        tree(xs[2] + 2.10 + i * 0.55, py + 2.28, s=0.5, lw=0.8, ms=2.6)
+    ax.text(xs[2] + 2.65, py + 1.72, "RF: voting banyak\npohon (bagging)",
+            ha="center", va="top", fontsize=FS_TINY, color=MUTED)
+    for i in range(3):
+        tree(xs[2] + 2.10 + i * 0.62, py + 1.05, s=0.5, lw=0.8, ms=2.6)
+        if i < 2:
+            ax.text(xs[2] + 2.41 + i * 0.62, py + 0.88, "+", fontsize=9, color=INK,
+                    ha="center")
+    ax.text(xs[2] + 2.65, py + 0.34, "XGBoost: pohon berikutnya\nmengoreksi galat (boosting)",
+            ha="center", va="center", fontsize=FS_TINY, color=MUTED)
+
+    ax.text(0.45, 4.62, "Tiga model klasik pada vektor fitur", ha="left", va="center",
+            fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
+    box(ax, 6.0, 0.62, 11.2, 0.56,
+        "Masukan: vektor fitur HI 36-D (18 fitur × 2 channel)  ·  Keluaran: 10 kelas "
+        "kerusakan CWRU  ·  XAI: SHAP KernelExplainer (SVM, LR) dan TreeExplainer (DT, RF, XGBoost)",
+        kind="util", fs=8.5)
+    save(fig, "classic_ml_trio")
+
+
+# --------------------------------------------------------------------------
+# 9 · Streaming inference engine
+# --------------------------------------------------------------------------
+def streaming_engine():
+    fig, ax = new_fig(12.0, 4.5)
+    my = 2.72
+
+    steps = [
+        (1.30, 1.95, "Akuisisi sinyal", "jendela geser\n64 akuisisi", "input"),
+        (3.65, 1.95, "Ekstraksi fitur HI", "pipeline identik\ndengan pelatihan", "proj"),
+        (6.00, 1.95, "Mamba-xLSTM-Net", "di server,\nprotokol WebSocket", "seq"),
+        (8.35, 1.95, "Prediksi per akuisisi", "fraksi RUL · status\nfusion gate · atribusi", "mem"),
+        (10.70, 1.95, "Dasbor streaming", "kurva RUL, waveform,\nevent log", "out"),
+    ]
+    for cx, w, label, sub, kind in steps:
+        box(ax, cx, my, w, 1.10, label, kind=kind, fs=9, sub=sub, bold=kind == "out")
+    for (cx1, w1, *_), (cx2, w2, *_) in zip(steps, steps[1:]):
+        arrow(ax, (cx1 + w1 / 2 + 0.02, my), (cx2 - w2 / 2 - 0.02, my), lw=1.8)
+
+    ax.text(6.0, my + 0.95, "atribusi fitur: gradient×input per akuisisi; "
+            "Integrated Gradients dipicu otomatis pada transisi status",
+            ha="center", va="center", fontsize=FS_NOTE, color=MUTED, style="italic")
+
+    # status threshold bar
+    bx, bw_, bh, by = 1.50, 9.0, 0.5, 0.92
+    ordered = [(0.0, 0.20, "#F3D9D5", "#C0392B", "Critical\n< 20 %"),
+               (0.20, 0.20, "#F3EAD2", GOLD, "Degrading\n20–40 %"),
+               (0.40, 0.60, "#D9EAD9", "#3E8E5B", "Healthy\n> 40 %")]
+    for f0, fw, fc, ec, lbl in ordered:
+        ax.add_patch(Rectangle((bx + f0 * bw_, by), fw * bw_, bh, fc=fc, ec=ec, lw=1.2))
+        ax.text(bx + (f0 + fw / 2) * bw_, by + bh / 2, lbl, ha="center", va="center",
+                fontsize=FS_NOTE, color=INK, linespacing=1.2)
+    ax.text(bx, by + bh + 0.12, "Ambang status dari fraksi RUL terprediksi",
+            ha="left", va="bottom", fontsize=FS_NOTE, color=INK, fontweight="bold")
+    ax.text(bx + bw_ + 0.10, by + bh / 2, "100 %", ha="left", va="center",
+            fontsize=FS_TINY, color=MUTED)
+    ax.text(bx - 0.10, by + bh / 2, "0 %", ha="right", va="center",
+            fontsize=FS_TINY, color=MUTED)
+
+    ax.text(0.45, 4.20, "Mesin inferensi RUL streaming", ha="left", va="center",
+            fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
+    ax.text(0.45, 3.86, "satu mesin yang sama untuk dataset benchmark dan rekaman lapangan "
+                        "PT SKF Indonesia, sehingga metrik antar dataset sebanding",
+            ha="left", va="center", fontsize=FS_NOTE, color=MUTED)
+    save(fig, "streaming_engine")
+
+
+# --------------------------------------------------------------------------
+# Driver
+# --------------------------------------------------------------------------
+DIAGRAMS = {
+    "mamba_xlstm_full": mamba_xlstm_full,
+    "nbeats_xlstm_full": nbeats_xlstm_full,
+    "sparsegate_tcn_full": sparsegate_tcn_full,
+    "wdcnn_full": wdcnn_full,
+    "topk_sae": topk_sae,
+    "sae_bpfx_pipeline": sae_bpfx_pipeline,
+    "shap_fsm_pipeline": shap_fsm_pipeline,
+    "classic_ml_trio": classic_ml_trio,
+    "streaming_engine": streaming_engine,
+}
+
+
+def save(fig, name: str) -> None:
+    OUT.mkdir(parents=True, exist_ok=True)
+    target = OUT / f"{name}.png"
+    fig.savefig(target, dpi=200, facecolor="white")
+    plt.close(fig)
+    print(f"{name:24s} -> {target.relative_to(ROOT)}")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--only", help="comma-separated diagram names")
+    args = parser.parse_args()
+    names = args.only.split(",") if args.only else list(DIAGRAMS)
+    for name in names:
+        if name not in DIAGRAMS:
+            print(f"unknown diagram: {name}", file=sys.stderr)
+            return 1
+        DIAGRAMS[name]()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
