@@ -49,10 +49,10 @@ KIND = {
     "active": {"fc": GOLD_FILL, "ec": GOLD},        # emas    — fitur aktif
 }
 
-FS_TITLE = 11.5   # panel / container titles
-FS_BLOCK = 9.5    # block labels
-FS_NOTE = 8.5     # annotations, legend
-FS_TINY = 7.5
+FS_TITLE = 12.5   # panel / container titles
+FS_BLOCK = 10.2   # block labels
+FS_NOTE = 9.2     # annotations, legend
+FS_TINY = 8.2
 
 
 # --------------------------------------------------------------------------

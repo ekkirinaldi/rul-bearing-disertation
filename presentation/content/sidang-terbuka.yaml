@@ -516,6 +516,23 @@ slides:
                       bagian RM-2 dan RM-3.
 
   # ======================================================================
+  # 11b · JEMBATAN A2 — cara kerja tiga golongan model klasik
+  # ======================================================================
+  - layout: content
+    eyebrow: "Pengantar · Cara Kerja Model"
+    title: "Cara Kerja Tiga Golongan Model Klasik"
+    top: 1.72
+    blocks:
+      - type: figure
+        flex: true
+        image: ../assets/diagrams/classic_ml_trio.png
+      - type: source
+        gap: 0.14
+        body: >-
+          Skema konseptual tiga golongan pada Subbab IV.2 dan IV.3 · SHAP
+          (Lundberg dan Lee, 2017) · hasil akurasinya dibandingkan pada slide berikut.
+
+  # ======================================================================
   # 12 · HASIL RM-1 — benchmark diagnostik CWRU
   # ======================================================================
   - layout: content
@@ -643,6 +660,99 @@ slides:
           Setiap angka RUL pada bagian ini dilaporkan sebagai **mean ± simpangan baku atas
           tiga seed** (42/43/44), sehingga keandalannya dapat dinilai, bukan hasil sekali
           jalan.
+
+  # ======================================================================
+  # 13b · METODE RM-1 — arsitektur Mamba-xLSTM-Net
+  # ======================================================================
+  - layout: content
+    eyebrow: "Metode Prognostik · Bab V"
+    title: Arsitektur Mamba-xLSTM-Net
+    top: 1.66
+    blocks:
+      - type: columns
+        flex: true
+        gutter: 0.26
+        items:
+          - width: 8.60
+            blocks:
+              - type: figure
+                flex: true
+                inset: 0.06
+                image: ../assets/diagrams/mamba_xlstm_full.png
+          - blocks:
+              - type: kvrows
+                flex: true
+                label_w: 1.55
+                items:
+                  - label: KOMPLEKSITAS
+                    value: >-
+                      ±898 ribu parameter (PHM2012) dan ±811 ribu (XJTU-SY);
+                      inferensi sekuens linear O(n).
+                  - label: GERBANG FUSI
+                    value: >-
+                      Bobot cabang xLSTM/Mamba adaptif per sampel, dapat dibaca
+                      sebagai indikator internal model.
+                  - label: PERAN
+                    value: >-
+                      Backbone utama demonstrasi streaming dan analisis SAE-BPFx.
+      - type: source
+        gap: 0.14
+        body: >-
+          Digambar ulang berdasarkan Gambar V.1 · Mamba (Gu dan Dao, 2023) ·
+          xLSTM (Beck dkk., 2024).
+
+  # ======================================================================
+  # 13c · METODE RM-1 — arsitektur N-BEATS-xLSTM-RUL
+  # ======================================================================
+  - layout: content
+    eyebrow: "Metode Prognostik · Bab V"
+    title: Arsitektur N-BEATS-xLSTM-RUL
+    top: 1.66
+    blocks:
+      - type: figure
+        flex: true
+        inset: 0.06
+        image: ../assets/diagrams/nbeats_xlstm_full.png
+      - type: banner
+        gap: 0.14
+        tone: light
+        size: 11
+        vpad: 0.12
+        body: >-
+          **±459 ribu parameter.** Prior struktural basis-blok menyempitkan ruang solusi,
+          sehingga stabilitas lintas seed menjadi yang tertinggi (simpangan baku RMSE
+          0,007 pada PHM2012).
+      - type: source
+        gap: 0.12
+        body: >-
+          Digambar ulang berdasarkan Gambar V.2 · N-BEATS (Oreshkin dkk., 2020) ·
+          xLSTM (Beck dkk., 2024).
+
+  # ======================================================================
+  # 13d · METODE RM-1 — arsitektur SparseGate-TCN-RUL
+  # ======================================================================
+  - layout: content
+    eyebrow: "Metode Prognostik · Bab V"
+    title: Arsitektur SparseGate-TCN-RUL
+    top: 1.66
+    blocks:
+      - type: figure
+        flex: true
+        inset: 0.06
+        image: ../assets/diagrams/sparsegate_tcn_full.png
+      - type: banner
+        gap: 0.14
+        tone: light
+        size: 11
+        vpad: 0.12
+        body: >-
+          **±249 ribu parameter, paling ringan dari ketiganya.** Pemenang RMSE pada
+          PHM2012 (0,226 ± 0,030); kecepatan inferensinya menjadikannya kandidat
+          deployment pada tier Edge Server (bagian RM-4).
+      - type: source
+        gap: 0.12
+        body: >-
+          Digambar ulang berdasarkan Gambar V.3 · TCN (Bai dkk., 2018).
 
   # ======================================================================
   # 14 · HASIL RM-1 — tiga backbone RUL
@@ -824,6 +934,24 @@ slides:
         body: >-
           Atribusi per sinyal kemudian **diagregasi per kelas** menjadi Fault Signature
           Maps (FSM), sehingga pola satu kelas kerusakan dapat dibaca sekali pandang.
+
+  # ======================================================================
+  # 17b · METODE RM-2 — pipeline sinyal → FSM
+  # ======================================================================
+  - layout: content
+    eyebrow: "Metode · Novelti N1"
+    title: "Empat Langkah dari Sinyal Mentah ke FSM"
+    top: 1.66
+    blocks:
+      - type: figure
+        flex: true
+        inset: 0.06
+        image: ../assets/diagrams/shap_fsm_pipeline.png
+      - type: source
+        gap: 0.14
+        body: >-
+          Digambar ulang berdasarkan Gambar IV.1 · SHAP DeepExplainer (Lundberg dan
+          Lee, 2017) dengan rescale rule DeepLIFT (Shrikumar dkk., 2017).
 
   # ======================================================================
   # 18 · HASIL RM-2 — FSM dan validasinya
@@ -1037,7 +1165,8 @@ slides:
             blocks:
               - type: figure
                 flex: true
-                image: ../../dissertation-docx/assets/figures/bab2/fig_sae_architecture.png
+                inset: 0.06
+                image: ../assets/diagrams/topk_sae.png
               - type: text
                 gap: 0.08
                 h: 0.28
@@ -1046,8 +1175,8 @@ slides:
                 align: center
                 color: "6B7689"
                 text: >-
-                  Gambar II.8 Konsep Top-k Sparse Autoencoder (Cunningham dkk., 2023),
-                  diadaptasi ke backbone RUL penelitian ini
+                  Alur SAE, digambar ulang berdasarkan Gambar II.8 dan Gambar V.5
+                  (Cunningham dkk., 2023)
           - blocks:
               - type: text
                 h: 1.50
@@ -1090,7 +1219,8 @@ slides:
             blocks:
               - type: figure
                 flex: true
-                image: ../assets/v14/gambar_v6_prosedur_sae_bpfx.png
+                inset: 0.06
+                image: ../assets/diagrams/sae_bpfx_pipeline.png
               - type: text
                 gap: 0.08
                 h: 0.28
@@ -1098,7 +1228,7 @@ slides:
                 italic: true
                 align: center
                 color: "6B7689"
-                text: "Gambar V.6 Prosedur tiga tahap pemetaan fitur SAE ke BPFx"
+                text: "Prosedur tiga tahap, digambar ulang berdasarkan Gambar V.6"
           - blocks:
               - type: numbered
                 flex: true
@@ -1827,8 +1957,9 @@ slides:
     top: 1.74
     blocks:
       - type: figure
-        h: 2.10
-        image: ../../dissertation-docx/assets/figures/bab4/wdcnn_architecture.png
+        h: 2.28
+        inset: 0.06
+        image: ../assets/diagrams/wdcnn_full.png
       - type: text
         gap: 0.08
         h: 0.28
@@ -1837,8 +1968,8 @@ slides:
         align: center
         color: "6B7689"
         text: >-
-          Gambar IV.3 Input 1 × 2.048 → lima blok konvolusi → dua fully connected →
-          sepuluh kelas (Zhang dkk., 2017)
+          Digambar ulang berdasarkan Gambar IV.3: input 1 × 2.048, lima blok konvolusi,
+          dua fully connected, sepuluh kelas (Zhang dkk., 2017)
       - type: columns
         gap: 0.16
         flex: true
@@ -1847,7 +1978,7 @@ slides:
           - width: 6.40
             blocks:
               - type: figure
-                h: 2.06
+                h: 1.94
                 image: ../../dissertation-docx/assets/figures/bab4/wdcnn_training_curves.png
               - type: text
                 gap: 0.06
@@ -1870,55 +2001,6 @@ slides:
                     value: >-
                       LSTM, Transformer, dan Informer dikaji sebagai studi pendahuluan
                       dan tidak dilatih pada eksperimen utama (Lampiran B).
-
-  # ======================================================================
-  # B4 · ARSITEKTUR MAMBA-XLSTM
-  # ======================================================================
-  - layout: content
-    eyebrow: "Cadangan · Prognostik"
-    title: Arsitektur Mamba-xLSTM-Net
-    top: 1.74
-    blocks:
-      - type: columns
-        flex: true
-        gutter: 0.32
-        items:
-          - width: 4.30
-            blocks:
-              - type: figure
-                flex: true
-                image: ../assets/v14/gambar_v1_arsitektur_mamba_xlstm.png
-          - blocks:
-              - type: text
-                h: 1.60
-                size: 12
-                text: >-
-                  Vektor indikator kesehatan diproyeksikan ke dimensi model, lalu diproses
-                  tiga pasang blok hibrid Mamba (selective state space) dan mLSTM (memori
-                  matriks). Keluaran kedua cabang disatukan **gated fusion** menjadi
-                  representasi laten h yang dibaca regression head RUL.
-              - type: kvrows
-                gap: 0.16
-                flex: true
-                label_w: 1.70
-                items:
-                  - label: KOMPLEKSITAS
-                    value: "±898 ribu parameter; inferensi sekuens linear O(n)"
-                  - label: GERBANG FUSI
-                    value: >-
-                      Bobot xLSTM/Mamba adaptif per sampel; teramati berimbang pada kanal
-                      NDE dan condong ke Mamba pada kanal DE data SKF.
-                  - label: PERAN
-                    value: >-
-                      Backbone utama demonstrasi streaming dan analisis SAE-BPFx.
-      - type: text
-        gap: 0.08
-        h: 0.26
-        size: 9.5
-        italic: true
-        align: center
-        color: "6B7689"
-        text: "Gambar V.1 Arsitektur Mamba-xLSTM-Net dengan rincian blok inti"
 
   # ======================================================================
   # B5 · PANDUAN METRIK DIAGNOSTIK (lengkap)
@@ -2246,6 +2328,24 @@ slides:
                 align: center
                 color: "6B7689"
                 text: "Gambar III.7 Akselerometer piezoelectric SKF CMSS2200"
+
+  # ======================================================================
+  # B10b · ARSITEKTUR MESIN INFERENSI STREAMING
+  # ======================================================================
+  - layout: content
+    eyebrow: "Cadangan · Subbab V.5.3"
+    title: Arsitektur Mesin Inferensi Streaming
+    top: 1.66
+    blocks:
+      - type: figure
+        flex: true
+        inset: 0.06
+        image: ../assets/diagrams/streaming_engine.png
+      - type: source
+        gap: 0.14
+        body: >-
+          Digambar berdasarkan Subbab V.5.3 dan V.5.4; mesin yang sama memproses
+          PHM2012, XJTU-SY, dan rekaman lapangan PT SKF Indonesia.
 
   # ======================================================================
   # B11 · MESIN INFERENSI PADA BENCHMARK (V.5.4)

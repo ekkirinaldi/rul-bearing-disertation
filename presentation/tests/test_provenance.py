@@ -109,8 +109,18 @@ CLAIMS: list[tuple[str, list[str]]] = [
     ("kenaikan 133%", ["133%", "133 %"]),
     # s16 backbone RUL
     ("Mamba-xLSTM 898K parameter", ["898"]),
+    ("Mamba-xLSTM 811K parameter pada XJTU-SY", ["811"]),
     ("N-BEATS 459K parameter", ["459"]),
+    ("N-BEATS stabilitas lintas seed 0,007", ["0,007"]),
     ("SparseGate-TCN 249K parameter", ["249"]),
+    # structural facts drawn into the algorithm diagrams
+    ("tiga pasang blok hibrid Mamba + mLSTM", ["tiga pasang"]),
+    ("SAE ekspansi delapan kali", ["delapan kali ekspansi"]),
+    ("dilatasi TCN 1-2-4-8", ["1, 2, 4, dan 8"]),
+    ("WDCNN kernel pertama lebar 64 stride 16", ["stride 16"]),
+    ("jendela streaming 64 akuisisi", ["jendela 64 akuisisi"]),
+    ("basis blok trend wear shock", ["wavelet Gabor"]),
+    ("quantile head median", ["quantile head"]),
     ("PHM2012 RMSE 0,226", ["0,226"]),
     ("XJTU-SY RMSE 0,213", ["0,213"]),
     ("runner-up XJTU 0,216", ["0,216"]),
