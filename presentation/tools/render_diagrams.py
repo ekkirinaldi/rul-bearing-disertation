@@ -264,7 +264,7 @@ def mamba_xlstm_full():
     arrow(ax, (Cx - 0.30, cyc + 0.44), (Cx - 0.30, cyc + 0.29), lw=0.9, shrink=0)
     arrow(ax, (Cx + 0.30, cyc + 0.44), (Cx + 0.30, cyc + 0.29), lw=0.9, shrink=0)
     arrow(ax, (Cx + 0.48, cyc - 0.20), (Cx + 1.14, cyc - 0.20))
-    box(ax, p2x + 5.34, cyc - 0.20, 1.14, 0.5, "Baca via q", kind="util", fs=8.5,
+    box(ax, p2x + 5.34, cyc - 0.20, 1.14, 0.5, "Readout q", kind="util", fs=8.5,
         sub="normalisasi")
     ax.plot([p2x + 1.74, p2x + 5.34], [cyc + 0.85, cyc + 0.85], color=INK, lw=1.0)  # q path
     arrow(ax, (p2x + 5.34, cyc + 0.85), (p2x + 5.34, cyc + 0.14), lw=0.9, shrink=1)
@@ -705,11 +705,11 @@ def classic_ml_trio():
     for pt in (a[np.argmax(a[:, 0])], b[np.argmin(b[:, 0])]):
         ax.add_patch(Circle((cxp + pt[0], cyp + pt[1]), 0.09, fc="none", ec=INK,
                             lw=1.1, zorder=6))
-    ax.text(cxp, py + 0.32, "batas pemisah bermargin maksimum;\nkernel RBF menekuk batas "
+    ax.text(cxp, py + 0.32, "batas pemisah dengan margin maksimum;\nkernel RBF menekuk batas "
             "untuk pola nonlinier", ha="center", va="center", fontsize=FS_TINY, color=MUTED)
 
     # --- Logistic Regression ----------------------------------------------
-    _panel(ax, xs[1], py, pw, ph, "Regresi Logistik (one-vs-rest)", tint="mem")
+    _panel(ax, xs[1], py, pw, ph, "Logistic Regression (one-vs-rest)", tint="mem")
     gx, gy, gw, gh = xs[1] + 0.55, py + 0.85, pw - 1.1, 1.35
     z = np.linspace(-6, 6, 150)
     sig = 1 / (1 + np.exp(-z))
@@ -726,7 +726,7 @@ def classic_ml_trio():
             fontsize=FS_TINY, color=MUTED)
 
     # --- Trees -------------------------------------------------------------
-    _panel(ax, xs[2], py, pw, ph, "Pohon Keputusan dan Ensemble", tint="gate")
+    _panel(ax, xs[2], py, pw, ph, "Decision Tree dan Ensemble", tint="gate")
 
     def tree(cx, cy, s=1.0, lw=1.0, ms=4.0):
         pts = {(0, 0): (cx, cy)}
@@ -743,18 +743,19 @@ def classic_ml_trio():
             ax.plot([x0], [y0], marker="o", ms=ms, color=INK, zorder=4)
 
     tree(xs[2] + 0.75, py + 2.15, s=1.0)
-    ax.text(xs[2] + 0.75, py + 1.10, "DT", ha="center", fontsize=FS_TINY, color=INK)
+    ax.text(xs[2] + 0.75, py + 1.10, "Decision Tree", ha="center",
+            fontsize=FS_TINY, color=INK)
     arrow(ax, (xs[2] + 1.30, py + 1.80), (xs[2] + 1.72, py + 1.80), lw=1.0)
     for i in range(3):
         tree(xs[2] + 2.10 + i * 0.55, py + 2.28, s=0.5, lw=0.8, ms=2.6)
-    ax.text(xs[2] + 2.65, py + 1.72, "RF: voting banyak\npohon (bagging)",
+    ax.text(xs[2] + 2.65, py + 1.72, "Random Forest: voting\nbanyak tree (bagging)",
             ha="center", va="top", fontsize=FS_TINY, color=MUTED)
     for i in range(3):
         tree(xs[2] + 2.10 + i * 0.62, py + 1.05, s=0.5, lw=0.8, ms=2.6)
         if i < 2:
             ax.text(xs[2] + 2.41 + i * 0.62, py + 0.88, "+", fontsize=9, color=INK,
                     ha="center")
-    ax.text(xs[2] + 2.65, py + 0.34, "XGBoost: pohon berikutnya\nmengoreksi galat (boosting)",
+    ax.text(xs[2] + 2.65, py + 0.34, "XGBoost: tree berikutnya\nmengoreksi galat (boosting)",
             ha="center", va="center", fontsize=FS_TINY, color=MUTED)
 
     ax.text(0.45, 4.62, "Tiga model klasik pada vektor fitur", ha="left", va="center",
