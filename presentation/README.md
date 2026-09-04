@@ -247,13 +247,17 @@ The deck follows V14's Bab-body values wherever V14 disagrees with itself:
 | Var-C 96,13% (Tabel IV.5) vs 92,0% (Gambar F.2 caption) | 96,13% |
 | WDCNN best epoch 54 (body) vs 47 (Gambar IV.6 caption) | epoch not cited |
 | "empat dataset publik" (III.2) vs "tiga dataset benchmark dan satu sumber industri" (I.8) | tiga + SKF |
-| Gambar III.1 / V.15 / V.17 artwork still shows IMS and CWRU panels; Gambar IV.8 mismatches its caption | deck uses IMS/CWRU-free crops from `make derived-assets` |
-| Subbab V still keeps CWRU in the SAE narrative (Tabel II.3 note, Gambar V.15/V.17 captions, "12 uji primer atas 4 dataset", "empat dataset publik") | deck drops CWRU from the hit-rate section per the review decision; the 12-uji / p < 0,004 arithmetic stays as V14 states it |
+| Gambar IV.8 artwork mismatches its caption | caption describes what is shown |
 
-IMS and CWRU are out of the deck's SAE/hit-rate section (guarded by
-`test_ims_and_cwru_out_of_the_sae_section`). The source artwork in
-`dissertation-docx/assets` still carries their panels, so `make derived-assets`
-crops presentation-local copies into `assets/derived/`; regenerating the
-figures in the manuscript pipeline makes those crops obsolete. The
-negative-controls chart has no PHM2012/XJTU-SY panels at all, so the deck now
+IMS and CWRU are out of the SAE/hit-rate section in BOTH the deck (guarded by
+`test_ims_and_cwru_out_of_the_sae_section`) and the V14 DOCX itself, which was
+edited in September 2026: the CWRU cross-check sentences, the Tabel V.6 CWRU
+row, and the "empat dataset" counts were removed, the primary-test arithmetic
+became enam uji primer / Bonferroni p < 0,008, and the embedded Gambar III.1 /
+V.15 / V.17 media were replaced with IMS/CWRU-free versions (V14 had been
+hiding those panels with Word picture-crops, which were cleared along with the
+swap). The source artwork in `dissertation-docx/assets` still carries the old
+panels, so `make derived-assets` crops presentation-local copies into
+`assets/derived/`; regenerating the figures upstream makes the crops obsolete.
+The negative-controls chart has no PHM2012/XJTU-SY panels at all, so the deck
 states the control results as text.

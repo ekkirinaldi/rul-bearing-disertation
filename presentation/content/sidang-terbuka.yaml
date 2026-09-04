@@ -1253,8 +1253,8 @@ slides:
                 vpad: 0.14
                 body: >-
                   **Rigor statistik.** Bootstrap CI 95% dan permutation test dua-sisi
-                  (masing-masing B = 1.000); 12 uji primer dengan ambang setara Bonferroni
-                  p < 0,004; dua negative control (bobot Xavier acak dan derau Gaussian).
+                  (masing-masing B = 1.000); enam uji primer dengan ambang setara Bonferroni
+                  p < 0,008; dua negative control (bobot Xavier acak dan derau Gaussian).
 
   # ======================================================================
   # 24 · HASIL RM-3 — hit-rate dan kontrol negatif
@@ -2097,14 +2097,14 @@ slides:
             hint: "↑ · skala 0–1"
             body: >-
               Korelasi tertinggi satu fitur laten terhadap amplitudo frekuensi kerusakan adalah 0,447, tergolong sedang menuju kuat untuk satu unit.
-          - value: "p<0,004"
+          - value: "p<0,008"
             value_size: 15
             title: p-value dan koreksi Bonferroni
             hint: "↓ lebih baik"
             body: >-
               Peluang hasil muncul karena kebetulan; makin kecil makin meyakinkan.
-              Karena 12 uji primer dijalankan sekaligus, ambang signifikansi diperketat ke 0,004
-              (bukan 0,05).
+              Karena enam uji primer dijalankan sekaligus, ambang signifikansi diperketat
+              ke 0,008 (bukan 0,05).
           - value: "≈0%"
             title: "Negative control (kontrol negatif)"
             hint: "harus ≈ 0"

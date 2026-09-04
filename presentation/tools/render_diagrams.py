@@ -609,7 +609,7 @@ def sae_bpfx_pipeline():
 
     box(ax, 6.0, 0.70, 11.2, 0.74,
         "Validasi statistik:  bootstrap 95% CI (B = 1.000)  ·  permutation test dua sisi "
-        "(B = 1.000)  ·  12 uji primer, ambang Bonferroni p < 0,004\n"
+        "(B = 1.000)  ·  enam uji primer, ambang Bonferroni p < 0,008\n"
         "dua kontrol negatif: backbone inisialisasi Xavier dan hidden state Gaussian noise",
         kind="util", fs=8.5)
     save(fig, "sae_bpfx_pipeline")
