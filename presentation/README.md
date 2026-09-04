@@ -39,6 +39,7 @@ cd presentation
 make install          # python-pptx, PyYAML, lxml, Pillow
 make v14-assets       # extract deck figures from the V14 DOCX media
 make diagrams         # render the paper-style algorithm diagrams (matplotlib)
+make derived-assets   # crop IMS/CWRU-free versions of the result figures
 make build            # content/sidang-terbuka.yaml -> out/…​.pptx
 make preview          # build + PDF via LibreOffice
 make png              # build + one PNG per slide (needs poppler)
@@ -61,6 +62,7 @@ presentation/
 ├── assets/
 │   ├── logo-itb.png            ITB seal used on the cover
 │   ├── diagrams/               algorithm diagrams rendered by make diagrams
+│   ├── derived/                IMS/CWRU-free crops of manuscript result figures
 │   └── v14/                    figures extracted from the V14 DOCX media
 ├── content/
 │   └── sidang-terbuka.yaml     ★ the deck content — this is what you edit
@@ -68,7 +70,8 @@ presentation/
 │   └── Sidang_Disertasi_…_v2.pptx   approved template the design was derived from
 ├── tools/
 │   ├── extract_v14_media.py    pulls figures out of the V14 DOCX by media index
-│   └── render_diagrams.py      draws the 9 algorithm diagrams (matplotlib)
+│   ├── render_diagrams.py      draws the 9 algorithm diagrams (matplotlib)
+│   └── derive_assets.py        crops IMS/CWRU panels out of the result figures
 ├── deck/
 │   ├── theme.py                design tokens: palette, type scale, grid
 │   ├── shapes.py               primitives + inline markup + text measurement
@@ -244,9 +247,13 @@ The deck follows V14's Bab-body values wherever V14 disagrees with itself:
 | Var-C 96,13% (Tabel IV.5) vs 92,0% (Gambar F.2 caption) | 96,13% |
 | WDCNN best epoch 54 (body) vs 47 (Gambar IV.6 caption) | epoch not cited |
 | "empat dataset publik" (III.2) vs "tiga dataset benchmark dan satu sumber industri" (I.8) | tiga + SKF |
-| Gambar III.1 / V.15 / IV.8 artwork still shows IMS or mismatches its caption | art kept as-is (it is V14's own), captions describe what is shown |
+| Gambar III.1 / V.15 / V.17 artwork still shows IMS and CWRU panels; Gambar IV.8 mismatches its caption | deck uses IMS/CWRU-free crops from `make derived-assets` |
+| Subbab V still keeps CWRU in the SAE narrative (Tabel II.3 note, Gambar V.15/V.17 captions, "12 uji primer atas 4 dataset", "empat dataset publik") | deck drops CWRU from the hit-rate section per the review decision; the 12-uji / p < 0,004 arithmetic stays as V14 states it |
 
-The figure artwork itself (Gambar III.1 kerangka, V.15 hitrate panel, the
-negative-controls chart) still contains IMS panels from before IMS was dropped;
-regenerating those PNGs in the manuscript pipeline will fix the deck too, since
-the deck references the same files.
+IMS and CWRU are out of the deck's SAE/hit-rate section (guarded by
+`test_ims_and_cwru_out_of_the_sae_section`). The source artwork in
+`dissertation-docx/assets` still carries their panels, so `make derived-assets`
+crops presentation-local copies into `assets/derived/`; regenerating the
+figures in the manuscript pipeline makes those crops obsolete. The
+negative-controls chart has no PHM2012/XJTU-SY panels at all, so the deck now
+states the control results as text.

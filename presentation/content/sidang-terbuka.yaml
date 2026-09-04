@@ -386,7 +386,7 @@ slides:
     blocks:
       - type: figure
         h: 3.16
-        image: ../../dissertation-docx/assets/figures/bab3/kerangka_terintegrasi.png
+        image: ../assets/derived/kerangka_terintegrasi_no_ims.png
       - type: text
         gap: 0.08
         h: 0.28
@@ -435,9 +435,9 @@ slides:
         size: 11.5
         italic: true
         text: >-
-          Tiga dataset benchmark memvalidasi metode; data ***PT SKF Indonesia*** menguji
-          transfer ke kondisi produksi nyata secara kualitatif. CWRU juga dipakai pada Bab V
-          sebagai validasi silang SAE, dengan catatan underpowered (n = 10 rekaman).
+          Tiga dataset benchmark memvalidasi metode: CWRU untuk jalur diagnostik, PHM2012
+          dan XJTU-SY untuk jalur prognostik; data ***PT SKF Indonesia*** menguji transfer
+          ke kondisi produksi nyata secara kualitatif.
 
   # ======================================================================
   # 10 · PEMBATAS BABAK 1 — RM-1
@@ -1268,11 +1268,12 @@ slides:
         flex: true
         gutter: 0.30
         items:
-          - width: 6.30
+          - width: 7.10
             blocks:
               - type: figure
-                flex: true
-                image: ../../dissertation-docx/assets/figures/bab5/hitrate_panel.png
+                h: 2.75
+                inset: 0.06
+                image: ../assets/derived/hitrate_panel_phm_xjtu.png
               - type: text
                 gap: 0.08
                 h: 0.28
@@ -1281,28 +1282,37 @@ slides:
                 align: center
                 color: "6B7689"
                 text: >-
-                  Gambar V.15 Hit-rate fitur SAE per dataset dengan nilai p permutation test
-          - blocks:
-              - type: figure
-                h: 2.10
-                image: ../../dissertation-docx/assets/figures/bab5/negative_controls.png
-              - type: text
-                gap: 0.08
-                h: 0.28
-                size: 9.5
-                italic: true
-                align: center
-                color: "6B7689"
-                text: "Kontrol negatif: model terlatih vs bobot acak vs derau Gaussian"
+                  Gambar V.15 (panel PHM2012 dan XJTU-SY): hit-rate fitur SAE dengan
+                  nilai p permutation test
               - type: text
                 gap: 0.12
                 flex: true
                 size: 11
                 text: >-
                   **PHM2012**: BPFI 2,3%, BPFO 2,0% (p < 0,001; rmax = 0,447).
-                  **XJTU-SY**: tersebar, yaitu BSF 1,6%, BPFI 1,5%, BPFO 0,7% (p < 0,001;
-                  rmax = 0,468). **CWRU**: 5,08% namun underpowered (n = 10; p > 0,05),
-                  dikeluarkan dari klaim falsifikasi formal. Kedua kontrol negatif ≈ 0%.
+                  **XJTU-SY**: tersebar, yaitu BSF 1,6%, BPFI 1,5%, BPFO 0,7%
+                  (p < 0,001; rmax = 0,468).
+          - blocks:
+              - type: panel
+                flex: true
+                tone: alt
+                title: KONTROL NEGATIF
+                title_size: 12.5
+                blocks:
+                  - type: bullets
+                    flex: true
+                    size: 11
+                    gap: 0.24
+                    items:
+                      - >-
+                        Backbone dengan inisialisasi Xavier (tidak dilatih):
+                        hit-rate ≈ 0%.
+                      - >-
+                        Hidden state diganti derau Gaussian: hit-rate ≈ 0%.
+                      - >-
+                        Korespondensi SAE-BPFx dengan demikian adalah **properti
+                        representasi terlatih**, bukan artefak arsitektur atau
+                        prosedur SAE.
       - type: source
         gap: 0.16
         body: >-
@@ -1348,8 +1358,8 @@ slides:
         size: 11.5
         vpad: 0.14
         body: >-
-          **Status pembuktian: empiris** (dengan catatan CWRU underpowered) · Bab V ·
-          novelti N3 dan N4 · bagian RM-4 menguji penerapannya pada data lini produksi nyata.
+          **Status pembuktian: empiris** · Bab V · novelti N3 dan N4 · bagian RM-4 menguji
+          penerapannya pada data lini produksi nyata.
 
   # ======================================================================
   # 26 · PEMBATAS BABAK 4 — RM-4
@@ -1745,9 +1755,6 @@ slides:
                         SAE bersifat post-hoc; pelatihan in-loop berpotensi menghasilkan
                         korespondensi lebih kuat.
                       - >-
-                        CWRU kurang bertenaga statistik untuk SAE (p > 0,05 meski hit-rate
-                        5,08%).
-                      - >-
                         Integrasi data kualitas (radial clearance checking) belum
                         dieksekusi.
                       - >-
@@ -2134,7 +2141,8 @@ slides:
             blocks:
               - type: figure
                 flex: true
-                image: ../../dissertation-docx/assets/figures/bab5/sparsity_sweep.png
+                inset: 0.06
+                image: ../assets/derived/sparsity_sweep_phm_xjtu.png
               - type: text
                 gap: 0.06
                 h: 0.28
@@ -2142,7 +2150,9 @@ slides:
                 italic: true
                 align: center
                 color: "6B7689"
-                text: "Gambar V.17 Hit-rate BPFx sebagai fungsi anggaran fitur aktif k"
+                text: >-
+                  Gambar V.17 (panel PHM2012 dan XJTU-SY): hit-rate BPFx sebagai fungsi
+                  anggaran fitur aktif k
           - blocks:
               - type: figure
                 h: 2.40
@@ -2175,7 +2185,7 @@ slides:
     top: 1.76
     blocks:
       - type: table
-        h: 1.90
+        h: 1.46
         header_h: 0.44
         size: 10.5
         widths: [1.30, 0.90, 0.90, 0.90, 0.90, 1.00, 3.30]
@@ -2184,40 +2194,21 @@ slides:
         rows:
           - ["PHM2012", "2,3%", "2,0%", "0", "0", "< 0,001", "IR dan OR spalling campuran"]
           - ["XJTU-SY", "1,5%", "0,7%", "1,6%", "0,2%", "< 0,001", "Keragaman mode kegagalan lintas kondisi"]
-          - ["CWRU", "5,08%", "0", "0", "0", "> 0,05", "IR dominan; underpowered (n = 10)"]
-      - type: columns
+      - type: panel
         gap: 0.20
         flex: true
-        gutter: 0.23
-        items:
-          - blocks:
-              - type: panel
-                flex: true
-                tone: alt
-                title: UNIVERSALITAS LINTAS ARSITEKTUR
-                title_size: 12.5
-                blocks:
-                  - type: text
-                    flex: true
-                    size: 11.3
-                    text: >-
-                      Urutan dominansi BPFx konsisten pada ketiga backbone dengan SAE yang
-                      dilatih terpisah, meski dengan variasi magnituda 4–8 kali lipat.
-                      Universalitas diklaim **parsial, bukan mutlak**.
-          - blocks:
-              - type: panel
-                flex: true
-                tone: alt
-                title: CWRU DIKELUARKAN DARI KLAIM FALSIFIKASI
-                title_size: 12.5
-                blocks:
-                  - type: text
-                    flex: true
-                    size: 11.3
-                    text: >-
-                      Hit-rate BPFI CWRU tertinggi secara numerik (5,08%) namun tidak
-                      signifikan (p > 0,05) karena hanya sepuluh rekaman. CWRU diperlakukan
-                      sebagai hasil rintisan kualitatif di luar klaim falsifikasi formal N4.
+        tone: alt
+        title: UNIVERSALITAS LINTAS ARSITEKTUR
+        title_size: 12.5
+        blocks:
+          - type: text
+            flex: true
+            size: 11.3
+            text: >-
+              Urutan dominansi BPFx konsisten pada ketiga backbone dengan SAE yang
+              dilatih terpisah, meski dengan variasi magnituda 4–8 kali lipat.
+              Universalitas diklaim **parsial, bukan mutlak**; klaim falsifikasi formal
+              N4 berpijak pada dua benchmark run-to-failure ini.
       - type: source
         gap: 0.16
         body: "Tabel V.6 · ambang |r| ≥ 0,30 · bootstrap CI 95% dan permutation test (B = 1.000)."

@@ -139,7 +139,6 @@ CLAIMS: list[tuple[str, list[str]]] = [
     ("corr scatter n = 304", ["n = 304"]),
     ("rmax 0,447", ["0,447"]),
     ("rmax BPFO XJTU 0,468", ["0,468"]),
-    ("CWRU 5,08%", ["5,08%"]),
     ("sparsity sweep k = 205", ["k = 205"]),
     ("sweep BPFI 0,68% ke 7,13%", ["menjadi 7,13%"]),
     ("sweep BPFO 0,59% ke 8,30%", ["menjadi 8,30%"]),
@@ -199,3 +198,18 @@ def test_no_stale_pre_v14_references():
             f"{stale} is pre-V14 numbering; the SKF material is Subbab IV.15 / "
             f"V.5.3 and its panels are Gambar V.8/V.9"
         )
+
+
+def test_ims_and_cwru_out_of_the_sae_section():
+    """IMS was dropped from the manuscript and CWRU from the SAE hit-rate
+    narrative; the deck must not reintroduce them, including through the
+    full 2x2 figure artwork (use the crops from ``make derived-assets``)."""
+    spec = _spec_text()
+    assert not re.search(r"\bIMS\b", spec), "IMS is no longer part of the research"
+    for artwork in ("bab5/hitrate_panel.png", "negative_controls.png",
+                    "bab5/sparsity_sweep.png", "bab3/kerangka_terintegrasi.png"):
+        assert artwork not in spec, (
+            f"{artwork} still carries IMS/CWRU panels; reference the "
+            f"assets/derived/ crop instead"
+        )
+    assert "underpowered" not in spec, "the CWRU-underpowered caveat left with CWRU"
