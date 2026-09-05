@@ -694,7 +694,7 @@ slides:
                       - "±898 ribu parameter pada PHM2012, ±811 ribu pada XJTU-SY."
                       - "Inferensi sekuens linear O(n), sesuai konteks panjang."
                       - >-
-                        Gerbang fusi membagi bobot cabang xLSTM/Mamba per sampel
+                        Fusion gate membagi bobot cabang xLSTM/Mamba per sampel
                         dan dapat dibaca sebagai indikator internal.
                       - "Backbone utama demonstrasi streaming dan analisis SAE-BPFx."
       - type: source
@@ -738,19 +738,35 @@ slides:
     title: Arsitektur SparseGate-TCN-RUL
     top: 1.66
     blocks:
-      - type: figure
+      # Same shape as the Mamba slide: the zoom-in figure is too tall to run
+      # full width, so it takes a wide column and the summary sits beside it.
+      - type: columns
         flex: true
-        inset: 0.06
-        image: ../assets/diagrams/sparsegate_tcn_full.png
-      - type: banner
-        gap: 0.14
-        tone: light
-        size: 11
-        vpad: 0.12
-        body: >-
-          **±249 ribu parameter, paling ringan dari ketiganya.** Pemenang RMSE pada
-          PHM2012 (0,226 ± 0,030); kecepatan inferensinya menjadikannya kandidat
-          deployment pada tier Edge Server (bagian RM-4).
+        gutter: 0.26
+        items:
+          - width: 9.40
+            blocks:
+              - type: figure
+                flex: true
+                inset: 0.06
+                image: ../assets/diagrams/sparsegate_tcn_full.png
+          - blocks:
+              - type: panel
+                flex: true
+                tone: alt
+                title: RINGKASAN
+                title_size: 12
+                blocks:
+                  - type: bullets
+                    flex: true
+                    size: 10.5
+                    gap: 0.22
+                    items:
+                      - "±249 ribu parameter, paling ringan dari ketiga backbone."
+                      - "Pemenang RMSE pada PHM2012 (0,226 ± 0,030)."
+                      - >-
+                        Kecepatan inferensinya menjadikannya kandidat deployment
+                        pada tier Edge Server (bagian RM-4).
       - type: source
         gap: 0.12
         body: >-
@@ -1157,53 +1173,31 @@ slides:
   - layout: content
     eyebrow: "Pengantar · Membedah Isi Model"
     title: "Cara Kerja Top-k Sparse Autoencoder (SAE)"
-    top: 1.72
+    top: 1.66
     blocks:
-      - type: columns
-        flex: true
-        gutter: 0.30
-        items:
-          - width: 6.60
-            blocks:
-              - type: figure
-                h: 2.80
-                inset: 0.06
-                image: ../assets/diagrams/topk_sae.png
-              - type: text
-                gap: 0.08
-                h: 0.28
-                size: 9.5
-                italic: true
-                align: center
-                color: "6B7689"
-                text: >-
-                  Alur SAE, digambar ulang berdasarkan Gambar II.8 dan Gambar V.5
-                  (Cunningham dkk., 2023)
-          - blocks:
-              - type: text
-                h: 1.50
-                size: 11.5
-                text: >-
-                  Catatan internal model (hidden state) ibarat tulisan cepat yang padat dan
-                  sulit dibaca. SAE menyalinnya ke **kamus laten berisi 1.024 entri**, tetapi setiap sampel hanya boleh mengaktifkan **51 entri** (k = 51, sekitar 5%). Batasan hemat ini membuat tiap entri cenderung bermakna satu hal saja.
-              - type: kvrows
-                gap: 0.14
-                flex: true
-                label_w: 1.55
-                items:
-                  - label: DIMENSI
-                    value: "hidden state d = 128  →  kamus laten 1.024 entri"
-                  - label: SPARSITAS
-                    value: "k = 51 entri aktif per sampel (≈ 5%)"
-                  - label: REKONSTRUKSI
-                    value: "MSE < 0,001 pada 20.000 hidden state beku"
+      # The diagram is the slide: full width at native label size; every
+      # number it carries (d = 128, 1.024, k = 51, MSE) is drawn in the figure.
+      - type: figure
+        h: 3.80
+        inset: 0.06
+        image: ../assets/diagrams/topk_sae.png
+      - type: text
+        gap: 0.06
+        h: 0.26
+        size: 9.5
+        italic: true
+        align: center
+        color: "6B7689"
+        text: >-
+          Alur SAE, digambar ulang berdasarkan Gambar II.8 dan Gambar V.5
+          (Cunningham dkk., 2023)
       - type: banner
-        gap: 0.18
+        gap: 0.16
         tone: light
         size: 11.5
         vpad: 0.14
         body: >-
-          Analisis berikutnya memeriksa **apakah ada entri kamus yang berkorelasi kuat dengan frekuensi kerusakan fisik** (BPFO, BPFI, BSF, FTF). Entri yang lolos uji statistik menjadi bukti bahwa model menangkap fisika degradasi, bukan pola kebetulan.
+          Catatan internal model (hidden state, d = 128) ibarat tulisan cepat yang padat dan sulit dibaca. SAE menyalinnya ke **kamus laten berisi 1.024 entri**, tetapi setiap sampel hanya boleh mengaktifkan **51 entri** (≈ 5%), sehingga tiap entri cenderung bermakna satu hal saja. Analisis berikutnya memeriksa **apakah ada entri kamus yang berkorelasi kuat dengan frekuensi kerusakan fisik** (BPFO, BPFI, BSF, FTF).
 
   # ======================================================================
   # 23 · METODE RM-3 — prosedur SAE→BPFx
@@ -1211,50 +1205,31 @@ slides:
   - layout: content
     eyebrow: "Metode · Novelti N3"
     title: "Prosedur Tiga Tahap Memetakan Fitur SAE ke BPFx"
-    top: 1.72
+    top: 1.66
     blocks:
-      - type: columns
-        flex: true
-        gutter: 0.30
-        items:
-          - width: 6.90
-            blocks:
-              - type: figure
-                h: 3.05
-                inset: 0.06
-                image: ../assets/diagrams/sae_bpfx_pipeline.png
-              - type: text
-                gap: 0.08
-                h: 0.28
-                size: 9.5
-                italic: true
-                align: center
-                color: "6B7689"
-                text: "Prosedur tiga tahap, digambar ulang berdasarkan Gambar V.6"
-          - blocks:
-              - type: numbered
-                flex: true
-                size: 11.3
-                gap: 0.26
-                items:
-                  - >-
-                    **Envelope spectrum** tiap rekaman: filter band-pass berbasis kurtogram
-                    spektral, transformasi Hilbert, FFT.
-                  - >-
-                    **Amplitudo BPFx**: integral spektrum pada pita ±2 Hz di sekitar BPFO,
-                    BPFI, BSF, dan FTF.
-                  - >-
-                    **Korelasi dan hit-rate**: korelasi Pearson aktivasi fitur SAE terhadap
-                    amplitudo BPFx; hit bila |r| ≥ 0,30.
-              - type: banner
-                gap: 0.16
-                tone: dark
-                size: 10.8
-                vpad: 0.14
-                body: >-
-                  **Rigor statistik.** Bootstrap CI 95% dan permutation test dua-sisi
-                  (masing-masing B = 1.000); enam uji primer dengan ambang setara Bonferroni
-                  p < 0,008; dua negative control (bobot Xavier acak dan derau Gaussian).
+      # Full-width figure: the three panels already spell out each tahap
+      # (envelope spectrum, pita ±2 Hz, |r| ≥ 0,30), so no side list.
+      - type: figure
+        h: 4.02
+        inset: 0.06
+        image: ../assets/diagrams/sae_bpfx_pipeline.png
+      - type: text
+        gap: 0.06
+        h: 0.26
+        size: 9.5
+        italic: true
+        align: center
+        color: "6B7689"
+        text: "Prosedur tiga tahap, digambar ulang berdasarkan Gambar V.6"
+      - type: banner
+        gap: 0.16
+        tone: dark
+        size: 10.8
+        vpad: 0.14
+        body: >-
+          **Rigor statistik.** Bootstrap CI 95% dan permutation test dua-sisi
+          (masing-masing B = 1.000); enam uji primer dengan ambang setara Bonferroni
+          p < 0,008; dua negative control (bobot Xavier acak dan derau Gaussian).
 
   # ======================================================================
   # 24 · HASIL RM-3 — hit-rate dan kontrol negatif
@@ -1471,7 +1446,7 @@ slides:
                     size: 11
                     items:
                       - "Menurun bertahap, kolaps menjelang akhir trajektori."
-                      - "Gerbang fusi xLSTM/Mamba berimbang."
+                      - "Fusion gate xLSTM/Mamba berimbang."
           - blocks:
               - type: panel
                 flex: true
@@ -1503,7 +1478,7 @@ slides:
                     flex: true
                     size: 11
                     items:
-                      - "Anjlok sejak awal; gerbang fusi condong ke Mamba (47% berbanding 53%)."
+                      - "Anjlok sejak awal; fusion gate condong ke Mamba (47% berbanding 53%)."
                       - "Atribusi fitur didominasi entropy spektral."
       - type: banner
         gap: 0.18
@@ -1598,7 +1573,7 @@ slides:
                 value: "SVM / LR (HI 36-D)"
               - label: LAPISAN XAI
                 value: SHAP KernelExplainer
-              - label: KELUARAN
+              - label: OUTPUT
                 value: "Triage anomali (ya / tidak)"
           - kicker: TIER 2
             title: Edge Server
@@ -1608,7 +1583,7 @@ slides:
                 value: WDCNN + FSM
               - label: LAPISAN XAI
                 value: SHAP DeepExplainer
-              - label: KELUARAN
+              - label: OUTPUT
                 value: "Jenis dan keparahan · 99,87%"
           - kicker: TIER 3
             title: Cloud / GPU
@@ -1618,7 +1593,7 @@ slides:
                 value: "Backbone RUL + SAE-BPFx"
               - label: LAPISAN XAI
                 value: "SAE → BPFx · bootstrap CI"
-              - label: KELUARAN
+              - label: OUTPUT
                 value: "RUL dan audit laten–fisika"
       - type: banner
         gap: 0.22
@@ -2388,7 +2363,7 @@ slides:
         body: >-
           Pola lintas dataset konsisten: fitur domain frekuensi dominan pada fase Healthy
           (entropy spektral), fitur domain waktu mengambil alih menjelang end-of-life.
-          Gerbang fusi PHM2012 terbagi 54% xLSTM dan 46% Mamba.
+          Fusion gate PHM2012 terbagi 54% xLSTM dan 46% Mamba.
 
   # ======================================================================
   # B12 · PETA STATE OF THE ART

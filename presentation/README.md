@@ -200,12 +200,31 @@ changes in the manuscript, update the YAML and the matching entry in `CLAIMS`.
 *Sensors* **26**:1578: rounded colour-coded blocks, dashed "n×" repeat
 containers, zoom-in panels for cell internals, and a legend row per figure.
 One master palette maps component function to colour across all nine figures
-(kuning masukan · ungu proyeksi/konvolusi · biru pemodelan sekuens · hijau
-memori/state · merah muda gating · hijau tua keluaran · emas fitur aktif),
+(kuning input · ungu proyeksi/konvolusi · biru pemodelan sekuens · hijau
+memory/state · merah muda gating · hijau tua output · emas fitur aktif),
 with the deck navy as ink. Every number drawn is asserted against the V14
 text by `tests/test_provenance.py`, and the slides that carry a redrawn
 figure cite it as "Digambar ulang berdasarkan Gambar X.N". Iterate with
 `python3 tools/render_diagrams.py --only <name>`.
+
+**Label language.** Labels follow the "adjusted translation" register
+(global skill `adjusted-translation-indonesia`): Indonesian sentences,
+English for every named component or mechanism. So `input`, `output`,
+`gate`, `attention`, `hidden state`, `matrix memory`, `exponential gating`,
+`receptive field`, `dilated convolution`, `Decision Tree` stay English,
+while generic operations and descriptions stay Indonesian (`proyeksi`,
+`konvolusi`, `normalisasi`, `jendela 32 rekaman`, `diteruskan`).
+`tests/test_diagrams.py` rejects the calques (`masukan`, `keluaran`,
+`gerbang`, `atensi`) in the renderer.
+
+**Canvas and slide fit.** A figure is drawn on a 12-unit-wide canvas whose
+height is closed tightly around the content, because the slide scales it
+to the width it is given: a wide-flat canvas (SAE 12 × 3,65, BPFx 12 × 4,05,
+N-BEATS 12 × 3,9) runs full width at near-native label size with the
+banner beneath it; a tall canvas (Mamba 12 × 6,9, SparseGate 12 × 5,6)
+takes a 8,6–9,4 in column with the RINGKASAN panel beside it. Text that a
+diagram already spells out (the three tahap of the BPFx procedure, the SAE
+dimensions) is not repeated in a side column.
 
 ## Re-deriving the template
 

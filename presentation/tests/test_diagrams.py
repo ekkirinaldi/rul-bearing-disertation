@@ -40,3 +40,21 @@ def test_palette_kinds_are_wellformed():
         assert set(colors) == {"fc", "ec"}, kind
         for value in colors.values():
             assert value.startswith("#") and len(value) == 7, (kind, value)
+
+
+def test_labels_keep_component_nouns_english():
+    """Adjusted-translation register: named components stay English
+    (input, output, gate, attention, hidden state, matrix memory); only
+    verbs, connectors, and KBBI cognates for generic operations (proyeksi,
+    konvolusi, normalisasi) are Indonesian. The calques below were flagged
+    by the user on the rendered diagrams and must not come back."""
+    import re
+
+    source = (ROOT / "tools" / "render_diagrams.py").read_text(encoding="utf-8")
+    calques = re.findall(
+        r"\b(masukan|keluaran|gerbang|atensi|jangkauan reseptif|terdilatasi|"
+        r"pohon keputusan|hutan acak|regresi logistik)\b",
+        source, flags=re.IGNORECASE,
+    )
+    assert calques == [], f"translated component nouns in the diagram labels: {calques}"
+    assert re.search(r"\bvia\b", source) is None, "`via` is not an Indonesian connector"

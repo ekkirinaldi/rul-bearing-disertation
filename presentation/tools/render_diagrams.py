@@ -39,12 +39,12 @@ GOLD = "#B8923B"
 GOLD_FILL = "#E6D6A8"
 
 KIND = {
-    "input":  {"fc": "#FBF0D3", "ec": "#C9B06B"},   # kuning  — masukan / embedding
+    "input":  {"fc": "#FBF0D3", "ec": "#C9B06B"},   # kuning  — input / embedding
     "proj":   {"fc": "#E7E1F4", "ec": "#A79BCF"},   # ungu    — proyeksi / konvolusi / FC
     "seq":    {"fc": "#D9EAF7", "ec": "#7FA3C4"},   # biru    — pemodelan sekuens
-    "mem":    {"fc": "#DFEEDF", "ec": "#7FAF8A"},   # hijau   — memori / state
+    "mem":    {"fc": "#DFEEDF", "ec": "#7FAF8A"},   # hijau   — memory / state
     "gate":   {"fc": "#F8E1E6", "ec": "#CE9AA8"},   # merah muda — gating / normalisasi
-    "out":    {"fc": "#CBE3D3", "ec": "#3E8E5B"},   # hijau tua — keluaran / head
+    "out":    {"fc": "#CBE3D3", "ec": "#3E8E5B"},   # hijau tua — output / head
     "util":   {"fc": "#EEF1F5", "ec": "#9AA5B5"},   # abu     — pooling / utilitas
     "active": {"fc": GOLD_FILL, "ec": GOLD},        # emas    — fitur aktif
 }
@@ -183,14 +183,14 @@ def mamba_xlstm_full():
 
     # ---- right column: the stack -----------------------------------------
     sx, bw = 10.35, 2.55
-    box(ax, sx, 1.28, bw, 0.56, "Masukan HI", kind="input", sub="jendela 32 rekaman")
+    box(ax, sx, 1.28, bw, 0.56, "Input HI", kind="input", sub="jendela 32 rekaman")
     arrow(ax, (sx, 1.58), (sx, 1.90))
     box(ax, sx, 2.16, bw, 0.52, "Proyeksi linear\nke dimensi model", kind="proj", fs=8.5)
     arrow(ax, (sx, 2.44), (sx, 2.76))
     container(ax, sx - bw / 2 - 0.14, 2.78, bw + 0.28, 1.94, times="3×")
     box(ax, sx, 3.28, bw - 0.18, 0.62, "Blok Mamba", kind="seq", sub="Selective State-Space")
     arrow(ax, (sx, 3.62), (sx, 3.92))
-    box(ax, sx, 4.26, bw - 0.18, 0.62, "Blok mLSTM", kind="mem", sub="memori matriks")
+    box(ax, sx, 4.26, bw - 0.18, 0.62, "Blok mLSTM", kind="mem", sub="matrix memory")
     arrow(ax, (sx, 4.74), (sx, 5.02))
     box(ax, sx, 5.28, bw, 0.52, "Gated fusion", kind="gate", sub="bobot dapat dilatih")
     arrow(ax, (sx, 5.56), (sx, 5.88))
@@ -218,8 +218,8 @@ def mamba_xlstm_full():
     arrow(ax, (p1x + 3.06, my), (p1x + 3.38, my))
     box(ax, p1x + 3.80, my, 0.80, 0.5, "SiLU", kind="util", fs=8.5)
     arrow(ax, (p1x + 4.22, my), (p1x + 4.54, my))
-    box(ax, p1x + 5.32, my, 1.52, 0.72, "SSM selektif", kind="seq", fs=9,
-        sub="B, C, Δ bergantung\npada masukan")
+    box(ax, p1x + 5.32, my, 1.52, 0.72, "Selective SSM", kind="seq", fs=9,
+        sub="B, C, Δ bergantung\npada input")
     matrix_glyph(ax, p1x + 5.32, my - 0.82, s=0.40)
     ax.text(p1x + 5.62, my - 0.82, "state", ha="left", va="center",
             fontsize=FS_TINY, color=MUTED)
@@ -234,7 +234,7 @@ def mamba_xlstm_full():
     arrow(ax, (p1x + 6.66, gy), (p1x + 6.66, my - 0.16), shrink=1)
     arrow(ax, (p1x + 6.82, my), (p1x + 7.10, my))
     box(ax, p1x + 7.56, my, 0.86, 0.5, "Proyeksi", kind="proj", fs=8.5)
-    ax.text(p1x + p1w / 2, p1y + 0.16, "gerbang multiplikatif memilih informasi yang diteruskan",
+    ax.text(p1x + p1w / 2, p1y + 0.16, "gate multiplikatif memilih informasi yang diteruskan",
             ha="center", va="bottom", fontsize=FS_TINY, color=MUTED, style="italic")
 
     # ---- top-left panel: mLSTM cell internals ----------------------------
@@ -253,7 +253,7 @@ def mamba_xlstm_full():
         arrow(ax, (p2x + 0.60, cyc), (p2x + 0.85, cyc + dy), lw=0.9, shrink=1)
     Cx = p2x + 3.66
     matrix_glyph(ax, Cx, cyc - 0.20, s=0.94, n=4)
-    ax.text(Cx, cyc - 0.98, "memori matriks  $C_t = f_t\\,C_{t-1} + i_t\\,v_t k_t^{\\top}$",
+    ax.text(Cx, cyc - 0.98, "matrix memory  $C_t = f_t\\,C_{t-1} + i_t\\,v_t k_t^{\\top}$",
             ha="center", va="center", fontsize=8, color=INK)
     arrow(ax, (p2x + 1.74, cyc), (Cx - 0.52, cyc - 0.10), shrink=2)         # k
     arrow(ax, (p2x + 1.74, cyc - 0.85), (Cx - 0.52, cyc - 0.42), shrink=2)  # v
@@ -282,13 +282,13 @@ def mamba_xlstm_full():
 
     # ---- legend (two rows) ------------------------------------------------
     legend_row(ax, 0.45, 0.44, [
-        ("input", "masukan"), ("proj", "proyeksi / konvolusi"),
-        ("seq", "pemodelan sekuens"), ("mem", "memori / state"),
-        ("gate", "gerbang"), ("out", "keluaran"),
+        ("input", "input"), ("proj", "proyeksi / konvolusi"),
+        ("seq", "pemodelan sekuens"), ("mem", "memory / state"),
+        ("gate", "gate"), ("out", "output"),
     ])
     legend_row(ax, 0.45, 0.15, [
-        ("exp", "gerbang eksponensial"), ("sigmoid", "gerbang sigmoid"),
-        ("matrix", "memori matriks"),
+        ("exp", "exponential gating"), ("sigmoid", "sigmoid gating"),
+        ("matrix", "matrix memory"),
     ])
     save(fig, "mamba_xlstm_full")
 
@@ -297,15 +297,15 @@ def mamba_xlstm_full():
 # 2 · N-BEATS-xLSTM-RUL
 # --------------------------------------------------------------------------
 def nbeats_xlstm_full():
-    fig, ax = new_fig(12.0, 5.4)
-    my = 2.30
+    fig, ax = new_fig(12.0, 3.9)
+    my = 1.78
 
-    box(ax, 1.15, my, 1.75, 0.78, "Masukan HI", kind="input", sub="jendela 32 rekaman")
+    box(ax, 1.15, my, 1.75, 0.78, "Input HI", kind="input", sub="jendela 32 rekaman")
     arrow(ax, (2.03, my), (2.42, my))
     container(ax, 2.46, my - 0.62, 1.62, 1.24, times="2×")
     box(ax, 3.27, my, 1.34, 0.66, "Blok xLSTM", kind="seq", sub="front-end")
     arrow(ax, (4.24, my), (4.62, my))
-    ax.text(3.27, my - 0.92, "konteks sekuens memodulasi\nkeluaran basis",
+    ax.text(3.27, my - 0.92, "konteks sekuens memodulasi\noutput basis",
             ha="center", va="top", fontsize=FS_TINY, color=MUTED, style="italic")
 
     # three basis blocks with mini curve glyphs
@@ -335,29 +335,29 @@ def nbeats_xlstm_full():
     # doubly-residual plumbing: backcast chain + forecast bus into the sum
     for bx, *_ in basis[:-1]:
         arrow(ax, (bx + 0.86, my), (bx + 2.00 - 0.86, my))
-    ax.text(6.55, my - 0.98, "residu diteruskan: masukan berikutnya = masukan − backcast",
+    ax.text(6.55, my - 0.98, "residual diteruskan: input berikutnya = input − backcast",
             ha="center", va="top", fontsize=FS_TINY, color=MUTED, style="italic")
-    sumx, sumy = 10.15, 4.30
+    sumx, sumy = 10.15, my + 1.25
     for bx, *_ in basis:
         ax.plot([bx, bx], [my + 0.73, sumy], color=INK, lw=1.0)
     ax.plot([basis[0][0], sumx - 0.20], [sumy, sumy], color=INK, lw=1.0)
     gate_glyph(ax, sumx, sumy, "+", kind="mem", r=0.20, fs=10)
     arrow(ax, (sumx - 0.30, sumy), (sumx - 0.21, sumy), shrink=0, lw=1.0)
-    ax.text(5.62, sumy + 0.14, "forecast tiap blok", ha="left", va="bottom",
+    ax.text(5.68, sumy - 0.12, "forecast tiap blok", ha="left", va="top",
             fontsize=FS_TINY, color=MUTED, style="italic")
     arrow(ax, (sumx + 0.21, sumy), (10.66, sumy), shrink=0)
     box(ax, 11.28, sumy, 1.14, 0.80, "Estimasi\nRUL", kind="out", fs=9, bold=True,
         sub="clamp fraksi RUL")
 
-    ax.text(0.45, 5.08, "N-BEATS-xLSTM-RUL", ha="left", va="center",
+    ax.text(0.45, 3.68, "N-BEATS-xLSTM-RUL", ha="left", va="center",
             fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
-    ax.text(0.45, 4.74, "dekomposisi kurva degradasi ke tiga basis terstruktur "
+    ax.text(0.45, 3.38, "dekomposisi kurva degradasi ke tiga basis terstruktur "
                         "(agregasi aditif, doubly residual)",
             ha="left", va="center", fontsize=FS_NOTE, color=MUTED)
 
-    legend_row(ax, 0.45, 0.42, [
-        ("input", "masukan"), ("seq", "pemodelan sekuens / basis blok"),
-        ("mem", "agregasi aditif"), ("out", "keluaran"),
+    legend_row(ax, 0.45, 0.32, [
+        ("input", "input"), ("seq", "pemodelan sekuens / basis blok"),
+        ("mem", "agregasi aditif"), ("out", "output"),
     ])
     save(fig, "nbeats_xlstm_full")
 
@@ -369,7 +369,7 @@ def sparsegate_tcn_full():
     fig, ax = new_fig(12.0, 5.6)
     my = 1.30
 
-    box(ax, 1.05, my, 1.65, 0.78, "Masukan HI", kind="input", sub="jendela 32 rekaman")
+    box(ax, 1.05, my, 1.65, 0.78, "Input HI", kind="input", sub="jendela 32 rekaman")
     ax.plot([1.88, 2.16], [my, my], color=INK, lw=1.1)
     ax.plot([2.16, 2.16], [my - 0.55, my + 0.55], color=INK, lw=1.1)
     arrow(ax, (2.16, my + 0.55), (2.52, my + 0.55), shrink=0)
@@ -381,7 +381,7 @@ def sparsegate_tcn_full():
     arrow(ax, (4.62, my + 0.55), (4.86, my + 0.10), shrink=1)
     arrow(ax, (4.62, my - 0.55), (4.86, my - 0.10), shrink=1)
     gate_glyph(ax, 4.94, my, "+", kind="mem", r=0.17, fs=10)
-    ax.text(4.94, my - 0.60, "masukan tergerbang", ha="center", va="top",
+    ax.text(4.94, my - 0.60, "gated input", ha="center", va="top",
             fontsize=FS_TINY, color=MUTED)
     arrow(ax, (5.11, my), (5.42, my))
 
@@ -401,15 +401,15 @@ def sparsegate_tcn_full():
     ax.add_patch(FancyBboxPatch((px, py), pw, ph,
                                 boxstyle="round,pad=0.02,rounding_size=0.09",
                                 fc=KIND["proj"]["fc"], ec="none", alpha=0.22, zorder=0))
-    ax.text(px + pw / 2, py + ph - 0.20, "Konvolusi kausal terdilatasi: "
-            "jangkauan reseptif menutup seluruh jendela",
+    ax.text(px + pw / 2, py + ph - 0.20, "Dilated causal convolution: "
+            "receptive field menutup seluruh jendela",
             ha="center", va="center", fontsize=FS_TITLE - 0.5, color=INK, fontweight="bold")
     n = 17
     xs = np.linspace(px + 0.85, px + pw - 0.30, n)
     rows = [(py + 0.52, 1), (py + 0.99, 2), (py + 1.46, 4), (py + 1.93, 8)]
     for ry, d in rows:
         ax.text(px + 0.14, ry, f"d = {d}", fontsize=FS_TINY, color=MUTED, va="center")
-    ax.text(px + 0.14, py + 0.18, "masukan", fontsize=FS_TINY, color=MUTED, va="center")
+    ax.text(px + 0.14, py + 0.18, "input", fontsize=FS_TINY, color=MUTED, va="center")
     # receptive-field cone of the last output node
     active = {3: {n - 1}}
     for level in (3, 2, 1, 0):
@@ -444,14 +444,14 @@ def sparsegate_tcn_full():
     ax.text(0.45, 5.32, "SparseGate-TCN-RUL", ha="left", va="center",
             fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
     ax.text(10.42, py + ph - 0.28,
-            "gerbang sparse hanya\nmeneruskan channel\npaling informatif;\n"
+            "sparse gate hanya\nmeneruskan channel\npaling informatif;\n"
             "model paling ringan,\nsesuai untuk tier edge",
             ha="left", va="top", fontsize=8, color=MUTED)
 
     legend_row(ax, 0.45, 0.32, [
-        ("input", "masukan"), ("gate", "gerbang"), ("seq", "atensi"),
-        ("proj", "konvolusi terdilatasi"), ("out", "keluaran"),
-        ("active", "rekaman yang dijangkau satu keluaran teratas"),
+        ("input", "input"), ("gate", "gate"), ("seq", "attention"),
+        ("proj", "dilated convolution"), ("out", "output"),
+        ("active", "rekaman yang dijangkau satu output teratas"),
     ])
     save(fig, "sparsegate_tcn_full")
 
@@ -491,8 +491,8 @@ def wdcnn_full():
             ha="left", va="center", fontsize=FS_NOTE, color=MUTED, style="italic")
 
     legend_row(ax, 0.45, 0.40, [
-        ("input", "masukan"), ("proj", "konvolusi / FC"),
-        ("gate", "normalisasi"), ("util", "pooling / utilitas"), ("out", "keluaran"),
+        ("input", "input"), ("proj", "konvolusi / FC"),
+        ("gate", "normalisasi"), ("util", "pooling / utilitas"), ("out", "output"),
     ])
     save(fig, "wdcnn_full")
 
@@ -501,8 +501,8 @@ def wdcnn_full():
 # 5 · Top-k Sparse Autoencoder
 # --------------------------------------------------------------------------
 def topk_sae():
-    fig, ax = new_fig(12.0, 4.7)
-    my = 2.55
+    fig, ax = new_fig(12.0, 3.65)
+    my = 1.75
 
     box(ax, 1.20, my, 1.95, 0.92, "$h \\in \\mathbb{R}^{128}$", kind="input", fs=10,
         sub="hidden state backbone\n(bobot dibekukan)")
@@ -537,15 +537,15 @@ def topk_sae():
     arrow(ax, (10.94, my), (11.16, my))
     box(ax, 11.54, my, 0.72, 0.92, "$\\hat{h}$", kind="out", fs=10, sub="MSE\n< 0,001")
 
-    ax.text(0.45, 4.38, "Top-k Sparse Autoencoder (SAE)", ha="left", va="center",
+    ax.text(0.45, 3.42, "Top-k Sparse Autoencoder (SAE)", ha="left", va="center",
             fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
-    ax.text(0.45, 4.04, "dilatih pasca-hoc pada 20.000 hidden state; "
+    ax.text(0.45, 3.10, "dilatih pasca-hoc pada 20.000 hidden state; "
                         "satu fitur laten idealnya mengkodekan satu konsep fisika "
                         "(monosemantisitas)",
             ha="left", va="center", fontsize=FS_NOTE, color=MUTED)
 
-    legend_row(ax, 0.45, 0.40, [
-        ("input", "masukan"), ("proj", "proyeksi linear"), ("gate", "seleksi sparsitas"),
+    legend_row(ax, 0.45, 0.32, [
+        ("input", "input"), ("proj", "proyeksi linear"), ("gate", "seleksi Top-k"),
         ("active", "fitur aktif"), ("util", "fitur nonaktif (nol)"), ("out", "rekonstruksi"),
     ])
     save(fig, "topk_sae")
@@ -564,8 +564,8 @@ def _panel(ax, x, y, w, h, title, tint="seq"):
 
 
 def sae_bpfx_pipeline():
-    fig, ax = new_fig(12.0, 5.1)
-    py, ph, pw = 1.42, 3.30, 3.55
+    fig, ax = new_fig(12.0, 4.05)
+    py, ph, pw = 0.32, 3.30, 3.55
 
     _panel(ax, 0.40, py, pw, ph, "Tahap 1: Envelope spectrum", tint="seq")
     x1 = 0.40 + pw / 2
@@ -604,14 +604,8 @@ def sae_bpfx_pipeline():
     ax.text(x3, py + 0.62, "korelasi maksimum 0,447 (BPFI, PHM2012)\ndan 0,468 (BPFO, XJTU-SY)",
             ha="center", va="center", fontsize=FS_TINY, color=MUTED)
 
-    ax.text(0.45, 4.90, "Prosedur pemetaan fitur SAE ke frekuensi karakteristik bearing (BPFx)",
+    ax.text(0.45, 3.84, "Prosedur pemetaan fitur SAE ke frekuensi karakteristik bearing (BPFx)",
             ha="left", va="center", fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
-
-    box(ax, 6.0, 0.70, 11.2, 0.74,
-        "Validasi statistik:  bootstrap 95% CI (B = 1.000)  ·  permutation test dua sisi "
-        "(B = 1.000)  ·  enam uji primer, ambang Bonferroni p < 0,008\n"
-        "dua kontrol negatif: backbone inisialisasi Xavier dan hidden state Gaussian noise",
-        kind="util", fs=8.5)
     save(fig, "sae_bpfx_pipeline")
 
 
@@ -761,7 +755,7 @@ def classic_ml_trio():
     ax.text(0.45, 4.62, "Tiga model klasik pada vektor fitur", ha="left", va="center",
             fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
     box(ax, 6.0, 0.62, 11.2, 0.56,
-        "Masukan: vektor fitur HI 36-D (18 fitur × 2 channel)  ·  Keluaran: 10 kelas "
+        "Input: vektor fitur HI 36-D (18 fitur × 2 channel)  ·  Output: 10 kelas "
         "kerusakan CWRU  ·  XAI: SHAP KernelExplainer (SVM, LR) dan TreeExplainer (DT, RF, XGBoost)",
         kind="util", fs=8.5)
     save(fig, "classic_ml_trio")
