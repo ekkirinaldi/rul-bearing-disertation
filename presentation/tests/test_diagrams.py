@@ -52,7 +52,9 @@ def test_labels_keep_component_nouns_english():
 
     pattern = (
         r"\b(masukan|keluaran|gerbang|atensi|jangkauan reseptif|terdilatasi|"
-        r"pohon keputusan|hutan acak|regresi logistik|bobot|derau|galat)\b"
+        r"pohon keputusan|hutan acak|regresi logistik|bobot|derau|galat|"
+        r"jendela|fitur|sampel|proyeksi|konvolusi|normalisasi|rekonstruksi|"
+        r"atribusi|kesenjangan|cincin (luar|dalam)|bantalan|sangkar)\b"
     )
     for path in (ROOT / "tools" / "render_diagrams.py",
                  ROOT / "content" / "sidang-terbuka.yaml"):

@@ -41,13 +41,13 @@ GOLD_FILL = "#E6D6A8"
 
 KIND = {
     "input":  {"fc": "#FBF0D3", "ec": "#C9B06B"},   # kuning  — input / embedding
-    "proj":   {"fc": "#E7E1F4", "ec": "#A79BCF"},   # ungu    — proyeksi / konvolusi / FC
-    "seq":    {"fc": "#D9EAF7", "ec": "#7FA3C4"},   # biru    — pemodelan sekuens
+    "proj":   {"fc": "#E7E1F4", "ec": "#A79BCF"},   # ungu    — projection / convolution / FC
+    "seq":    {"fc": "#D9EAF7", "ec": "#7FA3C4"},   # biru    — sequence modeling
     "mem":    {"fc": "#DFEEDF", "ec": "#7FAF8A"},   # hijau   — memory / state
-    "gate":   {"fc": "#F8E1E6", "ec": "#CE9AA8"},   # merah muda — gating / normalisasi
+    "gate":   {"fc": "#F8E1E6", "ec": "#CE9AA8"},   # merah muda — gating / normalization
     "out":    {"fc": "#CBE3D3", "ec": "#3E8E5B"},   # hijau tua — output / head
     "util":   {"fc": "#EEF1F5", "ec": "#9AA5B5"},   # abu     — pooling / utilitas
-    "active": {"fc": GOLD_FILL, "ec": GOLD},        # emas    — fitur aktif
+    "active": {"fc": GOLD_FILL, "ec": GOLD},        # emas    — active feature
 }
 
 FS_TITLE = 12.5   # panel / container titles
@@ -233,9 +233,9 @@ def mamba_xlstm_full():
 
     # ---- right column: the stack -----------------------------------------
     sx, bw = 10.35, 2.55
-    box(ax, sx, 1.28, bw, 0.56, "[[Input]] HI", kind="input", sub="jendela 32 rekaman")
+    box(ax, sx, 1.28, bw, 0.56, "[[Input]] HI", kind="input", sub="[[window]] 32 rekaman")
     arrow(ax, (sx, 1.58), (sx, 1.90))
-    box(ax, sx, 2.16, bw, 0.52, "Proyeksi linear\nke dimensi model", kind="proj", fs=8.5)
+    box(ax, sx, 2.16, bw, 0.52, "[[Linear projection]]\nke dimensi model", kind="proj", fs=8.5)
     arrow(ax, (sx, 2.44), (sx, 2.76))
     container(ax, sx - bw / 2 - 0.14, 2.78, bw + 0.28, 1.94, times="3×")
     box(ax, sx, 3.28, bw - 0.18, 0.62, "Blok Mamba", kind="seq", sub="[[Selective State-Space]]")
@@ -246,7 +246,7 @@ def mamba_xlstm_full():
     arrow(ax, (sx, 5.56), (sx, 5.88))
     ax.text(sx + 0.24, 5.72, r"$h \in \mathbb{R}^{128}$", ha="left", va="center",
             fontsize=8.5, color=MUTED)
-    box(ax, sx, 6.18, bw, 0.60, "MLP dua lapis", kind="out", sub="estimasi RUL", bold=True)
+    box(ax, sx, 6.18, bw, 0.60, "MLP dua [[layer]]", kind="out", sub="estimasi RUL", bold=True)
     ax.text(sx, 6.72, "Mamba-xLSTM-Net", ha="center", va="center",
             fontsize=FS_TITLE, color=INK, fontweight="bold")
 
@@ -262,7 +262,7 @@ def mamba_xlstm_full():
     gy = p1y + 0.62                                   # gate branch
     ax.plot([p1x + 0.28], [my], marker="o", ms=4, color=INK)
     arrow(ax, (p1x + 0.30, my), (p1x + 0.72, my))
-    box(ax, p1x + 1.22, my, 0.96, 0.5, "Proyeksi", kind="proj", fs=8.5)
+    box(ax, p1x + 1.22, my, 0.96, 0.5, "[[Projection]]", kind="proj", fs=8.5)
     arrow(ax, (p1x + 1.72, my), (p1x + 2.06, my))
     box(ax, p1x + 2.56, my, 0.96, 0.5, "Conv1D", kind="proj", fs=8.5)
     arrow(ax, (p1x + 3.06, my), (p1x + 3.38, my))
@@ -276,14 +276,14 @@ def mamba_xlstm_full():
     arrow(ax, (p1x + 5.32, my - 0.60), (p1x + 5.32, my - 0.38), lw=0.9)
     arrow(ax, (p1x + 6.10, my), (p1x + 6.50, my))
     gate_glyph(ax, p1x + 6.66, my, "×", kind="gate")
-    # gate branch: input -> proyeksi+SiLU -> multiplicative gate
+    # gate branch: input -> projection+SiLU -> multiplicative gate
     ax.plot([p1x + 0.28, p1x + 0.28], [my - 0.04, gy], color=INK, lw=1.0)
     arrow(ax, (p1x + 0.28, gy), (p1x + 1.30, gy))
-    box(ax, p1x + 2.14, gy, 1.66, 0.5, "Proyeksi + SiLU", kind="proj", fs=8.5)
+    box(ax, p1x + 2.14, gy, 1.66, 0.5, "[[Projection]] + SiLU", kind="proj", fs=8.5)
     ax.plot([p1x + 2.98, p1x + 6.66], [gy, gy], color=INK, lw=1.0)
     arrow(ax, (p1x + 6.66, gy), (p1x + 6.66, my - 0.16), shrink=1)
     arrow(ax, (p1x + 6.82, my), (p1x + 7.10, my))
-    box(ax, p1x + 7.56, my, 0.86, 0.5, "Proyeksi", kind="proj", fs=8.5)
+    box(ax, p1x + 7.56, my, 0.86, 0.5, "[[Projection]]", kind="proj", fs=8.5)
     ax.text(p1x + p1w / 2, p1y + 0.16, "[[gate]] multiplikatif memilih informasi yang diteruskan",
             ha="center", va="bottom", fontsize=FS_TINY, color=MUTED, style="italic")
 
@@ -298,7 +298,7 @@ def mamba_xlstm_full():
     cyc = p2y + 1.22
     ax.plot([p2x + 0.28], [cyc], marker="o", ms=4, color=INK)
     for lbl, dy in (("q", 0.85), ("k", 0.0), ("v", -0.85)):
-        box(ax, p2x + 1.30, cyc + dy, 0.86, 0.46, f"Proyeksi {lbl}", kind="proj", fs=8)
+        box(ax, p2x + 1.30, cyc + dy, 0.86, 0.46, f"[[Projection]] {lbl}", kind="proj", fs=8)
         ax.plot([p2x + 0.28, p2x + 0.60], [cyc, cyc], color=INK, lw=1.0)
         arrow(ax, (p2x + 0.60, cyc), (p2x + 0.85, cyc + dy), lw=0.9, shrink=1)
     Cx = p2x + 3.66
@@ -315,7 +315,7 @@ def mamba_xlstm_full():
     arrow(ax, (Cx + 0.30, cyc + 0.44), (Cx + 0.30, cyc + 0.29), lw=0.9, shrink=0)
     arrow(ax, (Cx + 0.48, cyc - 0.20), (Cx + 1.14, cyc - 0.20))
     box(ax, p2x + 5.34, cyc - 0.20, 1.14, 0.5, "[[Readout]] q", kind="util", fs=8.5,
-        sub="normalisasi")
+        sub="[[normalization]]")
     ax.plot([p2x + 1.74, p2x + 5.34], [cyc + 0.85, cyc + 0.85], color=INK, lw=1.0)  # q path
     arrow(ax, (p2x + 5.34, cyc + 0.85), (p2x + 5.34, cyc + 0.14), lw=0.9, shrink=1)
     arrow(ax, (p2x + 5.92, cyc - 0.20), (p2x + 6.30, cyc - 0.20))
@@ -332,8 +332,8 @@ def mamba_xlstm_full():
 
     # ---- legend (two rows) ------------------------------------------------
     legend_row(ax, 0.45, 0.44, [
-        ("input", "[[input]]"), ("proj", "proyeksi / konvolusi"),
-        ("seq", "pemodelan sekuens"), ("mem", "[[memory]] / [[state]]"),
+        ("input", "[[input]]"), ("proj", "[[projection]] / [[convolution]]"),
+        ("seq", "[[sequence modeling]]"), ("mem", "[[memory]] / [[state]]"),
         ("gate", "[[gate]]"), ("out", "[[output]]"),
     ])
     legend_row(ax, 0.45, 0.15, [
@@ -350,12 +350,12 @@ def nbeats_xlstm_full():
     fig, ax = new_fig(12.0, 3.9)
     my = 1.78
 
-    box(ax, 1.15, my, 1.75, 0.78, "[[Input]] HI", kind="input", sub="jendela 32 rekaman")
+    box(ax, 1.15, my, 1.75, 0.78, "[[Input]] HI", kind="input", sub="[[window]] 32 rekaman")
     arrow(ax, (2.03, my), (2.42, my))
     container(ax, 2.46, my - 0.62, 1.62, 1.24, times="2×")
     box(ax, 3.27, my, 1.34, 0.66, "Blok xLSTM", kind="seq", sub="[[front-end]]")
     arrow(ax, (4.24, my), (4.62, my))
-    ax.text(3.27, my - 0.92, "konteks sekuens memodulasi\n[[output]] basis",
+    ax.text(3.27, my - 0.92, "konteks [[sequence]] memodulasi\n[[output]] basis",
             ha="center", va="top", fontsize=FS_TINY, color=MUTED, style="italic")
 
     # three basis blocks with mini curve glyphs
@@ -406,7 +406,7 @@ def nbeats_xlstm_full():
             ha="left", va="center", fontsize=FS_NOTE, color=MUTED)
 
     legend_row(ax, 0.45, 0.32, [
-        ("input", "[[input]]"), ("seq", "pemodelan sekuens / basis blok"),
+        ("input", "[[input]]"), ("seq", "[[sequence modeling]] / basis blok"),
         ("mem", "agregasi aditif"), ("out", "[[output]]"),
     ])
     save(fig, "nbeats_xlstm_full")
@@ -419,7 +419,7 @@ def sparsegate_tcn_full():
     fig, ax = new_fig(12.0, 5.6)
     my = 1.30
 
-    box(ax, 1.05, my, 1.65, 0.78, "[[Input]] HI", kind="input", sub="jendela 32 rekaman")
+    box(ax, 1.05, my, 1.65, 0.78, "[[Input]] HI", kind="input", sub="[[window]] 32 rekaman")
     ax.plot([1.88, 2.16], [my, my], color=INK, lw=1.1)
     ax.plot([2.16, 2.16], [my - 0.55, my + 0.55], color=INK, lw=1.1)
     arrow(ax, (2.16, my + 0.55), (2.52, my + 0.55), shrink=0)
@@ -452,7 +452,7 @@ def sparsegate_tcn_full():
                                 boxstyle="round,pad=0.02,rounding_size=0.09",
                                 fc=KIND["proj"]["fc"], ec="none", alpha=0.22, zorder=0))
     ax.text(px + pw / 2, py + ph - 0.20, "[[Dilated causal convolution]]: "
-            "[[receptive field]] menutup seluruh jendela",
+            "[[receptive field]] menutup seluruh [[window]]",
             ha="center", va="center", fontsize=FS_TITLE - 0.5, color=INK, fontweight="bold")
     n = 17
     xs = np.linspace(px + 0.85, px + pw - 0.30, n)
@@ -531,7 +531,7 @@ def wdcnn_full():
     arrow(ax, (7.30, my), (7.66, my))
     box(ax, 8.16, my, 0.94, 0.52, "Flatten", kind="util", fs=8.5)
     arrow(ax, (8.65, my), (8.95, my))
-    box(ax, 9.70, my, 1.42, 0.72, "Dua lapis FC\n+ [[dropout]]", kind="proj", fs=8.5)
+    box(ax, 9.70, my, 1.42, 0.72, "Dua [[layer]] FC\n+ [[dropout]]", kind="proj", fs=8.5)
     arrow(ax, (10.43, my), (10.73, my))
     box(ax, 11.28, my, 1.02, 0.72, "Softmax\n10 kelas", kind="out", fs=8.5, bold=True)
 
@@ -541,8 +541,8 @@ def wdcnn_full():
             ha="left", va="center", fontsize=FS_NOTE, color=MUTED, style="italic")
 
     legend_row(ax, 0.45, 0.40, [
-        ("input", "[[input]]"), ("proj", "konvolusi / FC"),
-        ("gate", "normalisasi"), ("util", "[[pooling]] / utilitas"), ("out", "[[output]]"),
+        ("input", "[[input]]"), ("proj", "[[convolution]] / FC"),
+        ("gate", "[[normalization]]"), ("util", "[[pooling]] / utilitas"), ("out", "[[output]]"),
     ])
     save(fig, "wdcnn_full")
 
@@ -557,7 +557,7 @@ def topk_sae():
     box(ax, 1.20, my, 1.95, 0.92, "$h \\in \\mathbb{R}^{128}$", kind="input", fs=10,
         sub="[[hidden state]] [[backbone]]\n([[weights]] dibekukan)")
     arrow(ax, (2.20, my), (2.52, my))
-    box(ax, 3.10, my, 1.10, 0.56, "Bias\npra-enkoder", kind="util", fs=8)
+    box(ax, 3.10, my, 1.10, 0.56, "[[Pre-encoder]]\n[[bias]]", kind="util", fs=8)
     arrow(ax, (3.67, my), (3.95, my))
     box(ax, 4.60, my, 1.24, 0.62, "[[Encoder]]\nlinear", kind="proj", fs=8.5, sub="$W_{enc}$")
     arrow(ax, (5.24, my), (5.52, my))
@@ -578,9 +578,9 @@ def topk_sae():
             ax.add_patch(Rectangle((gx + i * cell, gy + j * cell), cell * 0.88,
                                    cell * 0.88, fc=c["fc"], ec=c["ec"], lw=0.6))
     ax.text(gx + nx * cell / 2, gy + ny * cell + 0.16,
-            "$z$: 1.024 fitur laten (ekspansi 8×)", ha="center", va="bottom",
+            "$z$: 1.024 [[latent feature]] (ekspansi 8×)", ha="center", va="bottom",
             fontsize=FS_BLOCK, color=INK, fontweight="bold")
-    ax.text(gx + nx * cell / 2, gy - 0.14, "hanya k = 51 fitur (sekitar 5 %)\naktif per sampel",
+    ax.text(gx + nx * cell / 2, gy - 0.14, "hanya k = 51 [[feature]] (sekitar 5 %)\naktif per [[sample]]",
             ha="center", va="top", fontsize=FS_TINY, color=MUTED)
     arrow(ax, (gx + nx * cell + 0.06, my), (gx + nx * cell + 0.30, my))
     box(ax, 10.30, my, 1.24, 0.62, "[[Decoder]]\nlinear", kind="proj", fs=8.5, sub="$W_{dec}$")
@@ -590,13 +590,13 @@ def topk_sae():
     ax.text(0.45, 3.42, "Top-k [[Sparse Autoencoder]] (SAE)", ha="left", va="center",
             fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
     ax.text(0.45, 3.10, "dilatih pasca-hoc pada 20.000 [[hidden state]]; "
-                        "satu fitur laten idealnya mengkodekan satu konsep fisika "
+                        "satu [[latent feature]] idealnya mengkodekan satu konsep fisika "
                         "(monosemantisitas)",
             ha="left", va="center", fontsize=FS_NOTE, color=MUTED)
 
     legend_row(ax, 0.45, 0.32, [
-        ("input", "[[input]]"), ("proj", "proyeksi linear"), ("gate", "seleksi Top-k"),
-        ("active", "fitur aktif"), ("util", "fitur nonaktif (nol)"), ("out", "rekonstruksi"),
+        ("input", "[[input]]"), ("proj", "[[linear projection]]"), ("gate", "[[Top-k selection]]"),
+        ("active", "[[active feature]]"), ("util", "[[inactive feature]] (nol)"), ("out", "[[reconstruction]]"),
     ])
     save(fig, "topk_sae")
 
@@ -646,15 +646,15 @@ def sae_bpfx_pipeline():
 
     _panel(ax, 8.44, py, pw, ph, "Tahap 3: Korelasi dan [[hit-rate]]", tint="gate")
     x3 = 8.44 + pw / 2
-    box(ax, x3, py + 2.28, 3.05, 0.60, "Korelasi Pearson $r$\naktivasi fitur SAE × amplitudo BPFx",
+    box(ax, x3, py + 2.28, 3.05, 0.60, "Korelasi Pearson $r$\naktivasi [[feature]] SAE × amplitudo BPFx",
         kind="proj", fs=8)
     arrow(ax, (x3, py + 1.95), (x3, py + 1.80), shrink=0, lw=0.9)
-    box(ax, x3, py + 1.44, 3.05, 0.56, "[[Hit-rate]]: proporsi fitur\ndengan |r| ≥ 0,30",
+    box(ax, x3, py + 1.44, 3.05, 0.56, "[[Hit-rate]]: proporsi [[feature]]\ndengan |r| ≥ 0,30",
         kind="out", fs=8)
     ax.text(x3, py + 0.62, "korelasi maksimum 0,447 (BPFI, PHM2012)\ndan 0,468 (BPFO, XJTU-SY)",
             ha="center", va="center", fontsize=FS_TINY, color=MUTED)
 
-    ax.text(0.45, 3.84, "Prosedur pemetaan fitur SAE ke frekuensi karakteristik [[bearing]] (BPFx)",
+    ax.text(0.45, 3.84, "Prosedur pemetaan [[feature]] SAE ke frekuensi karakteristik [[bearing]] (BPFx)",
             ha="left", va="center", fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
     save(fig, "sae_bpfx_pipeline")
 
@@ -692,7 +692,7 @@ def shap_fsm_pipeline():
         ax.plot([bx + i / 90 * bw2] * 2, [py + 1.55, py + 1.55 + v * 0.28],
                 color=color, lw=0.7, zorder=4)
     ax.plot([bx, bx + bw2], [py + 1.55, py + 1.55], color=MUTED, lw=0.6)
-    ax.text(cx, py + 0.55, "atribusi per titik waktu\n300 [[background]] · 500 sampel uji",
+    ax.text(cx, py + 0.55, "[[attribution]] per titik waktu\n300 [[background]] · 500 [[sample]] uji",
             ha="center", va="center", fontsize=FS_NOTE, color=MUTED)
 
     _panel(ax, xs[3], py, pw, ph, "[[Fault Signature Maps]]", tint="mem")
@@ -704,7 +704,7 @@ def shap_fsm_pipeline():
             v = rng.random() * np.exp(-((ci / 24 - (0.2 + 0.06 * r) % 1) ** 2) / 0.02)
             ax.add_patch(Rectangle((hx + ci * 0.081, hy + r * 0.115), 0.075, 0.105,
                                    fc=cmap(0.15 + 0.8 * min(v, 1)), ec="none"))
-    ax.text(xs[3] + pw / 2, py + 0.55, "peta atribusi 10 kelas × 2.048 titik\n"
+    ax.text(xs[3] + pw / 2, py + 0.55, "[[attribution map]] 10 kelas × 2.048 titik\n"
             "3 varian: [[Signed]], [[Absolute]], [[Variance]]",
             ha="center", va="center", fontsize=FS_NOTE, color=MUTED)
 
@@ -714,7 +714,7 @@ def shap_fsm_pipeline():
 
     ax.text(0.45, 4.32, "Dari sinyal mentah ke [[Fault Signature Maps]] (FSM)",
             ha="left", va="center", fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
-    ax.text(0.45, 3.98, "agregasi atribusi per kelas menghasilkan [[array]] 500 × 2.048 × 10 "
+    ax.text(0.45, 3.98, "agregasi [[attribution]] per kelas menghasilkan [[array]] 500 × 2.048 × 10 "
                         "(lebih dari 10 juta nilai SHAP)",
             ha="left", va="center", fontsize=FS_NOTE, color=MUTED)
 
@@ -763,7 +763,7 @@ def classic_ml_trio():
     ax.plot([gx, gx + gw], [gy + gh / 2, gy + gh / 2], color=GOLD, lw=0.9,
             ls=(0, (4, 3)), zorder=3)
     ax.text(gx + gw + 0.06, gy + gh / 2, "0,5", fontsize=FS_TINY, color=GOLD, va="center")
-    ax.text(gx + gw / 2, gy - 0.14, "skor linear fitur", ha="center", va="top",
+    ax.text(gx + gw / 2, gy - 0.14, "skor linear [[feature]]", ha="center", va="top",
             fontsize=FS_TINY, color=MUTED)
     ax.text(xs[1] + pw / 2, py + 0.32, "[[sigmoid]] memetakan skor ke probabilitas;\n"
             "satu model per kelas (OvR)", ha="center", va="center",
@@ -802,10 +802,10 @@ def classic_ml_trio():
     ax.text(xs[2] + 2.65, py + 0.34, "XGBoost: [[tree]] berikutnya\nmengoreksi [[error]] ([[boosting]])",
             ha="center", va="center", fontsize=FS_TINY, color=MUTED)
 
-    ax.text(0.45, 4.62, "Tiga model klasik pada vektor fitur", ha="left", va="center",
+    ax.text(0.45, 4.62, "Tiga model klasik pada [[feature vector]]", ha="left", va="center",
             fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
     box(ax, 6.0, 0.62, 11.2, 0.56,
-        "[[Input]]: vektor fitur HI 36-D (18 fitur × 2 [[channel]])  ·  [[Output]]: 10 kelas "
+        "[[Input]]: [[feature vector]] HI 36-D (18 [[feature]] × 2 [[channel]])  ·  [[Output]]: 10 kelas "
         "kerusakan CWRU  ·  XAI: SHAP KernelExplainer (SVM, LR) dan TreeExplainer (DT, RF, XGBoost)",
         kind="util", fs=8.5)
     save(fig, "classic_ml_trio")
@@ -819,10 +819,10 @@ def streaming_engine():
     my = 2.72
 
     steps = [
-        (1.30, 1.95, "Akuisisi sinyal", "jendela geser\n64 akuisisi", "input"),
-        (3.65, 1.95, "Ekstraksi fitur HI", "[[pipeline]] identik\ndengan pelatihan", "proj"),
+        (1.30, 1.95, "Akuisisi sinyal", "[[sliding window]]\n64 akuisisi", "input"),
+        (3.65, 1.95, "Ekstraksi [[feature]] HI", "[[pipeline]] identik\ndengan pelatihan", "proj"),
         (6.00, 1.95, "Mamba-xLSTM-Net", "di [[server]],\nprotokol WebSocket", "seq"),
-        (8.35, 1.95, "Prediksi per akuisisi", "fraksi RUL · status\n[[fusion gate]] · atribusi", "mem"),
+        (8.35, 1.95, "Prediksi per akuisisi", "fraksi RUL · status\n[[fusion gate]] · [[attribution]]", "mem"),
         (10.70, 1.95, "Dasbor [[streaming]]", "kurva RUL, [[waveform]],\n[[event log]]", "out"),
     ]
     for cx, w, label, sub, kind in steps:
@@ -830,7 +830,7 @@ def streaming_engine():
     for (cx1, w1, *_), (cx2, w2, *_) in zip(steps, steps[1:]):
         arrow(ax, (cx1 + w1 / 2 + 0.02, my), (cx2 - w2 / 2 - 0.02, my), lw=1.8)
 
-    ax.text(6.0, my + 0.95, "atribusi fitur: [[gradient]]×[[input]] per akuisisi; "
+    ax.text(6.0, my + 0.95, "[[feature attribution]]: [[gradient]]×[[input]] per akuisisi; "
             "Integrated Gradients dipicu otomatis pada transisi status",
             ha="center", va="center", fontsize=FS_NOTE, color=MUTED, style="italic")
 
