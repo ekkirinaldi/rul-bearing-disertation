@@ -168,7 +168,7 @@ CLAIMS: list[tuple[str, list[str]]] = [
     ("PHM2012 demo prediksi 4 jam 5 menit", ["4 jam 5 menit"]),
     ("XJTU demo 2 jam 50 menit", ["2 jam 50 menit"]),
     ("XJTU aktual 3 jam 16 menit", ["3 jam 16 menit"]),
-    ("gerbang fusi PHM 54% xLSTM", ["54%"]),
+    ("fusion gate PHM 54% xLSTM", ["54%"]),
     # cadangan: rig PRONOSTIA
     ("beban radial 4.000–5.000 N", ["4.000–5.000 N"]),
 ]

@@ -694,7 +694,7 @@ slides:
                       - "±898 ribu parameter pada PHM2012, ±811 ribu pada XJTU-SY."
                       - "Inferensi sekuens linear O(n), sesuai konteks panjang."
                       - >-
-                        Fusion gate membagi bobot cabang xLSTM/Mamba per sampel
+                        Fusion gate membagi weights cabang xLSTM/Mamba per sampel
                         dan dapat dibaca sebagai indikator internal.
                       - "Backbone utama demonstrasi streaming dan analisis SAE-BPFx."
       - type: source
@@ -873,7 +873,7 @@ slides:
               pada XJTU-SY; tiga seed per model, tanpa arsitektur yang unggul mutlak.
           - label: IMPLIKASI
             value: >-
-              Gradien akurasi dan bobot komputasi antargolongan model menjadi dasar
+              Gradien akurasi dan biaya komputasi antargolongan model menjadi dasar
               penempatan per tier pada kerangka PdM Bab VI (bagian RM-4).
       - type: banner
         gap: 0.22
@@ -894,7 +894,7 @@ slides:
     body: >-
       **RM-2.** Bagaimana menerapkan metode explainable artificial intelligence (XAI) pada
       model diagnostik bearing berbasis deep learning sehingga dapat menghasilkan peta
-      karakteristik kerusakan (fault signature) yang stabil dan diskriminatif dengan masukan
+      karakteristik kerusakan (fault signature) yang stabil dan diskriminatif dengan input
       raw signal, dan apakah peta tersebut sesuai dengan mekanisme fisik degradasi bearing
       yang dapat diverifikasi oleh insinyur perawatan?
 
@@ -1229,7 +1229,7 @@ slides:
         body: >-
           **Rigor statistik.** Bootstrap CI 95% dan permutation test dua-sisi
           (masing-masing B = 1.000); enam uji primer dengan ambang setara Bonferroni
-          p < 0,008; dua negative control (bobot Xavier acak dan derau Gaussian).
+          p < 0,008; dua negative control (weights Xavier acak dan Gaussian noise).
 
   # ======================================================================
   # 24 · HASIL RM-3 — hit-rate dan kontrol negatif
@@ -1283,7 +1283,7 @@ slides:
                         Backbone dengan inisialisasi Xavier (tidak dilatih):
                         hit-rate ≈ 0%.
                       - >-
-                        Hidden state diganti derau Gaussian: hit-rate ≈ 0%.
+                        Hidden state diganti Gaussian noise: hit-rate ≈ 0%.
                       - >-
                         Korespondensi SAE-BPFx dengan demikian adalah **properti
                         representasi terlatih**, bukan artefak arsitektur atau
@@ -1622,7 +1622,7 @@ slides:
         vpad: 0.20
         body: >-
           Pipeline diagnostik dan prognostik **dapat dijalankan pada data lini produksi
-          tanpa pelatihan ulang** dan menghasilkan keluaran yang konsisten dengan observasi
+          tanpa pelatihan ulang** dan menghasilkan output yang konsisten dengan observasi
           lapangan; bukti yang tersedia bersifat kualitatif dan menjadi bukti awal
           kelayakan deployment, bukan validasi lintas mesin.
       - type: kvrows
@@ -2058,7 +2058,7 @@ slides:
         badge_size: 1.00
         items:
           - value: "0,226"
-            title: "RMSE (rata-rata galat)"
+            title: "RMSE (rata-rata error)"
             hint: "↓ lebih baik"
             body: >-
               Rata-rata selisih prediksi sisa umur terhadap nilai referensi, skala 0–1 (0 = sempurna). Notasi “± 0,030” adalah variasi hasil antar tiga seed; makin kecil makin andal.
@@ -2084,7 +2084,7 @@ slides:
             title: "Negative control (kontrol negatif)"
             hint: "harus ≈ 0"
             body: >-
-              Analisis yang sama dijalankan pada model berbobot acak dan derau murni.
+              Analisis yang sama dijalankan pada model dengan weights acak dan noise murni.
               Jika metode hanya menemukan pola dalam keacakan, angka ini ikut tinggi.
               Hasilnya ≈0%, sehingga temuan bukan artefak metode.
           - value: "10,3%"
@@ -2095,10 +2095,10 @@ slides:
               bawah 20% status berpindah ke Critical. EoL adalah perkiraan tanggal dan jam
               bearing mencapai akhir umur.
           - value: "53%"
-            title: "Fusion gate (gerbang fusi)"
+            title: "Fusion gate"
             hint: konteks
             body: >-
-              Gate menimbang kontribusi dua cabang model (xLSTM dan Mamba); “Mamba 53%” berarti keluaran pada kanal itu sedikit condong ke cabang Mamba.
+              Gate menimbang kontribusi dua cabang model (xLSTM dan Mamba); “Mamba 53%” berarti output pada kanal itu sedikit condong ke cabang Mamba.
 
   # ======================================================================
   # B7 · SPARSITY SWEEP dan KORELASI

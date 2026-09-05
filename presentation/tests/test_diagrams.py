@@ -50,11 +50,27 @@ def test_labels_keep_component_nouns_english():
     by the user on the rendered diagrams and must not come back."""
     import re
 
-    source = (ROOT / "tools" / "render_diagrams.py").read_text(encoding="utf-8")
-    calques = re.findall(
+    pattern = (
         r"\b(masukan|keluaran|gerbang|atensi|jangkauan reseptif|terdilatasi|"
-        r"pohon keputusan|hutan acak|regresi logistik)\b",
-        source, flags=re.IGNORECASE,
+        r"pohon keputusan|hutan acak|regresi logistik|bobot|derau|galat)\b"
     )
-    assert calques == [], f"translated component nouns in the diagram labels: {calques}"
-    assert re.search(r"\bvia\b", source) is None, "`via` is not an Indonesian connector"
+    for path in (ROOT / "tools" / "render_diagrams.py",
+                 ROOT / "content" / "sidang-terbuka.yaml"):
+        source = path.read_text(encoding="utf-8")
+        calques = re.findall(pattern, source, flags=re.IGNORECASE)
+        assert calques == [], f"{path.name}: translated technical nouns {calques}"
+        assert re.search(r"\bvia\b", source) is None, (
+            f"{path.name}: `via` is not an Indonesian connector"
+        )
+
+
+def test_foreign_spans_render_as_italics():
+    """Research writing italicises foreign terms, figure labels included."""
+    from tools.render_diagrams import fr
+
+    assert fr("[[receptive field]] menutup jendela") == (
+        "$\\mathit{receptive\\ field}$ menutup jendela"
+    )
+    assert fr("[[gate]]", bold=True) == "$\\boldsymbol{gate}$"
+    assert fr("[[cross-feature attention]]").count("$") == 4   # hyphen stays upright
+    assert fr("$h \\in \\mathbb{R}^{128}$") == "$h \\in \\mathbb{R}^{128}$"
