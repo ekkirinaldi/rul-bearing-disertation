@@ -144,7 +144,7 @@ slides:
                 h: 1.44
                 text: >-
                   Pada hampir setiap mesin rotasi industri, mulai dari motor, pompa, kompresor,
-                  hingga lini otomasi, ***rolling element bearing*** menjadi tumpuan.
+                  hingga *production line* otomatis, ***rolling element bearing*** menjadi tumpuan.
                   Komponen ini sekaligus yang paling sering gagal: survei keandalan IEEE dan
                   EPRI mencatat bearing menyumbang sekitar 40 sampai 50% dari seluruh kerusakan
                   motor industri, sekaligus menjadi penyebab utama *downtime* yang tidak
@@ -360,7 +360,7 @@ slides:
               degradasi (BPFO, BPFI, BSF, FTF), bukan sekadar korelasi statistik?
               ~~→ N3, N4 · Bab V~~
           - key: RM-4
-            title: Transferabilitas ke lini produksi nyata
+            title: Transferabilitas ke *production line* nyata
             body: >-
               Sejauh mana model terlatih benchmark dapat dipindahkan ke data vibrasi
               industri nyata, dan bukti apa yang diperlukan untuk menilai kelayakannya?
@@ -532,7 +532,7 @@ slides:
         header_size: 11.5
         size: 10.5
         widths: [2.55, 2.75, 2.85, 2.95]
-        columns: [Model, Besaran *input*, Sensor dan laju cuplik, Bentuk tensor]
+        columns: [Model, Besaran *input*, Sensor dan *sampling rate*, Bentuk tensor]
         rows:
           - ["WDCNN (diagnostik)", "Amplitudo getaran domain waktu (*raw signal*)", "Akselerometer *drive-end* CWRU, 48 kHz", "1 × 2.048 titik, sekitar 42,67 ms"]
           - ["SVM, LR, DT, RF, XGBoost", "*Feature* HI turunan sinyal, bukan *waveform*", "Akselerometer CWRU, 48 kHz", "Satu vektor HI per segmen 2.048 titik"]
@@ -1379,18 +1379,18 @@ slides:
         vpad: 0.14
         body: >-
           **Status pembuktian: empiris** · Bab V · novelti N3 dan N4 · bagian RM-4 menguji
-          penerapannya pada data lini produksi nyata.
+          penerapannya pada data *production line* nyata.
 
   # ======================================================================
   # 26 · PEMBATAS BABAK 4 — RM-4
   # ======================================================================
   - layout: section
     eyebrow: "Rumusan Masalah 4 dari 4"
-    title: Transfer Model ke Lini Produksi Nyata
+    title: "Transfer Model ke *Production Line* Nyata"
     body: >-
       **RM-4.** Sejauh mana model diagnostik dan prognostik yang dilatih pada dataset
       benchmark laboratorium dapat dipindahkan ke data vibrasi industri nyata, dan bukti
-      apa yang diperlukan untuk menilai kelayakan penerapannya pada lini produksi
+      apa yang diperlukan untuk menilai kelayakan penerapannya pada *production line*
       ball bearing?
 
   # ======================================================================
@@ -1547,11 +1547,11 @@ slides:
           **demonstrasi kualitatif** transferabilitas perilaku prognostik.
 
   # ======================================================================
-  # 29 · HASIL RM-4 — dasbor mesin inferensi
+  # 29 · HASIL RM-4 — dashboard mesin inferensi
   # ======================================================================
   - layout: content
     eyebrow: "Validasi Industri · Subbab V.5.3"
-    title: Dasbor Inference Engine Streaming
+    title: Dashboard Inference Engine Streaming
     top: 1.70
     blocks:
       - type: text
@@ -1666,7 +1666,7 @@ slides:
         size: 12.5
         vpad: 0.20
         body: >-
-          Pipeline diagnostik dan prognostik **dapat dijalankan pada data lini produksi
+          Pipeline diagnostik dan prognostik **dapat dijalankan pada data *production line*
           tanpa pelatihan ulang** dan menghasilkan output yang konsisten dengan observasi
           lapangan; bukti yang tersedia bersifat kualitatif dan menjadi bukti awal
           kelayakan deployment, bukan validasi lintas mesin.

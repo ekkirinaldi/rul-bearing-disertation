@@ -240,7 +240,7 @@ def spectrum(ax, x, y, w, h, peaks, seed=3, color=INK, lw=0.9):
 # the ones in the run artifacts under Mamba-xLSTM/results/runs, which is also
 # what V14 states. Edit the contract here, not inside a draw function.
 #
-#   name -> (besaran fisis, sensor dan laju cuplik, bentuk tensor)
+#   name -> (besaran fisis, sensor dan sampling rate, bentuk tensor)
 INPUT_SPEC: dict[str, tuple[str, str, str]] = {
     "mamba_xlstm_full": (
         "[[feature]] HI 36-D per rekaman, bukan [[waveform]]",
@@ -741,9 +741,9 @@ def sae_bpfx_pipeline():
     waveform(ax, 0.85, py + 2.42, 2.60, 0.42, seed=5)
     box(ax, x1, py + 1.78, 2.60, 0.42, "Transformasi Hilbert\npada [[raw signal]]", kind="proj", fs=8)
     arrow(ax, (x1, py + 1.55), (x1, py + 1.42), shrink=0, lw=0.9)
-    box(ax, x1, py + 1.19, 2.60, 0.42, "Amplop sinyal analitik", kind="proj", fs=8)
+    box(ax, x1, py + 1.19, 2.60, 0.42, "[[Envelope]] sinyal analitik", kind="proj", fs=8)
     arrow(ax, (x1, py + 0.96), (x1, py + 0.83), shrink=0, lw=0.9)
-    box(ax, x1, py + 0.60, 2.60, 0.42, "FFT amplop getaran", kind="proj", fs=8)
+    box(ax, x1, py + 0.60, 2.60, 0.42, "FFT [[envelope]]", kind="proj", fs=8)
     arrow(ax, (x1, py + 2.20), (x1, py + 2.01), shrink=1, lw=0.9)
 
     arrow(ax, (4.02, py + ph / 2), (4.38, py + ph / 2), lw=2.2, style="-|>")
@@ -945,7 +945,7 @@ def streaming_engine():
         (3.65, 1.95, "Ekstraksi [[feature]] HI", "[[pipeline]] identik\ndengan pelatihan", "proj"),
         (6.00, 1.95, "Mamba-xLSTM-Net", "di [[server]],\nprotokol WebSocket", "seq"),
         (8.35, 1.95, "Prediksi per akuisisi", "fraksi RUL · status\n[[fusion gate]] · [[attribution]]", "mem"),
-        (10.70, 1.95, "Dasbor [[streaming]]", "kurva RUL, [[waveform]],\n[[event log]]", "out"),
+        (10.70, 1.95, "[[Dashboard streaming]]", "kurva RUL, [[waveform]],\n[[event log]]", "out"),
     ]
     for cx, w, label, sub, kind in steps:
         box(ax, cx, my, w, 1.10, label, kind=kind, fs=9, sub=sub, bold=kind == "out")

@@ -54,7 +54,8 @@ def test_labels_keep_component_nouns_english():
         r"\b(masukan|keluaran|gerbang|atensi|jangkauan reseptif|terdilatasi|"
         r"pohon keputusan|hutan acak|regresi logistik|bobot|derau|galat|"
         r"jendela|fitur|sampel|proyeksi|konvolusi|normalisasi|rekonstruksi|"
-        r"atribusi|kesenjangan|cincin (luar|dalam)|bantalan|sangkar)\b"
+        r"atribusi|kesenjangan|cincin (luar|dalam)|bantalan|sangkar|"
+        r"lini produksi|lini otomasi|amplop|dasbor|laju cuplik)\b"
     )
     for path in (ROOT / "tools" / "render_diagrams.py",
                  ROOT / "content" / "sidang-terbuka.yaml"):
