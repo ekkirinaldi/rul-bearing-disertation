@@ -523,7 +523,7 @@ slides:
   # backbones never see one, the SAE takes neither.
   - layout: content
     eyebrow: "Pengantar · Input Model"
-    title: "Apa yang Dibaca Setiap Model"
+    title: "*Input* Setiap Model"
     top: 1.72
     blocks:
       - type: table
@@ -549,6 +549,27 @@ slides:
           dihitung dari geometri *bearing* dan putaran poros, lalu dipakai sebagai rujukan
           validasi fisika pada bagian RM-3. Seluruh *input* model berasal dari sinyal
           getaran: tidak ada beban, kecepatan, atau suhu yang masuk ke model mana pun.
+
+  # ======================================================================
+  # 11a2 · JEMBATAN — the machine-learning side: raw signal to HI vector
+  # ======================================================================
+  # shap_fsm_pipeline (slide 23) shows the deep side reading the waveform;
+  # this is what the classic models read instead, and the same extractor
+  # feeds the RUL backbones per recording.
+  - layout: content
+    eyebrow: "Pengantar · Cara Kerja Model"
+    title: "Dari Sinyal Mentah ke *Feature Vector* HI"
+    top: 1.66
+    blocks:
+      - type: figure
+        flex: true
+        inset: 0.06
+        image: ../assets/diagrams/hi_feature_pipeline.png
+      - type: source
+        gap: 0.14
+        body: >-
+          Skema ekstraksi HI pada Subbab III.3.5 dan Lampiran A · SHAP
+          (Lundberg dan Lee, 2017) · mekanisme tiap model pada slide berikut.
 
   # ======================================================================
   # 11b · JEMBATAN A2 — cara kerja tiga golongan model klasik

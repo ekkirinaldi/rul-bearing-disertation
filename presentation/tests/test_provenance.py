@@ -79,6 +79,10 @@ CLAIMS: list[tuple[str, list[str]]] = [
     ("20.000 hidden state untuk SAE", ["20.000"]),
     ("hidden state 128 dimensi", ["d = 128"]),
     ("WDCNN raw signal 1 × 2.048", ["1 × 2.048"]),
+    # s13 dari sinyal mentah ke feature vector HI
+    ("18 feature per channel", ["18 fitur per channel"]),
+    ("channel fan-end CWRU", ["fan-end"]),
+    ("PSD Welch untuk feature domain frekuensi", ["PSD Welch"]),
     # s10 metrik diagnostik
     ("akurasi WDCNN 99,87%", ["99,87%"]),
     ("749 dari 750", ["749/750"]),

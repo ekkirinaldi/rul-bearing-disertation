@@ -199,7 +199,7 @@ changes in the manuscript, update the YAML and the matching entry in `CLAIMS`.
 `assets/diagrams/`, in the block-diagram idiom of Jiang dkk. (2026),
 *Sensors* **26**:1578: rounded colour-coded blocks, dashed "n×" repeat
 containers, zoom-in panels for cell internals, and a legend row per figure.
-One master palette maps component function to colour across all nine figures
+One master palette maps component function to colour across all ten figures
 (kuning input · ungu proyeksi/konvolusi · biru pemodelan sekuens · hijau
 memory/state · merah muda gating · hijau tua output · emas fitur aktif),
 with the deck navy as ink. Every number drawn is asserted against the V14
@@ -221,7 +221,10 @@ while generic operations and descriptions stay Indonesian (`proyeksi`,
 `Input: <besaran fisis> · <sensor dan laju cuplik> · <bentuk tensor>`, so
 that comparing two diagrams field by field tells the models apart: WDCNN
 takes a raw waveform, the three RUL backbones never see one (they read HI
-36-D vectors), and the SAE reads neither, only a frozen hidden state. The
+36-D vectors), and the SAE reads neither, only a frozen hidden state.
+`hi_feature_pipeline` draws the classic-ML side of that split — segment to
+18 features per channel to the 36-D vector to SVM/LR/trees and SHAP — as the
+counterpart of `shap_fsm_pipeline`, which draws the raw-signal side. The
 text lives in the `INPUT_SPEC` registry at the top of the diagram section —
 edit it there, never inside a draw function. Its numbers come from the run
 artifacts under `Mamba-xLSTM/results/runs/`, which the manuscript was

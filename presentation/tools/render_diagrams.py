@@ -287,6 +287,11 @@ INPUT_SPEC: dict[str, tuple[str, str, str]] = {
         "akselerometer 25,6 kHz",
         "[[feature]] HI 36-D, [[buffer window]] 64 akuisisi",
     ),
+    "hi_feature_pipeline": (
+        "amplitudo getaran domain waktu ([[raw signal]])",
+        "akselerometer [[drive-end]] dan [[fan-end]] CWRU, 48 kHz",
+        "segmen 2.048 titik menjadi [[feature vector]] 36-D",
+    ),
 }
 
 # These two sit in a narrow slide column, so they get bigger type; the rest
@@ -977,9 +982,84 @@ def streaming_engine():
 
 
 # --------------------------------------------------------------------------
+# 10 · Raw signal to HI feature vector (the machine-learning side of slide 11)
+# --------------------------------------------------------------------------
+def hi_feature_pipeline():
+    """The counterpart of shap_fsm_pipeline: the deep side reads the waveform,
+    the classic side reads this vector. Feature names are the ones in
+    Lampiran A and mxlstm/data/hi.py; the same extractor serves the RUL path."""
+    fig, ax = new_fig(12.0, 4.6, strip_pad("hi_feature_pipeline"))
+    py, ph, pw = 1.30, 2.55, 2.55
+    xs = [0.40, 3.31, 6.22, 9.13]
+
+    # panel 1: the segment
+    _panel(ax, xs[0], py, pw, ph, "[[Raw signal]]", tint="input")
+    waveform(ax, xs[0] + 0.30, py + 1.45, pw - 0.6, 0.70, seed=21)
+    ax.text(xs[0] + pw / 2, py + 0.55, "segmen 2.048 titik\n[[channel]] [[drive-end]] dan [[fan-end]]",
+            ha="center", va="center", fontsize=FS_NOTE, color=MUTED)
+
+    # panel 2: the two feature families, per channel
+    _panel(ax, xs[1], py, pw, ph, "Ekstraksi [[feature]]", tint="seq")
+    c2 = xs[1] + pw / 2
+    box(ax, c2, py + 1.68, 2.25, 0.72, "9 domain waktu", kind="proj", fs=8.8,
+        sub="RMS, [[peak]], kurtosis, [[skewness]],\n[[crest]], [[shape]], [[impulse]], [[margin]], variansi")
+    box(ax, c2, py + 0.80, 2.25, 0.72, "9 domain frekuensi", kind="proj", fs=8.8,
+        sub="PSD Welch: sentroid, entropi,\n[[mean]] dan RMS [[frequency]], 5 energi pita")
+    ax.text(c2, py + 0.22, "per [[channel]], 18 [[feature]]", ha="center", va="center",
+            fontsize=FS_TINY, color=MUTED)
+
+    # panel 3: the vector, drawn as its 18 x 2 cells
+    _panel(ax, xs[2], py, pw, ph, "[[Feature vector]] HI", tint="mem")
+    c3 = xs[2] + pw / 2
+    cell, nx, ny = 0.105, 18, 2
+    gx, gy = c3 - nx * cell / 2 + 0.08, py + 1.32
+    for r in range(ny):
+        for c in range(nx):
+            kind = "proj" if c < 9 else "seq"
+            ax.add_patch(Rectangle((gx + c * cell, gy + r * cell), cell * 0.9, cell * 0.9,
+                                   fc=KIND[kind]["fc"], ec=KIND[kind]["ec"], lw=0.5, zorder=3))
+    ax.text(gx - 0.07, gy + cell * 0.45, "FE", ha="right", va="center", fontsize=7, color=MUTED)
+    ax.text(gx - 0.07, gy + cell * 1.45, "DE", ha="right", va="center", fontsize=7, color=MUTED)
+    ax.text(gx + 4.5 * cell, gy + 2 * cell + 0.09, "9 waktu", ha="center", va="bottom",
+            fontsize=7, color=MUTED)
+    ax.text(gx + 13.5 * cell, gy + 2 * cell + 0.09, "9 frekuensi", ha="center", va="bottom",
+            fontsize=7, color=MUTED)
+    ax.text(c3, py + 0.55, "36-D per segmen\nZ-score [[fit-on-train]]",
+            ha="center", va="center", fontsize=FS_NOTE, color=MUTED)
+
+    # panel 4: the models and their explainer
+    _panel(ax, xs[3], py, pw, ph, "Model klasik dan SHAP", tint="gate")
+    c4 = xs[3] + pw / 2
+    box(ax, c4, py + 1.72, 2.25, 0.66, "SVM-RBF · LR\nDT · RF · XGBoost", kind="seq", fs=8.8)
+    arrow(ax, (c4, py + 1.37), (c4, py + 1.20), shrink=0, lw=0.9)
+    box(ax, c4, py + 0.86, 2.25, 0.62, "SHAP", kind="gate", fs=8.8,
+        sub="KernelExplainer · TreeExplainer")
+    ax.text(c4, py + 0.25, "[[output]]: 10 kelas dan [[feature ranking]]",
+            ha="center", va="center", fontsize=FS_TINY, color=MUTED)
+
+    for left, right in zip(xs[:-1], xs[1:]):
+        arrow(ax, (left + pw + 0.04, py + ph / 2), (right - 0.04, py + ph / 2),
+              lw=2.2, style="-|>")
+
+    box(ax, 6.0, 0.62, 11.2, 0.56,
+        "Ekstraktor yang sama dipakai jalur prognostik: per rekaman, [[channel]] "
+        "horizontal dan vertikal, lalu Min–Max dan EMA α = 0,10 (Lampiran A)",
+        kind="util", fs=8.5)
+
+    ax.text(0.45, 4.35, "Dari [[raw signal]] ke [[feature vector]] HI", ha="left",
+            va="center", fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
+    ax.text(0.45, 3.98, "18 [[feature]] per [[channel]] × 2 [[channel]] = 36 dimensi; "
+            "model klasik membaca vektor ini, bukan [[waveform]]",
+            ha="left", va="center", fontsize=FS_NOTE, color=MUTED)
+    input_strip(ax, 12.0, "hi_feature_pipeline")
+    save(fig, "hi_feature_pipeline")
+
+
+# --------------------------------------------------------------------------
 # Driver
 # --------------------------------------------------------------------------
 DIAGRAMS = {
+    "hi_feature_pipeline": hi_feature_pipeline,
     "mamba_xlstm_full": mamba_xlstm_full,
     "nbeats_xlstm_full": nbeats_xlstm_full,
     "sparsegate_tcn_full": sparsegate_tcn_full,
