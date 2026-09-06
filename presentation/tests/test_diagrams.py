@@ -76,3 +76,43 @@ def test_foreign_spans_render_as_italics():
     assert fr("[[gate]]", bold=True) == "$\\boldsymbol{gate}$"
     assert fr("[[cross-feature attention]]").count("$") == 4   # hyphen stays upright
     assert fr("$h \\in \\mathbb{R}^{128}$") == "$h \\in \\mathbb{R}^{128}$"
+
+
+def test_every_diagram_declares_its_input():
+    """The strip is the only place a viewer learns what the model eats, so a
+    new diagram must not be able to ship without one."""
+    from tools.render_diagrams import INPUT_SPEC
+
+    assert set(INPUT_SPEC) == set(DIAGRAMS), (
+        f"INPUT_SPEC and DIAGRAMS disagree: "
+        f"{set(INPUT_SPEC) ^ set(DIAGRAMS)}"
+    )
+    for name, fields in INPUT_SPEC.items():
+        assert len(fields) == 3, f"{name}: expected (besaran, sensor, tensor)"
+        for field in fields:
+            assert field.strip(), f"{name}: an empty contract field"
+
+
+def test_input_spec_states_a_concrete_shape():
+    """Every contract has to end in something countable — a tensor shape, a
+    window length, a sample count. Prose alone does not distinguish models."""
+    import re
+
+    from tools.render_diagrams import INPUT_SPEC
+
+    for name, fields in INPUT_SPEC.items():
+        assert re.search(r"\d", " ".join(fields)), (
+            f"{name}: the contract states no countable quantity"
+        )
+
+
+def test_strip_fits_the_canvas_width():
+    """The bar is drawn at a fixed 11,2 in; an over-long line would spill out
+    of the rounded rectangle instead of wrapping."""
+    from tools.render_diagrams import _CHAR_IN, _SPAN, INPUT_SPEC, _strip_layout
+
+    for name in INPUT_SPEC:
+        label, fs, _ = _strip_layout(name)
+        for line in label.split("\n"):
+            width = len(_SPAN.sub(r"\1", line)) * fs * _CHAR_IN
+            assert width <= 11.2, f"{name}: strip line is {width:.2f} in wide"

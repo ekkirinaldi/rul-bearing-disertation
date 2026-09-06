@@ -405,9 +405,9 @@ slides:
         size: 11
         vpad: 0.16
         body: >-
-          75 epoch · presisi bf16-mixed · batch 512 · window 32 · tiga seed (42/43/44) ·
-          bootstrap CI 95% (B = 1.000) · permutation test dua-sisi · dua negative control ·
-          pipeline open-source
+          75 epoch · presisi bf16-mixed · window 64 rekaman (PHM2012) dan 32 (XJTU-SY) ·
+          tiga seed (42/43/44) · bootstrap CI 95% (B = 1.000) · permutation test dua-sisi ·
+          dua negative control · pipeline open-source
 
   # ======================================================================
   # 9 · DATASET
@@ -514,6 +514,41 @@ slides:
                       hilang** saat diringkas menjadi feature. Konsekuensinya, model menjadi
                       kotak hitam yang harus dibuka kembali dengan XAI: itulah pokok
                       bagian RM-2 dan RM-3.
+
+  # ======================================================================
+  # 11a · JEMBATAN A1 — apa yang dibaca setiap model
+  # ======================================================================
+  # Answers the question a penguji asks first: what exactly goes in? Read
+  # across a row and the models separate: WDCNN takes a waveform, the RUL
+  # backbones never see one, the SAE takes neither.
+  - layout: content
+    eyebrow: "Pengantar · Input Model"
+    title: "Apa yang Dibaca Setiap Model"
+    top: 1.72
+    blocks:
+      - type: table
+        flex: true
+        header_h: 0.44
+        header_size: 11.5
+        size: 10.5
+        widths: [2.55, 2.75, 2.85, 2.95]
+        columns: [Model, Besaran *input*, Sensor dan laju cuplik, Bentuk tensor]
+        rows:
+          - ["WDCNN (diagnostik)", "Amplitudo getaran domain waktu (*raw signal*)", "Akselerometer *drive-end* CWRU, 48 kHz", "1 × 2.048 titik, sekitar 42,67 ms"]
+          - ["SVM, LR, DT, RF, XGBoost", "*Feature* HI turunan sinyal, bukan *waveform*", "Akselerometer CWRU, 48 kHz", "Satu vektor HI per segmen 2.048 titik"]
+          - ["Tiga *backbone* RUL", "*Feature* HI 36-D per rekaman, bukan *waveform*", "Akselerometer horizontal dan vertikal, 25,6 kHz", "64 × 36 (PHM2012); 32 × 36 (XJTU-SY)"]
+          - ["Top-k SAE", "*Hidden state backbone*, bukan sinyal getaran", "*Output gated fusion*, *weights* dibekukan", "20.000 vektor 128-D per dataset"]
+          - ["Pemetaan SAE ke BPFx", "Amplitudo getaran mentah, *channel* horizontal", "Akselerometer 25,6 kHz", "*Envelope spectrum* per rekaman"]
+      - type: banner
+        gap: 0.20
+        tone: light
+        size: 11
+        vpad: 0.14
+        body: >-
+          **BPFO, BPFI, BSF, dan FTF tidak pernah menjadi *input* model.** Keempatnya
+          dihitung dari geometri *bearing* dan putaran poros, lalu dipakai sebagai rujukan
+          validasi fisika pada bagian RM-3. Seluruh *input* model berasal dari sinyal
+          getaran: tidak ada beban, kecepatan, atau suhu yang masuk ke model mana pun.
 
   # ======================================================================
   # 11b · JEMBATAN A2 — cara kerja tiga golongan model klasik
@@ -1178,26 +1213,20 @@ slides:
       # The diagram is the slide: full width at native label size; every
       # number it carries (d = 128, 1.024, k = 51, MSE) is drawn in the figure.
       - type: figure
-        h: 3.80
+        flex: true
         inset: 0.06
         image: ../assets/diagrams/topk_sae.png
-      - type: text
-        gap: 0.06
-        h: 0.26
-        size: 9.5
-        italic: true
-        align: center
-        color: "6B7689"
-        text: >-
-          Alur SAE, digambar ulang berdasarkan Gambar II.8 dan Gambar V.5
-          (Cunningham dkk., 2023)
       - type: banner
         gap: 0.16
         tone: light
-        size: 11.5
-        vpad: 0.14
+        size: 11
+        vpad: 0.12
         body: >-
           Catatan internal model (hidden state, d = 128) ibarat tulisan cepat yang padat dan sulit dibaca. SAE menyalinnya ke **kamus laten berisi 1.024 entri**, tetapi setiap sample hanya boleh mengaktifkan **51 entri** (≈ 5%), sehingga tiap entri cenderung bermakna satu hal saja. Analisis berikutnya memeriksa **apakah ada entri kamus yang berkorelasi kuat dengan frekuensi kerusakan fisik** (BPFO, BPFI, BSF, FTF).
+      - type: source
+        gap: 0.10
+        body: >-
+          Digambar ulang berdasarkan Gambar II.8 dan Gambar V.5 (Cunningham dkk., 2023).
 
   # ======================================================================
   # 23 · METODE RM-3 — prosedur SAE→BPFx
@@ -1210,17 +1239,9 @@ slides:
       # Full-width figure: the three panels already spell out each tahap
       # (envelope spectrum, pita ±2 Hz, |r| ≥ 0,30), so no side list.
       - type: figure
-        h: 4.02
+        flex: true
         inset: 0.06
         image: ../assets/diagrams/sae_bpfx_pipeline.png
-      - type: text
-        gap: 0.06
-        h: 0.26
-        size: 9.5
-        italic: true
-        align: center
-        color: "6B7689"
-        text: "Prosedur tiga tahap, digambar ulang berdasarkan Gambar V.6"
       - type: banner
         gap: 0.16
         tone: dark
@@ -1230,6 +1251,9 @@ slides:
           **Rigor statistik.** Bootstrap CI 95% dan permutation test dua-sisi
           (masing-masing B = 1.000); enam uji primer dengan ambang setara Bonferroni
           p < 0,008; dua negative control (weights Xavier acak dan Gaussian noise).
+      - type: source
+        gap: 0.10
+        body: "Digambar ulang berdasarkan Gambar V.6."
 
   # ======================================================================
   # 24 · HASIL RM-3 — hit-rate dan kontrol negatif

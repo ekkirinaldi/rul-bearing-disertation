@@ -213,18 +213,33 @@ English for every named component or mechanism. So `input`, `output`,
 `gate`, `attention`, `hidden state`, `matrix memory`, `exponential gating`,
 `receptive field`, `dilated convolution`, `Decision Tree` stay English,
 while generic operations and descriptions stay Indonesian (`proyeksi`,
-`konvolusi`, `normalisasi`, `jendela 32 rekaman`, `diteruskan`).
+`konvolusi`, `normalisasi`, `diteruskan`).
 `tests/test_diagrams.py` rejects the calques (`masukan`, `keluaran`,
-`gerbang`, `atensi`) in the renderer.
+`gerbang`, `atensi`) in the renderer and in the slide copy.
+
+**Input strip.** Every figure ends in a full-width bar reading
+`Input: <besaran fisis> · <sensor dan laju cuplik> · <bentuk tensor>`, so
+that comparing two diagrams field by field tells the models apart: WDCNN
+takes a raw waveform, the three RUL backbones never see one (they read HI
+36-D vectors), and the SAE reads neither, only a frozen hidden state. The
+text lives in the `INPUT_SPEC` registry at the top of the diagram section —
+edit it there, never inside a draw function. Its numbers come from the run
+artifacts under `Mamba-xLSTM/results/runs/`, which the manuscript was
+aligned to. `new_fig(w, h, pad_bottom)` reserves the bar's lane by moving
+the y limit below zero, so every existing coordinate in a draw function
+keeps its meaning; a figure that already ends well above `y = 0` hosts the
+bar in that gap instead (`_STRIP_INSIDE`).
 
 **Canvas and slide fit.** A figure is drawn on a 12-unit-wide canvas whose
 height is closed tightly around the content, because the slide scales it
-to the width it is given: a wide-flat canvas (SAE 12 × 3,65, BPFx 12 × 4,05,
-N-BEATS 12 × 3,9) runs full width at near-native label size with the
-banner beneath it; a tall canvas (Mamba 12 × 6,9, SparseGate 12 × 5,6)
+to the width it is given: a wide-flat canvas (SAE 12 × 4,27, BPFx 12 × 4,67,
+N-BEATS 12 × 4,52 including the input strip) runs full width with the
+banner beneath it; a tall canvas (Mamba 12 × 7,90, SparseGate 12 × 6,60)
 takes a 8,6–9,4 in column with the RINGKASAN panel beside it. Text that a
 diagram already spells out (the three tahap of the BPFx procedure, the SAE
-dimensions) is not repeated in a side column.
+dimensions) is not repeated in a side column. `r_figure` draws its card
+around the fitted image rather than the whole slot, so a figure whose
+aspect does not match its slot shows slide background, never grey bands.
 
 ## Re-deriving the template
 

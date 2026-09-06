@@ -72,6 +72,13 @@ CLAIMS: list[tuple[str, list[str]]] = [
     ("protokol 75 epoch", ["75 epoch"]),
     ("presisi bf16", ["bf16"]),
     ("seed 42, 43, 44", ["(42, 43, 44)"]),
+    # s12 apa yang dibaca setiap model — the input contract on every diagram
+    ("HI 36-D untuk backbone RUL", ["HI 36-D"]),
+    ("window 64 rekaman pada PHM2012", ["64 rekaman"]),
+    ("akselerometer prognostik 25,6 kHz", ["25,6 kHz"]),
+    ("20.000 hidden state untuk SAE", ["20.000"]),
+    ("hidden state 128 dimensi", ["d = 128"]),
+    ("WDCNN raw signal 1 × 2.048", ["1 × 2.048"]),
     # s10 metrik diagnostik
     ("akurasi WDCNN 99,87%", ["99,87%"]),
     ("749 dari 750", ["749/750"]),

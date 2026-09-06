@@ -798,7 +798,6 @@ def m_figure(spec: dict, width: float) -> float:
 
 
 def r_figure(slide, spec: dict, box: Box) -> None:
-    shapes.card(slide, box.x, box.y, box.w, box.h, fill=Color.PANEL, line=Color.LINE)
     if spec.get("image"):
         from PIL import Image as _Image
         from pptx.util import Inches as _In
@@ -815,11 +814,15 @@ def r_figure(slide, spec: dict, box: Box) -> None:
         if h > avail_h:
             h = avail_h
             w = h / aspect
-        slide.shapes.add_picture(
-            spec["image"], _In(box.x + (box.w - w) / 2), _In(box.y + (box.h - h) / 2),
-            width=_In(w),
-        )
+        x = box.x + (box.w - w) / 2
+        y = box.y + (box.h - h) / 2
+        # The card hugs the fitted image rather than the whole slot, so an
+        # aspect mismatch reads as slide background instead of grey bands.
+        shapes.card(slide, x - inset, y - inset, w + 2 * inset, h + 2 * inset,
+                    fill=Color.PANEL, line=Color.LINE)
+        slide.shapes.add_picture(spec["image"], _In(x), _In(y), width=_In(w))
         return
+    shapes.card(slide, box.x, box.y, box.w, box.h, fill=Color.PANEL, line=Color.LINE)
     shapes.label(slide, box.x, box.y + box.h * 0.28, box.w, 0.90, "⊞",
                  size=spec.get("glyph_size", 48), align="center", color=Color.GHOST)
     caption = spec.get("caption")

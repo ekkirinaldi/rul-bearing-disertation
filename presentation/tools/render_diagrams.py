@@ -97,14 +97,21 @@ def fr(text: str, bold: bool = False) -> str:
 # --------------------------------------------------------------------------
 # Primitives
 # --------------------------------------------------------------------------
-def new_fig(w: float, h: float):
-    fig = plt.figure(figsize=(w, h))
+def new_fig(w: float, h: float, pad_bottom: float = 0.0):
+    """A canvas whose data units are inches, optionally with a band below y=0.
+
+    `pad_bottom` grows the figure downwards and shifts the y limit into
+    negative territory, so every coordinate already written in a draw function
+    keeps its meaning and the input strip gets a lane of its own underneath.
+    """
+    fig = plt.figure(figsize=(w, h + pad_bottom))
     ax = fig.add_axes((0.0, 0.0, 1.0, 1.0))
     ax.set_xlim(0, w)
-    ax.set_ylim(0, h)
+    ax.set_ylim(-pad_bottom, h)
     ax.set_aspect("equal")
     ax.axis("off")
-    ax.add_patch(Rectangle((0, 0), w, h, fc="white", ec="none", zorder=-10))
+    ax.add_patch(Rectangle((0, -pad_bottom), w, h + pad_bottom,
+                           fc="white", ec="none", zorder=-10))
     # Every label in every diagram goes through ax.text (box, container and
     # legend_row included), so hooking it here italicises the foreign spans
     # once, for all nine figures, with no call site left to forget.
@@ -226,14 +233,114 @@ def spectrum(ax, x, y, w, h, peaks, seed=3, color=INK, lw=0.9):
 
 
 # --------------------------------------------------------------------------
+# What each algorithm actually eats
+# --------------------------------------------------------------------------
+# Read across two diagrams and the three fields tell them apart: WDCNN takes a
+# waveform, the RUL backbones never see one, the SAE takes neither. Numbers are
+# the ones in the run artifacts under Mamba-xLSTM/results/runs, which is also
+# what V14 states. Edit the contract here, not inside a draw function.
+#
+#   name -> (besaran fisis, sensor dan laju cuplik, bentuk tensor)
+INPUT_SPEC: dict[str, tuple[str, str, str]] = {
+    "mamba_xlstm_full": (
+        "[[feature]] HI 36-D per rekaman, bukan [[waveform]]",
+        "akselerometer horizontal dan vertikal, 25,6 kHz",
+        "[[window]] 64 rekaman (PHM2012); 32 (XJTU-SY)",
+    ),
+    "nbeats_xlstm_full": (
+        "[[feature]] HI 36-D per rekaman, bukan [[waveform]]",
+        "akselerometer horizontal dan vertikal, 25,6 kHz",
+        "[[window]] 64 rekaman (PHM2012); 32 (XJTU-SY)",
+    ),
+    "sparsegate_tcn_full": (
+        "[[feature]] HI 36-D per rekaman, bukan [[waveform]]",
+        "akselerometer horizontal dan vertikal, 25,6 kHz",
+        "[[window]] 64 rekaman (PHM2012); 32 (XJTU-SY)",
+    ),
+    "wdcnn_full": (
+        "amplitudo getaran domain waktu ([[raw signal]])",
+        "akselerometer [[drive-end]] CWRU, 48 kHz",
+        "1 × 2.048 titik, sekitar 42,67 ms",
+    ),
+    "shap_fsm_pipeline": (
+        "amplitudo getaran domain waktu ([[raw signal]])",
+        "akselerometer [[drive-end]] CWRU, 48 kHz",
+        "2.048 titik per segmen",
+    ),
+    "classic_ml_trio": (
+        "[[feature]] HI turunan sinyal, bukan [[waveform]]",
+        "akselerometer CWRU, 48 kHz",
+        "satu vektor per segmen 2.048 titik",
+    ),
+    "topk_sae": (
+        "[[hidden state]] [[backbone]], bukan sinyal getaran",
+        "[[output]] [[gated fusion]], [[weights]] dibekukan",
+        "20.000 vektor $h \\in \\mathbb{R}^{128}$ per dataset",
+    ),
+    "sae_bpfx_pipeline": (
+        "amplitudo getaran mentah, [[channel]] horizontal",
+        "25,6 kHz; 0,1 s (PHM2012), 1,28 s (XJTU-SY)",
+        "BPFx dari geometri [[bearing]]: rujukan validasi",
+    ),
+    "streaming_engine": (
+        "dua [[channel]] percepatan per akuisisi",
+        "akselerometer 25,6 kHz",
+        "[[feature]] HI 36-D, [[buffer window]] 64 akuisisi",
+    ),
+}
+
+# These two sit in a narrow slide column, so they get bigger type; the rest
+# read at 8.6 pt across the full slide width.
+_STRIP_WIDE = {"mamba_xlstm_full", "sparsegate_tcn_full"}
+_STRIP_INNER = 10.9      # inches of text the bar can hold on one line
+_CHAR_IN = 0.0070        # rough inches per character per point of font size
+
+
+def _strip_layout(name: str) -> tuple[str, float, bool]:
+    """The bar's text, its font size, and whether it needs a second line."""
+    besaran, sensor, tensor = INPUT_SPEC[name]
+    head = f"[[Input]]:  {besaran}  ·  {sensor}"
+    fs = 10.4 if name in _STRIP_WIDE else 8.6
+    plain = _SPAN.sub(r"\1", f"{head}  ·  {tensor}")
+    two_line = name in _STRIP_WIDE or len(plain) * fs * _CHAR_IN > _STRIP_INNER
+    return f"{head}{'\n' if two_line else '  ·  '}{tensor}", fs, two_line
+
+
+# A diagram that already ends well above y=0 hosts the bar in that gap rather
+# than growing the canvas; the value is where the bar is centred.
+_STRIP_INSIDE = {"streaming_engine": 0.40}
+
+
+# The bar is kept as shallow as it can be: on a full-width slide figure every
+# inch of canvas height costs an inch of the content band.
+def _strip_height(name: str) -> float:
+    return 0.84 if _strip_layout(name)[2] else 0.46
+
+
+def strip_pad(name: str) -> float:
+    """Height `new_fig` must reserve below y=0 for this diagram's strip."""
+    if name in _STRIP_INSIDE:
+        return 0.0
+    return _strip_height(name) + 0.16
+
+
+def input_strip(ax, w: float, name: str) -> None:
+    """Draw the full-width bar stating what goes into the algorithm."""
+    label, fs, _ = _strip_layout(name)
+    cy = _STRIP_INSIDE.get(name, -strip_pad(name) / 2)
+    box(ax, w / 2, cy, w - 0.80, _strip_height(name), label, kind="input", fs=fs)
+
+
+# --------------------------------------------------------------------------
 # 1 · Mamba-xLSTM-Net (zoom-in idiom)
 # --------------------------------------------------------------------------
 def mamba_xlstm_full():
-    fig, ax = new_fig(12.0, 6.9)
+    fig, ax = new_fig(12.0, 6.9, strip_pad("mamba_xlstm_full"))
 
     # ---- right column: the stack -----------------------------------------
     sx, bw = 10.35, 2.55
-    box(ax, sx, 1.28, bw, 0.56, "[[Input]] HI", kind="input", sub="[[window]] 32 rekaman")
+    box(ax, sx, 1.28, bw, 0.56, "[[Input]] HI", kind="input",
+        sub="[[window]] 64 rekaman (PHM2012)")
     arrow(ax, (sx, 1.58), (sx, 1.90))
     box(ax, sx, 2.16, bw, 0.52, "[[Linear projection]]\nke dimensi model", kind="proj", fs=8.5)
     arrow(ax, (sx, 2.44), (sx, 2.76))
@@ -340,6 +447,7 @@ def mamba_xlstm_full():
         ("exp", "[[exponential gating]]"), ("sigmoid", "[[sigmoid gating]]"),
         ("matrix", "[[matrix memory]]"),
     ])
+    input_strip(ax, 12.0, "mamba_xlstm_full")
     save(fig, "mamba_xlstm_full")
 
 
@@ -347,10 +455,11 @@ def mamba_xlstm_full():
 # 2 · N-BEATS-xLSTM-RUL
 # --------------------------------------------------------------------------
 def nbeats_xlstm_full():
-    fig, ax = new_fig(12.0, 3.9)
+    fig, ax = new_fig(12.0, 3.9, strip_pad("nbeats_xlstm_full"))
     my = 1.78
 
-    box(ax, 1.15, my, 1.75, 0.78, "[[Input]] HI", kind="input", sub="[[window]] 32 rekaman")
+    box(ax, 1.15, my, 1.75, 0.78, "[[Input]] HI", kind="input",
+        sub="[[window]] 64 rekaman\n(PHM2012)")
     arrow(ax, (2.03, my), (2.42, my))
     container(ax, 2.46, my - 0.62, 1.62, 1.24, times="2×")
     box(ax, 3.27, my, 1.34, 0.66, "Blok xLSTM", kind="seq", sub="[[front-end]]")
@@ -409,6 +518,7 @@ def nbeats_xlstm_full():
         ("input", "[[input]]"), ("seq", "[[sequence modeling]] / basis blok"),
         ("mem", "agregasi aditif"), ("out", "[[output]]"),
     ])
+    input_strip(ax, 12.0, "nbeats_xlstm_full")
     save(fig, "nbeats_xlstm_full")
 
 
@@ -416,10 +526,11 @@ def nbeats_xlstm_full():
 # 3 · SparseGate-TCN-RUL
 # --------------------------------------------------------------------------
 def sparsegate_tcn_full():
-    fig, ax = new_fig(12.0, 5.6)
+    fig, ax = new_fig(12.0, 5.6, strip_pad("sparsegate_tcn_full"))
     my = 1.30
 
-    box(ax, 1.05, my, 1.65, 0.78, "[[Input]] HI", kind="input", sub="[[window]] 32 rekaman")
+    box(ax, 1.05, my, 1.65, 0.78, "[[Input]] HI", kind="input",
+        sub="[[window]] 64 rekaman\n(PHM2012)")
     ax.plot([1.88, 2.16], [my, my], color=INK, lw=1.1)
     ax.plot([2.16, 2.16], [my - 0.55, my + 0.55], color=INK, lw=1.1)
     arrow(ax, (2.16, my + 0.55), (2.52, my + 0.55), shrink=0)
@@ -503,6 +614,7 @@ def sparsegate_tcn_full():
         ("proj", "[[dilated convolution]]"), ("out", "[[output]]"),
         ("active", "rekaman yang dijangkau satu [[output]] teratas"),
     ])
+    input_strip(ax, 12.0, "sparsegate_tcn_full")
     save(fig, "sparsegate_tcn_full")
 
 
@@ -510,7 +622,7 @@ def sparsegate_tcn_full():
 # 4 · WDCNN
 # --------------------------------------------------------------------------
 def wdcnn_full():
-    fig, ax = new_fig(12.0, 3.55)
+    fig, ax = new_fig(12.0, 3.55, strip_pad("wdcnn_full"))
     my = 1.95
 
     box(ax, 1.05, my, 1.70, 1.10, "[[Raw signal]]\n1 × 2.048", kind="input", sub="[[channel]] [[drive-end]]")
@@ -544,6 +656,7 @@ def wdcnn_full():
         ("input", "[[input]]"), ("proj", "[[convolution]] / FC"),
         ("gate", "[[normalization]]"), ("util", "[[pooling]] / utilitas"), ("out", "[[output]]"),
     ])
+    input_strip(ax, 12.0, "wdcnn_full")
     save(fig, "wdcnn_full")
 
 
@@ -551,7 +664,7 @@ def wdcnn_full():
 # 5 · Top-k Sparse Autoencoder
 # --------------------------------------------------------------------------
 def topk_sae():
-    fig, ax = new_fig(12.0, 3.65)
+    fig, ax = new_fig(12.0, 3.65, strip_pad("topk_sae"))
     my = 1.75
 
     box(ax, 1.20, my, 1.95, 0.92, "$h \\in \\mathbb{R}^{128}$", kind="input", fs=10,
@@ -598,6 +711,7 @@ def topk_sae():
         ("input", "[[input]]"), ("proj", "[[linear projection]]"), ("gate", "[[Top-k selection]]"),
         ("active", "[[active feature]]"), ("util", "[[inactive feature]] (nol)"), ("out", "[[reconstruction]]"),
     ])
+    input_strip(ax, 12.0, "topk_sae")
     save(fig, "topk_sae")
 
 
@@ -614,15 +728,15 @@ def _panel(ax, x, y, w, h, title, tint="seq"):
 
 
 def sae_bpfx_pipeline():
-    fig, ax = new_fig(12.0, 4.05)
+    fig, ax = new_fig(12.0, 4.05, strip_pad("sae_bpfx_pipeline"))
     py, ph, pw = 0.32, 3.30, 3.55
 
     _panel(ax, 0.40, py, pw, ph, "Tahap 1: [[Envelope spectrum]]", tint="seq")
     x1 = 0.40 + pw / 2
     waveform(ax, 0.85, py + 2.42, 2.60, 0.42, seed=5)
-    box(ax, x1, py + 1.78, 2.60, 0.42, "[[Band-pass]] (kurtogram spektral)", kind="proj", fs=8)
+    box(ax, x1, py + 1.78, 2.60, 0.42, "Transformasi Hilbert\npada [[raw signal]]", kind="proj", fs=8)
     arrow(ax, (x1, py + 1.55), (x1, py + 1.42), shrink=0, lw=0.9)
-    box(ax, x1, py + 1.19, 2.60, 0.42, "Transformasi Hilbert", kind="proj", fs=8)
+    box(ax, x1, py + 1.19, 2.60, 0.42, "Amplop sinyal analitik", kind="proj", fs=8)
     arrow(ax, (x1, py + 0.96), (x1, py + 0.83), shrink=0, lw=0.9)
     box(ax, x1, py + 0.60, 2.60, 0.42, "FFT amplop getaran", kind="proj", fs=8)
     arrow(ax, (x1, py + 2.20), (x1, py + 2.01), shrink=1, lw=0.9)
@@ -638,7 +752,7 @@ def sae_bpfx_pipeline():
         ax.text(x2 + p * (pw - 0.7), sy - 0.10, name, ha="center", va="top",
                 fontsize=FS_TINY, color=INK)
     spectrum(ax, x2, sy, pw - 0.7, 1.05, peaks)
-    ax.text(4.42 + pw / 2, py + 0.38, "integral spektrum pada pita ±2 Hz\n"
+    ax.text(4.42 + pw / 2, py + 0.38, "rata-rata spektrum pada pita ±2 Hz\n"
             "di sekitar tiap frekuensi karakteristik",
             ha="center", va="center", fontsize=FS_TINY, color=MUTED)
 
@@ -656,6 +770,7 @@ def sae_bpfx_pipeline():
 
     ax.text(0.45, 3.84, "Prosedur pemetaan [[feature]] SAE ke frekuensi karakteristik [[bearing]] (BPFx)",
             ha="left", va="center", fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
+    input_strip(ax, 12.0, "sae_bpfx_pipeline")
     save(fig, "sae_bpfx_pipeline")
 
 
@@ -663,7 +778,7 @@ def sae_bpfx_pipeline():
 # 7 · SHAP -> FSM procedure
 # --------------------------------------------------------------------------
 def shap_fsm_pipeline():
-    fig, ax = new_fig(12.0, 4.6)
+    fig, ax = new_fig(12.0, 4.6, strip_pad("shap_fsm_pipeline"))
     py, ph, pw, gap = 1.30, 2.55, 2.55, 0.36
 
     xs = [0.40 + i * (pw + gap) for i in range(4)]
@@ -722,6 +837,7 @@ def shap_fsm_pipeline():
         "Validasi FSM:  diskriminabilitas D = 0,216  ·  stabilitas [[split-half]] 0,940  ·  "
         "monotonisitas keparahan (Ball 17,6 % · IR 13,8 % · OR 8,6 %)",
         kind="util", fs=8.5)
+    input_strip(ax, 12.0, "shap_fsm_pipeline")
     save(fig, "shap_fsm_pipeline")
 
 
@@ -729,7 +845,7 @@ def shap_fsm_pipeline():
 # 8 · Classic ML trio
 # --------------------------------------------------------------------------
 def classic_ml_trio():
-    fig, ax = new_fig(12.0, 4.9)
+    fig, ax = new_fig(12.0, 4.9, strip_pad("classic_ml_trio"))
     py, ph, pw, gap = 1.30, 2.80, 3.48, 0.38
     xs = [0.40 + i * (pw + gap) for i in range(3)]
 
@@ -805,9 +921,10 @@ def classic_ml_trio():
     ax.text(0.45, 4.62, "Tiga model klasik pada [[feature vector]]", ha="left", va="center",
             fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
     box(ax, 6.0, 0.62, 11.2, 0.56,
-        "[[Input]]: [[feature vector]] HI 36-D (18 [[feature]] × 2 [[channel]])  ·  [[Output]]: 10 kelas "
-        "kerusakan CWRU  ·  XAI: SHAP KernelExplainer (SVM, LR) dan TreeExplainer (DT, RF, XGBoost)",
+        "[[Output]]: 10 kelas kerusakan CWRU  ·  XAI: SHAP KernelExplainer "
+        "(SVM, LR) dan TreeExplainer (DT, RF, XGBoost)",
         kind="util", fs=8.5)
+    input_strip(ax, 12.0, "classic_ml_trio")
     save(fig, "classic_ml_trio")
 
 
@@ -815,7 +932,7 @@ def classic_ml_trio():
 # 9 · Streaming inference engine
 # --------------------------------------------------------------------------
 def streaming_engine():
-    fig, ax = new_fig(12.0, 4.5)
+    fig, ax = new_fig(12.0, 4.5, strip_pad("streaming_engine"))
     my = 2.72
 
     steps = [
@@ -855,6 +972,7 @@ def streaming_engine():
     ax.text(0.45, 3.86, "satu mesin yang sama untuk dataset benchmark dan rekaman lapangan "
                         "PT SKF Indonesia, sehingga metrik antar dataset sebanding",
             ha="left", va="center", fontsize=FS_NOTE, color=MUTED)
+    input_strip(ax, 12.0, "streaming_engine")
     save(fig, "streaming_engine")
 
 
