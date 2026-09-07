@@ -182,7 +182,48 @@ CLAIMS: list[tuple[str, list[str]]] = [
     ("fusion gate PHM 54% xLSTM", ["54%"]),
     # cadangan: rig PRONOSTIA
     ("beban radial 4.000–5.000 N", ["4.000–5.000 N"]),
+    # objek penelitian (draft-derived slides, grounded in Subbab III.2)
+    ("mesin grinding OR1 dan OR2", ["OR1 dan OR2"]),
+    ("Channel 15 PT SKF Indonesia", ["Channel 15"]),
+    ("spindel 3.500–4.200 rpm", ["3.500–4.200 rpm"]),
+    # data mana yang dipakai (V.5.3)
+    ("nilai tren A/V/ENV dari SKF Observer", ["percepatan (A), kecepatan (V), dan envelope (ENV)"]),
+    ("pseudo-waveform per titik tren", ["pseudo-waveform"]),
+    ("window XJTU-SY 32 rekaman", ["32 rekaman"]),
+    # kriteria evaluasi (III.4.2)
+    ("RMSE peka terhadap kesalahan besar", ["peka terhadap kesalahan besar"]),
+    ("RMSE satu-satunya metrik adil lintas dataset", ["satu-satunya metrik yang dapat dibandingkan secara adil"]),
+    # mengapa tiga backbone (II.5.2, V.1)
+    ("Transformer kuadratik terhadap panjang sekuens", ["kompleksitasnya kuadratik"]),
+    ("xLSTM exponential gating", ["exponential gating"]),
+    ("tiga prinsip desain berbeda", ["Tiga arsitektur backbone dipilih untuk mewakili tiga prinsip desain"]),
+    # explainability dan mengapa SAE (I.2, II.6)
+    ("RM-3: bukan sekadar korelasi statistik", ["bukan sekadar mempelajari korelasi statistik"]),
+    ("hipotesis superposisi", ["hipotesis superposisi"]),
+    ("Top-k kendali langsung atas sparsity", ["Top-k memberikan kendali langsung"]),
+    ("XAI input-level beroperasi di tingkat masukan", ["tingkat masukan"]),
+    ("SAE prognostik bearing belum pernah dilaporkan", ["belum pernah dilaporkan"]),
 ]
+
+# Numbers that are on a slide but deliberately NOT from the manuscript: domain
+# anecdotes from SKF training material and one published industry survey. Each
+# must be credited on the slide that shows it (a `source` block or an inline
+# citation naming the source), so a reader can tell them from research claims.
+EXTERNAL_CLAIMS: list[tuple[str, str]] = [
+    # (text on the slide, source label that must appear on the same slide)
+    ("26 minggu", "SKF Group (2017)"),
+    ("$26 juta", "SKF Group (2017)"),
+    ("$1,5 triliun", "Siemens, 2022"),
+    ("25 jam per bulan", "Siemens, 2022"),
+    ("$2 juta", "Siemens, 2022"),
+    ("2,3 mm/s", "SKF Group (2017)"),
+    ("4.000 byte", "SKF Group (2017)"),
+]
+
+
+def _slide_texts() -> list[str]:
+    """The spec split per slide, so a claim and its credit can be matched."""
+    return re.split(r"\n  - layout:", _spec_text())
 
 
 @pytest.mark.parametrize("claim,spellings", CLAIMS, ids=[c for c, _ in CLAIMS])
@@ -224,3 +265,24 @@ def test_ims_and_cwru_out_of_the_sae_section():
             f"assets/derived/ crop instead"
         )
     assert "underpowered" not in spec, "the CWRU-underpowered caveat left with CWRU"
+
+
+@pytest.mark.parametrize("claim,source", EXTERNAL_CLAIMS, ids=[c for c, _ in EXTERNAL_CLAIMS])
+def test_external_claim_is_credited_on_its_slide(claim, source):
+    """A number outside V14 may only appear next to its credit."""
+    slides = [s for s in _slide_texts() if claim in s]
+    assert slides, f"{claim!r} is listed as an external claim but is on no slide"
+    for slide in slides:
+        assert source in slide, (
+            f"{claim!r} is shown without its credit {source!r} on the same slide"
+        )
+
+
+def test_every_dollar_or_anecdote_number_is_enumerated():
+    """Dollar amounts never come from V14; each must be in EXTERNAL_CLAIMS."""
+    spec = _spec_text()
+    listed = {c for c, _ in EXTERNAL_CLAIMS}
+    for amount in re.findall(r"\$[\d.,]+ ?\w*", spec):
+        assert any(amount.startswith(c) for c in listed), (
+            f"{amount!r} is on a slide but not enumerated in EXTERNAL_CLAIMS"
+        )

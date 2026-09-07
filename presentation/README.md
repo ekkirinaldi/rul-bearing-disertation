@@ -14,17 +14,35 @@ identical to the version Pak Toto approved.
 citation, and claim in the deck traces to it — not to the older
 `dissertation-docx/` tree, whose numbers conflict with V14 in places.
 
-## Deck structure (52 slides)
+## Deck structure (76 slides)
 
-The main deck (40 slides) is organised around V14's **four rumusan masalah**:
-an intro arc (latar belakang, istilah inti untuk penguji non-informatika,
-kesenjangan, the RM spine slide reprising Tabel I.3, kerangka, dataset), then
-four acts — one per RM — each opened by a `section` divider restating the
-question and closed by a "Jawaban RM-N" slide with its epistemic status
-(empiris / empiris-kualitatif / konseptual). Bridging slides for the
-industrial-engineering panel sit just-in-time: ML vs DL, cara membaca RUL,
-analogi stabilo for SHAP, kamus konsep for the SAE. Twelve backup slides
-("Cadangan") follow the closing slide for the Q&A session.
+The main deck (64 slides) follows the flow Pak Toto sketched in the annotated
+draft of 6 September 2026: **domain knowledge first, one idea per slide, then
+the results by track**.
+
+1. **Pengantar domain** (8 slides, rebuilt from SKF training material and
+   credited on every slide): mesin rotasi, biaya kegagalan (the ball-mill case
+   plus the Senseye/Siemens downtime survey), nilai program keandalan, kurva
+   P-F, Asset Diagnostic Methodology and its AC-motor example, vibration
+   signature (static vs dynamic data), and the prognostics RUL curve.
+2. **Latar belakang dan objek**: bearing as the critical component, bearing
+   failures in photos and spectra, istilah inti, three "Objek Penelitian"
+   slides on the PT SKF Indonesia production line (components → cutting → QA;
+   rantai akuisisi; sensor placement), Peta State of the Art, gap, and the RM
+   spine slide reprising Tabel I.3.
+3. **Sinyal getaran dan data**: acceleration enveloping in three steps, bearing
+   fault frequencies, "data mana yang dipakai", dataset, alur data ke
+   keputusan, kerangka konseptual.
+4. **Three acts by track**, each opened by a `section` divider restating the
+   RMs it answers and closed by a "Jawaban" slide with its epistemic status:
+   *Jalur Diagnostik* (RM-1 diagnostik + RM-2), *Jalur Prognostik* (RM-1
+   prognostik + RM-3), *Validasi Industri* (RM-4). Bridging slides for the
+   industrial-engineering panel sit just-in-time and answer the questions Pak
+   Toto left on his note slides: batas explainability (korelasi, bukan
+   kausalitas), mengapa tiga backbone ini, kriteria "bagus" (RMSE dan PHM
+   Score), mengapa Sparse Autoencoder.
+5. Kesimpulan, keterbatasan, referensi, penutup; then twelve backup slides
+   ("Cadangan") for the Q&A session.
 
 Every algorithm carries a **paper-style block diagram** rendered by
 `make diagrams` (see below): the classic-ML trio, one architecture slide per
@@ -40,6 +58,7 @@ make install          # python-pptx, PyYAML, lxml, Pillow
 make v14-assets       # extract deck figures from the V14 DOCX media
 make diagrams         # render the paper-style algorithm diagrams (matplotlib)
 make derived-assets   # crop IMS/CWRU-free versions of the result figures
+make draft-assets     # extract the SKF domain artwork from the annotated draft deck
 make build            # content/sidang-terbuka.yaml -> out/…​.pptx
 make preview          # build + PDF via LibreOffice
 make png              # build + one PNG per slide (needs poppler)
@@ -63,6 +82,7 @@ presentation/
 │   ├── logo-itb.png            ITB seal used on the cover
 │   ├── diagrams/               algorithm diagrams rendered by make diagrams
 │   ├── derived/                IMS/CWRU-free crops of manuscript result figures
+│   ├── skf/                    SKF domain artwork cropped from the annotated draft
 │   └── v14/                    figures extracted from the V14 DOCX media
 ├── content/
 │   └── sidang-terbuka.yaml     ★ the deck content — this is what you edit
@@ -71,6 +91,7 @@ presentation/
 ├── tools/
 │   ├── extract_v14_media.py    pulls figures out of the V14 DOCX by media index
 │   ├── render_diagrams.py      draws the 9 algorithm diagrams (matplotlib)
+│   ├── extract_draft_media.py  crops the SKF artwork out of the draft PPTX/PDF
 │   └── derive_assets.py        crops IMS/CWRU panels out of the result figures
 ├── deck/
 │   ├── theme.py                design tokens: palette, type scale, grid
@@ -83,6 +104,7 @@ presentation/
 ├── tests/
 │   ├── test_deck.py            renderer + layout regressions
 │   ├── test_diagrams.py        diagram set complete, sized, and referenced
+│   ├── test_skf_assets.py      draft-derived artwork exists, is legible, and is credited
 │   └── test_provenance.py      every slide figure must exist in the V14 manuscript
 └── out/                        build artifacts (git-ignored)
 ```
@@ -193,6 +215,13 @@ a claim passing via the stale tree would defeat the guard.
 It skips cleanly when the V14 DOCX is absent. When a number legitimately
 changes in the manuscript, update the YAML and the matching entry in `CLAIMS`.
 
+Numbers that are deliberately **not** from the manuscript — the SKF training
+anecdotes (26 minggu, $26 juta, 2,3 mm/s, 4.000 byte) and the Senseye/Siemens
+*True Cost of Downtime 2022* survey ($1,5 triliun per tahun, 25 jam per bulan,
+$2 juta per jam) — are enumerated in `EXTERNAL_CLAIMS`. A test asserts each one
+appears only on a slide that also carries its credit, and that no dollar
+amount reaches a slide without being enumerated.
+
 ## Algorithm diagrams
 
 `tools/render_diagrams.py` (`make diagrams`) draws one PNG per method into
@@ -268,6 +297,19 @@ Figures and claims in `content/sidang-terbuka.yaml` are sourced from the
 | SAE (128→1.024, k=51), hit-rate, kontrol negatif, Bonferroni 0,004, sweep k=205 | Subbab V.2–V.4, V.6–V.9 |
 | SKF: IV.15 transfer diagnostik; V.5.3 streaming (158/78 akuisisi, EoL ±1 hari) | Subbab IV.15, V.5.3, V.5.4 |
 | Keterbatasan (6) dan rekomendasi (7) | Subbab VI.4, VI.5 |
+| Objek penelitian: OR1/OR2, Channel 15, 25,6 kHz, 3.500–4.200 rpm, nilai tren A/V/ENV | Subbab III.2, V.5.3 |
+| Kriteria evaluasi (RMSE primer, PHM Score asimetris), pemilihan tiga backbone, mengapa SAE | Subbab III.4.2, II.5.2, V.1, II.6 |
+
+### Draft-derived slides (SKF material)
+
+The domain-intro and signal-processing slides rebuild the SKF training
+material Pak Toto pasted into his annotated draft
+(`20260906 Sidang_Disertasi_Toto_Suharto.pptx` + PDF, gitignored). The
+artwork is cropped by `make draft-assets` into `assets/skf/` — ordinary
+pictures straight from the PPTX, WMF/EMF pictures and native-shape drawings
+rasterised from the PDF page at 220 dpi — and every slide that shows it ends
+in a `source` block crediting SKF Group (2017). External figures cite their
+source inline (Senseye, *The True Cost of Downtime 2022*, Siemens).
 
 When those numbers change in the manuscript, update the YAML **and** the
 matching entry in `tests/test_provenance.py`, then rebuild.
