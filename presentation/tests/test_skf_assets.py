@@ -26,6 +26,10 @@ def _referenced() -> list[str]:
     return sorted(set(re.findall(r"assets/skf/([\w-]+\.png)", _spec())))
 
 
+def _referenced_web() -> list[str]:
+    return sorted(set(re.findall(r"assets/web/([\w-]+\.(?:jpg|png))", _spec())))
+
+
 @pytest.mark.parametrize("name", _referenced())
 def test_referenced_skf_asset_exists_and_is_legible(name):
     target = ROOT / "assets" / "skf" / name
@@ -55,3 +59,26 @@ def test_every_slide_with_skf_artwork_credits_skf():
         assert "type: source" in slide, (
             f"slide {title.group(1) if title else '?'!r} shows SKF artwork without a `source` block"
         )
+
+
+# --- assets/web/: openly licensed photographs fetched from Wikimedia Commons ---
+
+@pytest.mark.parametrize("name", _referenced_web())
+def test_referenced_web_photo_exists_and_is_credited(name):
+    target = ROOT / "assets" / "web" / name
+    assert target.exists(), f"run `make web-assets` — missing {target.name}"
+    with Image.open(target) as image:
+        assert image.width >= 800, f"{name}: {image.width}px wide is too small"
+    credits = (ROOT / "assets" / "web" / "CREDITS.md").read_text(encoding="utf-8")
+    assert f"`{name}`" in credits, f"{name} has no line in assets/web/CREDITS.md"
+    for slide in re.split(r"\n  - layout:", _spec()):
+        if f"assets/web/{name}" in slide:
+            assert "Wikimedia Commons" in slide, (
+                f"slide showing {name} does not credit Wikimedia Commons in its source line"
+            )
+
+
+def test_every_fetched_web_photo_is_used():
+    committed = sorted(p.name for p in (ROOT / "assets" / "web").glob("*.jpg"))
+    unused = [n for n in committed if n not in _referenced_web()]
+    assert unused == [], f"assets/web/ files no slide uses: {unused}"

@@ -2,7 +2,7 @@ SPEC ?= content/sidang-terbuka.yaml
 OUT  ?= out/Sidang_Disertasi_Toto_Suharto.pptx
 PY   ?= python3
 
-.PHONY: help build lint preview png test inspect clean install v14-assets diagrams derived-assets draft-assets
+.PHONY: help build lint preview png test inspect clean install v14-assets diagrams derived-assets draft-assets web-assets
 
 help:
 	@echo "make build              render $(SPEC) -> $(OUT)"
@@ -15,6 +15,7 @@ help:
 	@echo "make diagrams           render the paper-style algorithm diagrams (matplotlib)"
 	@echo "make derived-assets     crop IMS/CWRU-free versions of the result figures"
 	@echo "make draft-assets       extract the SKF domain artwork from the annotated draft deck"
+	@echo "make web-assets         fetch the Wikimedia Commons photographs (with CREDITS.md)"
 	@echo "make clean              remove out/"
 	@echo ""
 	@echo "Override SPEC= and OUT= to build a different deck."
@@ -50,6 +51,9 @@ derived-assets:
 
 draft-assets:
 	$(PY) tools/extract_draft_media.py
+
+web-assets:
+	$(PY) tools/fetch_web_media.py
 
 inspect:
 	@test -n "$(FILE)" || { echo "usage: make inspect FILE=deck.pptx"; exit 1; }

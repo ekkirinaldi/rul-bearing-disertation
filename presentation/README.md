@@ -59,6 +59,7 @@ make v14-assets       # extract deck figures from the V14 DOCX media
 make diagrams         # render the paper-style algorithm diagrams (matplotlib)
 make derived-assets   # crop IMS/CWRU-free versions of the result figures
 make draft-assets     # extract the SKF domain artwork from the annotated draft deck
+make web-assets       # fetch the Wikimedia Commons photographs (writes CREDITS.md)
 make build            # content/sidang-terbuka.yaml -> out/…​.pptx
 make preview          # build + PDF via LibreOffice
 make png              # build + one PNG per slide (needs poppler)
@@ -83,6 +84,7 @@ presentation/
 │   ├── diagrams/               algorithm diagrams rendered by make diagrams
 │   ├── derived/                IMS/CWRU-free crops of manuscript result figures
 │   ├── skf/                    SKF domain artwork cropped from the annotated draft
+│   ├── web/                    Wikimedia Commons photographs + CREDITS.md (author, licence, URL)
 │   └── v14/                    figures extracted from the V14 DOCX media
 ├── content/
 │   └── sidang-terbuka.yaml     ★ the deck content — this is what you edit
@@ -92,6 +94,7 @@ presentation/
 │   ├── extract_v14_media.py    pulls figures out of the V14 DOCX by media index
 │   ├── render_diagrams.py      draws the 9 algorithm diagrams (matplotlib)
 │   ├── extract_draft_media.py  crops the SKF artwork out of the draft PPTX/PDF
+│   ├── fetch_web_media.py      downloads the Commons photographs and their credits
 │   └── derive_assets.py        crops IMS/CWRU panels out of the result figures
 ├── deck/
 │   ├── theme.py                design tokens: palette, type scale, grid
@@ -104,7 +107,7 @@ presentation/
 ├── tests/
 │   ├── test_deck.py            renderer + layout regressions
 │   ├── test_diagrams.py        diagram set complete, sized, and referenced
-│   ├── test_skf_assets.py      draft-derived artwork exists, is legible, and is credited
+│   ├── test_skf_assets.py      draft-derived and web artwork exists, is legible, and is credited
 │   └── test_provenance.py      every slide figure must exist in the V14 manuscript
 └── out/                        build artifacts (git-ignored)
 ```
@@ -310,6 +313,11 @@ pictures straight from the PPTX, WMF/EMF pictures and native-shape drawings
 rasterised from the PDF page at 220 dpi — and every slide that shows it ends
 in a `source` block crediting SKF Group (2017). External figures cite their
 source inline (Senseye, *The True Cost of Downtime 2022*, Siemens).
+
+The photographs on the "Mesin Rotasi" slide come from Wikimedia Commons via
+`make web-assets`, which also writes `assets/web/CREDITS.md` (author, licence,
+file URL) from the Commons API; the slide's source line names each
+photographer and licence, and a test keeps the two in step.
 
 When those numbers change in the manuscript, update the YAML **and** the
 matching entry in `tests/test_provenance.py`, then rebuild.

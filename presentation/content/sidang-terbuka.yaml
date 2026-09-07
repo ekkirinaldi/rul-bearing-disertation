@@ -136,56 +136,102 @@ slides:
     top: 1.74
     blocks:
       - type: lead
-        h: 0.90
-        size: 13
+        h: 0.60
+        size: 12
         text: >-
           Hampir seluruh proses produksi bertumpu pada mesin yang berputar. Motor
           listrik menggerakkan konveyor dan pompa, fan mengalirkan udara dan gas,
           pompa memindahkan fluida, dan mesin permesinan membentuk benda kerja.
           Keempatnya berbeda fungsi, tetapi berbagi satu komponen yang sama.
-      - type: cards
-        gap: 0.16
-        flex: true
+      - type: columns
+        gap: 0.14
+        h: 3.04
         gutter: 0.18
-        pad: 0.16
-        title_size: 13
-        body_size: 10.5
         items:
-          - badge: "1"
-            title: Motor listrik
-            body: >-
-              Penggerak utama di pabrik; rotor berputar pada dua bearing di sisi
-              drive end dan non-drive end.
-          - badge: "2"
-            title: Fan dan blower
-            body: >-
-              Poros panjang dengan beban tak seimbang; bearing memikul gaya radial
-              dan aksial secara terus-menerus.
-          - badge: "3"
-            title: Pompa dan kompresor
-            body: >-
-              Beroperasi nonstop di pembangkit, kilang, dan pabrik semen; kegagalan
-              bearing menghentikan aliran proses.
-          - badge: "4"
-            title: Mesin permesinan
-            body: >-
-              *Spindle* mesin *grinding* dan *milling* berputar ribuan rpm; presisi
-              produk bergantung pada kondisi bearing-nya.
+          - blocks:
+              - type: figure
+                h: 1.22
+                inset: 0.06
+                image: ../assets/web/motor_listrik_cutaway.jpg
+              - type: cards
+                gap: 0.10
+                flex: true
+                pad: 0.13
+                title_size: 12
+                body_size: 10.2
+                items:
+                  - badge: "1"
+                    title: Motor listrik
+                    body: >-
+                      Penggerak utama di pabrik; rotor berputar pada dua bearing di sisi
+                      drive end dan non-drive end.
+          - blocks:
+              - type: figure
+                h: 1.22
+                inset: 0.06
+                image: ../assets/web/fan_sentrifugal_industri.jpg
+              - type: cards
+                gap: 0.10
+                flex: true
+                pad: 0.13
+                title_size: 12
+                body_size: 10.2
+                items:
+                  - badge: "2"
+                    title: Fan dan blower
+                    body: >-
+                      Poros panjang dengan beban tak seimbang; bearing memikul gaya radial
+                      dan aksial secara terus-menerus.
+          - blocks:
+              - type: figure
+                h: 1.22
+                inset: 0.06
+                image: ../assets/web/pompa_cutaway.jpg
+              - type: cards
+                gap: 0.10
+                flex: true
+                pad: 0.13
+                title_size: 12
+                body_size: 10.2
+                items:
+                  - badge: "3"
+                    title: Pompa dan kompresor
+                    body: >-
+                      Beroperasi nonstop di pembangkit, kilang, dan pabrik semen; kegagalan
+                      bearing menghentikan aliran proses.
+          - blocks:
+              - type: figure
+                h: 1.22
+                inset: 0.06
+                image: ../assets/web/mesin_grinding_spindle.jpg
+              - type: cards
+                gap: 0.10
+                flex: true
+                pad: 0.13
+                title_size: 12
+                body_size: 10.2
+                items:
+                  - badge: "4"
+                    title: Mesin permesinan
+                    body: >-
+                      *Spindle* mesin *grinding* dan *milling* berputar ribuan rpm; presisi
+                      produk bergantung pada kondisi bearing-nya.
       - type: banner
-        gap: 0.22
+        gap: 0.18
         tone: dark
         label: BENANG MERAH
         label_size: 12
-        size: 12
-        vpad: 0.18
+        size: 11.5
+        vpad: 0.16
         body: >-
-          Semua mesin rotasi berputar di atas **rolling element bearing**. Karena
-          itu, memantau kondisi bearing berarti memantau kesehatan mesin secara
-          keseluruhan; bagian berikutnya menunjukkan apa yang terjadi bila hal itu
-          diabaikan.
+          Semua mesin rotasi berputar di atas **rolling element bearing**; memantau
+          kondisi bearing berarti memantau kesehatan mesin secara keseluruhan. Bagian
+          berikutnya menunjukkan apa yang terjadi bila hal itu diabaikan.
       - type: source
-        gap: 0.16
-        body: "diadaptasi dari materi pelatihan keandalan SKF Group (2017)"
+        gap: 0.12
+        body: >-
+          teks diadaptasi dari materi pelatihan SKF Group (2017); foto dari Wikimedia Commons:
+          S.J. de Waard (CC BY 2.5, motor dan pompa), SAF (CC BY-SA 4.0, fan), Amos1947 (CC BY-SA 4.0, grinder)
 
   # ======================================================================
   # 5 · PENGANTAR DOMAIN — apa yang merugikan: kasus ball mill (draft hal. 5) + kasus terpublikasi
