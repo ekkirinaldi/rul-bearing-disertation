@@ -727,7 +727,7 @@ slides:
     top: 1.72
     blocks:
       - type: columns
-        h: 2.40
+        h: 2.10
         gutter: 0.22
         items:
           - blocks:
@@ -784,15 +784,15 @@ slides:
                 text: "Spektrum envelope (gE) bearing yang cacat"
       - type: columns
         gap: 0.18
-        h: 2.10
+        h: 2.40
         gutter: 0.26
         items:
-          - width: 4.20
+          - width: 3.40
             blocks:
               - type: figure
                 flex: true
                 inset: 0.06
-                image: ../assets/skf/skf_bearing_stages.png
+                image: ../assets/diagrams/bearing_failure_stages.png
           - blocks:
               - type: cards
                 flex: true
@@ -816,7 +816,7 @@ slides:
                     body_color: "1F2A3D"
       - type: source
         gap: 0.12
-        body: "foto dan bagan tahap kerusakan dari materi pelatihan SKF Group (2017); angka 40–50% dari Nandi dkk. (2005)"
+        body: "foto dari materi pelatihan SKF Group (2017); skema tahap kerusakan digambar ulang; angka 40–50% dari Nandi dkk. (2005)"
 
   # ======================================================================
   # 14 · PENGANTAR OBJEK — jembatan istilah untuk pembaca non-informatika
@@ -1405,7 +1405,7 @@ slides:
         h: 3.96
         gutter: 0.26
         items:
-          - width: 4.30
+          - width: 3.20
             blocks:
               - type: figure
                 flex: true
@@ -1419,12 +1419,12 @@ slides:
                 align: center
                 color: "6B7689"
                 text: "Puncak 1×BPFO dan 1×BPFI pada spektrum envelope"
-          - width: 3.60
+          - width: 5.00
             blocks:
               - type: figure
                 flex: true
                 inset: 0.06
-                image: ../assets/skf/skf_bearing_stages.png
+                image: ../assets/diagrams/bearing_failure_stages.png
           - blocks:
               - type: cards
                 flex: true
@@ -1457,7 +1457,7 @@ slides:
           (disingkat **BPFx**) menjadi "kebenaran fisis" yang diuji terhadap isi model.
       - type: source
         gap: 0.12
-        body: "materi pelatihan SKF Group (2017); Subbab II.2.1 dan III.3.1"
+        body: "materi pelatihan SKF Group (2017); skema tahap kerusakan digambar ulang; Subbab II.2.1 dan III.3.1"
 
   # ======================================================================
   # 26 · CATATAN → SLIDE — data mana yang dipakai penelitian (draft hal. 28)

@@ -1058,6 +1058,110 @@ def hi_feature_pipeline():
 # --------------------------------------------------------------------------
 # Driver
 # --------------------------------------------------------------------------
+# --------------------------------------------------------------------------
+# Domain chart · four stages of bearing damage on the spectrum
+# --------------------------------------------------------------------------
+# The draft deck carried a third-party stage chart (a 2001 copyrighted
+# drawing reproduced in the SKF training material), which the defence deck
+# cannot reuse. This is an original schematic of the same well-known
+# progression: four frequency zones across, four damage stages down, and the
+# spike-energy (gE / HFD) level in the last column. Amplitudes are
+# illustrative, not measured.
+def bearing_failure_stages():
+    W, H = 6.0, 4.62
+    fig, ax = new_fig(W, H)
+
+    zones = [  # (x0, x1, label, tint)
+        (1.00, 1.85, "Zona A\nputaran\nporos", "util"),
+        (1.85, 3.15, "Zona B\nfrekuensi cacat\n[[bearing]]", "gate"),
+        (3.15, 4.35, "Zona C\nfrekuensi natural\nkomponen", "seq"),
+        (4.45, 5.05, "Zona D\n[[spike energy]]\ngE / HFD", "active"),
+    ]
+    y_top, row_h, base_off, plot_h = 3.87, 0.88, 0.78, 0.62
+    y_bot = y_top - 4 * row_h
+
+    for x0, x1, label, tint in zones:
+        ax.add_patch(Rectangle((x0, y_bot), x1 - x0, y_top - y_bot,
+                               fc=KIND[tint]["fc"], ec="none", alpha=0.45, zorder=0))
+        ax.text((x0 + x1) / 2, y_top + 0.36, label, ha="center", va="center",
+                fontsize=FS_TINY - 0.6, color=INK, fontweight="bold", linespacing=1.15)
+    for i in range(5):
+        y = y_top - i * row_h
+        ax.plot([0.05, 5.95], [y, y], color=MUTED, lw=0.6, ls=(0, (4, 3)), zorder=1)
+
+    # (name, note, gE level, gE note, peaks: (x in inches, amp 0..1, label))
+    fn = (3.15 + 4.35) / 2
+    stages = [
+        ("Tahap 1", "gejala paling awal", 0.35, "gE mulai\nnaik",
+         [(1.15, 0.90, "1×"), (1.35, 0.20, "2×")], False),
+        ("Tahap 2", "komponen [[ringing]]", 0.55, "gE naik",
+         [(1.15, 0.90, "1×"), (1.35, 0.20, "2×"),
+          (fn, 0.60, "fₙ"), (fn - 0.16, 0.22, None), (fn + 0.16, 0.22, None)], False),
+        ("Tahap 3", "cacat terlihat jelas", 0.80, "gE tinggi",
+         [(1.15, 0.90, "1×"), (1.35, 0.25, "2×"),
+          (2.15, 0.55, "BPFO"), (2.45, 0.50, "BPFI"), (2.75, 0.32, "2×BPFI"), (3.00, 0.22, None),
+          (fn, 0.65, "fₙ"), (fn - 0.16, 0.35, None), (fn + 0.16, 0.35, None)], False),
+        ("Tahap 4", "menjelang gagal", 1.00, "gE turun,\nlalu\nmelonjak",
+         [(1.15, 0.90, "1×"), (1.35, 0.55, "2×"), (1.55, 0.45, "3×")], True),
+    ]
+
+    rng = np.random.default_rng(11)
+    for i, (name, note, ge, ge_note, peaks, broadband) in enumerate(stages):
+        top = y_top - i * row_h
+        base = top - base_off
+        # row label
+        ax.text(0.50, top - 0.30, name, ha="center", va="center",
+                fontsize=FS_BLOCK, color=INK, fontweight="bold")
+        ax.text(0.50, top - 0.54, note, ha="center", va="center",
+                fontsize=FS_TINY - 1.0, color=MUTED, linespacing=1.1)
+        # spectrum across zones A–C
+        f = np.linspace(1.00, 4.35, 900)
+        s = 0.05 + 0.03 * rng.random(f.size)
+        if broadband:
+            hump = 0.30 + 0.12 * rng.random(f.size + 8)
+            hump = np.convolve(hump, np.ones(9) / 9, mode="valid")
+            s = s + np.where(f > 1.85, hump, 0.0) * np.clip((f - 1.85) / 0.25, 0, 1)
+        for x, amp, _ in peaks:
+            s = s + amp * np.exp(-((f - x) ** 2) / (2 * 0.016**2))
+        s = np.clip(s, 0, 1)
+        ax.plot(f, base + s * plot_h, color=INK, lw=0.85, zorder=5)
+        ax.plot([1.00, 4.35], [base, base], color=MUTED, lw=0.7, zorder=4)
+        for x, amp, label in peaks:
+            if label:
+                ax.text(x, base + amp * plot_h + 0.05, label, ha="center", va="bottom",
+                        fontsize=FS_TINY - 1.4, color=INK, zorder=6)
+        if i == 1:
+            ax.text(fn + 0.27, base + 0.30 * plot_h, "[[sideband]]", ha="left",
+                    va="center", fontsize=FS_TINY - 1.4, color=INK, zorder=6)
+        if broadband:
+            ax.text(3.10, base + 0.50 * plot_h, "getaran acak\nfrekuensi tinggi",
+                    ha="center", va="center", fontsize=FS_TINY - 1.2, color=INK,
+                    zorder=6, bbox=dict(fc="white", ec="none", alpha=0.85, pad=1.5))
+        # spike-energy bar
+        ax.add_patch(Rectangle((4.57, base), 0.36, ge * plot_h,
+                               fc=GOLD_FILL, ec=GOLD, lw=1.0, zorder=5))
+        ax.plot([4.45, 5.05], [base, base], color=MUTED, lw=0.7, zorder=4)
+        ax.text(5.50, top - 0.40, ge_note, ha="center", va="center",
+                fontsize=FS_TINY - 1.0, color=INK, linespacing=1.1)
+
+    # axes hints
+    arrow(ax, (1.00, y_bot - 0.14), (4.35, y_bot - 0.14), lw=0.9)
+    ax.text(2.68, y_bot - 0.26, "frekuensi", ha="center", va="center",
+            fontsize=FS_TINY - 0.6, color=MUTED)
+    ax.text(4.75, y_bot - 0.20, "energi tinggi", ha="center", va="center",
+            fontsize=FS_TINY - 0.6, color=MUTED)
+    ax.text(0.50, y_bot - 0.20, "amplitudo skematis", ha="center", va="center",
+            fontsize=FS_TINY - 1.2, color=MUTED)
+    save(fig, "bearing_failure_stages", dpi=320)  # 6 in canvas: 320 dpi clears the 1.800 px bar
+
+
+# Domain charts share the palette and the italics hook but are not algorithm
+# diagrams: no input contract, no strip.
+CHARTS = {
+    "bearing_failure_stages": bearing_failure_stages,
+}
+
+
 DIAGRAMS = {
     "hi_feature_pipeline": hi_feature_pipeline,
     "mamba_xlstm_full": mamba_xlstm_full,
@@ -1072,10 +1176,10 @@ DIAGRAMS = {
 }
 
 
-def save(fig, name: str) -> None:
+def save(fig, name: str, dpi: int = 200) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     target = OUT / f"{name}.png"
-    fig.savefig(target, dpi=200, facecolor="white")
+    fig.savefig(target, dpi=dpi, facecolor="white")
     plt.close(fig)
     print(f"{name:24s} -> {target.relative_to(ROOT)}")
 
@@ -1084,12 +1188,13 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--only", help="comma-separated diagram names")
     args = parser.parse_args()
-    names = args.only.split(",") if args.only else list(DIAGRAMS)
+    everything = {**DIAGRAMS, **CHARTS}
+    names = args.only.split(",") if args.only else list(everything)
     for name in names:
-        if name not in DIAGRAMS:
+        if name not in everything:
             print(f"unknown diagram: {name}", file=sys.stderr)
             return 1
-        DIAGRAMS[name]()
+        everything[name]()
     return 0
 
 

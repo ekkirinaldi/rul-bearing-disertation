@@ -16,10 +16,10 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from tools.render_diagrams import DIAGRAMS, KIND, OUT  # noqa: E402
+from tools.render_diagrams import CHARTS, DIAGRAMS, KIND, OUT  # noqa: E402
 
 
-@pytest.mark.parametrize("name", sorted(DIAGRAMS))
+@pytest.mark.parametrize("name", sorted({**DIAGRAMS, **CHARTS}))
 def test_diagram_rendered_and_sized(name):
     target = OUT / f"{name}.png"
     assert target.exists(), f"run `make diagrams` — missing {target.name}"
@@ -31,8 +31,13 @@ def test_diagram_rendered_and_sized(name):
 
 def test_every_diagram_is_referenced_by_the_deck():
     spec = (ROOT / "content" / "sidang-terbuka.yaml").read_text(encoding="utf-8")
-    unused = [n for n in DIAGRAMS if f"diagrams/{n}.png" not in spec]
+    unused = [n for n in {**DIAGRAMS, **CHARTS} if f"diagrams/{n}.png" not in spec]
     assert unused == [], f"diagrams rendered but not on any slide: {unused}"
+
+
+def test_charts_and_diagrams_do_not_share_names():
+    """A domain chart has no input contract, so it must not shadow a diagram."""
+    assert set(CHARTS).isdisjoint(DIAGRAMS)
 
 
 def test_palette_kinds_are_wellformed():

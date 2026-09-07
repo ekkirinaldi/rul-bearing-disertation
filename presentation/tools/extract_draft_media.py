@@ -56,7 +56,6 @@ MAP: dict[str, tuple] = {
     "skf_bearing_rusted.png": ("blob", 15, "image18.jpeg"),
     "skf_bearing_section.png": ("blob", 15, "image16.gif"),
     "skf_bearing_defect.png": ("blob", 15, "image17.gif"),
-    "skf_bearing_stages.png": ("blob", 15, "image11.gif"),
     "skf_ge_spectrum.png": ("crop", 15, (5.65, 3.15, 4.40, 3.10)),
     # slide 17 · komponen, proses cutting, QA, produk
     "skf_components.png": ("crop", 17, (0.62, 1.53, 4.28, 2.41)),

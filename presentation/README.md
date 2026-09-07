@@ -92,7 +92,7 @@ presentation/
 │   └── Sidang_Disertasi_…_v2.pptx   approved template the design was derived from
 ├── tools/
 │   ├── extract_v14_media.py    pulls figures out of the V14 DOCX by media index
-│   ├── render_diagrams.py      draws the 9 algorithm diagrams (matplotlib)
+│   ├── render_diagrams.py      draws the algorithm diagrams and domain charts (matplotlib)
 │   ├── extract_draft_media.py  crops the SKF artwork out of the draft PPTX/PDF
 │   ├── fetch_web_media.py      downloads the Commons photographs and their credits
 │   └── derive_assets.py        crops IMS/CWRU panels out of the result figures
@@ -237,7 +237,9 @@ memory/state · merah muda gating · hijau tua output · emas fitur aktif),
 with the deck navy as ink. Every number drawn is asserted against the V14
 text by `tests/test_provenance.py`, and the slides that carry a redrawn
 figure cite it as "Digambar ulang berdasarkan Gambar X.N". Iterate with
-`python3 tools/render_diagrams.py --only <name>`.
+`python3 tools/render_diagrams.py --only <name>`. The same tool also
+renders the domain charts in `CHARTS` (no input strip); `make diagrams`
+draws both sets.
 
 **Label language.** Labels follow the "adjusted translation" register
 (global skill `adjusted-translation-indonesia`): Indonesian sentences,
@@ -313,6 +315,15 @@ pictures straight from the PPTX, WMF/EMF pictures and native-shape drawings
 rasterised from the PDF page at 220 dpi — and every slide that shows it ends
 in a `source` block crediting SKF Group (2017). External figures cite their
 source inline (Senseye, *The True Cost of Downtime 2022*, Siemens).
+
+One picture in that material is not SKF's to lend: the four-stage bearing
+failure chart (a 2001 third-party copyrighted drawing). The deck does not
+reuse it. `bearing_failure_stages` in `tools/render_diagrams.py` is an
+original schematic of the same progression (four frequency zones across,
+four stages down, spike energy gE/HFD in the last column, illustrative
+amplitudes), registered under `CHARTS` rather than `DIAGRAMS` because a
+domain chart carries no model input contract. The two slides that show it
+say "skema tahap kerusakan digambar ulang" in their source line.
 
 The photographs on the "Mesin Rotasi" slide come from Wikimedia Commons via
 `make web-assets`, which also writes `assets/web/CREDITS.md` (author, licence,
