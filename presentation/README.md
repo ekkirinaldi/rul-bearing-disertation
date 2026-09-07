@@ -173,7 +173,7 @@ top-down inside the body band (y = 1.60 … 6.86 in):
 | `agenda` | numbered agenda grid |
 | `glossary` | columns of term / definition pairs |
 | `refs` | columns of grouped references |
-| `figure` | image via `image:`, or a captioned placeholder |
+| `figure` | image via `image:`, or a captioned placeholder; `fill: true` centre-crops a photo to its frame instead of letterboxing |
 | `maprows` | full-width `key → claim → evidence` rows |
 | `kvrows` | `LABEL | value` rows |
 | `source` | the small "Sumber dan metode:" credit line |

@@ -135,23 +135,15 @@ slides:
     title: "Mesin Rotasi Ada di Setiap Industri"
     top: 1.74
     blocks:
-      - type: lead
-        h: 0.60
-        size: 12
-        text: >-
-          Hampir seluruh proses produksi bertumpu pada mesin yang berputar. Motor
-          listrik menggerakkan konveyor dan pompa, fan mengalirkan udara dan gas,
-          pompa memindahkan fluida, dan mesin permesinan membentuk benda kerja.
-          Keempatnya berbeda fungsi, tetapi berbagi satu komponen yang sama.
       - type: columns
-        gap: 0.14
-        h: 3.04
+        h: 3.74
         gutter: 0.18
         items:
           - blocks:
               - type: figure
-                h: 1.22
+                h: 2.06
                 inset: 0.06
+                fill: true
                 image: ../assets/web/motor_listrik_cutaway.jpg
               - type: cards
                 gap: 0.10
@@ -167,8 +159,9 @@ slides:
                       drive end dan non-drive end.
           - blocks:
               - type: figure
-                h: 1.22
+                h: 2.06
                 inset: 0.06
+                fill: true
                 image: ../assets/web/fan_sentrifugal_industri.jpg
               - type: cards
                 gap: 0.10
@@ -184,8 +177,9 @@ slides:
                       dan aksial secara terus-menerus.
           - blocks:
               - type: figure
-                h: 1.22
+                h: 2.06
                 inset: 0.06
+                fill: true
                 image: ../assets/web/pompa_cutaway.jpg
               - type: cards
                 gap: 0.10
@@ -201,8 +195,9 @@ slides:
                       bearing menghentikan aliran proses.
           - blocks:
               - type: figure
-                h: 1.22
+                h: 2.06
                 inset: 0.06
+                fill: true
                 image: ../assets/web/mesin_grinding_spindle.jpg
               - type: cards
                 gap: 0.10
@@ -1560,46 +1555,49 @@ slides:
     title: "Dari Data Menuju Prediksi Kondisi Mesin"
     top: 1.72
     blocks:
-      - type: figure
-        h: 2.60
-        inset: 0.10
-        image: ../assets/skf/skf_collect_to_prognose.png
-      - type: text
-        gap: 0.06
-        h: 0.30
-        size: 9.5
-        italic: true
-        align: center
-        color: "6B7689"
-        text: "Sensing dan hardware menghasilkan data; analytics dan software mengubahnya menjadi informasi, lalu keputusan"
-      - type: cards
-        gap: 0.16
-        flex: true
-        gutter: 0.16
-        pad: 0.13
-        title_size: 11.5
-        body_size: 10.2
+      - type: columns
+        h: 4.72
+        gutter: 0.28
         items:
-          - badge: "1"
-            title: "Collect, connect, detect"
-            body: >-
-              Sensor, gateway IMx-8, dan ambang alarm; pada disertasi ini diwakili
-              rantai akuisisi SKF dan tiga dataset benchmark.
-          - badge: "2"
-            title: "Analyze"
-            body: >-
-              Ekstraksi feature (HI 36-D) dan pemodelan; jembatan dari sinyal mentah
-              ke sesuatu yang dapat dipelajari model.
-          - badge: "3"
-            title: "Diagnose"
-            body: >-
-              Jenis kerusakan apa: jalur diagnostik Bab IV (WDCNN dan Fault Signature
-              Maps).
-          - badge: "4"
-            title: "Prognose"
-            body: >-
-              Berapa lama lagi: jalur prognostik Bab V (tiga backbone RUL dan bukti
-              fisika lewat SAE-BPFx).
+          - width: 7.90
+            blocks:
+              - type: figure
+                flex: true
+                inset: 0.08
+                image: ../assets/skf/skf_collect_to_prognose.png
+              - type: text
+                gap: 0.06
+                h: 0.44
+                size: 9.5
+                italic: true
+                align: center
+                color: "6B7689"
+                text: "Sensing dan hardware menghasilkan data; analytics dan software mengubahnya menjadi informasi, lalu keputusan"
+          - blocks:
+              - type: cards
+                flex: true
+                columns: 1
+                row_gap: 0.12
+                pad: 0.14
+                title_size: 12
+                body_size: 10.5
+                items:
+                  - title: "1 · Collect, connect, detect"
+                    body: >-
+                      Sensor, gateway IMx-8, dan ambang alarm; pada disertasi ini diwakili
+                      rantai akuisisi SKF dan tiga dataset benchmark.
+                  - title: "2 · Analyze"
+                    body: >-
+                      Ekstraksi feature (HI 36-D) dan pemodelan; jembatan dari sinyal mentah
+                      ke sesuatu yang dapat dipelajari model.
+                  - title: "3 · Diagnose"
+                    body: >-
+                      Jenis kerusakan apa: jalur diagnostik Bab IV (WDCNN dan Fault Signature
+                      Maps).
+                  - title: "4 · Prognose"
+                    body: >-
+                      Berapa lama lagi: jalur prognostik Bab V (tiga backbone RUL dan bukti
+                      fisika lewat SAE-BPFx).
       - type: source
         gap: 0.14
         body: "diadaptasi dari materi SKF Group (2017); pemetaan ke bab mengikuti Gambar III.1"

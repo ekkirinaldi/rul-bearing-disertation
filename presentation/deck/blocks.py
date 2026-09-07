@@ -809,6 +809,21 @@ def r_figure(slide, spec: dict, box: Box) -> None:
         avail_h = box.h - 2 * inset
         with _Image.open(spec["image"]) as source:
             aspect = source.height / source.width
+        if spec.get("fill"):
+            # Photographs: crop to the frame (centre) rather than letterbox,
+            # so a row of pictures of mixed aspect fills its cards edge to edge.
+            x, y = box.x + inset, box.y + inset
+            shapes.card(slide, box.x, box.y, box.w, box.h, fill=Color.PANEL, line=Color.LINE)
+            picture = slide.shapes.add_picture(spec["image"], _In(x), _In(y),
+                                               width=_In(avail_w), height=_In(avail_h))
+            frame_aspect = avail_h / avail_w
+            if aspect > frame_aspect:      # image taller than the frame: trim top/bottom
+                keep = frame_aspect / aspect
+                picture.crop_top = picture.crop_bottom = (1 - keep) / 2
+            else:                          # image wider: trim the sides
+                keep = aspect / frame_aspect
+                picture.crop_left = picture.crop_right = (1 - keep) / 2
+            return
         w = avail_w
         h = w * aspect
         if h > avail_h:
