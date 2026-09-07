@@ -17,6 +17,9 @@ from typing import NamedTuple
 from .blocks import BLOCKS, Box
 from .theme import Grid
 
+# A flex block never shrinks below this when it absorbs negative slack.
+MIN_FLEX_H = 0.40
+
 
 class LayoutWarning(NamedTuple):
     slide: int
@@ -64,15 +67,19 @@ def render_stack(slide, specs: list[dict], x: float, y: float, w: float, bottom:
     natural = sum(heights) + sum(gaps)
     slack = available - natural
 
+    # Flex blocks absorb the leftover space in both directions: a nested
+    # figure without `h` measures at its 3,50 in default, so inside a fixed
+    # column shorter than that the slack is negative and the figure must
+    # shrink, or it overruns the blocks below it.
     flex_idx = [i for i, s in enumerate(flowing) if s.get("flex")]
-    if flex_idx and slack > 0:
+    if flex_idx and slack != 0:
         weights: list[float] = []
         for i in flex_idx:
             flex = flowing[i].get("flex")
             weights.append(float(flex) if isinstance(flex, (int, float)) and not isinstance(flex, bool) else 1.0)
         total_w = sum(weights) or 1.0
         for i, weight in zip(flex_idx, weights):
-            heights[i] += slack * weight / total_w
+            heights[i] = max(heights[i] + slack * weight / total_w, MIN_FLEX_H)
 
     cursor = y
     for spec, gap, height in zip(flowing, gaps, heights):
