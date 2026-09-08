@@ -203,6 +203,19 @@ CLAIMS: list[tuple[str, list[str]]] = [
     ("Top-k kendali langsung atas sparsity", ["Top-k memberikan kendali langsung"]),
     ("XAI input-level beroperasi di tingkat masukan", ["tingkat masukan"]),
     ("SAE prognostik bearing belum pernah dilaporkan", ["belum pernah dilaporkan"]),
+    # blok dasar (II.5.2, V.1) dan tabel syarat SAE (II.6.1)
+    ("Mamba memilih informasi yang dipertahankan, ditolak, atau dilewatkan", ["dipertahankan, ditolak, atau dilewatkan"]),
+    ("perubahan kecil jauh di awal trajektori tetap berkontribusi", ["jauh di awal trajektori degradasi tetap berkontribusi"]),
+    ("exponential gating menggantikan saturasi sigmoid", ["menggantikan saturasi sigmoid"]),
+    ("matrix memory menyimpan asosiasi key-value", ["asosiasi key-value"]),
+    ("mLSTM konteks multi-level", ["konteks multi-level"]),
+    ("basis trend polinomial Bernstein", ["polinomial Bernstein"]),
+    ("basis shock wavelet Gabor", ["wavelet Gabor"]),
+    ("prior struktural mempersempit ruang solusi optimizer", ["ruang solusi yang perlu dijelajahi optimizer menjadi lebih sempit"]),
+    ("laju dilatasi 1, 2, 4, dan 8", ["1, 2, 4, dan 8"]),
+    ("TCN menangkap periodisitas pada frekuensi rekaman tetap", ["pola periodisitas pada frekuensi rekaman yang tetap"]),
+    ("SHAP tidak beroperasi pada ruang laten", ["tidak beroperasi pada ruang representasi laten"]),
+    ("Templeton: jutaan fitur pada skala besar", ["jutaan fitur yang dapat diinterpretasi"]),
 ]
 
 # Numbers that are on a slide but deliberately NOT from the manuscript: domain

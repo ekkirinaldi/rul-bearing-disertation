@@ -14,7 +14,7 @@ identical to the version Pak Toto approved.
 citation, and claim in the deck traces to it — not to the older
 `dissertation-docx/` tree, whose numbers conflict with V14 in places.
 
-## Deck structure (76 slides)
+## Deck structure (78 slides)
 
 The main deck (64 slides) follows the flow Pak Toto sketched in the annotated
 draft of 6 September 2026: **domain knowledge first, one idea per slide, then
@@ -40,7 +40,11 @@ the results by track**.
    industrial-engineering panel sit just-in-time and answer the questions Pak
    Toto left on his note slides: batas explainability (korelasi, bukan
    kausalitas), mengapa tiga backbone ini, kriteria "bagus" (RMSE dan PHM
-   Score), mengapa Sparse Autoencoder.
+   Score), mengapa Sparse Autoencoder. The prognostik act introduces the four
+   primitives first (two "Blok Dasar" slides: Mamba and mLSTM, N-BEATS and
+   TCN) before the slide that explains how they combine into three backbones,
+   and the SAE choice is argued as a requirements table against reading
+   neurons directly and input-level XAI.
 5. Kesimpulan, keterbatasan, referensi, penutup; then twelve backup slides
    ("Cadangan") for the Q&A session.
 
@@ -240,6 +244,14 @@ figure cite it as "Digambar ulang berdasarkan Gambar X.N". Iterate with
 `python3 tools/render_diagrams.py --only <name>`. The same tool also
 renders the domain charts in `CHARTS` (no input strip); `make diagrams`
 draws both sets.
+
+`CHARTS` also holds the four building-block charts (`block_mamba`,
+`block_mlstm`, `block_nbeats`, `block_tcn`) shown on the two "Blok Dasar"
+slides before the backbones are compared. The Mamba, mLSTM, and dilation
+charts are drawn by the same helpers as the zoom panels of the full
+Mamba-xLSTM-Net and SparseGate-TCN-RUL diagrams (`_mamba_panel`,
+`_mlstm_panel`, `_dilation_panel`), so a change to a cell drawing shows
+up in both places.
 
 **Label language.** Labels follow the "adjusted translation" register
 (global skill `adjusted-translation-indonesia`): Indonesian sentences,

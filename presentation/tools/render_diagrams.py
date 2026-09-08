@@ -336,34 +336,11 @@ def input_strip(ax, w: float, name: str) -> None:
     box(ax, w / 2, cy, w - 0.80, _strip_height(name), label, kind="input", fs=fs)
 
 
-# --------------------------------------------------------------------------
-# 1 · Mamba-xLSTM-Net (zoom-in idiom)
-# --------------------------------------------------------------------------
-def mamba_xlstm_full():
-    fig, ax = new_fig(12.0, 6.9, strip_pad("mamba_xlstm_full"))
-
-    # ---- right column: the stack -----------------------------------------
-    sx, bw = 10.35, 2.55
-    box(ax, sx, 1.28, bw, 0.56, "[[Input]] HI", kind="input",
-        sub="[[window]] 64 rekaman (PHM2012)")
-    arrow(ax, (sx, 1.58), (sx, 1.90))
-    box(ax, sx, 2.16, bw, 0.52, "[[Linear projection]]\nke dimensi model", kind="proj", fs=8.5)
-    arrow(ax, (sx, 2.44), (sx, 2.76))
-    container(ax, sx - bw / 2 - 0.14, 2.78, bw + 0.28, 1.94, times="3×")
-    box(ax, sx, 3.28, bw - 0.18, 0.62, "Blok Mamba", kind="seq", sub="[[Selective State-Space]]")
-    arrow(ax, (sx, 3.62), (sx, 3.92))
-    box(ax, sx, 4.26, bw - 0.18, 0.62, "Blok mLSTM", kind="mem", sub="[[matrix memory]]")
-    arrow(ax, (sx, 4.74), (sx, 5.02))
-    box(ax, sx, 5.28, bw, 0.52, "[[Gated fusion]]", kind="gate", sub="[[weights]] dapat dilatih")
-    arrow(ax, (sx, 5.56), (sx, 5.88))
-    ax.text(sx + 0.24, 5.72, r"$h \in \mathbb{R}^{128}$", ha="left", va="center",
-            fontsize=8.5, color=MUTED)
-    box(ax, sx, 6.18, bw, 0.60, "MLP dua [[layer]]", kind="out", sub="estimasi RUL", bold=True)
-    ax.text(sx, 6.72, "Mamba-xLSTM-Net", ha="center", va="center",
-            fontsize=FS_TITLE, color=INK, fontweight="bold")
-
-    # ---- bottom-left panel: Mamba block internals ------------------------
-    p1x, p1y, p1w, p1h = 0.35, 0.72, 8.10, 2.70
+# The two zoom panels of Mamba-xLSTM-Net are also the two "building block"
+# charts shown before the backbones are introduced, so they are drawn by
+# helpers that take the panel's box; the full diagram and the block charts
+# call the same code.
+def _mamba_panel(ax, p1x, p1y, p1w, p1h):
     container(ax, p1x, p1y, p1w, p1h, ec=KIND["seq"]["ec"])
     ax.add_patch(FancyBboxPatch((p1x, p1y), p1w, p1h,
                                 boxstyle="round,pad=0.02,rounding_size=0.09",
@@ -399,8 +376,9 @@ def mamba_xlstm_full():
     ax.text(p1x + p1w / 2, p1y + 0.16, "[[gate]] multiplikatif memilih informasi yang diteruskan",
             ha="center", va="bottom", fontsize=FS_TINY, color=MUTED, style="italic")
 
-    # ---- top-left panel: mLSTM cell internals ----------------------------
-    p2x, p2y, p2w, p2h = 0.35, 3.72, 8.10, 2.70
+
+
+def _mlstm_panel(ax, p2x, p2y, p2w, p2h):
     container(ax, p2x, p2y, p2w, p2h, ec=KIND["mem"]["ec"])
     ax.add_patch(FancyBboxPatch((p2x, p2y), p2w, p2h,
                                 boxstyle="round,pad=0.02,rounding_size=0.09",
@@ -435,6 +413,40 @@ def mamba_xlstm_full():
     ax.text(p2x + 6.46, cyc + 0.12, "$o_t$", ha="center", fontsize=8, color=INK)
     arrow(ax, (p2x + 6.62, cyc - 0.20), (p2x + 7.00, cyc - 0.20))
     box(ax, p2x + 7.42, cyc - 0.20, 0.72, 0.5, "$h_t$", kind="out", fs=9)
+
+
+
+# --------------------------------------------------------------------------
+# 1 · Mamba-xLSTM-Net (zoom-in idiom)
+# --------------------------------------------------------------------------
+def mamba_xlstm_full():
+    fig, ax = new_fig(12.0, 6.9, strip_pad("mamba_xlstm_full"))
+
+    # ---- right column: the stack -----------------------------------------
+    sx, bw = 10.35, 2.55
+    box(ax, sx, 1.28, bw, 0.56, "[[Input]] HI", kind="input",
+        sub="[[window]] 64 rekaman (PHM2012)")
+    arrow(ax, (sx, 1.58), (sx, 1.90))
+    box(ax, sx, 2.16, bw, 0.52, "[[Linear projection]]\nke dimensi model", kind="proj", fs=8.5)
+    arrow(ax, (sx, 2.44), (sx, 2.76))
+    container(ax, sx - bw / 2 - 0.14, 2.78, bw + 0.28, 1.94, times="3×")
+    box(ax, sx, 3.28, bw - 0.18, 0.62, "Blok Mamba", kind="seq", sub="[[Selective State-Space]]")
+    arrow(ax, (sx, 3.62), (sx, 3.92))
+    box(ax, sx, 4.26, bw - 0.18, 0.62, "Blok mLSTM", kind="mem", sub="[[matrix memory]]")
+    arrow(ax, (sx, 4.74), (sx, 5.02))
+    box(ax, sx, 5.28, bw, 0.52, "[[Gated fusion]]", kind="gate", sub="[[weights]] dapat dilatih")
+    arrow(ax, (sx, 5.56), (sx, 5.88))
+    ax.text(sx + 0.24, 5.72, r"$h \in \mathbb{R}^{128}$", ha="left", va="center",
+            fontsize=8.5, color=MUTED)
+    box(ax, sx, 6.18, bw, 0.60, "MLP dua [[layer]]", kind="out", sub="estimasi RUL", bold=True)
+    ax.text(sx, 6.72, "Mamba-xLSTM-Net", ha="center", va="center",
+            fontsize=FS_TITLE, color=INK, fontweight="bold")
+
+    # ---- zoom panels (shared with the block charts) ----------------------
+    p1x, p1y, p1w, p1h = 0.35, 0.72, 8.10, 2.70
+    _mamba_panel(ax, p1x, p1y, p1w, p1h)
+    p2x, p2y, p2w, p2h = 0.35, 3.72, 8.10, 2.70
+    _mlstm_panel(ax, p2x, p2y, p2w, p2h)
 
     # ---- zoom links (Mamba block -> bottom panel, mLSTM block -> top) ----
     zoom_link(ax, (sx - bw / 2 + 0.09, 3.59), (sx - bw / 2 + 0.09, 2.97),
@@ -527,42 +539,7 @@ def nbeats_xlstm_full():
     save(fig, "nbeats_xlstm_full")
 
 
-# --------------------------------------------------------------------------
-# 3 · SparseGate-TCN-RUL
-# --------------------------------------------------------------------------
-def sparsegate_tcn_full():
-    fig, ax = new_fig(12.0, 5.6, strip_pad("sparsegate_tcn_full"))
-    my = 1.30
-
-    box(ax, 1.05, my, 1.65, 0.78, "[[Input]] HI", kind="input",
-        sub="[[window]] 64 rekaman\n(PHM2012)")
-    ax.plot([1.88, 2.16], [my, my], color=INK, lw=1.1)
-    ax.plot([2.16, 2.16], [my - 0.55, my + 0.55], color=INK, lw=1.1)
-    arrow(ax, (2.16, my + 0.55), (2.52, my + 0.55), shrink=0)
-    arrow(ax, (2.16, my - 0.55), (2.52, my - 0.55), shrink=0)
-    box(ax, 3.42, my + 0.55, 1.80, 0.5, "[[Sparse feature gate]]", kind="gate", fs=8.5)
-    box(ax, 3.42, my - 0.55, 1.80, 0.5, "[[Cross-feature attention]]", kind="seq", fs=8.5)
-    ax.plot([4.32, 4.62], [my + 0.55, my + 0.55], color=INK, lw=1.1)
-    ax.plot([4.32, 4.62], [my - 0.55, my - 0.55], color=INK, lw=1.1)
-    arrow(ax, (4.62, my + 0.55), (4.86, my + 0.10), shrink=1)
-    arrow(ax, (4.62, my - 0.55), (4.86, my - 0.10), shrink=1)
-    gate_glyph(ax, 4.94, my, "+", kind="mem", r=0.17, fs=10)
-    ax.text(4.94, my - 0.60, "[[gated input]]", ha="center", va="top",
-            fontsize=FS_TINY, color=MUTED)
-    arrow(ax, (5.11, my), (5.42, my))
-
-    container(ax, 5.46, my - 0.52, 3.92, 1.14, title="[[stack]] TCN")
-    for i, d in enumerate((1, 2, 4, 8)):
-        box(ax, 6.02 + i * 0.94, my, 0.84, 0.56, f"d = {d}", kind="proj", fs=8.5)
-        if i < 3:
-            arrow(ax, (6.44 + i * 0.94, my), (6.54 + i * 0.94, my), shrink=0, lw=0.9)
-    arrow(ax, (9.40, my), (9.66, my))
-    box(ax, 10.20, my, 1.04, 0.62, "Langkah\nterakhir", kind="util", fs=8.5)
-    arrow(ax, (10.74, my), (10.92, my))
-    box(ax, 11.42, my, 0.94, 0.78, "[[Quantile]]\n[[head]]", kind="out", fs=8.5, sub="median = RUL")
-
-    # ---- zoom panel: dilated receptive field ------------------------------
-    px, py, pw, ph = 1.60, 2.55, 8.60, 2.55
+def _dilation_panel(ax, px, py, pw, ph):
     container(ax, px, py, pw, ph, ec=KIND["proj"]["ec"])
     ax.add_patch(FancyBboxPatch((px, py), pw, ph,
                                 boxstyle="round,pad=0.02,rounding_size=0.09",
@@ -605,6 +582,45 @@ def sparsegate_tcn_full():
     for j in range(n):
         ax.plot([xs[j]], [rows[0][0] - 0.34], marker="s", ms=4,
                 color=GOLD if j in inputs else "#D8DEE8", zorder=3)
+
+
+# --------------------------------------------------------------------------
+# 3 · SparseGate-TCN-RUL
+# --------------------------------------------------------------------------
+def sparsegate_tcn_full():
+    fig, ax = new_fig(12.0, 5.6, strip_pad("sparsegate_tcn_full"))
+    my = 1.30
+
+    box(ax, 1.05, my, 1.65, 0.78, "[[Input]] HI", kind="input",
+        sub="[[window]] 64 rekaman\n(PHM2012)")
+    ax.plot([1.88, 2.16], [my, my], color=INK, lw=1.1)
+    ax.plot([2.16, 2.16], [my - 0.55, my + 0.55], color=INK, lw=1.1)
+    arrow(ax, (2.16, my + 0.55), (2.52, my + 0.55), shrink=0)
+    arrow(ax, (2.16, my - 0.55), (2.52, my - 0.55), shrink=0)
+    box(ax, 3.42, my + 0.55, 1.80, 0.5, "[[Sparse feature gate]]", kind="gate", fs=8.5)
+    box(ax, 3.42, my - 0.55, 1.80, 0.5, "[[Cross-feature attention]]", kind="seq", fs=8.5)
+    ax.plot([4.32, 4.62], [my + 0.55, my + 0.55], color=INK, lw=1.1)
+    ax.plot([4.32, 4.62], [my - 0.55, my - 0.55], color=INK, lw=1.1)
+    arrow(ax, (4.62, my + 0.55), (4.86, my + 0.10), shrink=1)
+    arrow(ax, (4.62, my - 0.55), (4.86, my - 0.10), shrink=1)
+    gate_glyph(ax, 4.94, my, "+", kind="mem", r=0.17, fs=10)
+    ax.text(4.94, my - 0.60, "[[gated input]]", ha="center", va="top",
+            fontsize=FS_TINY, color=MUTED)
+    arrow(ax, (5.11, my), (5.42, my))
+
+    container(ax, 5.46, my - 0.52, 3.92, 1.14, title="[[stack]] TCN")
+    for i, d in enumerate((1, 2, 4, 8)):
+        box(ax, 6.02 + i * 0.94, my, 0.84, 0.56, f"d = {d}", kind="proj", fs=8.5)
+        if i < 3:
+            arrow(ax, (6.44 + i * 0.94, my), (6.54 + i * 0.94, my), shrink=0, lw=0.9)
+    arrow(ax, (9.40, my), (9.66, my))
+    box(ax, 10.20, my, 1.04, 0.62, "Langkah\nterakhir", kind="util", fs=8.5)
+    arrow(ax, (10.74, my), (10.92, my))
+    box(ax, 11.42, my, 0.94, 0.78, "[[Quantile]]\n[[head]]", kind="out", fs=8.5, sub="median = RUL")
+
+    # ---- zoom panel: dilated receptive field ------------------------------
+    px, py, pw, ph = 1.60, 2.55, 8.60, 2.55
+    _dilation_panel(ax, px, py, pw, ph)
     zoom_link(ax, (5.60, my + 0.62), (9.24, my + 0.62), (px, py), (px + pw, py))
 
     ax.text(0.45, 5.32, "SparseGate-TCN-RUL", ha="left", va="center",
@@ -1155,10 +1171,84 @@ def bearing_failure_stages():
     save(fig, "bearing_failure_stages", dpi=320)  # 6 in canvas: 320 dpi clears the 1.800 px bar
 
 
-# Domain charts share the palette and the italics hook but are not algorithm
-# diagrams: no input contract, no strip.
+# --------------------------------------------------------------------------
+# Building-block charts · one primitive each, shown before the backbones
+# --------------------------------------------------------------------------
+# The "why these four" slide compares Mamba, xLSTM, N-BEATS, and TCN, so the
+# audience meets each primitive on its own first. The Mamba and mLSTM charts
+# are the zoom panels of Mamba-xLSTM-Net; the TCN chart is the dilation cone
+# of SparseGate-TCN-RUL; the N-BEATS chart is the doubly residual block of
+# Oreshkin dkk. (2020) with the three bases V14 Subbab V.1.2 assigns to it.
+_BLOCK_W, _BLOCK_H = 8.6, 3.0
+_BLOCK_BOX = (0.25, 0.15, 8.10, 2.70)
+
+
+def block_mamba():
+    fig, ax = new_fig(_BLOCK_W, _BLOCK_H)
+    _mamba_panel(ax, *_BLOCK_BOX)
+    save(fig, "block_mamba", dpi=240)
+
+
+def block_mlstm():
+    fig, ax = new_fig(_BLOCK_W, _BLOCK_H)
+    _mlstm_panel(ax, *_BLOCK_BOX)
+    save(fig, "block_mlstm", dpi=240)
+
+
+def block_tcn():
+    fig, ax = new_fig(_BLOCK_W, _BLOCK_H)
+    _dilation_panel(ax, *_BLOCK_BOX)
+    save(fig, "block_tcn", dpi=240)
+
+
+def block_nbeats():
+    fig, ax = new_fig(_BLOCK_W, _BLOCK_H)
+    px, py, pw, ph = _BLOCK_BOX
+    _panel(ax, px, py, pw, ph, "Blok N-BEATS ([[doubly residual stacking]] dan [[basis expansion]])")
+    my = py + 1.16
+    ax.plot([px + 0.28], [my], marker="o", ms=4, color=INK)
+    ax.text(px + 0.28, my + 0.22, "[[input]]", ha="center", va="bottom", fontsize=FS_TINY, color=MUTED)
+    arrow(ax, (px + 0.30, my), (px + 0.72, my))
+    container(ax, px + 0.78, my - 0.44, 1.74, 0.88, times="4×")
+    box(ax, px + 1.65, my, 1.34, 0.50, "FC + ReLU", kind="proj", fs=8.5)
+    arrow(ax, (px + 2.34, my), (px + 2.66, my))
+    ax.plot([px + 2.66, px + 2.66], [my - 0.55, my + 0.55], color=INK, lw=1.0)
+    arrow(ax, (px + 2.66, my + 0.55), (px + 2.96, my + 0.55), shrink=0)
+    arrow(ax, (px + 2.66, my - 0.55), (px + 2.96, my - 0.55), shrink=0)
+    box(ax, px + 3.32, my + 0.55, 0.68, 0.44, "$\\theta_b$", kind="util", fs=9)
+    box(ax, px + 3.32, my - 0.55, 0.68, 0.44, "$\\theta_f$", kind="util", fs=9)
+    arrow(ax, (px + 3.68, my + 0.55), (px + 4.02, my + 0.55))
+    arrow(ax, (px + 3.68, my - 0.55), (px + 4.02, my - 0.55))
+    box(ax, px + 4.86, my + 0.55, 1.62, 0.50, "[[basis]] $g_b$ → [[backcast]]", kind="seq", fs=8.5)
+    box(ax, px + 4.86, my - 0.55, 1.62, 0.50, "[[basis]] $g_f$ → [[forecast]]", kind="mem", fs=8.5)
+    # backcast is subtracted from the input before the next block
+    ax.plot([px + 5.69, px + 6.10], [my + 0.55, my + 0.55], color=INK, lw=1.0)
+    ax.plot([px + 6.10, px + 6.10], [my + 0.55, my + 1.06], color=INK, lw=1.0)
+    ax.plot([px + 6.10, px + 0.28], [my + 1.06, my + 1.06], color=INK, lw=1.0)
+    arrow(ax, (px + 0.28, my + 1.06), (px + 0.28, my + 0.30), shrink=1)
+    gate_glyph(ax, px + 0.28, my + 0.62, "−", kind="gate", r=0.13, fs=9)
+    ax.text(px + 3.2, my + 1.06 - 0.05, "[[input]] blok berikutnya = [[input]] − [[backcast]]",
+            ha="center", va="top", fontsize=FS_TINY, color=MUTED, style="italic")
+    # forecasts of all blocks add up to the estimate
+    arrow(ax, (px + 5.69, my - 0.55), (px + 6.14, my - 0.55))
+    gate_glyph(ax, px + 6.30, my - 0.55, "+", kind="mem", r=0.16, fs=10)
+    arrow(ax, (px + 6.47, my - 0.55), (px + 6.80, my - 0.55), shrink=0)
+    box(ax, px + 7.36, my - 0.55, 1.04, 0.58, "Σ [[forecast]]", kind="out", fs=8.5, sub="estimasi RUL")
+    ax.text(px + pw / 2, py + 0.14,
+            "basis pada penelitian ini: [[trend]] polinomial Bernstein · [[wear]] frekuensi "
+            "karakteristik · [[shock]] [[wavelet]] Gabor",
+            ha="center", va="bottom", fontsize=FS_TINY, color=MUTED, style="italic")
+    save(fig, "block_nbeats", dpi=240)
+
+
+# Domain and block charts share the palette and the italics hook but are not
+# algorithm diagrams: no input contract, no strip.
 CHARTS = {
     "bearing_failure_stages": bearing_failure_stages,
+    "block_mamba": block_mamba,
+    "block_mlstm": block_mlstm,
+    "block_nbeats": block_nbeats,
+    "block_tcn": block_tcn,
 }
 
 

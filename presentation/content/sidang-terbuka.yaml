@@ -1905,7 +1905,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar · Membaca Attribution"
-    title: "SHAP Menandai Bagian Sinyal yang Menentukan Keputusan"
+    title: "SHAP Menandai Bagian Sinyal yang Paling Berpengaruh pada Prediksi"
     top: 1.72
     blocks:
       - type: columns
@@ -2185,11 +2185,149 @@ slides:
       mempelajari korelasi statistik?
 
   # ======================================================================
-  # 43 · CATATAN → SLIDE — mengapa tiga backbone ini (draft hal. 42)
+  # 43 · PENGANTAR ARSITEKTUR — blok dasar 1 dari 2: Mamba dan mLSTM
+  # ======================================================================
+  - layout: content
+    eyebrow: "Pengantar · Blok Dasar 1 dari 2"
+    title: "Dua Blok Pemodelan Sekuens: Mamba dan xLSTM"
+    top: 1.66
+    blocks:
+      - type: columns
+        h: 2.28
+        gutter: 0.24
+        items:
+          - width: 7.40
+            blocks:
+              - type: figure
+                flex: true
+                inset: 0.04
+                image: ../assets/diagrams/block_mamba.png
+          - blocks:
+              - type: cards
+                flex: true
+                columns: 1
+                row_gap: 0.10
+                pad: 0.12
+                title_size: 11.5
+                body_size: 10
+                items:
+                  - title: "Blok Mamba: Selective State-Space Model"
+                    body: >-
+                      Parameter B, C, dan Δ bergantung pada input, sehingga blok memilih informasi yang
+                      dipertahankan, ditolak, atau dilewatkan; kompleksitasnya linear terhadap
+                      panjang sekuens (Gu dan Dao, 2023).
+                  - title: "Mengapa cocok untuk degradasi bearing"
+                    body: >-
+                      Perubahan kecil pada spektrum getaran jauh di awal trajektori degradasi tetap
+                      berkontribusi pada prediksi RUL tanpa harus dilacak secara eksplisit.
+      - type: columns
+        gap: 0.14
+        h: 2.28
+        gutter: 0.24
+        items:
+          - width: 7.40
+            blocks:
+              - type: figure
+                flex: true
+                inset: 0.04
+                image: ../assets/diagrams/block_mlstm.png
+          - blocks:
+              - type: cards
+                flex: true
+                columns: 1
+                row_gap: 0.10
+                pad: 0.12
+                title_size: 11.5
+                body_size: 10
+                items:
+                  - title: "Sel mLSTM: LSTM dengan matrix memory"
+                    body: >-
+                      Exponential gating menggantikan saturasi sigmoid pada LSTM klasik; matrix memory C
+                      menyimpan asosiasi key-value dengan kapasitas jauh lebih besar daripada memori
+                      vektor (Beck dkk., 2024).
+                  - title: "Mengapa cocok untuk degradasi bearing"
+                    body: >-
+                      Memori rekuren beresolusi tinggi menyimpan konteks multi-level yang tidak dapat
+                      ditangkap oleh vektor memori skalar pada LSTM konvensional.
+      - type: source
+        gap: 0.10
+        body: "Digambar ulang berdasarkan Gambar II.5 dan Gambar II.7; Subbab II.5.2 dan V.1 naskah disertasi"
+
+  # ======================================================================
+  # 44 · PENGANTAR ARSITEKTUR — blok dasar 2 dari 2: N-BEATS dan TCN
+  # ======================================================================
+  - layout: content
+    eyebrow: "Pengantar · Blok Dasar 2 dari 2"
+    title: "Dua Blok Bentuk Kurva dan Dilated Convolution: N-BEATS dan TCN"
+    top: 1.66
+    blocks:
+      - type: columns
+        h: 2.28
+        gutter: 0.24
+        items:
+          - width: 7.40
+            blocks:
+              - type: figure
+                flex: true
+                inset: 0.04
+                image: ../assets/diagrams/block_nbeats.png
+          - blocks:
+              - type: cards
+                flex: true
+                columns: 1
+                row_gap: 0.10
+                pad: 0.12
+                title_size: 11.5
+                body_size: 10
+                items:
+                  - title: "Blok N-BEATS: doubly residual stacking"
+                    body: >-
+                      Setiap blok menghasilkan backcast dan forecast: backcast dikurangkan dari input
+                      blok berikutnya, forecast semua blok dijumlahkan menjadi estimasi RUL
+                      (Oreshkin dkk., 2020).
+                  - title: "Mengapa cocok untuk degradasi bearing"
+                    body: >-
+                      Tiga basis (trend polinomial Bernstein, wear frekuensi karakteristik, shock wavelet
+                      Gabor) sudah memuat bentuk kurva degradasi, sehingga ruang solusi optimizer lebih
+                      sempit dan hasil stabil lintas seed.
+      - type: columns
+        gap: 0.14
+        h: 2.28
+        gutter: 0.24
+        items:
+          - width: 7.40
+            blocks:
+              - type: figure
+                flex: true
+                inset: 0.04
+                image: ../assets/diagrams/block_tcn.png
+          - blocks:
+              - type: cards
+                flex: true
+                columns: 1
+                row_gap: 0.10
+                pad: 0.12
+                title_size: 11.5
+                body_size: 10
+                items:
+                  - title: "TCN: dilated causal convolution"
+                    body: >-
+                      Empat blok dilated causal convolution dengan laju dilatasi 1, 2, 4, dan 8; receptive field tumbuh
+                      eksponensial hingga menutup seluruh window rekaman, tanpa rekurensi (Bai dkk., 2018).
+                  - title: "Mengapa cocok untuk degradasi bearing"
+                    body: >-
+                      Dilated convolution menangkap pola periodisitas pada frekuensi rekaman yang tetap;
+                      blok paling ringan, sehingga sesuai untuk tier edge.
+      - type: source
+        gap: 0.10
+        body: "Digambar ulang berdasarkan Gambar V.2 dan Gambar V.3 (Oreshkin dkk., 2020; Bai dkk., 2018); Subbab V.1 naskah disertasi"
+
+  # ======================================================================
+  # 45 · CATATAN → SLIDE — mengapa tiga backbone ini (draft hal. 42)
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar · Pemilihan Arsitektur"
-    title: "Mengapa Mamba, xLSTM, N-BEATS, dan TCN Dipilih"
+    title: "Mengapa Keempat Blok Itu Digabung Menjadi Tiga Backbone"
     top: 1.72
     blocks:
       - type: cards
@@ -2548,60 +2686,48 @@ slides:
           berikutnya membuka isi model RUL.
 
   # ======================================================================
-  # 50 · CATATAN → SLIDE — mengapa memilih Sparse Autoencoder (draft hal. 51)
+  # 52 · CATATAN → SLIDE — mengapa memilih Sparse Autoencoder (draft hal. 51)
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar · Mengapa Sparse Autoencoder"
-    title: "Mengapa *Sparse Autoencoder*: Membaca Isi Model, Bukan Hanya Input-nya"
-    top: 1.72
+    title: "Mengapa Sparse Autoencoder Dipilih untuk Membedah Model RUL"
+    top: 1.66
     blocks:
-      - type: cards
-        h: 2.62
-        gutter: 0.18
-        pad: 0.15
-        title_size: 12
-        body_size: 10.6
-        items:
-          - badge: "1"
-            title: "Masalah: superposisi"
-            body: >-
-              Neural network menyimpan lebih banyak feature daripada jumlah dimensi
-              latennya, sehingga satu neuron merespons banyak konsep sekaligus
-              (polisemantik) dan sulit dibaca (Elhage dkk., 2022).
-          - badge: "2"
-            title: "Solusi: kamus sparse"
-            body: >-
-              SAE melatih autoencoder dengan kendala sparsity sehingga tiap feature
-              aktif cenderung mewakili satu konsep (monosemantik); terbukti pada model
-              bahasa (Bricken dkk., 2023; Templeton dkk., 2024).
-          - badge: "3"
-            title: "Varian Top-k"
-            body: >-
-              Hanya k feature terbesar yang dipertahankan aktif; memberi kendali
-              langsung atas sparsity dan pelatihan yang lebih stabil daripada
-              regularisasi L1 (Makhzani dan Frey, 2014; Cunningham dkk., 2023).
-          - badge: "4"
-            title: "Mengapa bukan SHAP atau IG"
-            body: >-
-              SHAP, Integrated Gradients, dan attention rollout bekerja di tingkat
-              input: menunjuk langkah waktu yang berpengaruh, tetapi tidak menjawab
-              apakah representasi laten bersesuaian dengan konsep fisik.
       - type: banner
-        gap: 0.22
+        tone: light
+        size: 11.5
+        vpad: 0.14
+        body: >-
+          Pertanyaan yang harus dijawab: **"apakah model RUL ini benar-benar mengetahui
+          BPFO?"** Jawabannya menuntut metode yang bekerja pada representasi laten, bukan
+          pada input, dan menghasilkan feature yang masing-masing bermakna satu hal.
+      - type: table
+        gap: 0.16
+        h: 2.82
+        header_h: 0.42
+        header_size: 11
+        size: 10
+        widths: [2.70, 3.05, 3.05, 3.43]
+        columns: ["Syarat", "Membaca neuron langsung", "SHAP, IG, attention rollout", "Top-k Sparse Autoencoder"]
+        rows:
+          - ["Bekerja pada representasi laten model", "Ya", "Tidak: beroperasi di tingkat input, hanya menunjuk langkah waktu yang berpengaruh", "Ya: dilatih pasca-hoc pada hidden state backbone yang dibekukan"]
+          - ["Satu feature mewakili satu konsep", "Tidak: superposisi membuat satu neuron merespons banyak konsep (Elhage dkk., 2022)", "Tidak menjawab", "Ya: kendala sparsity menghasilkan feature monosemantik (Bricken dkk., 2023)"]
+          - ["Sparsity terkendali, pelatihan stabil", "Tidak ada mekanisme", "Tidak ada mekanisme", "Ya: Top-k menahan k feature terbesar, lebih stabil daripada regularisasi L1 (Makhzani dan Frey, 2014)"]
+          - ["Terbukti pada skala besar", "Tidak", "Ya, untuk input", "Ya: jutaan feature pada model produksi (Templeton dkk., 2024)"]
+      - type: banner
+        gap: 0.16
         tone: dark
         label: DASAR PEMILIHAN
         label_size: 12
-        size: 11.8
-        vpad: 0.18
+        size: 11.2
+        vpad: 0.14
         body: >-
-          Pilihan ini bertumpu pada **studi literatur** interpretabilitas mekanistik
-          (Subbab II.6): belum ada SAE untuk domain prognostik bearing, dan belum ada
-          prosedur pemetaannya ke frekuensi karakteristik dengan inferensi statistik yang
-          ketat. Pertanyaan "apakah model RUL ini benar-benar mengetahui BPFO?" belum
-          pernah dijawab secara kuantitatif; di sinilah kontribusi N3.
+          Pilihan bertumpu pada **studi literatur** interpretabilitas mekanistik (Subbab II.6),
+          bukan percobaan pembanding: hanya SAE yang memenuhi keempat syarat, dan penerapannya
+          pada prognostik bearing belum pernah dilaporkan; di sinilah kontribusi N3.
       - type: source
-        gap: 0.16
-        body: "Subbab II.6.1 dan II.6.2 naskah disertasi; dalam penelitian ini aktivasi diambil dari hidden state backbone RUL, bukan dari model bahasa"
+        gap: 0.10
+        body: "Subbab II.6.1 dan II.6.2 naskah disertasi; aktivasi diambil dari hidden state backbone RUL, bukan dari model bahasa"
 
   # ======================================================================
   # 51 · JEMBATAN C — sparse autoencoder sebagai kamus konsep
