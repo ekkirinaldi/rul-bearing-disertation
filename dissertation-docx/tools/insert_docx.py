@@ -499,23 +499,20 @@ class Anchors:
     """Resolves spec anchors against the body, ignoring front matter.
 
     The table of contents repeats every heading and caption verbatim, so the
-    search is confined to the body proper: from the first chapter heading to
-    the first bibliography entry.
+    search starts at the first chapter heading and runs to the end of the
+    document, which keeps the bibliography and the appendices reachable while
+    leaving the front matter out.
     """
 
     def __init__(self, doc: Document):
         self.body = doc.body
         self.kids = list(self.body)
-        first, last = 0, len(self.kids)
+        first = 0
         for i, node in enumerate(self.kids):
             if _style(node) == "Heading1":
                 first = i
                 break
-        for i, node in enumerate(self.kids):
-            if _style(node) == "Daftarpustaka":
-                last = i
-                break
-        self.lo, self.hi = first, last
+        self.lo, self.hi = first, len(self.kids)
 
     def _candidates(self):
         return [(i, self.kids[i]) for i in range(self.lo, self.hi)
@@ -869,6 +866,15 @@ def apply_edit(doc: Document, anchors: Anchors, edit: dict, base: Path,
             print(f"  bib_entry: {_norm(edit['bib_entry'])[:70]}...")
         return
 
+    if "rewrite_para" in edit:
+        spec = edit["rewrite_para"]
+        index = anchors.find_prefix(spec["text_prefix"], spec.get("style", "Paragraf"))
+        print(f"  rewrite [{index}] "
+              f"{_norm(para_text(anchors.kids[index]))[:58]}")
+        if not dry_run:
+            rewrite_para(anchors, index, spec["text"], referenced)
+        return
+
     if "replace_figure" in edit:
         spec = edit["replace_figure"]
         if "label" in spec and "caption_prefix" not in spec:
@@ -963,6 +969,21 @@ def apply_edit(doc: Document, anchors: Anchors, edit: dict, base: Path,
     anchors.kids = list(doc.body)
 
 
+def rewrite_para(anchors: Anchors, index: int, text: str, referenced: set) -> None:
+    """Replace the text of an existing paragraph, keeping its style.
+
+    Used to reword prose in place; the paragraph's own style, and its position
+    among its neighbours, stay exactly as they were.
+    """
+    para = anchors.kids[index]
+    for child in list(para):
+        if child.tag != W + "pPr":
+            para.remove(child)
+    for run in parse_markup(text):
+        para.append(run)
+    referenced.update(markup_refs(text))
+
+
 def replace_figure(doc: Document, anchors: Anchors, index: int, spec: dict,
                    base: Path, defined: dict) -> None:
     """Point an existing figure at a new image and rewrite its caption text."""
@@ -972,22 +993,23 @@ def replace_figure(doc: Document, anchors: Anchors, index: int, spec: dict,
         picture = picture.getprevious()
     if picture is None:
         raise SpecError(f"no picture paragraph before caption at index {index}")
-    image = (base / spec["image"]).resolve()
-    if not image.exists():
-        raise SpecError(f"image not found: {image}")
-    rel_id = doc.add_image(image)
-    blip = picture.find(f".//{A}blip")
-    blip.set(R + "embed", rel_id)
-    px_w, px_h = png_size(image)
-    width = doc.content_width_twips(picture)
-    cx = int(round(width * float(spec.get("width_fraction", 0.9)))) * EMU_PER_TWIP
-    cy = int(round(cx * px_h / px_w))
-    for tag, xname, yname in ((WP + "extent", "cx", "cy"), (A + "ext", "cx", "cy")):
-        for node in picture.iter(tag):
-            node.set(xname, str(cx))
-            node.set(yname, str(cy))
-    for node in picture.iter(f"{{{PICNS}}}cNvPr"):
-        node.set("descr", image.name)
+    if spec.get("image"):
+        image = (base / spec["image"]).resolve()
+        if not image.exists():
+            raise SpecError(f"image not found: {image}")
+        rel_id = doc.add_image(image)
+        blip = picture.find(f".//{A}blip")
+        blip.set(R + "embed", rel_id)
+        px_w, px_h = png_size(image)
+        width = doc.content_width_twips(picture)
+        cx = int(round(width * float(spec.get("width_fraction", 0.9)))) * EMU_PER_TWIP
+        cy = int(round(cx * px_h / px_w))
+        for tag, xname, yname in ((WP + "extent", "cx", "cy"), (A + "ext", "cx", "cy")):
+            for node in picture.iter(tag):
+                node.set(xname, str(cx))
+                node.set(yname, str(cy))
+        for node in picture.iter(f"{{{PICNS}}}cNvPr"):
+            node.set("descr", image.name)
 
     # Rewrite the caption title: keep "Gambar ", the bookmark, and the field;
     # replace everything after the bookmarkEnd.

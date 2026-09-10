@@ -149,6 +149,35 @@ def _manuscripts() -> list[Path]:
     return sorted(ROOT.glob("V1? *.docx"))
 
 
+def _rewritten_prefixes() -> list[str]:
+    """Text the spec deliberately replaces, read from the spec itself.
+
+    Deriving the exemptions this way keeps the test honest: an edit that
+    rewrites a paragraph nobody declared still shows up as a loss.
+    """
+    spec_path = ROOT.parent / "dissertation-docx" / "inserts" / "v15" / "spec.yaml"
+    if not spec_path.exists():
+        return []
+    yaml = pytest.importorskip("yaml")
+    spec = yaml.safe_load(spec_path.read_text(encoding="utf-8"))
+    out = []
+    for edit in spec.get("edits", []):
+        if "rewrite_para" in edit:
+            out.append(edit["rewrite_para"]["text_prefix"])
+        if "replace_figure" in edit:
+            prefix = edit["replace_figure"].get("caption_prefix")
+            if prefix:
+                # Compare on the title, since the number itself may move.
+                out.append(re.sub(r"^\s*(Gambar|Tabel)[\s\u00a0]+[IVX]+\.\d+\s*",
+                                  "", prefix))
+            label = edit["replace_figure"].get("label")
+            if label:
+                out.append(label)
+    # The two Bab II figures are addressed by label, not by caption text.
+    out += ["Blok Selective State Space", "Blok matrix LSTM"]
+    return [o for o in out if o]
+
+
 def _source() -> Path:
     hits = sorted(ROOT.glob("V14 *.docx"))
     if not hits:
@@ -247,12 +276,9 @@ def test_v15_keeps_every_v14_paragraph_in_order():
                              r"\1 #", re.sub(r"\s+", " ", s)).strip()
     before = [blind(t) for t in _paragraph_texts(_body(versions[0])) if t.strip()]
     after = {blind(t) for t in _paragraph_texts(_body(versions[-1]))}
-    # Captions of figures the spec deliberately replaces are exempt.
-    replaced = ("Blok Selective State Space", "Blok matrix LSTM",
-                "Arsitektur N-BEATS dengan prinsip",
-                "Elemen arsitektur Temporal Convolutional")
+    exempt = _rewritten_prefixes()
     missing = [t for t in before
-               if t not in after and not any(r in t for r in replaced)]
+               if t not in after and not any(r in t for r in exempt)]
     # One paragraph carries a bare "II.7" reference the blinding cannot see.
     assert len(missing) <= 1, missing[:5]
 

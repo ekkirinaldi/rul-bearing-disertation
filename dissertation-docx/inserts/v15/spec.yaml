@@ -478,6 +478,55 @@ edits:
         Bai dkk. (2018).
 
   # ------------------------------------------------------------------
+  # Revisi Pak Toto: rujukan ke file konfigurasi diganti penjelasan
+  # ------------------------------------------------------------------
+  # Pembaca disertasi tidak membuka repositori, sehingga isi berkas
+  # konfigurasi dinyatakan sebagai kalimat; perintah yang memang harus
+  # dijalankan tetap dibiarkan sebagai listing pada Lampiran C.2.
+  - rewrite_para:
+      text_prefix: "Ketiga kondisi operasi digunakan (15 bearing aktif)"
+      text: >-
+        Ketiga kondisi operasi digunakan dengan seluruh 15 bearing yang tersedia. Pembagian
+        set dilakukan secara bearing-wise di dalam setiap kondisi operasi, yaitu tiga bearing
+        untuk training, satu untuk validation, dan satu untuk test, sehingga rekaman dari satu
+        bearing tidak pernah muncul pada dua set sekaligus dan kebocoran sampel dapat
+        dihindari. Bearing uji dipilih mewakili panjang trajektori yang berbeda, yaitu bearing
+        1_5 dengan umur pakai pendek, bearing 2_3 dengan umur pakai panjang, dan bearing 3_3
+        dengan umur pakai menengah, agar evaluasi tidak bias pada satu pola degradasi saja.
+        Rincian pembagian tersebut disajikan pada Tabel [ref:tab_bab3_split_xjtu].
+  - rewrite_para:
+      text_prefix: "Semua model Tier-S dilatih dengan konfigurasi identik"
+      text: >-
+        Semua model Tier-S dilatih dengan konfigurasi yang identik untuk memastikan
+        perbandingan yang adil, yaitu 75 epoch penuh tanpa early stopping, optimizer AdamW
+        dengan jadwal cosine annealing dan pemanasan lima epoch, presisi bf16-mixed, serta
+        klip gradien pada norma maksimum 1,0. Perbedaan hanya pada hyperparameter spesifik
+        arsitektur yang didokumentasikan pada subbab di atas. Konfigurasi pelatihan lengkap
+        yang berlaku untuk semua model ditampilkan pada Tabel [ref:tab_lampB_training].
+  - rewrite_para:
+      text_prefix: "Daftar dependensi inti dan rentang versi yang disyaratkan"
+      text: >-
+        Lingkungan pelatihan dibangun di atas Python 3.11 dengan PyTorch 2.2 atau lebih baru
+        sebagai pustaka inti, dilengkapi PyTorch Lightning 2.2 dan TorchMetrics 1.2 untuk
+        kerangka pelatihan dan metrik. Pemrosesan sinyal dan data memakai NumPy 1.24, SciPy
+        1.11, pandas 2.0, PyWavelets 1.4, dan PyArrow 15; ekstraksi fitur klasik memakai
+        scikit-learn 1.3; konfigurasi eksperimen dibaca dengan OmegaConf 2.3 dan PyYAML 6.0;
+        visualisasi hasil memakai Matplotlib 3.7 dan seaborn 0.13. Versi yang dicantumkan
+        merupakan batas minimum. Untuk merekam versi paket yang identik dengan lingkungan
+        pelatihan Bab V, keluaran perintah pip freeze setelah instalasi pada mesin target
+        disimpan bersama log pelatihan.
+
+  # Caption Gambar IV.3 tidak memiliki sumber; diagram berasal dari
+  # arsitektur WDCNN pada Zhang dkk. (2017).
+  - replace_figure:
+      caption_prefix: "Gambar IV.3 Diagram arsitektur WDCNN"
+      caption: >-
+        Diagram arsitektur WDCNN yang digunakan dalam penelitian ini: *input* 1 × 2.048
+        diproses melalui lima blok konvolusi (Conv1d, BatchNorm, ReLU, MaxPool) yang secara
+        progresif mengurangi dimensi temporal, diikuti dua *layer* *fully connected* (FC) dan
+        *dropout* sebelum keluaran 10-kelas. Sumber: Zhang dkk. (2017).
+
+  # ------------------------------------------------------------------
   # Daftar Pustaka
   # ------------------------------------------------------------------
   - bib_entry: >-
