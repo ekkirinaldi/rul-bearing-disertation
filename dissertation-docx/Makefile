@@ -93,12 +93,23 @@ disertasi.docx: frontmatter/frontmatter.docx tools/merge_master.py \
   $(foreach l,A B C D E F G,lampiran/lamp$(l).docx)
 	python3 tools/merge_master.py
 
+# In-place insertion into a hand-edited manuscript (see tools/insert_docx.py).
+# The chapter targets above regenerate a chapter from LaTeX and would discard
+# Word edits, so a document that has been revised by hand is grown this way.
+SPEC ?= inserts/v15/spec.yaml
+
+insert:
+	python3 tools/insert_docx.py $(SPEC) --force
+
+insert-dry:
+	python3 tools/insert_docx.py $(SPEC) --dry-run
+
 lint:
 	bash tools/lint_docx.sh chapters/*.docx
 
 clean:
 	rm -rf build/pre build/raw build/verify
 
-.PHONY: all-chapters all-lampiran frontmatter master lint clean \
+.PHONY: all-chapters all-lampiran frontmatter master lint clean insert insert-dry \
   $(foreach n,1 2 3 4 5 6,bab$(n) verify-bab$(n)) \
   $(foreach l,A B C D E F G,lamp$(l) verify-lamp$(l))

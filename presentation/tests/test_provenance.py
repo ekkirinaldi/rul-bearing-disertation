@@ -43,10 +43,12 @@ def _docx_text(path: Path) -> str:
 
 @pytest.fixture(scope="module")
 def manuscript() -> str:
-    sources = sorted(ROOT.glob("V14 *.docx"))
+    # The newest version wins: V15 adds the domain material ported from this
+    # deck, so it is a superset of V14 and every claim still has to hold.
+    sources = sorted(ROOT.glob("V1? *.docx"))
     if not sources:
-        pytest.skip(f"V14 manuscript DOCX not found under {ROOT}")
-    text = _docx_text(sources[0])
+        pytest.skip(f"manuscript DOCX not found under {ROOT}")
+    text = _docx_text(sources[-1])
     # The manuscript writes "17,6 %" and "1 024"; normalise so a slide that
     # writes "17,6%" still matches.
     text = re.sub(r"\s+", " ", text)
