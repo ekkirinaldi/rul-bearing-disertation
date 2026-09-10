@@ -16,7 +16,13 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from tools.render_diagrams import CHARTS, DIAGRAMS, KIND, OUT  # noqa: E402
+from tools.render_diagrams import (  # noqa: E402
+    CHARTS,
+    DIAGRAMS,
+    KIND,
+    MANUSCRIPT_ONLY_CHARTS,
+    OUT,
+)
 
 
 @pytest.mark.parametrize("name", sorted({**DIAGRAMS, **CHARTS}))
@@ -31,8 +37,22 @@ def test_diagram_rendered_and_sized(name):
 
 def test_every_diagram_is_referenced_by_the_deck():
     spec = (ROOT / "content" / "sidang-terbuka.yaml").read_text(encoding="utf-8")
-    unused = [n for n in {**DIAGRAMS, **CHARTS} if f"diagrams/{n}.png" not in spec]
+    # Manuscript-only charts are dissertation figures drawn by the same tool;
+    # they are placed by dissertation-docx/inserts/, not by a slide.
+    unused = [n for n in {**DIAGRAMS, **CHARTS}
+              if n not in MANUSCRIPT_ONLY_CHARTS and f"diagrams/{n}.png" not in spec]
     assert unused == [], f"diagrams rendered but not on any slide: {unused}"
+
+
+def test_manuscript_charts_are_placed_by_the_insert_spec():
+    """A chart exempted from the deck rule must earn the exemption: the
+    dissertation insert spec has to reference it."""
+    spec = (ROOT.parent / "dissertation-docx" / "inserts" / "v15" / "spec.yaml")
+    if not spec.exists():
+        pytest.skip("insert spec not present")
+    text = spec.read_text(encoding="utf-8")
+    missing = sorted(n for n in MANUSCRIPT_ONLY_CHARTS if f"{n}.png" not in text)
+    assert missing == [], f"manuscript-only charts no insert spec uses: {missing}"
 
 
 def test_charts_and_diagrams_do_not_share_names():

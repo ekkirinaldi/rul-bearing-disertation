@@ -67,11 +67,15 @@ def main() -> int:
         meta = info["extmetadata"]
         author = _strip(meta.get("Artist", {}).get("value", "unknown"))
         licence = meta.get("LicenseShortName", {}).get("value", "unknown")
+        # The date the work is dated on Commons; the dissertation bibliography
+        # cites a photograph by its year, so it has to be recorded here.
+        dated = _strip(meta.get("DateTimeOriginal", {}).get("value", "")
+                       or meta.get("DateTime", {}).get("value", ""))[:10] or "tanpa tahun"
         page_url = info["descriptionurl"]
         with urllib.request.urlopen(urllib.request.Request(info["thumburl"], headers=HEADERS),
                                     timeout=120) as r:
             (OUT / name).write_bytes(r.read())
-        lines.append(f"- `{name}` — {title[5:]} — {author} — {licence} — {page_url}")
+        lines.append(f"- `{name}` — {title[5:]} — {author} — {licence} — {dated} — {page_url}")
         print(f"{name:32s} {author[:24]:24s} {licence:14s} {info['width']}x{info['height']} -> {WIDTH}px")
     (OUT / "CREDITS.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return 0

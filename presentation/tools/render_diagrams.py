@@ -1172,6 +1172,437 @@ def bearing_failure_stages():
 
 
 # --------------------------------------------------------------------------
+# Manuscript charts · condition-monitoring concepts, drawn for the dissertation
+# --------------------------------------------------------------------------
+# These seven are dissertation figures (Bab I–III) rendered by the same tool
+# so they share the palette and the italics hook with the deck. None is on a
+# slide, hence MANUSCRIPT_ONLY_CHARTS below. Each is an original schematic
+# redrawn from the concept in SKF Group (2017) condition-monitoring training
+# material; no artwork is copied and every amplitude is illustrative.
+def _axis_pair(ax, x0, y0, x1, y1, xlabel=None, ylabel=None, lw=0.9):
+    """A pair of axis arrows meeting at (x0, y0), with optional muted labels."""
+    arrow(ax, (x0, y0), (x1, y0), lw=lw, shrink=0)
+    arrow(ax, (x0, y0), (x0, y1), lw=lw, shrink=0)
+    if xlabel:
+        ax.text(x1, y0 - 0.10, xlabel, ha="right", va="top", fontsize=FS_TINY - 0.6, color=MUTED)
+    if ylabel:
+        ax.text(x0 - 0.16, (y0 + y1) / 2, ylabel, ha="center", va="center", rotation=90,
+                fontsize=FS_TINY - 0.6, color=MUTED)
+
+
+def _bracket(ax, x0, x1, y, label, tick=0.06, below=True, fs=FS_TINY - 0.6, color=INK):
+    """A horizontal bracket with end ticks and a centred label under (or over) it."""
+    ax.plot([x0, x1], [y, y], color=color, lw=0.9, zorder=4)
+    for x in (x0, x1):
+        ax.plot([x, x], [y - tick, y + tick], color=color, lw=0.9, zorder=4)
+    dy = -0.13 if below else 0.13
+    ax.text((x0 + x1) / 2, y + dy, label, ha="center", va="center", fontsize=fs,
+            color=color, zorder=5)
+
+
+def _numbered(ax, x, y, n, r=0.11, kind="util"):
+    gate_glyph(ax, x, y, str(n), kind=kind, r=r, fs=FS_TINY - 0.6)
+
+
+# Original schematic redrawn from the P-F curve concept in SKF Group (2017) condition-monitoring training material; no artwork copied.
+def pf_curve():
+    W, H = 6.0, 3.6
+    fig, ax = new_fig(W, H)
+    x0, y0 = 0.70, 1.05                   # axis origin
+    top, bottom = 2.95, 1.10              # condition at "healthy" and at F
+    xP, xF, xR = 1.90, 4.40, 4.90         # P, F, and the end of the repair
+    _axis_pair(ax, x0, y0, 5.30, 3.35, ylabel="kondisi mesin")
+    # The axis label sits left of the repair tail, which reaches x = 4,90.
+    ax.text(x0 + 1.55, y0 + 0.09, "waktu operasi", ha="left", va="bottom",
+            fontsize=FS_TINY - 0.6, color=MUTED)
+
+    # interval P-F: the working space of predictive maintenance
+    ax.add_patch(Rectangle((xP, y0), xF - xP, top + 0.08 - y0, fc=GOLD_FILL, ec="none",
+                           alpha=0.38, zorder=0))
+    for x in (xP, xF):
+        ax.plot([x, x], [y0, top + 0.08], color=GOLD, lw=0.8, ls=(0, (3, 2)), zorder=1)
+
+    # the curve: flat, then an accelerating decline from P to F
+    xa = np.linspace(x0, xP, 60)
+    xb = np.linspace(xP, xF, 300)
+    t = (xb - xP) / (xF - xP)
+    ya = np.full(xa.size, top)
+    yb = top - (top - bottom) * t**1.8
+    ax.plot(np.concatenate([xa, xb]), np.concatenate([ya, yb]), color=INK, lw=1.6, zorder=5)
+    # the repair after F (drawn faint, so F stays the focus)
+    ax.plot([xF, xR], [bottom, bottom], color=MUTED, lw=1.0, ls=(0, (2, 2)), zorder=4)
+    ax.plot([xR], [bottom], marker="|", ms=7, color=MUTED, mew=1.0, zorder=4)
+
+    for x, y in ((xP, top), (xF, bottom)):
+        ax.plot([x], [y], marker="o", ms=6, mfc=GOLD_FILL, mec=INK, mew=1.2, zorder=6)
+    ax.text(xP - 0.10, top + 0.22, "P: gejala awal ([[potential failure]])", ha="left",
+            va="center", fontsize=FS_TINY, color=INK, zorder=6)
+    ax.text(xF + 0.14, bottom + 0.50, "F: kegagalan fungsional\n([[functional failure]])",
+            ha="left", va="center", fontsize=FS_TINY, color=INK, linespacing=1.2, zorder=6)
+
+    ax.text(3.85, 2.76, "interval P-F:\nruang kerja\nperawatan prediktif", ha="center",
+            va="center", fontsize=FS_TINY, color=INK, fontweight="bold", linespacing=1.2, zorder=6)
+    ax.text(2.45, 2.20, "deteksi kerusakan\n(diagnostik)", ha="center", va="center",
+            fontsize=FS_TINY - 0.6, color=INK, linespacing=1.15, zorder=6)
+    ax.text(3.38, 1.42, "prediksi sisa umur\n(prognostik)", ha="center", va="center",
+            fontsize=FS_TINY - 0.6, color=INK, linespacing=1.15, zorder=6)
+    arrow(ax, (2.95, 2.05), (3.20, 1.72), color=MUTED, lw=0.8, shrink=1)
+
+    # MTBF runs from the previous F to this F; MTTR is the repair after F
+    ax.text(x0 + 0.06, y0 + 0.09, "F sebelumnya", ha="left", va="bottom",
+            fontsize=FS_TINY - 1.2, color=MUTED)
+    _bracket(ax, xF, xR, 0.80, "MTTR ([[mean time to repair]])")
+    _bracket(ax, x0, xF, 0.50, "MTBF ([[mean time between failures]])")
+    save(fig, "pf_curve", dpi=320)
+
+
+# Original schematic redrawn from the Asset Diagnostic Methodology concept in SKF Group (2017) condition-monitoring training material; no artwork copied.
+def adm_hierarchy():
+    W, H = 6.0, 4.6
+    fig, ax = new_fig(W, H)
+    container(ax, 0.10, 0.20, 5.80, 4.28, title="[[Asset Diagnostic Methodology]] (ADM)")
+
+    levels = [  # (label, kind, description)
+        ("[[Asset]]", "seq", "aset diuraikan menjadi komponen"),
+        ("[[Component]]", "seq", "setiap komponen memiliki beberapa [[failure mode]]"),
+        ("[[Failure mode]]", "gate", "ditandai satu [[fault]] atau kombinasinya"),
+        ("[[Fault]]", "gate", "terdeteksi bila gejala hadir"),
+        ("[[Symptom]]", "mem", "satu atau lebih [[key feature]] melewati ambang"),
+        ("[[Key feature]]", "proj",
+         "sinyal yang dibangkitkan aset,\nmis. amplitudo pada frekuensi tertentu"),
+        ("[[Measurement]]", "input", "diatur agar seluruh [[key feature]] tertangkap"),
+    ]
+    cx, bw, bh, pitch, y_top = 1.55, 1.50, 0.34, 0.52, 3.80
+    for i, (label, kind, desc) in enumerate(levels):
+        cy = y_top - i * pitch
+        box(ax, cx, cy, bw, bh, label, kind=kind, fs=FS_BLOCK - 0.6)
+        ax.text(cx + bw / 2 + 0.22, cy, desc, ha="left", va="center", fontsize=FS_TINY,
+                color=INK, linespacing=1.15)
+        if i < len(levels) - 1:
+            arrow(ax, (cx, cy - bh / 2), (cx, cy - pitch + bh / 2), shrink=1, lw=1.0)
+    y_bot = y_top - (len(levels) - 1) * pitch
+
+    # two ways to read the chain
+    arrow(ax, (0.55, y_top), (0.55, y_bot), color=MUTED, lw=1.1)
+    ax.text(0.36, (y_top + y_bot) / 2, "reaktif: kegagalan terjadi, komponen diganti",
+            ha="center", va="center", rotation=90, fontsize=FS_TINY - 0.6, color=MUTED)
+    arrow(ax, (5.55, y_bot), (5.55, y_top), color=GOLD, lw=1.1)
+    ax.text(5.74, (y_top + y_bot) / 2, "proaktif: pengukuran menangkap gejala lebih dulu",
+            ha="center", va="center", rotation=90, fontsize=FS_TINY - 0.6, color=GOLD)
+    save(fig, "adm_hierarchy", dpi=320)
+
+
+# Original schematic redrawn from the defect-impact ringing concept in SKF Group (2017) condition-monitoring training material; no artwork copied.
+def defect_ringing():
+    W, H = 6.0, 3.8
+    fig, ax = new_fig(W, H)
+    x0, x1 = 0.35, 5.70
+    period, t_first = 0.85, 0.75
+    hits = t_first + period * np.arange(6)
+    t = np.linspace(x0, x1, 3000)
+    rng = np.random.default_rng(5)
+
+    def ringing(tt):
+        s = np.zeros_like(tt)
+        for h in hits:
+            m = tt >= h
+            s[m] += np.exp(-(tt[m] - h) / 0.16) * np.sin(2 * np.pi * 15 * (tt[m] - h))
+        return s
+
+    rows = [  # (label, base y, half-height)
+        ("impuls periodik: setiap [[rolling element]] melewati cacat", 2.95, 0.32),
+        ("respons struktur: [[ringing]] pada frekuensi natural, meluruh", 2.05, 0.34),
+        ("yang terukur sensor: gelombang termodulasi", 0.95, 0.34),
+    ]
+    for h in hits:  # shared time marks
+        ax.plot([h, h], [0.32, 3.30], color=MUTED, lw=0.5, ls=(0, (2, 3)), zorder=0)
+    for i, (label, base, amp) in enumerate(rows):
+        ty = base + amp + (0.42 if i == 0 else 0.30)
+        _numbered(ax, x0 + 0.12, ty, i + 1)
+        ax.text(x0 + 0.32, ty, label, ha="left", va="center", fontsize=FS_TINY, color=INK,
+                fontweight="bold", zorder=6, bbox=dict(fc="white", ec="none", pad=1.5))
+        if i == 0:
+            ax.plot([x0, x1], [base, base], color=MUTED, lw=0.7, zorder=4)
+            for h in hits:
+                ax.plot([h, h], [base, base + amp], color=INK, lw=1.6, zorder=5,
+                        solid_capstyle="butt")
+                ax.plot([h], [base + amp], marker="^", ms=4, color=INK, zorder=6)
+            _bracket(ax, hits[0], hits[1], base + amp + 0.08, "T = 1/BPFx", below=False,
+                     tick=0.04)
+        else:
+            ax.plot([x0, x1], [base, base], color=MUTED, lw=0.7, zorder=4)
+            sig = ringing(t)
+            if i == 2:
+                sig = sig + 0.07 * rng.standard_normal(t.size)
+                sig = sig * (1.0 + 0.25 * np.sin(2 * np.pi * 0.35 * (t - x0)))
+            sig = sig / np.max(np.abs(sig))
+            ax.plot(t, base + sig * amp, color=INK, lw=0.7, zorder=5)
+    arrow(ax, (x0, 0.30), (x1 + 0.05, 0.30), lw=0.9, shrink=0)
+    ax.text(x1 + 0.05, 0.19, "waktu", ha="right", va="top", fontsize=FS_TINY - 0.6, color=MUTED)
+    ax.text(x0, 0.19, "amplitudo skematis", ha="left", va="top", fontsize=FS_TINY - 1.2,
+            color=MUTED)
+    save(fig, "defect_ringing", dpi=320)
+
+
+# Original schematic redrawn from the degradation-and-RUL timeline concept in SKF Group (2017) condition-monitoring training material; no artwork copied.
+def rul_timeline():
+    W, H = 6.0, 3.9
+    fig, ax = new_fig(W, H)
+    x0, y0, x1, y1 = 0.70, 0.95, 4.35, 3.70
+    y_fail, y_diag, y_anom = 1.20, 2.20, 2.85
+    band_lo, band_hi = 3.10, 3.50
+    _axis_pair(ax, x0, y0, x1 + 0.10, y1, ylabel="kondisi")
+    ax.text(1.50, y0 - 0.10, "waktu operasi", ha="center", va="top",
+            fontsize=FS_TINY - 0.6, color=MUTED)
+
+    ax.add_patch(Rectangle((x0, band_lo), x1 - x0, band_hi - band_lo, fc=KIND["mem"]["fc"],
+                           ec="none", alpha=0.8, zorder=0))
+    ax.text(x1 - 0.10, (band_lo + band_hi) / 2, "pita operasi normal", ha="right",
+            va="center", fontsize=FS_TINY - 0.6, color=MUTED)
+    for y, label in ((y_anom, "ambang deteksi anomali"), (y_diag, "ambang diagnosis"),
+                     (y_fail, "ambang kegagalan\nfungsional\n([[end-of-life]])")):
+        ax.plot([x0, x1], [y, y], color=MUTED, lw=0.9, ls=(0, (4, 3)), zorder=1)
+        ax.text(x1 + 0.12, y, label, ha="left", va="center", fontsize=FS_TINY - 0.6,
+                color=INK, linespacing=1.15)
+
+    # observed degradation up to now
+    x_leave, x_now = 1.60, 3.10
+    rng = np.random.default_rng(3)
+    xa = np.linspace(x0, x_leave, 80)
+    ya = 3.30 + 0.03 * np.sin(2 * np.pi * 2.5 * xa)
+    xb = np.linspace(x_leave, x_now, 200)
+    s = (xb - x_leave) / 2.4
+    yb = 3.30 - 2.1 * s**1.3 + 0.02 * np.convolve(rng.standard_normal(xb.size + 8),
+                                                 np.ones(9) / 9, mode="valid")
+    ax.plot(np.concatenate([xa, xb]), np.concatenate([ya, yb]), color=INK, lw=1.5, zorder=5)
+    y_now = float(yb[-1])
+    ax.plot([x_now], [y_now], marker="o", ms=6.5, mfc=GOLD_FILL, mec=INK, mew=1.2, zorder=7)
+    ax.text(x_now - 0.14, y_now - 0.20, "kondisi saat ini", ha="right", va="center",
+            fontsize=FS_TINY - 0.6, color=INK, zorder=7)
+
+    # a fan of predicted trajectories down to the failure threshold
+    ends = [3.45, 3.72, 4.00, 4.28]
+    for xe, p in zip(ends, (0.8, 1.05, 1.3, 1.6)):
+        xf = np.linspace(x_now, xe, 80)
+        u = (xf - x_now) / (xe - x_now)
+        yf = y_now - (y_now - y_fail) * u**p
+        ax.plot(xf, yf, color=GOLD, lw=1.1, ls=(0, (4, 2)), zorder=6)
+        ax.plot([xe], [y_fail], marker="o", ms=3.5, color=GOLD, zorder=7)
+        ax.plot([xe, xe], [y0, y_fail], color=GOLD, lw=0.5, ls=(0, (1, 2)), zorder=1)
+    ax.text(3.20, 1.45, "lintasan\nprediksi", ha="right", va="center",
+            fontsize=FS_TINY - 1.0, color=GOLD, linespacing=1.1, zorder=7)
+    _bracket(ax, ends[0], ends[-1], 0.80, "sebaran RUL", color=GOLD)
+    ax.text((ends[0] + ends[-1]) / 2, 0.50, "ketidakpastian mengecil mendekati akhir umur",
+            ha="center", va="center", fontsize=FS_TINY - 1.0, color=MUTED)
+    ax.text(W / 2, 0.18, "pada disertasi ini RUL dinyatakan sebagai fraksi 1 (baru) sampai 0 (rusak)",
+            ha="center", va="center", fontsize=FS_TINY - 0.6, color=INK, style="italic")
+    save(fig, "rul_timeline", dpi=320)
+
+
+# Original schematic redrawn from the data-to-decision chain concept in SKF Group (2017) condition-monitoring training material; no artwork copied.
+def data_to_decision():
+    W, H = 6.0, 2.4
+    fig, ax = new_fig(W, H)
+    bw, bh, cy = 1.22, 0.80, 1.42
+    lefts = [0.22, 1.64, 3.14, 4.56]
+    steps = [  # (title, sub, chapter tag)
+        ("[[Collect]], [[connect]],\n[[detect]]", "sensor, [[gateway]],\nambang alarm", "Bab III"),
+        ("[[Analyze]]", "ekstraksi HI 36-D,\npemodelan", "Bab III"),
+        ("[[Diagnose]]", "jenis kerusakan", "Bab IV: WDCNN, FSM"),
+        ("[[Prognose]]", "sisa umur pakai", "Bab V: [[backbone]] RUL,\nSAE-BPFx"),
+    ]
+    for i, (title, sub, tag) in enumerate(steps):
+        x = lefts[i]
+        cx = x + bw / 2
+        ax.add_patch(FancyBboxPatch((x, cy - bh / 2), bw, bh,
+                                    boxstyle="round,pad=0.015,rounding_size=0.07",
+                                    fc=KIND["seq"]["fc"], ec=KIND["seq"]["ec"], lw=1.2, zorder=3))
+        ax.text(cx, cy + 0.15, title, ha="center", va="center", fontsize=FS_TINY,
+                color=INK, fontweight="bold", linespacing=1.15, zorder=4)
+        ax.text(cx, cy - 0.20, sub, ha="center", va="center", fontsize=FS_TINY - 1.0,
+                color=MUTED, linespacing=1.15, zorder=4)
+        _numbered(ax, x + 0.02, cy + bh / 2 - 0.02, i + 1, r=0.10, kind="active")
+        box(ax, cx, 0.62, bw + 0.08, 0.34, tag, kind="active", fs=FS_TINY - 1.4)
+        if i < 3:
+            arrow(ax, (x + bw, cy), (lefts[i + 1], cy), shrink=1, lw=1.2)
+    container(ax, 0.12, 0.34, 2.84, 1.92)
+    container(ax, 3.04, 0.34, 2.84, 1.92)
+    ax.text(0.22, 2.16, "[[sensing]] dan [[hardware]]: data", ha="left", va="center",
+            fontsize=FS_TINY, color=MUTED)
+    ax.text(3.14, 2.16, "[[analytics]] dan [[software]]: informasi, keputusan", ha="left",
+            va="center", fontsize=FS_TINY, color=MUTED)
+    save(fig, "data_to_decision", dpi=320)
+
+
+# Original schematic redrawn from the composite vibration signature concept in SKF Group (2017) condition-monitoring training material; no artwork copied.
+def vibration_signature():
+    W, H = 6.0, 3.4
+    fig, ax = new_fig(W, H)
+    rng = np.random.default_rng(9)
+    t = np.linspace(0, 1, 1500)
+
+    def impulses(tt, period=0.21, tau=0.03, f=60):
+        s = np.zeros_like(tt)
+        for h in np.arange(0.06, 1.0, period):
+            m = tt >= h
+            s[m] += np.exp(-(tt[m] - h) / tau) * np.sin(2 * np.pi * f * (tt[m] - h))
+        return s
+
+    parts = [  # (label, signal, amplitude)
+        ("rotor: 1× rpm ([[unbalance]])", np.sin(2 * np.pi * 2.5 * t), 1.0),
+        ("[[gear mesh]]", np.sin(2 * np.pi * 14 * t), 0.45),
+        ("[[bearing]]: BPFx", impulses(t), 0.7),
+        ("[[coupling]] dan struktur", rng.standard_normal(t.size) * 0.3, 0.35),
+    ]
+    xw, ww, amp = 0.25, 1.45, 0.15
+    ys = [2.95, 2.35, 1.75, 1.15]
+    total = np.zeros_like(t)
+    for (label, sig, a), y in zip(parts, ys):
+        sig = a * sig / np.max(np.abs(sig))
+        total += sig
+        ax.text(xw, y + amp + 0.11, label, ha="left", va="center", fontsize=FS_TINY - 0.8,
+                color=INK)
+        ax.plot([xw, xw + ww], [y, y], color=MUTED, lw=0.5, zorder=4)
+        ax.plot(xw + t * ww, y + sig * amp, color=INK, lw=0.7, zorder=5)
+        ax.plot([xw + ww + 0.04, 1.86], [y, y], color=MUTED, lw=0.8, zorder=2)
+    y_mid = (ys[0] + ys[-1]) / 2
+    ax.plot([1.86, 1.86], [ys[-1], ys[0]], color=MUTED, lw=0.8, zorder=2)
+    gate_glyph(ax, 2.04, y_mid, "+", kind="mem", r=0.14, fs=10)
+    arrow(ax, (2.18, y_mid), (2.40, y_mid), lw=1.0, shrink=1)
+
+    xs, ws = 2.42, 1.30
+    total = total / np.max(np.abs(total))
+    ax.text(xs + ws / 2, y_mid + 0.74, "sinyal yang diukur sensor", ha="center",
+            va="center", fontsize=FS_TINY - 0.6, color=INK, fontweight="bold")
+    ax.plot([xs, xs + ws], [y_mid, y_mid], color=MUTED, lw=0.5, zorder=4)
+    ax.plot(xs + t * ws, y_mid + total * 0.45, color=INK, lw=0.7, zorder=5)
+    arrow(ax, (xs + ws + 0.06, y_mid), (xs + ws + 0.40, y_mid), lw=1.0, shrink=1)
+    ax.text(xs + ws + 0.23, y_mid + 0.14, "FFT", ha="center", va="bottom",
+            fontsize=FS_TINY - 0.6, color=INK, fontweight="bold")
+
+    xf, wf, hf, yf = 4.20, 1.60, 0.82, y_mid - 0.50
+    peaks = [(0.10, 1.0, "1×"), (0.42, 0.55, "[[gear mesh]]"), (0.64, 0.42, "BPFO"),
+             (0.84, 0.30, "BPFI")]
+    spectrum(ax, xf, yf, wf, hf, [(p, a) for p, a, _ in peaks], seed=4)
+    for p, a, label in peaks:
+        ax.text(xf + p * wf, yf + a * hf + 0.05, label, ha="center", va="bottom",
+                fontsize=FS_TINY - 1.4, color=INK, zorder=6)
+    ax.text(xf + wf / 2, y_mid + 0.74, "spektrum (domain frekuensi)", ha="center",
+            va="center", fontsize=FS_TINY - 0.6, color=INK, fontweight="bold")
+    ax.text(xf + wf, yf - 0.06, "frekuensi", ha="right", va="top", fontsize=FS_TINY - 1.2,
+            color=MUTED)
+
+    ax.text(W / 2, 0.44, "[[static data]]: satu nilai RMS per pengukuran", ha="center",
+            va="center", fontsize=FS_TINY - 0.6, color=INK)
+    ax.text(W / 2, 0.26, "[[dynamic data]]: [[waveform]] utuh yang dapat diurai per komponen",
+            ha="center", va="center", fontsize=FS_TINY - 0.6, color=INK)
+    ax.text(xw, 0.72, "amplitudo skematis", ha="left", va="center", fontsize=FS_TINY - 1.2,
+            color=MUTED)
+    save(fig, "vibration_signature", dpi=320)
+
+
+# Original schematic redrawn from the enveloping (gE) processing concept in SKF Group (2017) condition-monitoring training material; no artwork copied.
+def enveloping_steps():
+    W, H = 6.0, 4.2
+    fig, ax = new_fig(W, H)
+    pw, ph = 2.75, 1.80
+    panels = [(0.20, 2.30), (3.05, 2.30), (0.20, 0.20), (3.05, 0.20)]
+    titles = ["spektrum kecepatan", "[[band-pass]] pada pita resonansi",
+              "[[rectification]] dan [[envelope]]\npada domain waktu", "[[envelope spectrum]] (gE)"]
+    for (px, py), title, n in zip(panels, titles, range(1, 5)):
+        container(ax, px, py, pw, ph, ec=KIND["seq"]["ec"])
+        ax.add_patch(FancyBboxPatch((px, py), pw, ph, boxstyle="round,pad=0.02,rounding_size=0.09",
+                                    fc=KIND["seq"]["fc"], ec="none", alpha=0.20, zorder=0))
+        _numbered(ax, px + 0.20, py + ph - 0.22, n, kind="active")
+        ax.text(px + 0.38, py + ph - 0.22, title, ha="left", va="center", fontsize=FS_NOTE - 0.4,
+                color=INK, fontweight="bold", linespacing=1.1)
+    arrow(ax, (panels[0][0] + pw + 0.02, 3.20), (panels[1][0] - 0.02, 3.20), lw=1.1, shrink=0)
+    ax.plot([4.40, 4.40, 1.60], [2.30, 2.15, 2.15], color=INK, lw=1.1, zorder=2)
+    arrow(ax, (1.60, 2.15), (1.60, 2.00), lw=1.1, shrink=0)
+    arrow(ax, (panels[2][0] + pw + 0.02, 1.10), (panels[3][0] - 0.02, 1.10), lw=1.1, shrink=0)
+
+    rng = np.random.default_rng(21)
+    f = np.linspace(0, 1, 700)
+    low = [(0.08, 1.0), (0.16, 0.5), (0.24, 0.22)]
+    res = [(0.74, 0.16), (0.70, 0.08), (0.78, 0.08), (0.66, 0.05), (0.82, 0.05)]
+    floor = 0.04 + 0.025 * rng.random(f.size)
+
+    def peaks(items, width=0.007):
+        s = np.zeros_like(f)
+        for p, a in items:
+            s += a * np.exp(-((f - p) ** 2) / (2 * width**2))
+        return s
+
+    def plot_area(idx):
+        px, py = panels[idx]
+        return px + 0.22, py + 0.32, pw - 0.40, ph - 0.85
+
+    # 1 · velocity spectrum: shaft orders dominate, the resonance band is tiny
+    x, y, w, h = plot_area(0)
+    s = floor + peaks(low) + peaks(res)
+    ax.plot(x + f * w, y + s * h, color=INK, lw=0.8, zorder=5)
+    ax.plot([x, x + w], [y, y], color=MUTED, lw=0.7, zorder=4)
+    for (p, a), label in zip(low, ("1×", "2×", "3×")):
+        ax.text(x + p * w, y + a * h + 0.04, label, ha="center", va="bottom",
+                fontsize=FS_TINY - 1.4, color=INK)
+    ax.text(x + 0.74 * w, y + 0.16 * h + 0.06, "pita resonansi\n(kecil)", ha="center",
+            va="bottom", fontsize=FS_TINY - 1.6, color=MUTED, linespacing=1.1)
+    ax.text(x + w, y - 0.05, "frekuensi", ha="right", va="top", fontsize=FS_TINY - 1.4, color=MUTED)
+
+    # 2 · band-pass: keep the resonance band, grey out the low orders
+    x, y, w, h = plot_area(1)
+    ax.add_patch(Rectangle((x + 0.60 * w, y), 0.30 * w, h, fc=GOLD_FILL, ec="none",
+                           alpha=0.55, zorder=1))
+    ax.plot(x + f * w, y + (floor + peaks(low)) * h, color=MUTED, lw=0.7, alpha=0.5, zorder=4)
+    band = (f > 0.60) & (f < 0.90)
+    gain = np.where(band, 1.0, 0.0)
+    s2 = (floor * 0.5 + peaks(res) * 4.5) * gain
+    ax.plot(x + f[band] * w, y + s2[band] * h, color=INK, lw=0.8, zorder=5)
+    ax.plot([x, x + w], [y, y], color=MUTED, lw=0.7, zorder=4)
+    ax.text(x + 0.75 * w, y + h + 0.03, "pita resonansi", ha="center", va="bottom",
+            fontsize=FS_TINY - 1.4, color=GOLD)
+    ax.text(x + 0.42 * w, y + 0.55 * h, "1×, 2×, 3×\ndibuang", ha="center", va="center",
+            fontsize=FS_TINY - 1.6, color=MUTED, linespacing=1.1)
+    ax.text(x + w, y - 0.05, "frekuensi", ha="right", va="top", fontsize=FS_TINY - 1.4, color=MUTED)
+
+    # 3 · time domain: modulated bursts, rectified, and the envelope over them
+    x, y, w, h = plot_area(2)
+    tt = np.linspace(0, 1, 2400)
+    sig = np.zeros_like(tt)
+    env = np.zeros_like(tt)
+    for hit in np.arange(0.05, 1.0, 0.23):
+        m = tt >= hit
+        e = np.exp(-(tt[m] - hit) / 0.05)
+        sig[m] += e * np.sin(2 * np.pi * 90 * (tt[m] - hit))
+        env[m] = np.maximum(env[m], e)
+    sig += 0.04 * rng.standard_normal(tt.size)
+    rect = np.abs(sig) / np.max(np.abs(sig))
+    env = env / env.max()
+    base = y + 0.05
+    ax.plot([x, x + w], [base, base], color=MUTED, lw=0.7, zorder=4)
+    ax.plot(x + tt * w, base + rect * h * 0.9, color=INK, lw=0.5, alpha=0.8, zorder=5)
+    ax.plot(x + tt * w, base + env * h * 0.9, color=GOLD, lw=1.5, zorder=6)
+    ax.text(x + 0.42 * w, base + 0.95 * h, "[[envelope]]", ha="left", va="center",
+            fontsize=FS_TINY - 1.4, color=GOLD)
+    ax.text(x, y - 0.05, "sinyal terfilter, disearahkan", ha="left", va="top",
+            fontsize=FS_TINY - 1.4, color=MUTED)
+    ax.text(x + w, y - 0.05, "waktu", ha="right", va="top", fontsize=FS_TINY - 1.4, color=MUTED)
+
+    # 4 · envelope spectrum: clean harmonics of the defect frequency
+    x, y, w, h = plot_area(3)
+    s4 = 0.03 + 0.02 * rng.random(f.size) + peaks([(0.22, 1.0), (0.44, 0.62), (0.66, 0.38)])
+    ax.plot(x + f * w, y + s4 * h, color=INK, lw=0.8, zorder=5)
+    ax.plot([x, x + w], [y, y], color=MUTED, lw=0.7, zorder=4)
+    for p, a, label in ((0.22, 1.0, "BPFO"), (0.44, 0.62, "2×BPFO"), (0.66, 0.38, "3×BPFO")):
+        ax.text(x + p * w, y + a * h + 0.04, label, ha="center", va="bottom",
+                fontsize=FS_TINY - 1.4, color=INK)
+    ax.text(x + w, y - 0.05, "frekuensi", ha="right", va="top", fontsize=FS_TINY - 1.4, color=MUTED)
+    ax.text(x - 0.02, y + h, "gE", ha="right", va="top", fontsize=FS_TINY - 1.4, color=MUTED)
+    save(fig, "enveloping_steps", dpi=320)
+
+
+
+# --------------------------------------------------------------------------
 # Building-block charts · one primitive each, shown before the backbones
 # --------------------------------------------------------------------------
 # The "why these four" slide compares Mamba, xLSTM, N-BEATS, and TCN, so the
@@ -1249,6 +1680,26 @@ CHARTS = {
     "block_mlstm": block_mlstm,
     "block_nbeats": block_nbeats,
     "block_tcn": block_tcn,
+    "pf_curve": pf_curve,
+    "adm_hierarchy": adm_hierarchy,
+    "defect_ringing": defect_ringing,
+    "rul_timeline": rul_timeline,
+    "data_to_decision": data_to_decision,
+    "vibration_signature": vibration_signature,
+    "enveloping_steps": enveloping_steps,
+}
+
+# Dissertation figures rendered by the same tool (shared palette, italics
+# hook, and calque test) but not placed on any slide, so the "every diagram
+# is referenced by the deck" rule does not apply to them.
+MANUSCRIPT_ONLY_CHARTS = {
+    "pf_curve",
+    "adm_hierarchy",
+    "defect_ringing",
+    "rul_timeline",
+    "data_to_decision",
+    "vibration_signature",
+    "enveloping_steps",
 }
 
 

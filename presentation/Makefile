@@ -2,7 +2,7 @@ SPEC ?= content/sidang-terbuka.yaml
 OUT  ?= out/Sidang_Disertasi_Toto_Suharto.pptx
 PY   ?= python3
 
-.PHONY: help build lint preview png test inspect clean install v14-assets diagrams derived-assets draft-assets web-assets
+.PHONY: help build lint preview png test inspect clean install v14-assets diagrams derived-assets draft-assets web-assets montage
 
 help:
 	@echo "make build              render $(SPEC) -> $(OUT)"
@@ -13,6 +13,7 @@ help:
 	@echo "make inspect FILE=x.ppt dump an existing deck's geometry and type"
 	@echo "make v14-assets         extract deck figures from the V14 manuscript DOCX"
 	@echo "make diagrams           render the paper-style algorithm diagrams (matplotlib)"
+	@echo "make montage            compose the Wikimedia machine photos into one figure"
 	@echo "make derived-assets     crop IMS/CWRU-free versions of the result figures"
 	@echo "make draft-assets       extract the SKF domain artwork from the annotated draft deck"
 	@echo "make web-assets         fetch the Wikimedia Commons photographs (with CREDITS.md)"
@@ -42,6 +43,9 @@ test:
 
 v14-assets:
 	$(PY) tools/extract_v14_media.py
+
+montage:
+	$(PY) tools/compose_web_photos.py
 
 diagrams:
 	$(PY) tools/render_diagrams.py
