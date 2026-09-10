@@ -1,0 +1,507 @@
+# V14 -> V15: port the defence deck's "domain first" flow into the manuscript.
+#
+# Each edit anchors on a unique paragraph of the V14 DOCX and inserts styled
+# blocks (Paragraf, Heading3, Gambar + JudulGambar, judulTabel + table) or
+# replaces a third-party figure with an original redraw. Inline markup:
+# *italic* for foreign terms (ITB rule), **bold**, [ref:label] for a REF
+# field. Paths are relative to this file. Prose follows the adjusted-
+# translation register (Indonesian sentences, English domain nouns kept,
+# decimal comma, dkk., no em dash, no via/vs). Numbers are either already
+# in V14 (subbab cited) or credited inline (SKF Group, 2017; Siemens, 2022).
+#
+# Run:  make insert SPEC=inserts/v15/spec.yaml   (from dissertation-docx/)
+
+source: "../../../presentation/V14 *.docx"
+output: "../../../presentation/V15 PERAWATAN PREDIKTIF UNTUK SISTEM PRODUKSI DENGAN PENDEKATAN ANALISIS BIG DATA DAN KECERDASAN BUATAN MENGGUNAKAN DATA KONDISI MESIN DAN INFORMASI KUALITAS YANG REAL TIME.docx"
+
+edits:
+  # ------------------------------------------------------------------
+  # Bab I.1 Latar Belakang: mesin rotasi, biaya kegagalan, kurva P-F
+  # (inserted before the paragraph on bearing criticality, 40-50 %)
+  # ------------------------------------------------------------------
+  - anchor: {text_prefix: "Di antara banyaknya komponen mesin rotasi, rolling element bearing", position: before}
+    blocks:
+      - para: >-
+          Mesin rotasi terdapat pada hampir setiap sektor industri manufaktur dan proses.
+          Motor listrik menjadi penggerak utama di pabrik dengan rotor yang berputar di atas
+          dua bearing pada sisi *drive end* dan *non-drive end*; *fan* dan *blower* memikul
+          gaya radial dan aksial secara terus-menerus pada poros yang panjang; pompa dan
+          kompresor beroperasi tanpa henti di pembangkit listrik, kilang, dan pabrik semen;
+          *spindle* mesin *grinding* dan *milling* berputar ribuan rpm dengan presisi produk
+          yang bergantung pada kondisi bearing-nya. Empat contoh mesin tersebut diperlihatkan
+          pada Gambar [ref:fig_bab1_mesin_rotasi]. Keempatnya berputar di atas rolling element
+          bearing, sehingga memantau kondisi bearing pada praktiknya berarti memantau
+          kesehatan mesin secara keseluruhan (SKF Group, 2017).
+      - figure:
+          image: mesin_rotasi_montase.png
+          width_fraction: 0.92
+          label: fig_bab1_mesin_rotasi
+          caption: >-
+            Contoh mesin rotasi industri yang berputar di atas rolling element bearing:
+            (a) motor listrik, (b) *fan* sentrifugal, (c) pompa, dan (d) *spindle* mesin
+            *grinding*. Sumber foto: Wikimedia Commons, S.J. de Waard (a dan c, lisensi
+            CC BY 2.5), SAF (b, CC BY-SA 4.0), dan Amos1947 (d, CC BY-SA 4.0).
+      - para: >-
+          Kegagalan satu komponen rotasi dapat menghentikan seluruh *production line* untuk
+          waktu yang lama. Survei *The True Cost of Downtime 2022* menaksir bahwa *downtime*
+          tak terencana merugikan perusahaan industri Fortune Global 500 hampir 1,5 triliun
+          dolar AS per tahun, setara 11% pendapatan tahunan; satu pabrik besar rata-rata
+          kehilangan 25 jam produksi per bulan, dan pada sektor otomotif satu jam berhenti
+          berbiaya lebih dari 2 juta dolar AS (Siemens, 2022). Skala kerugian tersebut juga
+          terlihat pada kasus tunggal. Pada sebuah *ball mill* pabrik semen, retakan pada
+          *bull gear* tidak terdeteksi hingga roda gigi tersebut gagal berfungsi; karena suku
+          cadang berukuran besar tidak tersedia di gudang dan waktu pengiriman penggantinya
+          mencapai 26 minggu, produksi yang hilang selama mesin berhenti ditaksir 26 juta
+          dolar AS (SKF Group, 2017).
+      - para: >-
+          Kegagalan fungsional seperti itu tidak datang secara tiba-tiba. Kurva P-F pada
+          Gambar [ref:fig_bab1_kurva_pf] memperlihatkan bahwa kerusakan mulai terdeteksi
+          oleh pengukuran pada titik P (*potential failure*) jauh sebelum mesin kehilangan
+          fungsinya pada titik F (*functional failure*); lama perbaikan (*mean time to
+          repair*, MTTR) dan jarak antarkegagalan (*mean time between failures*, MTBF)
+          memburuk bila intervensi baru dilakukan setelah titik F (SKF Group, 2017). Selang
+          antara P dan F adalah ruang kerja perawatan prediktif: deteksi kerusakan menjawab
+          pertanyaan "ada apa" dan menjadi jalur diagnostik disertasi ini, sedangkan prediksi
+          sisa umur pakai menjawab "berapa lama lagi" dan menjadi jalur prognostiknya.
+          Program keandalan yang memanfaatkan selang tersebut menekan biaya terbesar lebih
+          dahulu, yaitu produksi yang hilang dan masalah kualitas, lalu berturut-turut
+          memperbaiki keselamatan kerja, output dan efisiensi pabrik, kualitas produk,
+          konsumsi energi, risiko lingkungan, persediaan suku cadang, dan laba bersih
+          (SKF Group, 2017).
+      - figure:
+          image: pf_curve.png
+          width_fraction: 0.90
+          label: fig_bab1_kurva_pf
+          caption: >-
+            Kurva P-F: kerusakan terdeteksi pada titik P (*potential failure*) jauh sebelum
+            kegagalan fungsional pada titik F; selang P-F adalah ruang kerja perawatan
+            prediktif, dan MTTR serta MTBF memburuk bila intervensi dilakukan setelah F.
+            Digambar ulang berdasarkan materi SKF Group (2017).
+
+  # ------------------------------------------------------------------
+  # Bab II.1.3 (new anak subbab): Asset Diagnostic Methodology
+  # ------------------------------------------------------------------
+  - anchor: {heading: "Ekosistem IoT dan Konteks Making Indonesia 4.0", position: after_section}
+    blocks:
+      - heading3: "Asset Diagnostic Methodology: dari Aset ke Pengukuran"
+      - para: >-
+          Untuk mengubah data kondisi menjadi keputusan perawatan, praktik industri memakai
+          kerangka *Asset Diagnostic Methodology* (ADM) yang menguraikan sebuah aset menjadi
+          tujuh lapis pengetahuan (SKF Group, 2017). Sebuah aset (*asset*) diuraikan menjadi
+          komponen-komponennya; setiap komponen memiliki sejumlah *failure mode*; satu
+          *failure mode* ditandai oleh satu *fault* atau kombinasi beberapa *fault*; sebuah
+          *fault* terdeteksi bila satu gejala (*symptom*) atau lebih hadir; sebuah gejala
+          terdeteksi bila satu atau lebih *key feature*, misalnya amplitudo pada frekuensi
+          tertentu, melewati ambang alarm; dan pengukuran (*measurement*) harus diatur agar
+          seluruh *key feature* yang mungkin ikut tertangkap. Hierarki tersebut diperlihatkan
+          pada Gambar [ref:fig_bab2_adm]. Pendekatan reaktif bekerja dari atas ke bawah,
+          yaitu kegagalan terjadi lebih dahulu lalu komponennya diganti, sedangkan pendekatan
+          proaktif bekerja dari bawah ke atas, yaitu pengukuran yang tepat menangkap *key
+          feature*, gejala, dan *fault* jauh sebelum kegagalan.
+      - figure:
+          image: adm_hierarchy.png
+          width_fraction: 0.85
+          label: fig_bab2_adm
+          caption: >-
+            Hierarki *Asset Diagnostic Methodology* (ADM): tujuh lapis dari aset hingga
+            pengukuran; pendekatan reaktif bekerja dari atas ke bawah, pendekatan proaktif
+            dari bawah ke atas. Digambar ulang berdasarkan materi SKF Group (2017).
+      - para: >-
+          Penerapan ADM pada motor AC, aset yang paling umum di pabrik, diringkas pada
+          Tabel [ref:tab_bab2_adm_motor]. Rotor dan stator memunculkan ketidakseimbangan,
+          rotor retak, atau stator longgar yang tampak sebagai harmonik frekuensi jala-jala
+          dan *rotor bar pass frequency*; bearing memunculkan gesekan berlebih dengan dua
+          *fault* utama, yaitu kerusakan bearing dan kekurangan pelumasan, yang keduanya
+          muncul pada frekuensi karakteristik bearing (SKF Group, 2017). Baris bearing pada
+          tabel tersebut adalah komponen yang diteliti pada disertasi ini: jenis kerusakannya
+          dideteksi pada jalur diagnostik dan sisa umurnya diprediksi pada jalur prognostik
+          dari sinyal getaran yang sama.
+      - table:
+          label: tab_bab2_adm_motor
+          caption: >-
+            Uraian *Asset Diagnostic Methodology* untuk motor AC: komponen, *failure mode*,
+            *fault*, dan *key feature* yang mengungkapnya; baris bearing adalah komponen yang
+            diteliti pada disertasi ini. Diadaptasi dari materi SKF Group (2017).
+          columns: ["Komponen", "*Failure mode*", "*Fault*", "*Key feature*"]
+          widths: [2, 3, 3.5, 4.5]
+          header_repeat: true
+          rows:
+            - ["Rotor", "Ketidakseimbangan; rotor retak", "Massa tidak seimbang; batang rotor patah", "Amplitudo 1× putaran poros; *rotor bar pass frequency*"]
+            - ["Stator", "Stator longgar", "Stator bergeser atau longgar", "Harmonik frekuensi jala-jala"]
+            - ["Bearing", "Gesekan berlebih", "Kerusakan bearing; kekurangan pelumasan", "Amplitudo pada frekuensi karakteristik bearing (BPFO, BPFI, BSF, FTF) dan harmoniknya"]
+
+  # ------------------------------------------------------------------
+  # Bab II.2.1: four damage stages on the spectrum (original chart)
+  # ------------------------------------------------------------------
+  - anchor: {text_prefix: "Untuk bearing CWRU (n = 9 bola", position: after}
+    blocks:
+      - para: >-
+          Amplitudo pada frekuensi-frekuensi tersebut tidak muncul sekaligus, melainkan
+          mengikuti tahapan kerusakan yang dapat dibaca pada spektrum
+          (Gambar [ref:fig_bab2_tahap_kerusakan]). Pada tahap pertama, kerusakan hanya tampak
+          pada zona frekuensi tinggi sebagai kenaikan energi *spike* (gE atau HFD) tanpa
+          perubahan pada spektrum kecepatan biasa. Tahap kedua memunculkan frekuensi natural
+          komponen bearing beserta *sideband*-nya karena struktur berdering setiap kali cacat
+          dilewati, dan tahap ketiga memunculkan BPFO, BPFI, dan harmoniknya secara jelas.
+          Pada tahap keempat, menjelang kegagalan, spektrum berubah menjadi getaran acak
+          berfrekuensi tinggi, harmonik putaran poros membesar, dan energi gE sempat turun
+          sebelum melonjak tajam. Tahapan inilah yang menjadikan frekuensi karakteristik
+          sebagai penanda yang harus dikenali model, baik pada raw signal jalur diagnostik
+          maupun pada representasi laten jalur prognostik.
+      - figure:
+          image: bearing_failure_stages.png
+          width_fraction: 0.95
+          label: fig_bab2_tahap_kerusakan
+          caption: >-
+            Empat tahap kerusakan bearing pada spektrum: tahap 1 hanya tampak sebagai energi
+            *spike* (gE/HFD) pada zona frekuensi tinggi, tahap 2 memunculkan frekuensi natural
+            komponen dan *sideband*, tahap 3 memunculkan BPFO, BPFI, dan harmoniknya, dan
+            tahap 4 berujung getaran acak berfrekuensi tinggi menjelang kegagalan. Amplitudo
+            bersifat skematis; tahapan mengikuti praktik analisis getaran industri
+            (SKF Group, 2017).
+
+  # ------------------------------------------------------------------
+  # Bab II.2.2: why the bearing impulse is buried (original chart)
+  # ------------------------------------------------------------------
+  - anchor: {text_prefix: "Kurtogram spektral (spectral kurtosis)", position: after}
+    blocks:
+      - para: >-
+          Alasan envelope analysis diperlukan dapat dilihat dari sifat impuls bearing itu
+          sendiri. Impuls yang timbul saat rolling element melewati cacat berenergi jauh
+          lebih rendah daripada getaran akibat ketidakseimbangan, *gear mesh*, atau struktur
+          mesin, sehingga pada spektrum biasa impuls tersebut tenggelam di antara komponen
+          berfrekuensi rendah. Setiap benturan membangkitkan dering (*ringing*) struktur pada
+          frekuensi naturalnya yang kemudian meluruh sampai benturan berikutnya, dan yang
+          terbaca pada domain waktu adalah gelombang termodulasi dengan laju benturan sama
+          dengan frekuensi karakteristik bearing (McFadden dan Smith, 1984).
+          Gambar [ref:fig_bab2_defect_ringing] memperlihatkan hubungan antara deret impuls,
+          respons dering, dan gelombang termodulasi yang terukur sensor. Demodulasi
+          amplitudo pada pita resonansi mengangkat laju benturan tersebut dari pembawanya,
+          dan itulah yang dilakukan prosedur envelope di atas.
+      - figure:
+          image: defect_ringing.png
+          width_fraction: 0.90
+          label: fig_bab2_defect_ringing
+          caption: >-
+            Dari cacat ke sinyal termodulasi: (atas) deret impuls setiap rolling element
+            melewati cacat dengan periode 1/BPFx, (tengah) respons dering struktur yang
+            meluruh pada frekuensi naturalnya, dan (bawah) gelombang termodulasi yang terukur
+            sensor. Skema mengikuti model McFadden dan Smith (1984).
+
+  # ------------------------------------------------------------------
+  # Bab II.4.1: the limits of explainability, two layers
+  # ------------------------------------------------------------------
+  - anchor: {text_prefix: "Kategori ketiga adalah metode berbasis perturbasi", position: after}
+    blocks:
+      - para: >-
+          Ketiga kategori tersebut berbagi satu batas yang menentukan cara hasilnya dibaca.
+          Metode XAI menghitung *attribution*, yaitu bagian masukan mana yang paling
+          memengaruhi keputusan model, dan tidak membuktikan bahwa bagian tersebut
+          menyebabkan kerusakan; klaim fisis harus diuji terpisah dengan inferensi statistik,
+          sebagaimana dirumuskan pada RM-3. Batas ini justru menentukan kegunaannya di
+          lapangan. Kelas rusak selalu jauh lebih sedikit daripada kelas sehat, alarm palsu
+          menghentikan produksi tanpa sebab, dan alarm yang terlewat berujung kegagalan
+          fungsional, sehingga penjelasan yang menandai segmen sinyal atau fitur penentu
+          memungkinkan insinyur memverifikasi apakah model melihat impuls cacat atau artefak
+          sebelum bertindak; bila yang terlihat adalah artefak, yang dikoreksi adalah data,
+          sensor, atau modelnya, bukan mesinnya.
+      - para: >-
+          Atas dasar itu disertasi ini memakai dua lapis interpretabilitas yang saling
+          melengkapi. *Input attribution* pada raw signal (Bab IV) menjawab bagian sinyal
+          mana yang dipakai model, dan konsep laten melalui Sparse Autoencoder (Bab V)
+          menjawab apakah model menyimpan frekuensi karakteristik bearing di dalam
+          representasinya. Keduanya tidak diterima begitu saja, melainkan diuji dengan
+          stabilitas, diskriminabilitas, dan kontrol negatif sebelum dipadukan pada kerangka
+          Bab VI.
+
+  # ------------------------------------------------------------------
+  # Bab II.5.1 (end): condition curve, three thresholds, RUL spread
+  # ------------------------------------------------------------------
+  - anchor: {heading: "Pendekatan Berbasis Fisika dan Data-Driven", position: before}
+    blocks:
+      - para: >-
+          Prognostik menaksir sisa umur pakai dengan menempatkan kondisi mesin saat ini pada
+          kurva degradasi terhadap waktu operasi, seperti diperlihatkan pada
+          Gambar [ref:fig_bab2_rul_timeline]. Kondisi bermula di dalam pita operasi normal,
+          lalu melewati tiga ambang berturut-turut: ambang deteksi anomali, saat kondisi
+          keluar dari pita normal dan diagnostik prediktif dimulai; ambang diagnosis, saat
+          jenis kerusakan dapat dikenali dari *signature*-nya dan prognosis dimulai; dan
+          ambang kegagalan fungsional yang menandai *end-of-life*, sehingga mesin harus
+          dihentikan secara terencana sebelum ambang terakhir itu tercapai (SKF Group, 2017).
+          Prediksi sisa umur selalu berupa rentang, bukan satu angka, dan sebaran tersebut
+          mengecil ketika kondisi mendekati akhir umur. Pada disertasi ini kurva tersebut
+          dinormalisasi menjadi fraksi RUL dari 1 (bearing baru) sampai 0 (kegagalan),
+          sehingga model dilatih menaksir posisi pada kurva yang sama untuk semua bearing
+          (Subbab III.2.2).
+      - figure:
+          image: rul_timeline.png
+          width_fraction: 0.90
+          label: fig_bab2_rul_timeline
+          caption: >-
+            Kurva kondisi terhadap waktu operasi pada prognostik: pita operasi normal, tiga
+            ambang (deteksi anomali, diagnosis, kegagalan fungsional), dan sebaran prediksi
+            RUL dari kondisi saat ini yang mengecil mendekati akhir umur. Digambar ulang
+            berdasarkan materi SKF Group (2017).
+
+  # ------------------------------------------------------------------
+  # Bab II.5.2: replace the adapted Mamba / mLSTM figures with redraws
+  # ------------------------------------------------------------------
+  - replace_figure:
+      label: fig_bab2_mamba_ssm
+      image: block_mamba.png
+      width_fraction: 1.0
+      caption: >-
+        Blok *Selective State Space Model* Mamba: parameter B, C, dan Δ bergantung pada
+        masukan sehingga model dapat memilih informasi yang dipertahankan, ditolak, atau
+        dilewatkan secara adaptif dengan kompleksitas linear terhadap panjang sekuens;
+        *gate* multiplikatif memilih informasi yang diteruskan. Digambar ulang berdasarkan
+        Gu dan Dao (2023).
+  - replace_figure:
+      label: fig_bab2_mlstm
+      image: block_mlstm.png
+      width_fraction: 1.0
+      caption: >-
+        Sel *matrix* LSTM (mLSTM) dalam arsitektur xLSTM: *exponential gating* pada
+        *input gate* dan *forget gate* menggantikan saturasi sigmoid, dan *matrix memory*
+        menyimpan asosiasi *key-value* dengan kapasitas jauh lebih besar dibanding memori
+        vektor LSTM klasik. Digambar ulang berdasarkan Beck dkk. (2024).
+
+  # ------------------------------------------------------------------
+  # Bab II.6.1: requirements table for the choice of SAE
+  # ------------------------------------------------------------------
+  - anchor: {text_prefix: "Varian Top-k SAE (Makhzani dan Frey, 2014)", position: after}
+    blocks:
+      - para: >-
+          Pemilihan SAE di antara metode interpretabilitas yang tersedia dapat diringkas
+          sebagai empat syarat yang dituntut oleh pertanyaan "apakah model RUL ini
+          benar-benar mengetahui BPFO". Metode yang dipilih harus bekerja pada representasi
+          laten model, bukan pada masukannya; harus menghasilkan fitur yang masing-masing
+          mewakili satu konsep; harus memberi kendali atas tingkat *sparsity* dengan
+          pelatihan yang stabil; dan sebaiknya telah terbukti pada skala besar.
+          Tabel [ref:tab_bab2_syarat_sae] menilai tiga pilihan terhadap keempat syarat
+          tersebut: membaca neuron secara langsung, metode atribusi masukan (SHAP,
+          Integrated Gradients, *attention rollout*), dan Top-k SAE. Hanya Top-k SAE yang
+          memenuhi keempatnya, dan pilihan ini bertumpu pada studi literatur
+          interpretabilitas mekanistik, bukan pada percobaan pembanding.
+      - table:
+          label: tab_bab2_syarat_sae
+          caption: >-
+            Empat syarat metode interpretabilitas laten untuk menguji pengetahuan fisis
+            model RUL dan pemenuhannya oleh tiga pilihan metode.
+          columns: ["Syarat", "Membaca neuron langsung", "SHAP, Integrated Gradients, *attention rollout*", "Top-k SAE"]
+          widths: [3, 3.2, 3.4, 3.4]
+          header_repeat: true
+          rows:
+            - ["Bekerja pada representasi laten model", "Ya", "Tidak: beroperasi di tingkat masukan, hanya menunjuk langkah waktu yang berpengaruh", "Ya: dilatih pasca-hoc pada *hidden state* backbone yang dibekukan"]
+            - ["Satu fitur mewakili satu konsep", "Tidak: superposisi membuat satu neuron merespons banyak konsep (Elhage dkk., 2022)", "Tidak menjawab", "Ya: kendala *sparsity* menghasilkan fitur monosemantik (Bricken dkk., 2023)"]
+            - ["*Sparsity* terkendali, pelatihan stabil", "Tidak ada mekanisme", "Tidak ada mekanisme", "Ya: Top-k menahan k fitur terbesar, lebih stabil daripada regularisasi L1 (Makhzani dan Frey, 2014)"]
+            - ["Terbukti pada skala besar", "Tidak", "Ya, untuk atribusi masukan", "Ya: jutaan fitur pada model produksi (Templeton dkk., 2024)"]
+
+  # ------------------------------------------------------------------
+  # Bab III.1: data-to-decision chain mapped to chapters
+  # ------------------------------------------------------------------
+  - anchor: {text_prefix: "Pilihan untuk mengembangkan dua pendekatan terpisah", position: after}
+    blocks:
+      - para: >-
+          Dilihat dari sudut praktik industri, kedua pendekatan tersebut menempati dua mata
+          rantai terakhir dari alur data menuju keputusan yang lazim dipakai pada perawatan
+          prediktif (Gambar [ref:fig_bab3_data_to_decision]). Tahap pertama, *collect,
+          connect, detect*, mencakup sensor, *gateway*, dan ambang alarm; pada disertasi ini
+          tahap tersebut diwakili oleh rantai akuisisi PT SKF Indonesia dan tiga dataset
+          benchmark (Subbab III.2). Tahap kedua, *analyze*, mengubah sinyal mentah menjadi
+          sesuatu yang dapat dipelajari model melalui ekstraksi HI 36-D dan pemodelan
+          (Subbab III.3). Tahap ketiga, *diagnose*, menjawab jenis kerusakan apa yang terjadi
+          dan menjadi isi Bab IV dengan WDCNN dan Fault Signature Maps, sedangkan tahap
+          keempat, *prognose*, menjawab berapa lama lagi mesin dapat beroperasi dan menjadi
+          isi Bab V dengan tiga backbone RUL beserta bukti fisikanya melalui pemetaan
+          SAE-BPFx (SKF Group, 2017).
+      - figure:
+          image: data_to_decision.png
+          width_fraction: 1.0
+          label: fig_bab3_data_to_decision
+          caption: >-
+            Alur dari data menuju keputusan pada perawatan prediktif dan pemetaannya ke bab
+            disertasi: *sensing* dan *hardware* menghasilkan data, *analytics* dan *software*
+            mengubahnya menjadi informasi dan keputusan. Digambar ulang berdasarkan materi
+            SKF Group (2017).
+
+  # ------------------------------------------------------------------
+  # Bab III.2 (after Tabel III.1): data forms per source
+  # ------------------------------------------------------------------
+  - anchor: {heading: "CWRU (Diagnostik)", position: before}
+    blocks:
+      - para: >-
+          Bentuk data yang dibaca model berbeda antarsumber, dan perbedaan itu menentukan
+          peran setiap sumber dalam penelitian (Tabel [ref:tab_bab3_bentuk_data]). Tiga
+          dataset publik menyediakan *waveform* utuh beserta label kerusakan atau waktu
+          kegagalan yang pasti, sehingga akurasi dan interpretabilitas dapat diuji secara
+          terukur dan direproduksi oleh peneliti lain; karena itu ketiganya dipakai sebagai
+          tempat model dilatih dan diuji. Ekspor SKF Observer, sebaliknya, hanya memuat
+          nilai tren *overall* percepatan (A), kecepatan (V), dan *envelope* (ENV) tanpa
+          *waveform*, dari dua channel satu mesin dan satu peristiwa kerusakan. Data lapangan
+          karena itu diposisikan sebagai validasi industri yang bersifat demonstrasi
+          kualitatif transfer (Subbab IV.15 dan V.5.3), bukan sebagai tempat model dilatih.
+      - table:
+          label: tab_bab3_bentuk_data
+          caption: >-
+            Bentuk data mentah dan bentuk yang dibaca model untuk setiap sumber data beserta
+            jalur dan bab yang memakainya.
+          columns: ["Sumber", "Bentuk data mentah", "Bentuk yang dibaca model", "Jalur", "Bab"]
+          widths: [2, 4, 4.2, 1.8, 1.4]
+          header_repeat: true
+          rows:
+            - ["CWRU", "*Raw vibration signal* 48 kHz, segmen 2.048 titik, sepuluh kelas kerusakan", "*Raw signal* 1 × 2.048 (WDCNN) atau vektor fitur HI 36-D (SVM, LR, *tree*)", "Diagnostik", "IV"]
+            - ["PHM2012", "*Raw signal* 25,6 kHz, 17 bearing *run-to-failure*", "*Sliding window* 64 rekaman × HI 36-D (18 fitur per channel)", "Prognostik", "V"]
+            - ["XJTU-SY", "*Raw signal* 25,6 kHz, 15 bearing, tiga kondisi operasi", "*Sliding window* 32 rekaman × HI 36-D", "Prognostik", "V"]
+            - ["SKF Observer", "Nilai tren *overall* A, V, dan ENV; tanpa *waveform*", "*Pseudo-waveform* per titik tren, lalu pipeline HI yang sama (18 fitur per channel)", "Validasi industri", "IV.15, V.5.3"]
+
+  # ------------------------------------------------------------------
+  # Bab III.3.1 (end): vibration signature, static vs dynamic data
+  # ------------------------------------------------------------------
+  - anchor: {text_prefix: "Getaran mesin dapat dikuantifikasi dalam tiga parameter", position: after}
+    blocks:
+      - para: >-
+          Setiap komponen mesin bergetar pada frekuensinya sendiri dan menyumbangkan
+          *vibration signature* yang khas: rotor pada 1× putaran poros, roda gigi pada
+          frekuensi *gear mesh*, bearing pada frekuensi karakteristiknya, dan kopling serta
+          struktur pada komponen lainnya; sensor mengukur penjumlahan semuanya
+          (Gambar [ref:fig_bab3_vibration_signature]). Dari sinyal jumlahan tersebut, sistem
+          pemantauan dapat menyimpan dua bentuk data yang berbeda (SKF Group, 2017).
+          *Static data* meringkas sinyal menjadi satu angka, misalnya nilai RMS kecepatan
+          2,3 mm/s yang hanya membutuhkan 2 byte per pengukuran; bentuk ini cukup untuk
+          mengikuti tren, tetapi tidak cukup untuk mengetahui komponen mana yang memburuk.
+          *Dynamic data* menyimpan *waveform* domain waktu selengkapnya, sekitar 4.000 byte
+          per pengukuran, yang dapat diurai oleh FFT menjadi spektrum sehingga perubahan pada
+          satu komponen frekuensi menunjuk komponen mesin yang rusak. Disertasi ini bekerja
+          pada *dynamic data*, yaitu *raw signal* 2.048 titik untuk jalur diagnostik dan
+          fitur spektral dari *waveform* 25,6 kHz untuk jalur prognostik; nilai tren SKF
+          Observer, yang termasuk *static data*, hanya dipakai pada validasi lapangan
+          (Subbab III.2.4).
+      - figure:
+          image: vibration_signature.png
+          width_fraction: 1.0
+          label: fig_bab3_vibration_signature
+          caption: >-
+            Setiap komponen mesin menyumbangkan *vibration signature*-nya sendiri dan sensor
+            mengukur penjumlahannya; FFT menguraikan sinyal jumlahan kembali ke komponen
+            frekuensi. *Static data* menyimpan satu nilai RMS per pengukuran, *dynamic data*
+            menyimpan *waveform* utuh. Digambar ulang berdasarkan materi SKF Group (2017).
+
+  # ------------------------------------------------------------------
+  # Bab III.3.2: acceleration enveloping, gE, link to Hilbert
+  # ------------------------------------------------------------------
+  - anchor: {text_prefix: "Analisis envelope spectrum. FFT dari envelope", position: after}
+    blocks:
+      - para: >-
+          Tahapan di atas dikenal di industri sebagai *acceleration enveloping* dan
+          diperlihatkan pada Gambar [ref:fig_bab3_enveloping]. Spektrum kecepatan biasa
+          didominasi puncak berfrekuensi rendah sehingga harmonik cacat bearing nyaris tidak
+          terlihat; filter *band-pass* pada pita frekuensi tinggi tempat harmonik itu
+          beresonansi membuang komponen berfrekuensi rendah; rektifikasi dan *envelope*
+          melipat harmonik yang tersisa kembali ke frekuensi dasarnya; dan spektrum
+          *envelope* menampilkan frekuensi cacat beserta harmoniknya dengan jelas. Pada
+          implementasi SKF, keluaran tahap terakhir dinyatakan dalam satuan gE (*enveloped
+          acceleration*) dan dicatat SKF Observer sebagai nilai tren pada mesin OR-1 dan OR-2
+          bersama percepatan dan kecepatan (SKF Group, 2017). Pada disertasi ini *envelope*
+          dihitung melalui transformasi Hilbert seperti pada Subbab II.2.2, dan spektrum
+          *envelope* yang dihasilkannya menjadi acuan amplitudo BPFO, BPFI, BSF, dan FTF pada
+          prosedur pemetaan SAE-BPFx (Subbab V.3).
+      - figure:
+          image: enveloping_steps.png
+          width_fraction: 0.95
+          label: fig_bab3_enveloping
+          caption: >-
+            Empat langkah *acceleration enveloping*: (1) spektrum kecepatan yang didominasi
+            puncak berfrekuensi rendah, (2) filter *band-pass* pada pita resonansi,
+            (3) rektifikasi dan *envelope* pada domain waktu, dan (4) spektrum *envelope* (gE)
+            yang memunculkan frekuensi cacat beserta harmoniknya. Digambar ulang berdasarkan
+            materi SKF Group (2017).
+
+  # ------------------------------------------------------------------
+  # Bab V.1: the three backbones as combinations of the four blocks
+  # ------------------------------------------------------------------
+  - anchor: {text_prefix: "Semua arsitektur yang dipilih mendapatkan input berupa sekuens", position: after}
+    blocks:
+      - para: >-
+          Ketiga backbone tersebut dibangun dari empat blok dasar dalam tiga kombinasi yang
+          sengaja berbeda bias induktifnya (Tabel [ref:tab_bab5_backbone_blok]): blok Mamba
+          dan sel mLSTM dari xLSTM yang telah ditinjau pada Subbab II.5.2, serta blok N-BEATS
+          (Gambar [ref:fig_bab5_nbeats_blok]) dan blok TCN (Gambar [ref:fig_bab5_tcn_blok])
+          yang diuraikan pada Subbab V.1.2 dan V.1.3. LSTM klasik dominan dalam prognostik bearing
+          karena *gating*-nya menjaga dependensi jangka panjang, tetapi kapasitas memorinya
+          berupa vektor dan *gating* sigmoidnya mudah jenuh; Transformer menangkap konteks
+          global, namun kompleksitasnya kuadratik terhadap panjang sekuens. Mamba dan xLSTM
+          mengatasi kedua keterbatasan itu dari sudut berbeda, N-BEATS membawa *prior*
+          struktural bentuk kurva degradasi, dan TCN memberi model yang paling ringan.
+          Ketiga kombinasi dipilih berdasarkan tinjauan literatur Bab II, bukan percobaan
+          pendahuluan, agar uji universalitas interpretabilitas SAE-BPFx tidak bergantung
+          pada satu paradigma arsitektur, sementara gradien ukuran model dari sekitar
+          249.000 sampai 898.000 parameter menyediakan pilihan yang sesuai untuk tier yang
+          berbeda pada kerangka Bab VI, dengan SparseGate-TCN-RUL sebagai kandidat untuk
+          Edge Server.
+      - table:
+          label: tab_bab5_backbone_blok
+          caption: >-
+            Tiga backbone RUL sebagai kombinasi blok dasar: blok yang digabung, bias induktif
+            yang diwakili, dan jumlah parameter.
+          columns: ["Backbone", "Blok dasar yang digabung", "Bias induktif", "Parameter"]
+          widths: [3, 4.2, 4, 2.4]
+          header_repeat: true
+          rows:
+            - ["Mamba-xLSTM-Net", "Blok Mamba dan sel mLSTM dalam tiga pasang, disatukan *gated fusion*", "Pemodelan konteks panjang dengan presisi tinggi", "≈ 898.000 (PHM2012); ≈ 811.000 (XJTU-SY)"]
+            - ["N-BEATS-xLSTM-RUL", "*Front-end* xLSTM dua blok di depan tiga basis-blok N-BEATS (*trend*, *wear*, *shock*)", "*Prior* struktural bentuk kurva degradasi; stabil lintas *seed*", "459.000"]
+            - ["SparseGate-TCN-RUL", "*Sparse feature gate* dan *cross-feature attention* di depan *stack* empat blok TCN", "Konvolusi kausal berdilatasi tanpa rekurensi; model paling ringan", "≈ 249.000"]
+
+  # ------------------------------------------------------------------
+  # Bab V.1.2 / V.1.3: replace the N-BEATS and TCN figures with redraws
+  # ------------------------------------------------------------------
+  - replace_figure:
+      caption_prefix: "Gambar V.2 Arsitektur N-BEATS"
+      label: fig_bab5_nbeats_blok
+      image: block_nbeats.png
+      width_fraction: 1.0
+      caption: >-
+        Blok N-BEATS dengan prinsip *doubly residual stacking* dan *basis expansion*: setiap
+        blok menghasilkan *backcast* yang dikurangkan dari masukan blok berikutnya dan
+        *forecast* yang dijumlahkan menjadi estimasi; pada penelitian ini basisnya adalah
+        *trend* (polinomial Bernstein), *wear* (frekuensi karakteristik), dan *shock*
+        (*wavelet* Gabor). Digambar ulang berdasarkan Oreshkin dkk. (2020).
+  - replace_figure:
+      caption_prefix: "Gambar V.3 Elemen arsitektur Temporal Convolutional Network"
+      label: fig_bab5_tcn_blok
+      image: block_tcn.png
+      width_fraction: 1.0
+      caption: >-
+        Elemen arsitektur *Temporal Convolutional Network* (TCN): *dilated causal
+        convolution* dengan laju dilatasi 1, 2, 4, dan 8 sehingga *receptive field* satu
+        keluaran teratas menutup seluruh *window* masukan. Digambar ulang berdasarkan
+        Bai dkk. (2018).
+
+  # ------------------------------------------------------------------
+  # Daftar Pustaka
+  # ------------------------------------------------------------------
+  - bib_entry: >-
+      Siemens (2022): The true cost of downtime 2022, Senseye Predictive Maintenance,
+      Siemens AG Digital Industries, diperoleh melalui situs internet:
+      https://assets.new.siemens.com/siemens/assets/api/uuid:3d606495-dbe0-43e4-80b1-d04e27ada920/dics-b10153-00-7600truecostofdowntime2022-144.pdf.
+      Diunduh pada tanggal 7 September 2026.
+  - bib_entry: >-
+      de Waard, S. J. (2009): Cut-away version of an electric motor, Wikimedia
+      Commons, lisensi CC BY 2.5, diperoleh melalui situs internet:
+      https://commons.wikimedia.org/wiki/File:Cut-away_version_of_an_electric_motor_(1).JPG.
+      Diunduh pada tanggal 7 September 2026.
+  - bib_entry: >-
+      de Waard, S. J. (2010): Pump (cut-away), Wikimedia Commons, lisensi
+      CC BY 2.5, diperoleh melalui situs internet:
+      https://commons.wikimedia.org/wiki/File:Pump_(Cut-Away).JPG. Diunduh pada tanggal
+      7 September 2026.
+  - bib_entry: >-
+      SAF (2018): High pressure centrifugal fan, Wikimedia Commons, lisensi
+      CC BY-SA 4.0, diperoleh melalui situs internet:
+      https://commons.wikimedia.org/wiki/File:High_Pressure_Centrifugal_Fan.jpg. Diunduh
+      pada tanggal 7 September 2026.
+  - bib_entry: >-
+      Amos1947 (2012): Cylindrical grinder, Wikimedia Commons, lisensi
+      CC BY-SA 4.0, diperoleh melalui situs internet:
+      https://commons.wikimedia.org/wiki/File:Cylindrical_grinder.jpg. Diunduh pada tanggal
+      7 September 2026.

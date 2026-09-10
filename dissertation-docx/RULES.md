@@ -29,8 +29,10 @@ Gunakan **hanya** gaya berikut. Jangan membuat gaya baru atau memformat manual
 
 **Pemisah paragraf:** satu paragraf kosong ber-style `Paragraf` di antara dua
 blok isi (konvensi dokumen V5; ekuivalen "satu baris kosong 1,5 spasi" pada
-Pedoman). Tidak ada paragraf kosong antara paragraf-gambar dan caption-nya,
-atau antara caption tabel dan tabelnya.
+Pedoman). Tidak ada paragraf kosong antara paragraf-gambar dan caption-nya
+(`Gambar` → `JudulGambar`). **Antara caption tabel dan tabelnya wajib ada satu
+paragraf kosong** (`judulTabel` → `Paragraf` kosong → tabel), sesuai Juknis
+Mei 2019.
 
 ## 2. Penomoran Bab dan Field
 
@@ -102,7 +104,9 @@ run("Gambar ") + bookmarkStart + run("VI.") + { SEQ Gambar \* ARABIC \s 1 } + bo
 - Jangan memulai kalimat dengan angka, simbol, atau rumus.
 - Tabel: layout **fixed** dengan lebar kolom eksplisit (jangan autofit);
   caption di atas; header diulang antar-halaman (`tblHeader`) untuk tabel
-  panjang. Setiap tabel/gambar **wajib dirujuk** dalam teks.
+  panjang; **grid border ITB** (`tblBorders`: `single`, sz=4, color=auto pada
+  semua sisi) diterapkan otomatis oleh `restyle.py` (kecuali tabel layout
+  gambar berdampingan). Setiap tabel/gambar **wajib dirujuk** dalam teks.
 - Gambar: lebar mengikuti `assets/figure-map.tsv` (fraksi dari lebar teks
   ±14 cm); resolusi raster minimal 300 dpi.
 
@@ -158,3 +162,35 @@ make lint           # lint prosa + cek artefak docx pada semua bab
 - Catatan known-issue: cek desimal-titik pada lint mengecualikan grup tepat
   3 digit (dianggap pemisah ribuan); desimal-titik 3 digit sungguhan tidak
   terdeteksi otomatis.
+
+## 10. Menyisipkan Materi ke Naskah yang Sudah Disunting Manual
+
+Target `make babN` **meregenerasi** bab dari LaTeX sehingga suntingan manual di
+Word hilang. Untuk menambah materi ke naskah yang sudah disunting tangan,
+gunakan `tools/insert_docx.py`:
+
+```bash
+make insert-dry SPEC=inserts/v15/spec.yaml   # resolusi anchor saja
+make insert     SPEC=inserts/v15/spec.yaml   # tulis dokumen keluaran
+```
+
+Spesifikasi YAML (lihat `inserts/v15/spec.yaml`) menautkan setiap sisipan pada
+paragraf yang sudah ada (`text_prefix`, `heading`, atau `label`) dan menyusun
+blok ber-style sesuai aturan di atas: `Paragraf`, `Heading3`, `Gambar` +
+`JudulGambar`, `judulTabel` + tabel, serta entri `Daftarpustaka`. Penanda dalam
+teks: `*miring*`, `**tebal**`, dan `[ref:label]` untuk field REF.
+
+- Nomor gambar/tabel dihitung ulang setelah penyisipan: cached result pada
+  field SEQ, cached result pada setiap field REF, **dan** nomor yang diketik
+  literal di dalam teks (naskah V14 memuat 41 rujukan semacam itu).
+- Rujukan silang yang cached result-nya kosong dibiarkan apa adanya dan
+  dilaporkan, karena mengisinya akan memunculkan teks yang sebelumnya tidak
+  tampak.
+- Alat menolak menimpa dokumen sumber, dan menolak sisipan yang anchor-nya
+  tidak unik.
+- Setelah dibuka di Word: Ctrl+A, F9 untuk memperbarui Daftar Isi, Daftar
+  Gambar, dan Daftar Tabel.
+- Catatan render: LibreOffice mengabaikan sakelar `\s 1` pada field SEQ
+  sehingga PDF hasil `soffice --convert-to pdf` menomori gambar secara
+  berurutan lintas bab. Word menghormatinya dan menampilkan nomor yang benar.
+  Perilaku ini sudah ada pada naskah sebelum penyisipan.

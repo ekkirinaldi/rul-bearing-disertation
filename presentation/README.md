@@ -245,6 +245,14 @@ figure cite it as "Digambar ulang berdasarkan Gambar X.N". Iterate with
 renders the domain charts in `CHARTS` (no input strip); `make diagrams`
 draws both sets.
 
+`CHARTS` also holds seven manuscript figures listed in
+`MANUSCRIPT_ONLY_CHARTS` (`pf_curve`, `adm_hierarchy`, `defect_ringing`,
+`rul_timeline`, `data_to_decision`, `vibration_signature`, `enveloping_steps`).
+They are placed by `dissertation-docx/inserts/v15/spec.yaml` rather than by a
+slide, so the "every diagram is on a slide" test skips them and a second test
+requires the insert spec to use them instead. `make montage` composes the four
+Wikimedia photographs into one figure for the same spec.
+
 `CHARTS` also holds the four building-block charts (`block_mamba`,
 `block_mlstm`, `block_nbeats`, `block_tcn`) shown on the two "Blok Dasar"
 slides before the backbones are compared. The Mamba, mLSTM, and dilation
@@ -344,6 +352,23 @@ photographer and licence, and a test keeps the two in step.
 
 When those numbers change in the manuscript, update the YAML **and** the
 matching entry in `tests/test_provenance.py`, then rebuild.
+
+### Porting the deck back into the manuscript
+
+The domain material this deck introduced does not exist in the manuscript, so
+`dissertation-docx/inserts/v15/spec.yaml` puts it there: the rotating-machine
+opening and the P-F curve into Bab I, the ADM hierarchy, the damage stages, the
+limits of explainability and the SAE requirements table into Bab II, the
+data-to-decision chain, the data-form table and the enveloping steps into Bab
+III, and the backbone-composition table into Bab V. The four building-block
+charts also replace the adapted architecture figures in Bab II and Bab V.
+
+`make insert` in `dissertation-docx/` writes a new manuscript version beside the
+current one; `presentation/tests/test_insert_docx.py` checks that nothing was
+lost, that caption numbers stay contiguous per chapter, and that every
+cross-reference still matches its caption. The provenance fixture reads the
+newest `V1? *.docx`, so the deck's claims are checked against the version that
+now contains them.
 
 ### V14-internal inconsistencies (flagged for the manuscript, not fixable here)
 
