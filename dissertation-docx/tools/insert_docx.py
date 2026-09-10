@@ -1000,6 +1000,14 @@ def replace_figure(doc: Document, anchors: Anchors, index: int, spec: dict,
         rel_id = doc.add_image(image)
         blip = picture.find(f".//{A}blip")
         blip.set(R + "embed", rel_id)
+        # A crop set in Word belongs to the picture being replaced: leaving it
+        # in place would cut the same percentages out of the new image.
+        for fill in picture.iter(f"{{{PICNS}}}blipFill"):
+            for crop in fill.findall(A + "srcRect"):
+                fill.remove(crop)
+        # Cached size hints refer to the old bitmap; Word rewrites them itself.
+        for ext_list in blip.findall(A + "extLst"):
+            blip.remove(ext_list)
         px_w, px_h = png_size(image)
         width = doc.content_width_twips(picture)
         cx = int(round(width * float(spec.get("width_fraction", 0.9)))) * EMU_PER_TWIP

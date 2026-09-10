@@ -681,6 +681,61 @@ def wdcnn_full():
     save(fig, "wdcnn_full")
 
 
+# Original schematic of the WDCNN architecture as configured in this research,
+# drawn for the dissertation page: the deck version is 12 in wide and its
+# labels would fall to about 4,7 pt once scaled to a 14 cm column, so the same
+# pipeline is reflowed onto two rows on a 6 in canvas. Structure follows
+# Zhang dkk. (2017); no artwork copied.
+def wdcnn_manuscript():
+    W, H = 6.0, 4.15
+    fig, ax = new_fig(W, H)
+    my1, my2 = 2.80, 1.00          # convolution row, classifier row
+
+    ax.text(0.10, 3.96, "WDCNN ([[Wide First-layer Kernels]])", ha="left", va="center",
+            fontsize=FS_TITLE, color=INK, fontweight="bold")
+
+    box(ax, 0.80, my1, 1.36, 0.92, "[[Raw signal]]\n1 × 2.048", kind="input",
+        fs=9, sub="[[channel]] [[drive-end]]")
+    waveform(ax, 0.22, my1 - 0.30, 1.16, 0.22, seed=11)
+    arrow(ax, (1.50, my1), (1.86, my1))
+
+    def conv_block(cx, title, conv_label):
+        container(ax, cx - 0.90, my1 - 0.80, 1.80, 1.75, title=title)
+        box(ax, cx, my1 + 0.42, 1.58, 0.40, conv_label, kind="proj", fs=8.5)
+        arrow(ax, (cx, my1 + 0.22), (cx, my1 + 0.18), shrink=0, lw=0.9)
+        box(ax, cx, my1 - 0.02, 1.58, 0.38, "BatchNorm + ReLU", kind="gate", fs=8.5)
+        arrow(ax, (cx, my1 - 0.21), (cx, my1 - 0.25), shrink=0, lw=0.9)
+        box(ax, cx, my1 - 0.46, 1.58, 0.38, "MaxPool", kind="util", fs=8.5)
+
+    conv_block(2.85, "Blok 1: [[kernel]] lebar", "Conv1D 64, [[stride]] 16")
+    arrow(ax, (3.76, my1), (4.02, my1), shrink=0)
+    conv_block(4.95, "Blok 2 sampai 5 (4×)", "Conv1D [[kernel]] 3")
+
+    # the flow wraps to the classifier row, clear of the note below the blocks
+    wrap_y = 1.62
+    ax.plot([5.85, 5.92], [my1, my1], color=INK, lw=1.1)
+    ax.plot([5.92, 5.92], [my1, wrap_y], color=INK, lw=1.1)
+    ax.plot([5.92, 0.30], [wrap_y, wrap_y], color=INK, lw=1.1)
+    ax.plot([0.30, 0.30], [wrap_y, my2], color=INK, lw=1.1)
+    arrow(ax, (0.30, my2), (0.62, my2), shrink=0)
+    ax.text(2.60, my1 - 1.02, "lima blok mereduksi dimensi temporal secara progresif",
+            ha="center", va="center", fontsize=FS_TINY - 0.4, color=MUTED, style="italic")
+
+    box(ax, 1.22, my2, 1.08, 0.48, "Flatten", kind="util", fs=8.5)
+    arrow(ax, (1.76, my2), (2.06, my2))
+    box(ax, 2.92, my2, 1.66, 0.62, "Dua [[layer]] FC + [[dropout]]", kind="proj", fs=8.5)
+    arrow(ax, (3.75, my2), (4.05, my2))
+    box(ax, 4.86, my2, 1.54, 0.62, "Softmax: 10 kelas", kind="out", fs=8.5, bold=True)
+
+    # Five entries do not fit on one 6 in line at this size, so the key wraps.
+    legend_row(ax, 0.12, 0.48, [
+        ("input", "[[input]]"), ("proj", "[[convolution]] / FC"),
+        ("gate", "[[normalization]]"),
+    ])
+    legend_row(ax, 0.12, 0.16, [("util", "[[pooling]]"), ("out", "[[output]]")])
+    save(fig, "wdcnn_manuscript", dpi=320)
+
+
 # --------------------------------------------------------------------------
 # 5 · Top-k Sparse Autoencoder
 # --------------------------------------------------------------------------
@@ -1687,6 +1742,7 @@ CHARTS = {
     "data_to_decision": data_to_decision,
     "vibration_signature": vibration_signature,
     "enveloping_steps": enveloping_steps,
+    "wdcnn_manuscript": wdcnn_manuscript,
 }
 
 # Dissertation figures rendered by the same tool (shared palette, italics
@@ -1700,6 +1756,7 @@ MANUSCRIPT_ONLY_CHARTS = {
     "data_to_decision",
     "vibration_signature",
     "enveloping_steps",
+    "wdcnn_manuscript",
 }
 
 

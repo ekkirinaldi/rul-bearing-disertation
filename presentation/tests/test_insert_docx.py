@@ -332,6 +332,41 @@ def test_v15_reference_caches_match_their_caption():
     assert wrong == [], wrong[:5]
 
 
+def test_a_replaced_figure_keeps_no_stale_crop():
+    """A crop applied in Word belongs to the picture it was made for.
+
+    Gambar IV.3 carried one; carrying it over would cut the same percentages
+    out of whatever image replaces it.
+    """
+    versions = _manuscripts()
+    if len(versions) < 2:
+        pytest.skip("V15 not built yet (run make insert)")
+    yaml = pytest.importorskip("yaml")
+    spec_path = ROOT.parent / "dissertation-docx" / "inserts" / "v15" / "spec.yaml"
+    spec = yaml.safe_load(spec_path.read_text(encoding="utf-8"))
+    titles = [e["replace_figure"].get("caption_prefix") for e in spec.get("edits", [])
+              if "replace_figure" in e and e["replace_figure"].get("image")]
+    titles = [t for t in titles if t]
+    if not titles:
+        pytest.skip("no figure replacements declared")
+    A = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
+    body = _body(versions[-1])
+    kids = list(body)
+    checked = 0
+    for prefix in titles:
+        title = re.sub(r"^\s*(Gambar|Tabel)[\s\u00a0]+[IVX]+\.\d+\s*", "", prefix)
+        for i, p in enumerate(kids):
+            if p.tag != W + "p" or _style(p) != "JudulGambar":
+                continue
+            if title not in "".join(t.text or "" for t in p.iter(W + "t")):
+                continue
+            picture = kids[i - 1]
+            assert picture.findall(f".//{A}srcRect") == [], f"{title}: crop survived"
+            checked += 1
+            break
+    assert checked == len(titles), "some replaced figures were not found"
+
+
 def test_v15_renders_without_broken_references(tmp_path):
     """LibreOffice resolves bookmarks live, so a dangling REF shows up here."""
     versions = _manuscripts()

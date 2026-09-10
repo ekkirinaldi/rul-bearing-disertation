@@ -516,15 +516,18 @@ edits:
         pelatihan Bab V, keluaran perintah pip freeze setelah instalasi pada mesin target
         disimpan bersama log pelatihan.
 
-  # Caption Gambar IV.3 tidak memiliki sumber; diagram berasal dari
-  # arsitektur WDCNN pada Zhang dkk. (2017).
+  # Gambar IV.3 sebelumnya memuat gambar asli Zhang dkk. (2017) tanpa sumber,
+  # dan gambar tersebut tidak menampilkan konfigurasi yang dipakai di sini.
+  # Diganti dengan skema yang digambar ulang agar sesuai dengan captionnya.
   - replace_figure:
       caption_prefix: "Gambar IV.3 Diagram arsitektur WDCNN"
+      image: wdcnn_manuscript.png
+      width_fraction: 1.0
       caption: >-
         Diagram arsitektur WDCNN yang digunakan dalam penelitian ini: *input* 1 × 2.048
-        diproses melalui lima blok konvolusi (Conv1d, BatchNorm, ReLU, MaxPool) yang secara
+        diproses melalui lima blok konvolusi (Conv1D, BatchNorm, ReLU, MaxPool) yang secara
         progresif mengurangi dimensi temporal, diikuti dua *layer* *fully connected* (FC) dan
-        *dropout* sebelum keluaran 10-kelas. Sumber: Zhang dkk. (2017).
+        *dropout* sebelum keluaran 10-kelas. Digambar ulang berdasarkan Zhang dkk. (2017).
 
   # ------------------------------------------------------------------
   # Daftar Pustaka
