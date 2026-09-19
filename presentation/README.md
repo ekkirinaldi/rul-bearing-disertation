@@ -9,10 +9,10 @@ from the approved reference deck in [`reference/`](reference/) and
 frozen in [`deck/theme.py`](deck/theme.py), so regenerated decks stay visually
 identical to the version Pak Toto approved.
 
-**Manuscript of record: the V14 DOCX** at the top of this directory
-(`V14 PERAWATAN PREDIKTIF … .docx`, gitignored binary). Every number, figure
-citation, and claim in the deck traces to it — not to the older
-`dissertation-docx/` tree, whose numbers conflict with V14 in places.
+The manuscript the deck follows is `manuscript/V16-disertasi.docx`, with
+V14 and V15 in `manuscript/versions/`. Every number, figure citation and claim
+in the deck traces to it. The June DOCX port in `archive/docx-port/` does not
+count as a source: its numbers are older and conflict with the V-series.
 
 ## Deck structure (78 slides)
 
@@ -80,7 +80,6 @@ make build SPEC=content/seminar-kemajuan.yaml OUT=out/Seminar.pptx
 
 ```
 presentation/
-├── V14 PERAWATAN PREDIKTIF ….docx   ★ manuscript of record (gitignored binary)
 ├── build.py                    CLI: build · lint · preview · inspect
 ├── Makefile
 ├── assets/
@@ -91,7 +90,7 @@ presentation/
 │   ├── web/                    Wikimedia Commons photographs + CREDITS.md (author, licence, URL)
 │   └── v14/                    figures extracted from the V14 DOCX media
 ├── content/
-│   └── sidang-terbuka.yaml     ★ the deck content — this is what you edit
+│   └── sidang-terbuka.yaml     the deck content; this is what you edit
 ├── reference/
 │   └── Sidang_Disertasi_…_v2.pptx   approved template the design was derived from
 ├── tools/
@@ -206,7 +205,7 @@ hold (no `&` standing in for `dan`, decimal commas on percentages).
 
 ### Provenance guard
 
-`tests/test_provenance.py` is the important one. It reads the **V14 DOCX** and
+`tests/test_provenance.py` is the important one. It reads the newest V-series manuscript and
 asserts that **every headline figure on a slide actually appears in the
 manuscript** — accuracies, RMSE values, hit-rates, thresholds, acquisition
 counts, citations (90 claims). Two further tests assert that every
@@ -214,12 +213,12 @@ counts, citations (90 claims). Two further tests assert that every
 pre-V14 reference (Lampiran D.5, Gambar D.2/D.4) survives. A claim that
 drifts from the dissertation fails the build rather than reaching the defence.
 
-The older `dissertation-docx/` tree is deliberately **not** in the corpus:
+The June DOCX port in `archive/docx-port/` is deliberately not in the corpus:
 its numbers conflict with V14 (XJTU-SY 15 rekaman vs 10 bearing, IMS dropped,
 SKF moved from Lampiran D into Subbab IV.15 / V.5.3, figures renumbered), and
 a claim passing via the stale tree would defeat the guard.
 
-It skips cleanly when the V14 DOCX is absent. When a number legitimately
+It skips cleanly when no manuscript DOCX is present. When a number legitimately
 changes in the manuscript, update the YAML and the matching entry in `CLAIMS`.
 
 Numbers that are deliberately **not** from the manuscript — the SKF training
@@ -363,11 +362,11 @@ data-to-decision chain, the data-form table and the enveloping steps into Bab
 III, and the backbone-composition table into Bab V. The four building-block
 charts also replace the adapted architecture figures in Bab II and Bab V.
 
-`make insert` in `dissertation-docx/` writes a new manuscript version beside the
+`make insert` in `manuscript/` writes a new manuscript version beside the
 current one; `presentation/tests/test_insert_docx.py` checks that nothing was
 lost, that caption numbers stay contiguous per chapter, and that every
 cross-reference still matches its caption. The provenance fixture reads the
-newest `V1? *.docx`, so the deck's claims are checked against the version that
+newest `V1?*.docx` in `manuscript/` or `manuscript/versions/`, so the deck's claims are checked against the version that
 now contains them.
 
 ### V14-internal inconsistencies (flagged for the manuscript, not fixable here)
