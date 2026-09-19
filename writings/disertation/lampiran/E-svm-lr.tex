@@ -159,14 +159,7 @@ gambar tersebut dengan rincian kesalahan per pasang kelas.
 
 \begin{figure}[ht]
   \centering
-  \fbox{\parbox{0.90\textwidth}{\centering\vspace{2.8cm}
-    \textit{[Gambar~E.1 --- Matriks konfusi SVM-RBF, 10~$\times$~10,
-      set uji 750 sampel. Diagonal utama mendominasi; kesalahan
-      terbesar pada pasang Ball\_007 $\leftrightarrow$ Normal
-      (2--3 sampel) dan Ball\_007 $\leftrightarrow$ Ball\_014
-      (2 sampel). Dihasilkan dari
-      \texttt{Conference1\_Classification\_SVM\_LR.ipynb}.]}
-    \vspace{2.8cm}}}
+  \includegraphics[width=0.90\textwidth]{figures/lampE/lampE_cm_svm.png}
   \caption{Matriks konfusi SVM-RBF pada set uji CWRU 10 kelas.
            Akurasi 96,4\%; satu-satunya kebocoran yang konsisten
            adalah kelas Ball keparahan rendah ke Normal.}
@@ -175,15 +168,9 @@ gambar tersebut dengan rincian kesalahan per pasang kelas.
 
 \begin{figure}[ht]
   \centering
-  \fbox{\parbox{0.90\textwidth}{\centering\vspace{2.8cm}
-    \textit{[Gambar~E.2 --- Matriks konfusi Logistic Regression,
-      10~$\times$~10, set uji 750 sampel. Pola kesalahan serupa
-      dengan SVM, namun dengan jumlah \emph{off-diagonal} lebih
-      banyak pada kelas Ball dan OR keparahan rendah. Dihasilkan dari
-      \texttt{Conference1\_Classification\_SVM\_LR.ipynb}.]}
-    \vspace{2.8cm}}}
+  \includegraphics[width=0.90\textwidth]{figures/lampE/lampE_cm_lr.png}
   \caption{Matriks konfusi Logistic Regression pada set uji CWRU 10
-           kelas. Akurasi 94,3\%; kebocoran LR lebih menyebar
+           kelas. Akurasi 94,4\%; kebocoran LR lebih menyebar
            dibandingkan SVM karena batas keputusan yang lebih kaku.}
   \label{fig:lampE_cm_lr}
 \end{figure}

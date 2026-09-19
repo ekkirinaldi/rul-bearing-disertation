@@ -486,42 +486,47 @@ dibandingkan PHM2012 (Tabel~\ref{tab:bab5_xjtusy}).
 
 \begin{table}[ht]
 \centering
-\caption{Evaluasi kinerja pada dataset XJTU-SY (mean $\pm$ std, $n = 3$ \emph{seed}).
-         Pemenang RMSE dicetak tebal. $R^2$ negatif merupakan artefak dari
-         \emph{test split} ekstrem (dua \emph{bearing}).}
+\caption{Evaluasi kinerja pada dataset XJTU-SY tiga kondisi operasi yang
+         lengkap (mean $\pm$ std, $n = 3$ \emph{seed}). Pemenang RMSE
+         dicetak tebal.}
 \label{tab:bab5_xjtusy}
 \small
 \begin{tabular}{@{}lcccc@{}}
 \toprule
 \textbf{Model} & \textbf{RMSE~$\downarrow$} & \textbf{MAE~$\downarrow$}
-  & \textbf{$R^2$} & \textbf{PHM Score~$\uparrow$} \\
+  & \textbf{$R^2$~$\uparrow$} & \textbf{PHM Score~$\uparrow$} \\
 \midrule
-\textbf{N-BEATS-xLSTM-RUL}  & \textbf{0{,}259 $\pm$ 0{,}003}
-  & 0{,}223 & ~~0{,}002 & 0{,}875 \\
-SparseGate-TCN-RUL           & 0{,}263 $\pm$ 0{,}003 & 0{,}222
-  & $-$0{,}031 & 0{,}882 \\
-Mamba-xLSTM-Net              & 0{,}267 $\pm$ 0{,}012 & \textbf{0{,}211}
-  & $-$0{,}061 & \textbf{0{,}907} \\
+\textbf{Mamba-xLSTM-Net}     & \textbf{0{,}213 $\pm$ 0{,}056}
+  & 0{,}166 & 0{,}333 & \textbf{0{,}938} \\
+SparseGate-TCN-RUL           & 0{,}216 $\pm$ 0{,}011 & \textbf{0{,}165}
+  & \textbf{0{,}362} & 0{,}915 \\
+N-BEATS-xLSTM-RUL            & 0{,}256 $\pm$ 0{,}010 & 0{,}218
+  & 0{,}098 & 0{,}873 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Selisih RMSE antar model pada XJTU-SY sangat kecil, hanya 0{,}008 dari
-terbaik ke terburuk.
-Hal ini disebabkan oleh \emph{test set} yang hanya berisi dua \emph{bearing};
-variansi antar-\emph{seed} dengan demikian mendominasi variasi hasil
-dibandingkan perbedaan antar-arsitektur.
-N-BEATS-xLSTM-RUL unggul tipis pada RMSE (0{,}259) dan menunjukkan
-stabilitas tertinggi ($\sigma = \pm$0{,}003), sedangkan Mamba-xLSTM-Net
-mencatat PHM~Score tertinggi (0{,}907) yang mencerminkan kecenderungan
-arsitektur ini untuk memprediksi RUL secara konservatif.
+Pada dataset XJTU-SY tiga kondisi operasi yang lengkap, Mamba-xLSTM-Net
+mencatat RMSE rata-rata terendah sebesar 0{,}213 sekaligus PHM~Score
+tertinggi 0{,}938, menjadikannya pemenang pada dataset ini.
+SparseGate-TCN-RUL menempati posisi kedua dengan selisih RMSE yang sangat
+tipis (0{,}216), bahkan unggul pada MAE (0{,}165) dan $R^2$ (0{,}362),
+sedangkan N-BEATS-xLSTM-RUL berada di posisi ketiga (RMSE 0{,}256).
+Selisih RMSE dari terbaik ke terburuk adalah 0{,}043, lebih lebar
+dibandingkan hasil pada subset dua kondisi sebelum perbaikan dataset karena
+\emph{test split} tiga kondisi mencakup keragaman beban yang lebih besar.
 
-$R^2$ negatif pada hampir semua model merupakan artefak statistik dari
-\emph{test split} yang sangat terbatas: dengan hanya dua \emph{bearing},
-$SS_{\rm tot}$ menjadi sangat kecil sehingga $R^2$ kehilangan
-interpretabilitasnya.
-RMSE dipertahankan sebagai satu-satunya metrik yang dapat dibandingkan
-secara adil lintas ketiga dataset prognostik.
+Keunggulan RMSE Mamba-xLSTM-Net disertai variansi antar-\emph{seed} yang
+relatif tinggi ($\sigma = \pm$0{,}056), terbesar di antara ketiga
+\emph{backbone}; hal ini disebabkan oleh sebaran RMSE per \emph{seed}
+yang lebar (0{,}153 pada \emph{seed}~42 hingga 0{,}289 pada \emph{seed}~44).
+Sebaliknya, N-BEATS-xLSTM-RUL dan SparseGate-TCN-RUL menunjukkan stabilitas
+lintas \emph{seed} yang lebih tinggi ($\sigma = \pm$0{,}010 dan
+$\pm$0{,}011), mencerminkan \emph{prior} struktural yang menekan sensitivitas
+terhadap inisialisasi acak. Nilai $R^2$ yang positif untuk ketiga model
+menegaskan bahwa pada dataset tiga kondisi yang lengkap, prediksi RUL
+seluruh \emph{backbone} mengungguli prediktor rata-rata, berbeda dari subset
+dua \emph{bearing} sebelum perbaikan dataset.
 
 \subsection{Hasil pada Dataset IMS}
 \label{subsec:bab5_ims_rul}
@@ -581,26 +586,28 @@ kombinasi dataset~$\times$~arsitektur.
   \textbf{RMSE (mean $\pm$ std)} \\
 \midrule
 PHM2012  & SparseGate-TCN-RUL   & $0{,}226 \pm 0{,}030$ \\
-XJTU-SY & N-BEATS-xLSTM-RUL    & $0{,}259 \pm 0{,}003$ \\
+XJTU-SY & Mamba-xLSTM-Net      & $0{,}213 \pm 0{,}056$ \\
 IMS      & Mamba-xLSTM-Net       & $0{,}407 \pm 0{,}040$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Tiga temuan utama muncul dari analisis komparatif ini.
-Pertama, tidak ada satu arsitektur yang mendominasi semua dataset: SparseGate
-unggul pada PHM2012, N-BEATS pada XJTU-SY, dan Mamba pada IMS.
+Pertama, tidak ada satu arsitektur yang mendominasi semua dataset:
+SparseGate-TCN-RUL unggul pada PHM2012, sedangkan Mamba-xLSTM-Net unggul
+pada XJTU-SY dan IMS.
 Ketiadaan pemenang universal ini mengkonfirmasi bahwa ketiga arsitektur
 merupakan model prognostik yang \emph{viable} dan layak sebagai substrat
 analisis SAE-BPFx.
-Kedua, Mamba-xLSTM-Net secara konsisten memberikan {\color{blue}\emph{trade-off}} terbaik
-antara kinerja prognostik (kompetitif pada semua dataset) dan stabilitas
-lintas \emph{seed} (deviasi standar rendah), menjadikannya pilihan
-\emph{backbone} utama untuk analisis interpretabilitas.
-Ketiga, N-BEATS-xLSTM-RUL memperlihatkan deviasi standar terkecil secara
-konsisten ($\sigma = \pm$0{,}003 pada XJTU-SY), mengkonfirmasi bahwa
-\emph{prior} struktural basis-blok degradasi menekan sensitivitas terhadap
-inisialisasi acak.
+Kedua, Mamba-xLSTM-Net memberikan kinerja prognostik terbaik pada dua dari
+tiga dataset (RMSE 0{,}213 pada XJTU-SY dan 0{,}407 pada IMS), menjadikannya
+pilihan \emph{backbone} utama untuk analisis interpretabilitas; meskipun pada
+XJTU-SY keunggulan akurasinya disertai variansi antar-\emph{seed} yang lebih
+tinggi dibandingkan kedua \emph{backbone} pembanding.
+Ketiga, N-BEATS-xLSTM-RUL dan SparseGate-TCN-RUL memperlihatkan deviasi
+standar terkecil pada XJTU-SY ($\sigma = \pm$0{,}010 dan $\pm$0{,}011),
+mengkonfirmasi bahwa \emph{prior} struktural basis-blok degradasi dan gerbang
+fitur \emph{sparse} menekan sensitivitas terhadap inisialisasi acak.
 
 % =================================================================
 \section{\emph{Hit-Rate} BPFx: Hasil Utama}
@@ -629,8 +636,8 @@ lintas arsitektur) penelitian ini.
 \midrule
 PHM2012  & \textbf{2{,}3\%} & 2{,}0\% & 0    & 0 & $< 0{,}001$
   & IR + OR \emph{spalling} campuran \\
-XJTU-SY & 0    & \textbf{2{,}2\%} & 0{,}3\% & 0 & $< 0{,}001$
-  & \emph{Outer-race spalling} dominan \\
+XJTU-SY & 1{,}5\% & 0{,}7\% & \textbf{1{,}6\%} & 0{,}2\% & $< 0{,}001$
+  & BPFI/BSF/BPFO; keragaman mode kegagalan lintas kondisi \\
 IMS      & \textbf{1{,}76\%} & 0 & 0{,}49\% & 0 & $0{,}001$
   & IR (\emph{Run}~2) + \emph{rolling element} \\
 CWRU     & \textbf{5{,}08\%} & 0 & 0    & 0 & $> 0{,}05$
@@ -645,18 +652,22 @@ Pola ini konsisten dengan literatur yang mendokumentasikan bahwa
 \emph{spalling} pada \emph{inner race} dan \emph{outer race} merupakan
 mode kegagalan dominan pada \emph{bearing} NSK~6804 dalam kondisi beban dan
 kecepatan tinggi \citetitb{Nectoux2012PRONOSTIA}.
-Pada XJTU-SY, BPFO mendominasi (2{,}2\%) sesuai dengan karakter
-\emph{outer-race spalling} yang terdokumentasi pada \emph{bearing} LDK~UER204
-\citetitb{Wang2020XJTU}.
+Pada XJTU-SY dengan dataset tiga kondisi operasi yang lengkap, \emph{hit-rate}
+justru tersebar pada BSF (1{,}6\%), BPFI (1{,}5\%), dan BPFO (0{,}7\%), tidak
+lagi terpusat pada satu frekuensi karakteristik. Sebaran ini mencerminkan
+keragaman mode kegagalan lintas tiga kondisi beban pada \emph{bearing}
+LDK~UER204 \citetitb{Wang2020XJTU}, berbeda dari subset dua kondisi sebelum
+perbaikan dataset yang memperlihatkan dominasi \emph{outer-race} tunggal.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/bab5/hitrate_panel.pdf}
-\caption{\emph{Hit-rate} fitur SAE ke BPFx per dataset dengan anotasi
-         nilai $p$ dari \emph{permutation test}. Batang berwarna biru
-         untuk BPFI dan merah untuk BPFO. BSF ditampilkan dengan batang
-         abu-abu. Dataset CWRU ditandai sebagai \emph{underpowered}
-         ($n = 10$, $p > 0{,}05$).
+\caption{\emph{Hit-rate} fitur SAE ke BPFx (\emph{point estimate}) per
+         dataset dengan anotasi nilai $p$ dari \emph{permutation test}.
+         Batang berwarna biru untuk BPFI, merah untuk BPFO, abu-abu untuk
+         BSF, dan ungu untuk FTF. Nilai \emph{hit-rate} konsisten dengan
+         Tabel~\ref{tab:bab5_hitrate_utama}. Dataset CWRU ditandai sebagai
+         \emph{underpowered} ($n = 10$, $p > 0{,}05$).
          \citetitb{TotoSuharto2025Journal2RUL}}
 \label{fig:bab5_hitrate_panel}
 \end{figure}
@@ -682,23 +693,24 @@ korelasi, menjadikannya \emph{underpowered}.
 formal penelitian (Novelti~N4) dan diperlakukan sebagai hasil rintisan
 (\emph{pilot}) yang bersifat kualitatif.}
 
-Korelasi Pearson maksimum yang teramati adalah $r_{\rm max} = 0{,}507$ pada
-fitur SAE ke-474 terhadap BPFI untuk PHM2012, dan $r_{\rm max} = 0{,}501$
-pada fitur ke-959 terhadap BPFO untuk XJTU-SY
+Korelasi Pearson maksimum yang teramati adalah $r_{\rm max} = 0{,}447$ pada
+fitur SAE ke-443 terhadap BPFI untuk PHM2012, dan $r_{\rm max} = 0{,}468$
+pada fitur ke-868 terhadap BPFO untuk XJTU-SY
 \citetitb{TotoSuharto2025Journal2RUL}.
 Nilai korelasi moderat ini dapat diinterpretasi sebagai berikut: input ke
 \emph{backbone} RUL adalah vektor HI~5-D yang sudah diagregasi (bukan
 sinyal getaran mentah), sehingga fitur SAE tidak dapat "mengulang" analisis
 amplop secara langsung.
-Fakta bahwa BPFO dan BPFI muncul sebagai satu-satunya BPFx dengan \emph{hit-rate}
-yang konsisten menunjukkan korespondensi lemah namun terdeteksi antara
-representasi yang dipelajari model dan teori getaran klasik.
+Fakta bahwa BPFI, BPFO, dan BSF muncul sebagai BPFx dengan \emph{hit-rate}
+yang signifikan secara statistik menunjukkan korespondensi lemah namun
+terdeteksi antara representasi yang dipelajari model dan teori getaran klasik.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.80\textwidth]{figures/bab5/corr_scatter_phm2012.pdf}
-\caption{\emph{Scatter plot} aktivasi fitur SAE ke-474 terhadap amplitudo
-         BPFI pada PHM2012 ($r = 0{,}507$, $n = 300$ rekaman \emph{training}).
+\caption{\emph{Scatter plot} aktivasi fitur SAE ke-443 terhadap amplitudo
+         BPFI pada PHM2012 ($r = 0{,}447$, $n = 304$ rekaman \emph{training},
+         4 bantalan tersedia dari 7 bantalan nominal).
          Setiap titik mewakili satu rekaman; warna gradien mencerminkan
          nilai RUL ternormalisasi (biru = sehat, merah = mendekati EOL).
          \citetitb{TotoSuharto2025Journal2RUL}}
@@ -706,7 +718,7 @@ representasi yang dipelajari model dan teori getaran klasik.
 \end{figure}
 
 Gambar~\ref{fig:bab5_corr_scatter} menampilkan \emph{scatter plot} antara
-aktivasi fitur SAE ke-474 dan amplitudo BPFI PHM2012.
+aktivasi fitur SAE ke-443 dan amplitudo BPFI PHM2012.
 Titik-titik berwarna merah (mendekati \emph{end of life}) cenderung berada
 di sisi kanan atas plot, mengindikasikan bahwa fitur ini aktif lebih tinggi
 seiring meningkatnya amplitudo BPFI menjelang kegagalan.
@@ -802,16 +814,17 @@ segar per \emph{backbone}), Mamba-xLSTM-Net menyebarkan \emph{hit-rate}
 hampir merata pada keempat BPFx (BPFO~0{,}39\%, BPFI~0{,}39\%, BSF~0{,}20\%,
 FTF~0{,}29\%); N-BEATS-xLSTM-RUL mencatat nilai tertinggi pada BPFI
 (4{,}56\%); dan SparseGate-TCN-RUL pada FTF (2{,}64\%).}
-{\color{blue}Dominansi BPFO yang menjadi profil khas \emph{outer-race
-spalling} pada LDK~UER204 baru pulih ketika SAE \emph{post-hoc} dilatih
-dengan anggaran lebih panjang (Tabel~\ref{tab:bab5_hitrate_utama},
-BPFO~2{,}2\%).}
+{\color{blue}Pada SAE \emph{post-hoc} utama dengan anggaran pelatihan lebih
+panjang (Tabel~\ref{tab:bab5_hitrate_utama}), \emph{hit-rate} XJTU-SY tersebar
+pada BSF~(1{,}6\%), BPFI~(1{,}5\%), dan BPFO~(0{,}7\%), mencerminkan keragaman
+mode kegagalan lintas tiga kondisi beban alih-alih dominasi satu frekuensi
+tunggal.}
 Hal ini mengisyaratkan bahwa pada XJTU-SY, di mana sinyal dataset tidak
 membatasi urutan BPFx secara kuat, {\color{blue}bias induktif} encoder ikut
-memodulasi BPFx mana yang dominan. \emph{Gating} ruang-keadaan selektif
-Mamba menguatkan komponen \emph{outer-race} dominan, sedangkan
-\emph{backbone} basis-blok dan konvolusi bergerbang menyebarkan respons
-secara lebih luas.
+memodulasi BPFx mana yang menonjol. \emph{Gating} ruang-keadaan selektif
+Mamba maupun \emph{backbone} basis-blok dan konvolusi bergerbang
+menyebarkan respons ke beberapa frekuensi karakteristik sekaligus, sehingga
+tidak ada satu BPFx yang mendominasi secara mutlak.
 
 Pada validasi lintas-dataset dengan CWRU (data dengan $n = 10$ rekaman
 {\color{blue}tingkat berkas}, menjadikannya \emph{underpowered}),

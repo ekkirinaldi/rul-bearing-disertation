@@ -192,48 +192,27 @@ per pasang kelas.
 
 \begin{figure}[ht]
   \centering
-  \fbox{\parbox{0.90\textwidth}{\centering\vspace{2.4cm}
-    \textit{[Gambar~F.1 --- Matriks konfusi Decision Tree,
-      10~$\times$~10, set uji 750 sampel.
-      Kesalahan menyebar lebih luas dibanding ensemble;
-      Ball\_007 $\leftrightarrow$ Normal memiliki kesalahan
-      terbanyak (6--8 sampel). Dihasilkan dari
-      \texttt{Conference2\_Classification\_Tree.ipynb}.]}
-    \vspace{2.4cm}}}
+  \includegraphics[width=0.90\textwidth]{figures/lampF/lampF_cm_dt.png}
   \caption{Matriks konfusi Decision Tree pada set uji CWRU 10 kelas.
-           Akurasi $\approx$~87,5\%; pola \emph{off-diagonal}
+           Akurasi 94,0\%; pola \emph{off-diagonal}
            mencerminkan kurangnya kapasitas pemisah batas tunggal.}
   \label{fig:lampF_cm_dt}
 \end{figure}
 
 \begin{figure}[ht]
   \centering
-  \fbox{\parbox{0.90\textwidth}{\centering\vspace{2.4cm}
-    \textit{[Gambar~F.2 --- Matriks konfusi Random Forest,
-      10~$\times$~10, set uji 750 sampel. Diagonal lebih dominan
-      dibanding DT; kesalahan residual pada pasang
-      Ball\_007~$\leftrightarrow$~Ball\_014 (2--3 sampel).
-      Dihasilkan dari
-      \texttt{Conference2\_Classification\_Tree.ipynb}.]}
-    \vspace{2.4cm}}}
+  \includegraphics[width=0.90\textwidth]{figures/lampF/lampF_cm_rf.png}
   \caption{Matriks konfusi Random Forest pada set uji CWRU 10 kelas.
-           Akurasi $\approx$~95,8\%; keunggulan \emph{bagging}
+           Akurasi 94,9\%; keunggulan \emph{bagging}
            terlihat jelas dibandingkan pohon tunggal.}
   \label{fig:lampF_cm_rf}
 \end{figure}
 
 \begin{figure}[ht]
   \centering
-  \fbox{\parbox{0.90\textwidth}{\centering\vspace{2.4cm}
-    \textit{[Gambar~F.3 --- Matriks konfusi XGBoost,
-      10~$\times$~10, set uji 750 sampel. Diagonal hampir
-      sempurna; satu-satunya kebocoran residual pada
-      Ball\_007 (2--3 sampel).
-      Dihasilkan dari
-      \texttt{Conference2\_Classification\_Tree.ipynb}.]}
-    \vspace{2.4cm}}}
+  \includegraphics[width=0.90\textwidth]{figures/lampF/lampF_cm_xgb.png}
   \caption{Matriks konfusi XGBoost pada set uji CWRU 10 kelas.
-           Akurasi $\approx$~97,1\%; XGBoost menjadi pemenang
+           Akurasi 95,3\%; XGBoost menjadi pemenang
            dalam kelompok berbasis pohon pada seluruh metrik.}
   \label{fig:lampF_cm_xgb}
 \end{figure}

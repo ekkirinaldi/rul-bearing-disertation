@@ -210,34 +210,21 @@ varian C (tanpa \emph{BatchNorm}).
 
 \begin{figure}[ht]
   \centering
-  \fbox{\parbox{0.92\textwidth}{\centering\vspace{4.0cm}
-    \textit{[Gambar~G.1 --- FSM \emph{Absolute}
-      \emph{full-resolution} (resolusi penuh $10 \times 2048$),
-      varian A (\emph{baseline} dengan BatchNorm). Setiap baris
-      mewakili satu kelas; intensitas warna menunjukkan
-      $\overline{|\phi^{(c)}(x)[p]|}$ rata-rata 500 sampel uji.
-      Dihasilkan dari
-      \texttt{Journal1\_Fault\_Signature\_Maps.ipynb}.]}
-    \vspace{4.0cm}}}
+  \includegraphics[width=0.92\textwidth]{figures/lampG/lampG_fsm_varA.png}
   \caption{FSM \emph{Absolute full-resolution} varian A (baseline
            dengan \emph{BatchNorm}) untuk kesepuluh kelas kerusakan
-           CWRU. Resolusi 2.048 posisi per kelas; \emph{split-half
-           stability} = 0,940.}
+           CWRU. Resolusi 2.048 posisi per kelas; model mencapai
+           akurasi 99,87\% pada set uji.}
   \label{fig:lampG_fsm_fullres}
 \end{figure}
 
 \begin{figure}[ht]
   \centering
-  \fbox{\parbox{0.92\textwidth}{\centering\vspace{4.0cm}
-    \textit{[Gambar~G.2 --- FSM \emph{Absolute full-resolution}
-      varian C (tanpa BatchNorm). Puncak atribusi lebih tajam
-      dan lebih terlokalisasi dibanding varian A; \emph{discriminability}
-      meningkat 133\% menjadi 0,735. Dihasilkan dari
-      \texttt{Journal1\_Fault\_Signature\_Maps.ipynb}.]}
-    \vspace{4.0cm}}}
+  \includegraphics[width=0.92\textwidth]{figures/lampG/lampG_fsm_varC.png}
   \caption{FSM \emph{Absolute full-resolution} varian C (tanpa
-           \emph{BatchNorm}). Peningkatan \emph{discriminability} 133\%
-           dibanding varian A dengan pengorbanan akurasi 3,60~pp.}
+           \emph{BatchNorm}). Puncak atribusi lebih tajam dan
+           lebih terlokalisasi dibanding varian A; akurasi 92,0\%
+           dengan \emph{tradeoff} interpretabilitas yang meningkat.}
   \label{fig:lampG_fsm_fullres_nobn}
 \end{figure}
 

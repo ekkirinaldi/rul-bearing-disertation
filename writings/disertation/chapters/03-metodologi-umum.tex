@@ -53,80 +53,102 @@ Interpretabilitas {\color{blue}pendekatan prognostik} dicapai melalui \emph{Top-
 (SAE) yang memetakan representasi laten model ke frekuensi karakteristik
 \emph{bearing} (BPFx) secara statistik terverifikasi.
 
-Gambar~\ref{fig:bab3_kerangka_terintegrasi} mengilustrasikan alur keseluruhan
-{\color{blue}kedua pendekatan} beserta titik konvergensi di Bab~VI.
+Gambar~\ref{fig:bab3_kerangka_terintegrasi} mengilustrasikan {\color{blue}alur
+pengembangan model} kedua pendekatan beserta titik konvergensi di Bab~VI.
 
 \begin{figure}[ht]
 \centering
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
-    node distance = 0.5cm and 1.0cm,
     ds/.style  = {rectangle, rounded corners=3pt, draw, thick, fill=gray!15,
                   align=center, minimum height=0.85cm, minimum width=2.6cm,
                   font=\small},
+    sh/.style  = {rectangle, rounded corners=3pt, draw, thick, fill=gray!15,
+                  align=center, minimum height=4.9cm, minimum width=2.9cm,
+                  font=\small},
     ja/.style  = {rectangle, rounded corners=3pt, draw, thick, fill=blue!10,
-                  align=center, minimum height=0.85cm, minimum width=2.8cm,
+                  align=center, minimum height=1.05cm, minimum width=2.8cm,
                   font=\small},
     jb/.style  = {rectangle, rounded corners=3pt, draw, thick, fill=green!10,
-                  align=center, minimum height=0.85cm, minimum width=2.8cm,
+                  align=center, minimum height=1.05cm, minimum width=2.8cm,
                   font=\small},
     conv/.style = {rectangle, rounded corners=3pt, draw, thick, fill=orange!15,
                    align=center, minimum height=1.0cm, minimum width=4.0cm,
                    font=\small},
     arr/.style  = {-{Stealth[length=5pt]}, thick},
+    iter/.style = {-{Stealth[length=4pt]}, semithick, densely dashed},
   ]
 
-  %% --- DIAGNOSTIK (baris atas) ---
-  \node[ds] (cwru) {CWRU\\{\scriptsize 10 kelas, 48~kHz}};
-  \node[ja, right=1.1cm of cwru]  (bench)
-       {Kernel / Tree / Deep\\{\scriptsize SVM · RF · WDCNN}};
-  \node[ja, right=1.0cm of bench] (shap)
-       {SHAP\\{\scriptsize Kernel/Tree/Deep}};
-  \node[ja, right=1.0cm of shap]  (fsm)
-       {\emph{Fault Signature}\\{\scriptsize \emph{Maps} (FSM)}};
+  %% --- Kolom 1: dataset per pendekatan ---
+  \node[ds] (cwru) at (0,0) {CWRU\\{\scriptsize 10 kelas · 48~kHz}};
+  \node[ds] (progds) at (0,-4.0) {PHM2012 · XJTU-SY\\{\scriptsize IMS}};
 
   \node[font=\scriptsize\bfseries, text=blue!70!black, above=0.2cm of cwru]
-       {{\color{blue}Diagnostik} (Bab~IV)};
-
-  \draw[arr] (cwru)  -- (bench);
-  \draw[arr] (bench) -- (shap);
-  \draw[arr] (shap)  -- (fsm);
-
-  %% --- PROGNOSTIK (baris bawah) ---
-  \node[ds, below=2.6cm of cwru] (progds)
-       {PHM2012 · XJTU-SY\\{\scriptsize IMS}};
-  \node[jb, right=1.1cm of progds] (rul)
-       {\emph{Backbone} RUL\\{\scriptsize Mamba-xLSTM · TCN}};
-  \node[jb, right=1.0cm of rul] (sae)
-       {Top-$k$ SAE\\{\scriptsize $d_{\mathrm{lat}} = 1024$}};
-  \node[jb, right=1.0cm of sae] (bpfx)
-       {Pemetaan BPFx\\{\scriptsize Pearson + \emph{bootstrap}}};
-
+       {Diagnostik (Bab~IV)};
   \node[font=\scriptsize\bfseries, text=green!60!black, below=0.2cm of progds]
-       {{\color{blue}Prognostik} (Bab~V)};
+       {Prognostik (Bab~V)};
 
-  \draw[arr] (progds) -- (rul);
-  \draw[arr] (rul)    -- node[midway, above, font=\scriptsize]{laten $\mathbf{h}$} (sae);
-  \draw[arr] (sae)    -- (bpfx);
+  %% --- Kolom 2: fondasi bersama Bab III ---
+  \node[sh] (prep) at (4.0,-2.0)
+       {Fondasi Bersama\\(Bab~III)\\[2pt]
+        {\scriptsize praproses sinyal}\\
+        {\scriptsize segmentasi · normalisasi}\\
+        {\scriptsize ekstraksi fitur HI 36-D}};
+
+  %% --- Kolom 3: pengembangan model (iteratif) ---
+  \node[ja] (devd) at (8.3,0)
+       {Model Klasifikasi Kerusakan\\{\scriptsize SVM·LR / DT·RF·XGBoost / WDCNN}\\
+        {\scriptsize evaluasi: akurasi · F1}};
+  \node[jb] (devp) at (8.3,-4.0)
+       {Model Estimasi RUL\\{\scriptsize Mamba-xLSTM · N-BEATS · TCN}\\
+        {\scriptsize evaluasi: RMSE · MAE · skor PHM}};
+
+  %% loop iterasi pelatihan-evaluasi-penalaan (di celah antar baris)
+  \draw[iter] ([xshift=7mm]devd.south) to[out=-60,in=-120,looseness=2.2]
+       node[midway, below, font=\tiny]{iterasi: pelatihan · validasi · penalaan}
+       ([xshift=-7mm]devd.south);
+  \draw[iter] ([xshift=-7mm]devp.north) to[out=120,in=60,looseness=2.2]
+       node[midway, above, font=\tiny]{iterasi: pelatihan · validasi · penalaan}
+       ([xshift=7mm]devp.north);
+
+  %% --- Kolom 4: interpretabilitas ---
+  \node[ja] (xaid) at (12.5,0)
+       {\emph{Fault Signature}\\{\scriptsize \emph{Maps} (FSM) · SHAP}};
+  \node[jb] (xaip) at (12.5,-4.0)
+       {Pemetaan BPFx\\{\scriptsize Top-$k$ SAE + Pearson}};
 
   %% --- Konvergensi Bab VI ---
-  \node[conv, right=2.8cm of shap, yshift=-1.3cm] (konv)
-       {Bab~VI: Kerangka PdM \emph{Multi-Tier}\\
+  \node[conv] (konv) at (16.0,-2.0)
+       {Bab~VI: Kerangka PdM\\\emph{Multi-Tier}\\
         {\scriptsize Edge~IoT $\to$ Edge~Server $\to$ Cloud}\\
-        {\scriptsize Interpretabilitas Dua-Lapis (FSM + SAE-BPFx)}};
+        {\scriptsize Interpretabilitas Dua-Lapis}\\
+        {\scriptsize (FSM + SAE-BPFx)}};
 
-  \draw[arr] (fsm.east)  -| (konv.north);
-  \draw[arr] (bpfx.east) -| (konv.south);
+  %% --- Panah alur utama ---
+  \draw[arr] (cwru.east)   -- (prep.west |- cwru.east);
+  \draw[arr] (progds.east) -- (prep.west |- progds.east);
+  \draw[arr] (prep.east |- devd.west) -- (devd.west);
+  \draw[arr] (prep.east |- devp.west) -- (devp.west);
+  \draw[arr] (devd) -- (xaid);
+  \draw[arr] (devp) -- (xaip);
+  \draw[arr] (xaid.east) -| ([xshift=-9mm]konv.north);
+  \draw[arr] (xaip.east) -| ([xshift=-9mm]konv.south);
+
+  %% --- Bingkai tahap pengembangan model ---
+  \node[draw=black!60, densely dashed, rounded corners=4pt, inner xsep=6pt,
+        inner ysep=22pt, fit=(devd)(devp),
+        label={[font=\scriptsize\bfseries]90:Pengembangan Model}] {};
 
 \end{tikzpicture}%
 }
-\caption{Kerangka konseptual: {\color{blue}pendekatan diagnostik} (biru) menggunakan dataset
-         CWRU untuk \emph{benchmark} algoritma
-         (kernel/pohon keputusan/\emph{Deep Learning}) dan menghasilkan FSM sebagai
-         XAI level sinyal; {\color{blue}pendekatan prognostik} (hijau)
-         menggunakan tiga dataset prognostik untuk estimasi RUL dan pemetaan
-         BPFx melalui Top-$k$ SAE. {\color{blue}Keduanya} berkonvergensi pada kerangka
-         PdM \emph{multi-tier} di Bab~VI.}
+\caption{{\color{blue}Kerangka pengembangan model: fondasi data dan praproses
+         bersama (Bab~III) menjadi masukan bagi dua alur pengembangan model;
+         alur diagnostik (biru) mengembangkan model klasifikasi kerusakan
+         (SVM/LR, DT/RF/XGBoost, WDCNN) secara iteratif hingga menghasilkan
+         \emph{Fault Signature Maps}, sedangkan alur prognostik (hijau)
+         mengembangkan model estimasi RUL (Mamba-xLSTM, N-BEATS-xLSTM,
+         SparseGate-TCN) dengan pemetaan BPFx melalui Top-$k$ SAE. Keduanya
+         berkonvergensi pada kerangka PdM \emph{multi-tier} di Bab~VI.}}
 \label{fig:bab3_kerangka_terintegrasi}
 \end{figure}
 
@@ -441,12 +463,13 @@ XJTU-SY beserta tiga kondisi operasinya.
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.94\textwidth]{figures/bab3/xjtu_sy_test_rig.png}
-  \caption{Skema \emph{test rig} XJTU-SY \citetitb{Wang2020XJTU}: motor AC variabel
+  \caption{Konfigurasi \emph{test rig} XJTU-SY \citetitb{Wang2020XJTU}: motor AC variabel
            menggerakkan \emph{bearing} uji LDK~UER204 melalui \emph{belt drive};
            aktuator hidrolik memberikan beban radial 10--12~kN; akselerometer
-           horizontal (25,6~kHz) merekam getaran setiap 1 menit.
+           horizontal dan vertikal (25,6~kHz) merekam getaran setiap 1 menit.
            Tiga kondisi operasi (35~Hz/12~kN, 37,5~Hz/11~kN, 40~Hz/10~kN)
-           menghasilkan 15 rekaman \emph{run-to-failure}.}
+           menghasilkan 15 rekaman \emph{run-to-failure}. Diadaptasi dari
+           \citetitb{Wang2020XJTU}.}
   \label{fig:bab3_xjtusy_rig}
 \end{figure}
 
