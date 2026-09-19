@@ -1,6 +1,6 @@
 ## tex_arg	asset_path	width_fraction
 ## tex_arg = argument of \includegraphics in the LaTeX source (or tikz:<bab> for
-## in-document tikzpicture diagrams). asset_path relative to dissertation-docx/.
+## in-document tikzpicture diagrams). asset_path relative to manuscript/.
 ## width_fraction = fraction of the 14.0 cm text width (from width=...\textwidth).
 ball_bearing_components.png	assets/figures/bab1/ball_bearing_components.png	0.42
 ball_bearing_machining.png	assets/figures/bab1/ball_bearing_machining.png	0.55

@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """Post-process a pandoc-produced chapter docx into ITB dissertation format.
 
+insert_docx.py imports the XML helpers defined here. The command line below is
+the LaTeX-port pass; it needs preprocess_tex.py from archive/docx-port/tools
+and the .aux file of the removed LaTeX build.
+
 Usage:
     python3 restyle.py RAW.docx OUT.docx \
-        --aux ../writings/disertation/build/disertasi.aux \
+        --aux disertasi.aux \
         --figmap assets/figure-map.tsv --bab 6 --chapter-label bab:kesimpulan
 
 Steps (all verified against the ITB template internals):

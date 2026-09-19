@@ -84,21 +84,16 @@ wandb/
 *.nav
 *.snm
 *.vrb
-# Legacy dissertation tree, superseded by dissertation-docx/
-disertasi-itb/
-
-# ITB reference PDFs/DOCX and internal spec drafts — keep locally, not in git
-disertasi/
-spec/
+# Seminar drafts, ITB reference files and other material kept only on disk
+archive/local/
 
 # =============================================================================
-# Loose draft DOCX / seminar presentation files at repo root
+# Word and PowerPoint files are untracked unless re-included below
 # =============================================================================
 *.docx
 *.pptx
-# Re-include tracked dissertation DOCX tree
-!dissertation-docx/**/*.docx
-!dissertation-docx/**/*.pptx
+# The June LaTeX-to-DOCX port, kept for traceability
+!archive/docx-port/**/*.docx
 # The ITB Word template the manuscript is built on
 !manuscript/assets/*.docx
 
@@ -111,8 +106,8 @@ spec/
 # Earlier versions, backups and the circulated sidang deck stay local
 manuscript/versions/
 
-# dissertation-docx PDF build output (regenerable via make build)
-dissertation-docx/build/
+# Build output of the archived port
+archive/docx-port/build/
 
 # journal-q2 working draft (separate publication, not dissertation core)
 writings/journal-q2/

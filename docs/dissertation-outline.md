@@ -6,7 +6,7 @@
 
 **NIM:** 33420002 — **Tahun:** 2025/2026
 
-**Status:** Draft outline final — restrukturisasi mengikuti enam-bab [Outline_Disertasi_6Bab.pdf](Outline_Disertasi_6Bab.pdf), dengan Bab I diselaraskan ke [SK-Toto.pdf](SK-Toto.pdf) dan pembahasan kernel/tree/deep CWRU yang dipertahankan dari karya teknis Pak Toto (Conference 1, Conference 2, Journal 1, Journal 2).
+**Status:** Draft outline final — restrukturisasi mengikuti enam-bab [Outline_Disertasi_6Bab.pdf](sources/Outline_Disertasi_6Bab.pdf), dengan Bab I diselaraskan ke [SK-Toto.pdf](sources/SK-Toto.pdf) dan pembahasan kernel/tree/deep CWRU yang dipertahankan dari karya teknis Pak Toto (Conference 1, Conference 2, Journal 1, Journal 2).
 
 ---
 
@@ -66,7 +66,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 
 ## Bab I — Pendahuluan
 
-**Tujuan bab:** Memaparkan motivasi industri, masalah penelitian, tujuan + novelti, manfaat, batasan + asumsi, kontribusi & posisi, dan sistematika disertasi. *Diselaraskan dengan [SK-Toto.pdf §I](SK-Toto.pdf)*
+**Tujuan bab:** Memaparkan motivasi industri, masalah penelitian, tujuan + novelti, manfaat, batasan + asumsi, kontribusi & posisi, dan sistematika disertasi. *Diselaraskan dengan [SK-Toto.pdf §I](sources/SK-Toto.pdf)*
 
 ### 1.1 Latar Belakang
 - **(retained dari SK-Toto §I.1)** Konteks *Making Indonesia 4.0* (April 2018): lima sektor prioritas (makanan-minuman, tekstil, kimia, otomotif, elektronika); IoT, big data, AI sebagai enabler.
@@ -80,7 +80,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 - **(NEW para)** Penegasan posisi penelitian: disertasi ini fokus pada **pipeline vibrasi end-to-end** (diagnostik + prognostik + XAI), dengan validasi eksternal terbatas pada subset data PT~SKF Indonesia. Integrasi penuh data kualitas radial clearance bukan deliverable disertasi.
 
 ### 1.2 Rumusan Masalah
-*Tiga RQ disusun pada **level pertanyaan industri** mengikuti [SK-Toto §I.2](SK-Toto.pdf), dengan **sub-RQ teknis** yang dapat dijawab penuh oleh papers Pak Toto + draft disertasi. Sub-RQ menjadi anchor empiris setiap bab; RQ tingkat atas menjaga kontinuitas dengan framing usulan penelitian Agustus 2025.*
+*Tiga RQ disusun pada **level pertanyaan industri** mengikuti [SK-Toto §I.2](sources/SK-Toto.pdf), dengan **sub-RQ teknis** yang dapat dijawab penuh oleh papers Pak Toto + draft disertasi. Sub-RQ menjadi anchor empiris setiap bab; RQ tingkat atas menjaga kontinuitas dengan framing usulan penelitian Agustus 2025.*
 
 - **RQ1 — Integrasi Data Sensor dan Arsitektur PdM untuk OEE.** *Bagaimana sistem perawatan prediktif berbasis sensor vibrasi yang melekat pada arsitektur multi-tier (Edge IoT → Edge Server → Cloud/GPU) dapat dirancang sebagai fondasi untuk mengurangi unplanned downtime dan mendukung peningkatan OEE pada produksi ball bearing, dengan integrasi penuh data kualitas heterogen (vibration checking + radial clearance checking) sebagai roadmap penelitian lanjutan?*
   - **Sub-RQ1.1 — Pembagian beban komputasi lintas tier.** *Bagaimana memetakan tiga jenis beban inferensi (triage anomali ringan, klasifikasi jenis kerusakan, estimasi RUL) ke tiga tier (Edge IoT, Edge Server, Cloud) sehingga keluaran setiap tier dapat dipakai oleh tier berikutnya dalam satu loop perawatan?*
@@ -99,7 +99,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
   - *Backing:* Journal 1, Journal 2; [04-diagnostik.tex](disertation/chapters/04-diagnostik.tex) §4.10–4.13; [05-prognostik.tex](disertation/chapters/05-prognostik.tex) §5.6–5.8. Angka kunci: split-half stability 0,940 (FSM); $r_\text{max} = 0{,}507$ (PHM2012, BPFI), $r_\text{max} = 0{,}501$ (XJTU-SY, BPFO).
 
 ### 1.3 Tujuan Penelitian dan Novelti
-*Tiga tujuan dari [SK-Toto §I.3](SK-Toto.pdf), dipetakan eksplisit ke lima novelti N1–N5 dan ke tiga RQ §1.2. Setiap tujuan adalah anchor untuk satu RQ; novelti adalah bukti pembuktiannya.*
+*Tiga tujuan dari [SK-Toto §I.3](sources/SK-Toto.pdf), dipetakan eksplisit ke lima novelti N1–N5 dan ke tiga RQ §1.2. Setiap tujuan adalah anchor untuk satu RQ; novelti adalah bukti pembuktiannya.*
 
 - **Tujuan 1 — Pengembangan Sistem PdM Multi-Tier (menjawab RQ1).** Merancang *blueprint* sistem perawatan prediktif berbasis sensor vibrasi yang mengintegrasikan blok diagnostik (klasifikasi kerusakan) dan blok prognostik (estimasi RUL) ke dalam arsitektur tiga-tier (Edge IoT → Edge Server → Cloud/GPU) yang dapat diaudit lapis demi lapis. → **Novelti N5 — Kerangka Konseptual PdM Multi-Tier** (sintesis FSM input-attribution + SAE-BPFx latent-concept). *Bukti:* tabel penempatan model per tier di Bab VI.2 (berbasis parameter count, latency estimasi, tipe XAI yang sesuai).
 
@@ -113,7 +113,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 - **RQ1** dijawab pada level **blueprint arsitektur** (Bab VI.2), bukan pada level *cross-machine deployment study*. Validasi industri PT~SKF terbatas pada *sanity check* eksternal (Lampiran D).
 
 ### 1.4 Manfaat Penelitian
-*Adaptasi dari [SK-Toto §I.4](SK-Toto.pdf), dilembutkan: klaim multi-modal radial clearance digeser ke aspirasi/future work.*
+*Adaptasi dari [SK-Toto §I.4](sources/SK-Toto.pdf), dilembutkan: klaim multi-modal radial clearance digeser ke aspirasi/future work.*
 
 1. **(retained)** Memberikan contoh kasus implementasi analisis *big data* dan AI dalam sistem produksi untuk meningkatkan produktivitas dan daya saing manufaktur Indonesia.
 2. **(retained)** Hasil penelitian berupa pipeline *open-source* (notebook reproduksi + bobot model + skrip evaluasi statistik) yang dapat menjadi contoh integrasi diagnostik–prognostik dan layer XAI dalam sistem perawatan prediktif.
@@ -121,7 +121,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 4. **(softened)** **Aspirasi jangka panjang:** integrasi penuh data kualitas heterogen (*vibration checking* + *radial clearance checking* PT~SKF) sebagai input model multi-modal — *future work* (Bab VI.5).
 
 ### 1.5 Batasan dan Asumsi Penelitian
-*Gabungan [SK-Toto §I.5](SK-Toto.pdf) + [Outline_6Bab §I.4](Outline_Disertasi_6Bab.pdf).*
+*Gabungan [SK-Toto §I.5](sources/SK-Toto.pdf) + [Outline_6Bab §I.4](sources/Outline_Disertasi_6Bab.pdf).*
 
 **Batasan:**
 1. **Sistem produksi:** proses permesinan grinding pada produksi ball bearing.
@@ -133,7 +133,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 7. **Validasi industri:** terbatas pada subset titik data PT~SKF Indonesia (volume kecil, sanity check eksternal).
 8. **Perangkat:** menggunakan *library open-source* (PyTorch, scikit-learn, XGBoost, SHAP, Mamba-SSM, xLSTM). Tidak ada pengembangan *library* baru.
 
-**Asumsi:** (adopsi dari [SK-Toto §I.5](SK-Toto.pdf) #1–#6)
+**Asumsi:** (adopsi dari [SK-Toto §I.5](sources/SK-Toto.pdf) #1–#6)
 1. Sensor vibrasi/suhu/putaran sudah dipasang dan terkalibrasi pada mesin OR1/OR2 PT~SKF.
 2. Data quality check (*vibration checking* + *radial clearance checking*) tersedia secara waktu-nyata bagi tim PdM SKF (digunakan sebagai *ground-truth* validasi eksternal Lampiran D).
 3. Mesin beroperasi dalam jangkauan normal sesuai spesifikasi SKF.
@@ -142,7 +142,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 6. Proses grinding memiliki karakteristik degradasi yang dapat dimodelkan dengan ML berbasis data.
 
 ### 1.6 Kontribusi dan Posisi Penelitian
-- **Kontribusi keilmuan** (adaptasi [SK-Toto §I.6](SK-Toto.pdf) + Novelti N1–N5 + pemetaan ke RQ §1.2):
+- **Kontribusi keilmuan** (adaptasi [SK-Toto §I.6](sources/SK-Toto.pdf) + Novelti N1–N5 + pemetaan ke RQ §1.2):
 
   | # | Kontribusi | Novelti | RQ yang dijawab | Tipe |
   |---|------------|---------|-----------------|------|
@@ -151,7 +151,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
   | 3 | **Integrasi PdM Multi-Tier** — *Blueprint* arsitektur yang menyatukan FSM (input-attribution) dan SAE-BPFx (latent-concept) ke tiga tier (Edge IoT → Edge Server → Cloud/GPU) yang dapat diaudit lapis demi lapis. | **N5** | RQ1 / Sub-RQ1.1 | Konseptual |
   | 4 | **Konsistensi Hybrid ML+DL Lintas Keluarga** — Benchmark paralel kernel/tree/deep untuk diagnostik (CWRU) dan tiga backbone DL untuk prognostik (PHM2012/XJTU-SY/IMS) sebagai bukti universalitas pendekatan hybrid pada level *family of algorithms*. | Mendukung **N4** | RQ2 / Sub-RQ2.1 + Sub-RQ2.2 | Empiris |
 
-- **Posisi penelitian** (matriks gap, augmentasi dari [Tabel I-1 SK-Toto](SK-Toto.pdf)):
+- **Posisi penelitian** (matriks gap, augmentasi dari [Tabel I-1 SK-Toto](sources/SK-Toto.pdf)):
   - Tabel `tab:bab1_posisi_penelitian` dengan kolom: Sumber Data | Mode Operasi | Pendekatan Model | XAI | **FSM** | **SAE-BPFx** | Tier PdM. Posisikan empat karya Pak Toto + literatur eksternal pada matriks ini.
 - **Diagram TikZ** `fig:bab1_kontribusi`: lima kotak N1–N5 dengan panah dependency: N1↔N2 (Jalur A, menjawab Sub-RQ3.1); N3↔N4 (Jalur B, menjawab Sub-RQ2.2 + Sub-RQ3.2); N5 menghubungkan keduanya ke output PdM Multi-Tier (menjawab Sub-RQ1.1).
 
@@ -167,7 +167,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 
 ## Bab II — Tinjauan Pustaka
 
-**Tujuan bab:** Memetakan *state-of-the-art*, kelemahan tiap pendekatan, dan *research gap*. Mengikuti urutan [Outline_6Bab §II.1–II.7](Outline_Disertasi_6Bab.pdf), diaugmentasi dengan materi [02-tinjauan-pustaka.tex](disertation/chapters/02-tinjauan-pustaka.tex) existing.
+**Tujuan bab:** Memetakan *state-of-the-art*, kelemahan tiap pendekatan, dan *research gap*. Mengikuti urutan [Outline_6Bab §II.1–II.7](sources/Outline_Disertasi_6Bab.pdf), diaugmentasi dengan materi [02-tinjauan-pustaka.tex](disertation/chapters/02-tinjauan-pustaka.tex) existing.
 
 ### 2.1 Perawatan Prediktif dan Industri 4.0
 - Evolusi *Condition-Based Maintenance* (CBM) — standar **ISO 13374** (data processing) dan **ISO 13381** (prognostics).
@@ -224,7 +224,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 - **(figure)** `fig:bab3_kerangka_terintegrasi`: diagram TikZ dua-jalur dengan blok konvergensi.
 
 ### 3.2 Dataset
-*Mengikuti verbatim [Outline_6Bab §III.2](Outline_Disertasi_6Bab.pdf).*
+*Mengikuti verbatim [Outline_6Bab §III.2](sources/Outline_Disertasi_6Bab.pdf).*
 
 - **3.2.1 CWRU — Bab IV.**
   - *Case Western Reserve University Bearing Data Center.*
@@ -268,7 +268,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 
 **Tujuan bab:** Menyajikan jalur diagnostik secara end-to-end. Diawali dengan **benchmark tiga keluarga algoritma** (kernel → tree → deep) sebagai progresi naratif "mengapa deep learning diperlukan", lalu deep-dive pada backbone utama WDCNN dengan SHAP DeepExplainer dan formalisasi *Fault Signature Maps*.
 
-**Sumber utama:** Conference 1 (kernel), Conference 2 (tree), Journal 1 (deep + FSM); notebook [Notebook/Conference1_*.ipynb](../Notebook/Conference1_Classification_SVM_LR.ipynb), [Notebook/Conference2_*.ipynb](../Notebook/Conference2_Classification_Tree.ipynb), [Notebook/Journal1_*.ipynb](../Notebook/Journal1_Fault%20Signature%20Maps.ipynb).
+**Sumber utama:** Conference 1 (kernel), Conference 2 (tree), Journal 1 (deep + FSM); notebook [Notebook/Conference1_*.ipynb](../research/notebooks/Conference1_Classification_SVM_LR.ipynb), [Notebook/Conference2_*.ipynb](../research/notebooks/Conference2_Classification_Tree.ipynb), [Notebook/Journal1_*.ipynb](../research/notebooks/Journal1_Fault%20Signature%20Maps.ipynb).
 
 ### [ Metodologi Studi Diagnostik ]
 
@@ -278,7 +278,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 - **(figure)** `fig:bab4_pipeline_diagnostik`: diagram TikZ alur tiga keluarga + SHAP variant per keluarga + FSM untuk WDCNN.
 
 #### 4.2 Benchmark Keluarga Kernel — SVM + Logistic Regression (Conf 1)
-- **Sumber notebook:** [Notebook/Conference1_Classification_SVM_LR.ipynb](../Notebook/Conference1_Classification_SVM_LR.ipynb).
+- **Sumber notebook:** [Notebook/Conference1_Classification_SVM_LR.ipynb](../research/notebooks/Conference1_Classification_SVM_LR.ipynb).
 - **Ekstraksi fitur:** 9 fitur time-domain (RMS, kurtosis, crest factor, peak-to-peak, skewness, std, mean, variance, MAD) + 9 fitur frequency-domain (spectral centroid, spectral entropy, energi pita BPFO/BPFI/BSF/FTF) per *window* (geometri SKF 6205).
 - **Standardisasi:** Z-score *fit-on-train*.
 - **Model:** SVM RBF + Logistic Regression *one-vs-rest* (10 kelas).
@@ -286,14 +286,14 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 - **Split:** stratified 80/20 dengan `random_state` tetap; *5-fold stratified CV* pada train set untuk tuning.
 
 #### 4.3 Benchmark Keluarga Tree — DT + RF + XGBoost (Conf 2)
-- **Sumber notebook:** [Notebook/Conference2_Classification_Tree.ipynb](../Notebook/Conference2_Classification_Tree.ipynb).
+- **Sumber notebook:** [Notebook/Conference2_Classification_Tree.ipynb](../research/notebooks/Conference2_Classification_Tree.ipynb).
 - **Fitur:** sama dengan §4.2 (9 + 9 dimensi).
 - **Model:** Decision Tree, Random Forest, XGBoost — kriteria splitting Gini/entropy; *bagging* untuk RF; *gradient boosting* + regularisasi L1/L2 untuk XGBoost.
 - **Tuning:** grid hyperparameter spesifik per model (detail di [Lampiran F](#lampiran-f-detail-klasifikasi-tree-based)).
 - **Catatan teknis:** label encoding string → integer untuk XGBoost.
 
 #### 4.4 Backbone Deep: WDCNN (Journal 1)
-- **Sumber notebook:** [Notebook/Journal1_Fault Signature Maps.ipynb](../Notebook/Journal1_Fault%20Signature%20Maps.ipynb).
+- **Sumber notebook:** [Notebook/Journal1_Fault Signature Maps.ipynb](../research/notebooks/Journal1_Fault%20Signature%20Maps.ipynb).
 - **Arsitektur (Zhang 2017/2018):** Kernel-1 lebar **64**, stride **16** (untuk *frequency-aware feature extraction*); blok konvolusi 2–5 dengan kernel 3; dua lapisan FC(100) dengan dropout 0.5; softmax 10 kelas. Total **~60 710 parameter**.
 - **Input:** sinyal mentah 2 048 sampel (tanpa ekstraksi fitur manual).
 - **Tiga varian ablasi:**
@@ -547,7 +547,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 - Figure: SHAP summary plot untuk SVM dan LR (per-class breakdown).
 - Tabel: per-class precision/recall/F1.
 - Confusion matrix figure (10 × 10).
-- Kode reproduksi training + SHAP (snippet dari [Notebook/Conference1_*.ipynb](../Notebook/Conference1_Classification_SVM_LR.ipynb)).
+- Kode reproduksi training + SHAP (snippet dari [Notebook/Conference1_*.ipynb](../research/notebooks/Conference1_Classification_SVM_LR.ipynb)).
 
 ### Lampiran F — Detail Klasifikasi Tree-Based (NEW; sumber: Conference 2)
 - Tabel hyperparameter DT, RF, XGBoost (max_depth, n_estimators, learning_rate, subsample, reg_lambda).
@@ -555,7 +555,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 - Tabel: per-class precision/recall/F1 per model.
 - Confusion matrix figure × 3 model.
 - Catatan tentang label encoding (string → integer) yang diperlukan XGBoost.
-- Kode reproduksi (snippet dari [Notebook/Conference2_*.ipynb](../Notebook/Conference2_Classification_Tree.ipynb)).
+- Kode reproduksi (snippet dari [Notebook/Conference2_*.ipynb](../research/notebooks/Conference2_Classification_Tree.ipynb)).
 
 ### Lampiran G — Detail WDCNN dan FSM (NEW; sumber: Journal 1)
 - Arsitektur WDCNN lengkap (diagram + tabel layer dengan kernel size, stride, padding, output dim).
@@ -563,7 +563,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
 - Figure: training curves lengkap (loss + accuracy train/val).
 - Figure: FSM heatmap full-resolution (Absolute variant, 10 kelas × 2 048 posisi).
 - Tabel ablasi: variasi kernel size lapisan pertama (32 / 64 / 128) → efek pada akurasi + discriminability.
-- Catatan reproduksi SHAP DeepExplainer pada sinyal mentah 2 048 sampel (dari [Notebook/Journal1_*.ipynb](../Notebook/Journal1_Fault%20Signature%20Maps.ipynb)).
+- Catatan reproduksi SHAP DeepExplainer pada sinyal mentah 2 048 sampel (dari [Notebook/Journal1_*.ipynb](../research/notebooks/Journal1_Fault%20Signature%20Maps.ipynb)).
 
 ---
 
@@ -631,7 +631,7 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
    - **Fase E** — Restrukturisasi abstrak + daftar singkatan.
    - **Fase F** — Update Bab VI selaras VI.1–VI.5.
 2. **Komitmen kecil-kecil:** setiap perubahan section di-commit terpisah agar mudah di-review oleh Pak Toto.
-3. **Verifikasi setelah setiap section:** `make lint` di [dissertation-docx/](../dissertation-docx/); perbaiki setiap `[FATAL]`.
+3. **Verifikasi setelah setiap section:** `make lint` di [manuscript/](../manuscript/); perbaiki setiap `[FATAL]`.
 4. **Bahasa:** Bahasa Indonesia. Istilah teknis Inggris ditulis miring. Hindari *Indonesianisasi* paksa terhadap istilah baku (*deep learning*, *Sparse Autoencoder*, *backpropagation*, *envelope spectrum*).
 5. **Sitasi-diri:** tulis `(Suharto dkk., tahun)` mengikuti konvensi yang sudah ada di naskah.
 6. **Konsistensi penomoran:** setelah Bab IV/V direstrukturisasi (kernel/tree/deep di awal Bab IV), semua REF field ke subbab lain harus diperbarui (Ctrl+A lalu F9).

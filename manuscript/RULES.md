@@ -6,7 +6,7 @@ pohon LaTeX asal porting sudah dihapus pada September 2026 dan hanya dapat
 diambil kembali dari riwayat git. Semua suntingan naskah dilakukan pada file
 `.docx` di sini, mengikuti aturan dalam dokumen ini. Aturan format bersumber dari *Pedoman Penulisan Disertasi Doktor
 ITB* (SPs, April 2016) dan *Juknis Disertasi Mei 2019*; template resmi:
-`assets/template.docx` (salinan `disertasi/template-disertasi_Mei2019.docx`).
+`assets/template.docx` (salinan `template-disertasi_Mei2019.docx` resmi ITB).
 
 ---
 
@@ -146,10 +146,10 @@ Diturunkan utuh dari aturan ITB di `docs/writing-guide.md`; ringkasan operasiona
 ## 9. Alur Kerja dan Lint
 
 ```bash
-cd dissertation-docx
-make bab6           # regenerasi satu bab dari LaTeX (hanya selama porting)
-make verify-bab6    # XML valid + render PDF + REF resolve + volume isi + sitasi
-make lint           # lint prosa + cek artefak docx pada semua bab
+cd manuscript
+make insert-dry     # pratinjau spesifikasi sisipan tanpa menulis apa pun
+make insert         # terapkan sisipan, menghasilkan versi naskah berikutnya
+make lint           # lint prosa + cek artefak docx pada naskah V16
 ```
 
 - `tools/lint_docx.sh` mengekstrak teks via pandoc dan memeriksa: token `@@`
