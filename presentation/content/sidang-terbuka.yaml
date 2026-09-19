@@ -232,8 +232,8 @@ slides:
   # 5 · PENGANTAR DOMAIN — apa yang merugikan: kasus ball mill (draft hal. 5) + kasus terpublikasi
   # ======================================================================
   - layout: content
-    eyebrow: "Pengantar Domain · Biaya Kegagalan"
-    title: "Apa yang Merugikan: Satu Kegagalan, Berbulan-bulan Produksi Hilang"
+    eyebrow: "Pengantar Domain · Biaya akibat Failure"
+    title: "Retak pada Bull Gear Menghentikan Ball Mill Selama 26 Minggu"
     top: 1.72
     blocks:
       - type: columns
@@ -303,8 +303,8 @@ slides:
   # 6 · PENGANTAR DOMAIN — reliability program menekan biaya (draft hal. 6)
   # ======================================================================
   - layout: content
-    eyebrow: "Pengantar Domain · Nilai Program Keandalan"
-    title: "Program Keandalan yang Baik Menghemat Biaya di Semua Lini"
+    eyebrow: "Pengantar Domain · Nilai Reliability Program"
+    title: "Komponen Biaya Terbesar Bukan Suku Cadang, melainkan Kehilangan Potensi Produksi"
     top: 1.72
     blocks:
       - type: columns
@@ -363,7 +363,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar Domain · Kurva P-F"
-    title: "Kegagalan Fungsional Tidak Datang Tiba-tiba: Ada Interval P-F"
+    title: "Interval P-F Memberi Rentang Waktu antara Gejala Awal dan Functional Failure"
     top: 1.72
     blocks:
       - type: columns
@@ -428,7 +428,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar Domain · Asset Diagnostic Methodology"
-    title: "Dari Aset ke Pengukuran: Tujuh Lapis Pengetahuan untuk Prediksi"
+    title: "Asset Diagnostic Methodology Menghubungkan Aset dengan Titik Pengukuran"
     top: 1.72
     blocks:
       - type: columns
@@ -583,7 +583,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar Domain · Prognostik"
-    title: "Prognostik Menaksir Sisa Umur Pakai pada Kurva Kondisi"
+    title: "Prognostik Mengestimasi Sisa Umur Pakai pada Kurva Kondisi"
     top: 1.72
     blocks:
       - type: columns
@@ -1196,7 +1196,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar Sinyal · 1 dari 5"
-    title: "Sinyal Bearing Tenggelam di Dalam Getaran Mesin Keseluruhan"
+    title: "Sinyal Bearing Beramplitudo Jauh di Bawah Getaran Mesin Keseluruhan"
     top: 1.72
     blocks:
       - type: figure
@@ -1240,7 +1240,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar Sinyal · 2 dari 5"
-    title: "*Acceleration Enveloping*: Empat Langkah Mengangkat Impuls Bearing"
+    title: "*Acceleration Enveloping*: Empat Langkah Memisahkan Impuls Bearing dari Derau"
     top: 1.72
     blocks:
       - type: columns
@@ -1289,7 +1289,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar Sinyal · 3 dari 5"
-    title: "Cacat Kecil pada Raceway Membangkitkan Dering Struktur yang Berulang"
+    title: "Cacat Kecil pada Raceway Membangkitkan *Ringing* Struktur yang Berulang"
     top: 1.72
     blocks:
       - type: columns
@@ -1464,7 +1464,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar Sinyal · Data Penelitian"
-    title: "Data Mana yang Dipakai Penelitian Ini, dan dalam Bentuk Apa"
+    title: "Sumber Data Penelitian dan Bentuk Input Setiap Model"
     top: 1.72
     blocks:
       - type: table
@@ -1552,7 +1552,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Metodologi · Alur Data ke Keputusan"
-    title: "Dari Data Menuju Prediksi Kondisi Mesin"
+    title: "Alur Pengolahan Data Menjadi Prediksi Kondisi Mesin"
     top: 1.72
     blocks:
       - type: columns
@@ -1640,7 +1640,7 @@ slides:
   # ======================================================================
   - layout: section
     eyebrow: "Jalur Diagnostik · Bab IV · Rumusan Masalah 1 dan 2"
-    title: "Mengenali Jenis Kerusakan, lalu Menjelaskannya"
+    title: "Klasifikasi Jenis Kerusakan dan Verifikasi Penjelasannya"
     body: >-
       **RM-1 (diagnostik).** Bagaimana mengembangkan model deteksi kerusakan bearing
       berbasis data sensor vibrasi, dengan berbagai model machine learning dan deep
@@ -1755,7 +1755,7 @@ slides:
   # feeds the RUL backbones per recording.
   - layout: content
     eyebrow: "Pengantar · Cara Kerja Model"
-    title: "Dari Sinyal Mentah ke *Feature Vector* HI"
+    title: "Pembentukan *Feature Vector* HI dari *Raw Signal*"
     top: 1.66
     blocks:
       - type: figure
@@ -1853,7 +1853,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar · Batas Explainability"
-    title: "Apa yang Dijanjikan *Explainability*, dan Apa yang Tidak"
+    title: "Batas Klaim yang Dapat Ditarik dari *Explainability*"
     top: 1.72
     blocks:
       - type: cards
@@ -1960,7 +1960,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Metode · Novelti N1"
-    title: "Empat Langkah dari Sinyal Mentah ke FSM"
+    title: "Empat Langkah Pembentukan FSM dari *Raw Signal*"
     top: 1.66
     blocks:
       - type: figure
@@ -2120,7 +2120,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Jawaban · Jalur Diagnostik"
-    title: "RM-1 (Diagnostik) dan RM-2 Terjawab: Akurat, lalu Dapat Diverifikasi"
+    title: "RM-1 (Diagnostik) dan RM-2 Terjawab: Akurasi 99,87% dengan FSM Tervalidasi"
     top: 1.80
     blocks:
       - type: banner
@@ -2175,7 +2175,7 @@ slides:
   # ======================================================================
   - layout: section
     eyebrow: "Jalur Prognostik · Bab V · Rumusan Masalah 1 dan 3"
-    title: "Menaksir Sisa Umur, lalu Membuktikan Fisikanya"
+    title: "Estimasi Sisa Umur dan Pembuktian Fisika pada Representasi Latennya"
     body: >-
       **RM-1 (prognostik).** Bagaimana mengembangkan model prediksi remaining useful
       life bearing yang akurat pada dua benchmark run-to-failure, di bawah protokol
@@ -2690,7 +2690,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar · Mengapa Sparse Autoencoder"
-    title: "Mengapa Sparse Autoencoder Dipilih untuk Membedah Model RUL"
+    title: "Alasan Sparse Autoencoder Dipilih untuk Menguraikan Representasi Laten Model RUL"
     top: 1.66
     blocks:
       - type: banner
@@ -2787,7 +2787,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Hasil · Novelti N3 dan N4"
-    title: "Hasil Hit-Rate BPFx dan Kontrol Negatif"
+    title: "Hasil Hit-Rate BPFx dan *Negative Control*"
     top: 1.74
     blocks:
       - type: columns
@@ -2822,7 +2822,7 @@ slides:
               - type: panel
                 flex: true
                 tone: alt
-                title: KONTROL NEGATIF
+                title: NEGATIVE CONTROL
                 title_size: 12.5
                 blocks:
                   - type: bullets
@@ -2904,7 +2904,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Validasi Industri · Subbab IV.15"
-    title: "Transfer Diagnostik: SVM-RBF CWRU pada Spindel SKF"
+    title: "Transfer Diagnostik: SVM-RBF CWRU pada Spindle SKF"
     top: 1.74
     blocks:
       - type: figure
@@ -2950,7 +2950,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Validasi Industri · Subbab V.5.3"
-    title: Inferensi RUL Streaming pada Mesin Grinding OR-1
+    title: "Inference Engine RUL Streaming pada Mesin Grinding OR-1"
     top: 1.70
     blocks:
       - type: text
@@ -3110,7 +3110,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Sintesis · Novelti N5"
-    title: "Kerangka PdM Tiga-Tier: Cetak Biru Adopsi Industri"
+    title: "Kerangka PdM Tiga-Tier untuk Adopsi Industri"
     top: 1.78
     blocks:
       - type: tiers
@@ -3634,7 +3634,7 @@ slides:
               Karena enam uji primer dijalankan sekaligus, ambang signifikansi diperketat
               ke 0,008 (bukan 0,05).
           - value: "≈0%"
-            title: "Negative control (kontrol negatif)"
+            title: "Negative control"
             hint: "harus ≈ 0"
             body: >-
               Analisis yang sama dijalankan pada model dengan weights acak dan noise murni.
@@ -3855,7 +3855,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Cadangan · Subbab V.5.3"
-    title: Arsitektur Mesin Inferensi Streaming
+    title: "Arsitektur *Inference Engine* Streaming"
     top: 1.66
     blocks:
       - type: figure
@@ -3873,7 +3873,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Cadangan · Subbab V.5.4"
-    title: Mesin Inferensi Streaming pada Dataset Benchmark
+    title: "*Inference Engine* Streaming pada Dataset Benchmark"
     top: 1.70
     blocks:
       - type: columns
@@ -3923,7 +3923,7 @@ slides:
   # ======================================================================
   - layout: content
     eyebrow: "Cadangan · Konteks Industri"
-    title: "Dari Tujuan Pabrik ke Rotasi yang Andal"
+    title: "Sasaran Produksi Pabrik Bergantung pada Kondisi Mesin Rotasi"
     top: 1.70
     blocks:
       - type: figure
