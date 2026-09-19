@@ -33,10 +33,8 @@ lint:
 preview:
 	$(PY) build.py preview --spec $(SPEC) --out $(OUT)
 
-png: preview
-	@command -v pdftoppm >/dev/null || { echo "pdftoppm not found (brew install poppler)"; exit 1; }
-	pdftoppm -r 110 -png out/preview/$(notdir $(basename $(OUT))).pdf out/preview/slide
-	@echo "PNG → out/preview/slide-NN.png"
+png:
+	$(PY) build.py preview --spec $(SPEC) --out $(OUT) --png
 
 test:
 	$(PY) -m pytest tests -q

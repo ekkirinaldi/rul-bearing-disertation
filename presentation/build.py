@@ -66,6 +66,14 @@ def cmd_build(args) -> int:
 
 
 def cmd_preview(args) -> int:
+    """Render the deck to out/preview: always a PDF, plus per-slide PNGs on --png.
+
+    `soffice --convert-to png` on a .pptx writes exactly one file, the first
+    slide, and leaves everything else in the directory untouched. That used to
+    be what --png did, so the per-slide slide-NN.png files stayed at whatever
+    an earlier run had left behind and quietly showed an old deck. Slides come
+    from the PDF via pdftoppm instead, and stale ones are cleared first.
+    """
     rc = cmd_build(args)
     if rc and args.strict:
         return rc
@@ -73,15 +81,40 @@ def cmd_preview(args) -> int:
     if not soffice:
         print("LibreOffice not found — install it to render previews.")
         return 1
-    out_dir = Path(args.out).parent / "preview"
+    out_pptx = Path(args.out)
+    out_dir = out_pptx.parent / "preview"
     out_dir.mkdir(parents=True, exist_ok=True)
-    fmt = "png" if args.png else "pdf"
+    pdf = out_dir / f"{out_pptx.stem}.pdf"
+    before = pdf.stat().st_mtime if pdf.exists() else None
+
     subprocess.run(
-        [soffice, "--headless", "--convert-to", fmt, "--outdir", str(out_dir), str(args.out)],
+        [soffice, "--headless", "--convert-to", "pdf", "--outdir", str(out_dir), str(out_pptx)],
         check=True,
         stdout=subprocess.DEVNULL,
     )
-    print(f"Preview → {out_dir}")
+    # soffice exits 0 even when it converts nothing (a stale lock, a second
+    # instance already running), so the timestamp is what proves it ran.
+    if not pdf.exists() or pdf.stat().st_mtime == before:
+        print(f"LibreOffice left {pdf.name} untouched — close any running "
+              f"LibreOffice window and try again.", file=sys.stderr)
+        return 1
+    print(f"Preview → {pdf}")
+
+    if not args.png:
+        return 0
+    pdftoppm = shutil.which("pdftoppm")
+    if not pdftoppm:
+        print("pdftoppm not found (brew install poppler) — PDF written, "
+              "per-slide PNGs skipped.", file=sys.stderr)
+        return 1
+    for old_png in out_dir.glob("slide-*.png"):
+        old_png.unlink()
+    subprocess.run(
+        [pdftoppm, "-r", "110", "-png", str(pdf), str(out_dir / "slide")],
+        check=True,
+    )
+    n = len(list(out_dir.glob("slide-*.png")))
+    print(f"PNG → {out_dir}/slide-NN.png  ({n} slides)")
     return 0
 
 
