@@ -4,7 +4,7 @@
 #   - Mamba-xLSTM (code + configs + tests; excludes venv, caches, bulky results)
 #   - data-bearing (optional; see below)
 #
-# **VPS default (see .cursor/rules/vps-ssh-key-access.mdc §6 + §6.3):** on the server, download
+# **VPS default (see docs/compute-setup.md, Datasets):** on the server, download
 #   https://dataset-bearing-rul.s3.ap-southeast-2.amazonaws.com/data-bearing/data-bearing.zip
 #   and https://dataset-bearing-rul.s3.ap-southeast-2.amazonaws.com/data-bearing/xtju-sy.zip
 #   into REMOTE_BASE and unzip — do not rsync the dataset from the laptop.
@@ -73,7 +73,7 @@ echo "[rsync] Mamba-xLSTM -> ${REMOTE_BASE%/}/Mamba-xLSTM/"
   "${MBA}/" "${REMOTE_BASE%/}/Mamba-xLSTM/"
 
 if [[ "${RSYNC_SKIP_DATA}" == "1" ]]; then
-  echo "[rsync] Skipping data-bearing (RSYNC_SKIP_DATA=1). On VPS unzip S3 archive into ${REMOTE_HOSTPATH%/}/ — see vps-ssh-key-access.mdc §6."
+  echo "[rsync] Skipping data-bearing (RSYNC_SKIP_DATA=1). On VPS unzip S3 archive into ${REMOTE_HOSTPATH%/}/ — see docs/compute-setup.md."
 else
   echo "[rsync] data-bearing -> ${REMOTE_BASE%/}/data-bearing/"
   /usr/bin/rsync -avz \

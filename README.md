@@ -155,7 +155,7 @@ unzip -q -o xtju-sy.zip -d data-bearing/ && rm -f xtju-sy.zip
 find data-bearing/xtju-sy -name '*.csv' | wc -l   # expect 9216
 ```
 
-The legacy `data-bearing.zip` alone does **not** include the repaired XJTU subtree; always add `xtju-sy.zip`. VPS workflow: `.cursor/rules/vps-ssh-key-access.mdc` §6 + §6.3.
+The legacy `data-bearing.zip` alone does **not** include the repaired XJTU subtree; always add `xtju-sy.zip`. Remote GPU setup: [docs/compute-setup.md](docs/compute-setup.md).
 
 **Diagnostic — CWRU** (used by the three notebooks in `Notebook/`): download from the [Case Western Reserve University Bearing Data Center](https://engineering.case.edu/bearingdatacenter). Each notebook documents the exact subset (drive-end + fan-end accelerometer, Load 0–3 HP, 48 kHz, 10 classes).
 

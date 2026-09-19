@@ -22,8 +22,8 @@
 #   PYTHON          default .venv/bin/python
 #   DATA_ROOT       override path to ../data-bearing if layouts differ on pod
 #
-# Dataset on a fresh pod: .cursor/rules/vps-ssh-key-access.mdc §6 (data-bearing.zip)
-#   + §6.3 (xtju-sy.zip — full three-condition XJTU, 9216 CSVs).
+# Dataset on a fresh pod: docs/compute-setup.md (data-bearing.zip
+#   + xtju-sy.zip — full three-condition XJTU, 9216 CSVs).
 #
 set -euo pipefail
 

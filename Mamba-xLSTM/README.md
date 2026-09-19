@@ -115,7 +115,7 @@ curl -fL -o xtju-sy.zip \
 unzip -q -o xtju-sy.zip -d data-bearing/ && rm -f xtju-sy.zip
 ```
 
-The repaired XJTU tree (9.216 CSVs, three conditions) ships in **`xtju-sy.zip`** only; the older `data-bearing.zip` does not replace it. See `.cursor/rules/vps-ssh-key-access.mdc` §6.3.
+The repaired XJTU tree (9.216 CSVs, three conditions) ships in **`xtju-sy.zip`** only; the older `data-bearing.zip` does not replace it. See `docs/compute-setup.md` at the repository root.
 
 ## Quick smoke test
 
@@ -413,4 +413,4 @@ Then: `ssh my-vps-alias`.
 
 The filesystem under the default user may reset when the pod is **recreated**. Re-add `authorized_keys` or inject keys via the provider UI / startup script if keys must survive redeploys.
 
-Dataset download on a fresh VPS (HTTPS zip beside `Mamba-xLSTM/`) is documented in the repo Cursor rule `vps-ssh-key-access` and in `scripts/rsync_training_bundle_to_vps.sh` comments.
+Dataset download on a fresh VPS (HTTPS zip beside `Mamba-xLSTM/`) is documented in `docs/compute-setup.md` at the repository root and in `scripts/rsync_training_bundle_to_vps.sh` comments.

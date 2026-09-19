@@ -8,7 +8,7 @@
 #   ./scripts/vps_nbeats_physics_cloud.sh cloud75   # 75-epoch × physics + N-BEATS-xLSTM × 2 datasets (parallel)
 #   ./scripts/vps_nbeats_physics_cloud.sh all       # smoke then compare
 #
-# From laptop (push code first — see ``.cursor/rules/vps-ssh-key-access.mdc``):
+# From laptop (push code first — see docs/compute-setup.md):
 #   rsync -az --delete .../Mamba-xLSTM/ root@HOST:.../Mamba-xLSTM/
 #   ssh ... 'cd .../Mamba-xLSTM && chmod +x scripts/vps_nbeats_physics_cloud.sh && ./scripts/vps_nbeats_physics_cloud.sh compare'
 
