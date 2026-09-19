@@ -5,8 +5,7 @@ amplitude per raw acc_*.csv recording, coloured by normalised RUL.
 
 Produces:
     results/bpfx_mapping/phm2012_corr_scatter_feat474_bpfi.png
-    → copy to: writings/disertation/figures/bab5/corr_scatter_phm2012.pdf
-                dissertation-docx/assets/figures/bab5/corr_scatter_phm2012.png
+    → copy to: manuscript/assets/figures/bab5/corr_scatter_phm2012.png
 
 Usage (from Mamba-xLSTM/):
     source .venv/bin/activate

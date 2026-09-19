@@ -12,9 +12,7 @@ Provenance of the point hit-rates:
                          traceable to the chapter table / Journal2).
 
 Outputs (PDF for LaTeX + PNG for the DOCX assets):
-  writings/disertation/figures/bab5/hitrate_panel.pdf
-  writings/disertation/figures/bab5/hitrate_panel.png
-  dissertation-docx/assets/figures/bab5/hitrate_panel.png
+  manuscript/assets/figures/bab5/hitrate_panel.png
 """
 
 from __future__ import annotations
@@ -25,7 +23,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 _ROOT = Path(__file__).resolve().parents[1]            # Mamba-xLSTM/
-_REPO = _ROOT.parent                                   # repo root
+_REPO = _ROOT.parents[1]                               # repo root
 _BPFX = _ROOT / "results" / "bpfx_mapping"
 
 # Consistent BPFx order + colours (caption: BPFI biru, BPFO merah, BSF abu-abu)
@@ -92,18 +90,13 @@ def main() -> None:
     )
     fig.tight_layout(rect=(0, 0, 1, 0.96))
 
-    out_pdf = _REPO / "writings/disertation/figures/bab5/hitrate_panel.pdf"
-    out_png = _REPO / "writings/disertation/figures/bab5/hitrate_panel.png"
-    out_docx = _REPO / "dissertation-docx/assets/figures/bab5/hitrate_panel.png"
-    for p in (out_pdf, out_png, out_docx):
-        p.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_pdf)
-    fig.savefig(out_png, dpi=150)
+    out_docx = _REPO / "manuscript/assets/figures/bab5/hitrate_panel.png"
+    out_docx.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_docx, dpi=150)
     plt.close(fig)
 
     print("Saved:")
-    for p in (out_pdf, out_png, out_docx):
+    for p in (out_docx,):
         print(f"  {p}")
     print("\nPanel values (%):")
     for name, hr, pval, _ in panels:

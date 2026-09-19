@@ -9,7 +9,7 @@ Reads:
   - all PNG figures from explain/ and bpfx_mapping/
 
 Writes:
-  - ../../writings/experiment-report.html
+  - archive/notes/experiment-report.html (repository root)
 
 Notes:
   - Output is sized for A4 print (Chrome ``--print-to-pdf``).
@@ -43,7 +43,7 @@ import matplotlib.ticker as mticker
 ROOT = Path(__file__).resolve().parents[1]
 RUNS_ROOT = ROOT / "results" / "runs"
 BPFX_DIR = ROOT / "results" / "bpfx_mapping"
-WRITINGS = ROOT.parent / "writings"
+WRITINGS = ROOT.parents[1] / "archive" / "notes"
 
 BEST_RUNS = {
     "phm2012": RUNS_ROOT / "20260512_151550_algorithm_comparison_phm2012_mamba_xlstm_net_s42",

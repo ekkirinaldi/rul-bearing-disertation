@@ -4,9 +4,9 @@ Reproduces the core classification experiment from
 Conference2_Classification_Tree.ipynb using the CWRU 48kHz data.
 
 Outputs:
-    Notebook/output/lampF_cm_dt.png
-    Notebook/output/lampF_cm_rf.png
-    Notebook/output/lampF_cm_xgb.png
+    research/notebooks/output/lampF_cm_dt.png
+    research/notebooks/output/lampF_cm_rf.png
+    research/notebooks/output/lampF_cm_xgb.png
 """
 
 from __future__ import annotations

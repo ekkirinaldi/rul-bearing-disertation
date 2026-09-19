@@ -5,8 +5,8 @@ on CWRU data, then computes SHAP DeepExplainer values and plots the
 10 × 2048 FSM heatmaps.
 
 Outputs:
-    Notebook/output/lampG_fsm_varA.png   (G.1 — with BatchNorm)
-    Notebook/output/lampG_fsm_varC.png   (G.2 — without BatchNorm)
+    research/notebooks/output/lampG_fsm_varA.png   (G.1 — with BatchNorm)
+    research/notebooks/output/lampG_fsm_varC.png   (G.2 — without BatchNorm)
 """
 
 from __future__ import annotations

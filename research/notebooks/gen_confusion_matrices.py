@@ -4,8 +4,8 @@ Reproduces the core classification experiment from
 Conference1_Classification_SVM_LR.ipynb using the CWRU 48kHz data.
 
 Outputs:
-    Notebook/output/lampE_cm_svm.png
-    Notebook/output/lampE_cm_lr.png
+    research/notebooks/output/lampE_cm_svm.png
+    research/notebooks/output/lampE_cm_lr.png
 """
 
 from __future__ import annotations

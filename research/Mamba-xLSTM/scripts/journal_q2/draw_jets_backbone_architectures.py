@@ -58,7 +58,7 @@ from _diagrams import (  # type: ignore  # noqa: E402
     _box,
 )
 
-OUT_DIR = _REPO_ROOT / "writings" / "journal-q2" / "jets-docs" / "figures" / "architectures"
+OUT_DIR = _REPO_ROOT.parent / "writings" / "journal-q2" / "jets-docs" / "figures" / "architectures"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 

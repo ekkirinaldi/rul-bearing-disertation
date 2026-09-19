@@ -13,11 +13,15 @@ Runs can also be **recorded, saved, and replayed offline** with an automatic **f
 
 ## Install (web deps only)
 
+From `research/`:
+
 ```bash
 Mamba-xLSTM/.venv/bin/python -m pip install -r inference-engine/requirements.txt
 ```
 
 ## Run dashboard
+
+From `research/`:
 
 ```bash
 ./inference-engine/run.sh

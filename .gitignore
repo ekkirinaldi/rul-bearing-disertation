@@ -1,11 +1,11 @@
 # =============================================================================
-# Datasets (too large for git — see data-bearing/README.md for download)
+# Datasets (too large for git — see research/data-bearing/README.md for download)
 # =============================================================================
 # Use /* (not /) so the directory itself remains traversable and the README
 # below can be re-included with a negation pattern.
-data-bearing/*
-!data-bearing/README.md
-!data-bearing/.gitkeep
+research/data-bearing/*
+!research/data-bearing/README.md
+!research/data-bearing/.gitkeep
 
 # Derived feature/parquet caches (regenerable from raw datasets)
 data/cache/
@@ -50,17 +50,17 @@ wandb/
 # =============================================================================
 # Keep dissertation evidence (override broader patterns above)
 # =============================================================================
-!Mamba-xLSTM/results/
-!Mamba-xLSTM/results/reports/
-!Mamba-xLSTM/results/reports/**
-!Mamba-xLSTM/results/_chapter_assets/
-!Mamba-xLSTM/results/_chapter_assets/**
-!Mamba-xLSTM/results/bpfx_mapping/
-!Mamba-xLSTM/results/bpfx_mapping/**
-!Mamba-xLSTM/results/_comparison_configs/
-!Mamba-xLSTM/results/_comparison_configs/**
-!Mamba-xLSTM/results/tables/
-!Mamba-xLSTM/results/tables/**
+!research/Mamba-xLSTM/results/
+!research/Mamba-xLSTM/results/reports/
+!research/Mamba-xLSTM/results/reports/**
+!research/Mamba-xLSTM/results/_chapter_assets/
+!research/Mamba-xLSTM/results/_chapter_assets/**
+!research/Mamba-xLSTM/results/bpfx_mapping/
+!research/Mamba-xLSTM/results/bpfx_mapping/**
+!research/Mamba-xLSTM/results/_comparison_configs/
+!research/Mamba-xLSTM/results/_comparison_configs/**
+!research/Mamba-xLSTM/results/tables/
+!research/Mamba-xLSTM/results/tables/**
 
 # =============================================================================
 # LaTeX build artefacts (keep .tex/.bib source, drop generated PDFs/aux files)
@@ -120,8 +120,8 @@ writings/journal-q2/
 # =============================================================================
 # Inference engine — keep source, exclude Python caches
 # =============================================================================
-inference-engine/**/__pycache__/
-inference-engine/**/*.py[cod]
+research/inference-engine/**/__pycache__/
+research/inference-engine/**/*.py[cod]
 
 # =============================================================================
 # OS / IDE / temporary files

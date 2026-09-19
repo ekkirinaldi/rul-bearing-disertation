@@ -70,14 +70,14 @@ Minimal images may lack `curl`, `unzip` or `rsync`; install them with `apt-get i
 
 ## Code and environment
 
-Only the code travels from the laptop. `scripts/cloud/rsync_training_bundle_to_vps.sh` skips `.venv`, caches and the results tree:
+Only the code travels from the laptop. `scripts/rsync_training_bundle_to_vps.sh` skips `.venv`, caches and the results tree:
 
 ```bash
 rsync -az --delete -e "ssh -i ~/.ssh/id_ed25519_runpod -p <PORT>" \
   research/Mamba-xLSTM/ <USER>@<HOST>:<parent>/Mamba-xLSTM/
 ```
 
-On the server, `scripts/cloud/bootstrap_gpu_vps.sh` creates the virtual environment with CUDA wheels. It defaults to `TORCH_CUDA=cu128`, which matches hosts that report CUDA 12.8 in `nvidia-smi`; `INSTALL_MAMBASSM=1` also builds the `mamba_ssm` kernels, which takes a while. Training uses a single GPU and picks CUDA automatically.
+On the server, `scripts/bootstrap_gpu_vps.sh` creates the virtual environment with CUDA wheels. It defaults to `TORCH_CUDA=cu128`, which matches hosts that report CUDA 12.8 in `nvidia-smi`; `INSTALL_MAMBASSM=1` also builds the `mamba_ssm` kernels, which takes a while. Training uses a single GPU and picks CUDA automatically.
 
 A smoke run after the bootstrap:
 
@@ -101,7 +101,7 @@ python scripts/train.py --data configs/data/phm2012.yaml \
 
 Small HI windows rarely saturate a GPU on their own. Raise the batch size with `--data-batch-size N` until `nvidia-smi` shows steady utilisation without running out of memory.
 
-Long jobs run under `nohup` and log to the home directory. The `wait_pull_*` scripts in `scripts/cloud/` poll that log every 15 minutes and pull `results/` back once the report line appears. `VPS_HOST`, `VPS_PORT`, `VPS_KEY` and `REMOTE_LOG` override their defaults.
+Long jobs run under `nohup` and log to the home directory. The `wait_pull_*` scripts poll that log every 15 minutes and pull `results/` back once the report line appears. `VPS_HOST`, `VPS_PORT`, `VPS_KEY` and `REMOTE_LOG` override their defaults.
 
 ```bash
 nohup python -u scripts/run_algorithm_comparison.py \
