@@ -100,6 +100,12 @@ spec/
 !dissertation-docx/**/*.docx
 !dissertation-docx/**/*.pptx
 
+# Re-include the current V-series manuscript draft. One line per version on
+# purpose: each DOCX is ~18 MB and git cannot delta-compress it (a DOCX is
+# already a deflate-compressed zip), so every tracked version costs its full
+# size. Add the next version here deliberately rather than tracking V*.docx.
+!presentation/V16*.docx
+
 # =============================================================================
 # writings/disertation/figures/bab* — generated copies of dissertation-docx assets
 # The source of truth lives in dissertation-docx/assets/figures/
