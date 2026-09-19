@@ -1786,6 +1786,68 @@ slides:
           (Lundberg dan Lee, 2017) · hasil akurasinya dibandingkan pada slide berikut.
 
   # ======================================================================
+  # 34b · JEMBATAN A3 — cara kerja WDCNN (pasangan slide sebelumnya)
+  # ======================================================================
+  - layout: content
+    eyebrow: "Pengantar · Cara Kerja Model"
+    title: "Cara Kerja WDCNN: Feature Ditemukan, Bukan Dirancang"
+    top: 1.72
+    blocks:
+      - type: figure
+        flex: true
+        image: ../assets/diagrams/wdcnn_how_it_works.png
+      - type: source
+        gap: 0.14
+        body: >-
+          Skema konseptual Subbab IV.4 · arsitektur asli Zhang dkk. (2017) ·
+          ketiga model klasik pada slide sebelumnya memakai input yang berbeda,
+          yaitu feature vector HI, bukan sinyal 2.048 titik.
+
+  # ======================================================================
+  # 34c · JEMBATAN A4 — arsitektur WDCNN per blok
+  # ======================================================================
+  - layout: content
+    eyebrow: "Metode Diagnostik · Bab IV"
+    title: "Arsitektur WDCNN: Lima Blok Convolution dan Dua Layer FC"
+    top: 1.74
+    blocks:
+      - type: figure
+        h: 2.46
+        inset: 0.06
+        image: ../assets/diagrams/wdcnn_full.png
+      - type: text
+        gap: 0.08
+        h: 0.28
+        size: 9.5
+        italic: true
+        align: center
+        color: "6B7689"
+        text: >-
+          Digambar ulang berdasarkan Gambar IV.3: input 1 × 2.048, lima blok convolution,
+          dua fully connected, sepuluh kelas (Zhang dkk., 2017)
+      - type: kvrows
+        gap: 0.18
+        flex: true
+        label_w: 2.30
+        items:
+          - label: KERNEL PERTAMA
+            value: >-
+              Lebar 64 dengan stride 16, menghasilkan 128 posisi dari 2.048 titik.
+              Satu jendela ≈ 1,33 ms pada 48 kHz, cukup memuat satu impuls cacat
+              beserta ringing-nya.
+          - label: BLOK 2 SAMPAI 5
+            value: >-
+              Kernel 3 dengan BatchNorm, ReLU, dan MaxPool; panjang sequence menyusut
+              128 → 8 sementara jangkauan tiap neuron terhadap sinyal asal melebar.
+          - label: KEPALA KLASIFIKASI
+            value: >-
+              Flatten, dua layer FC 100 neuron dengan dropout 0,5, lalu softmax
+              sepuluh kelas. Total ±60.710 parameter, ringan untuk edge server.
+      - type: source
+        gap: 0.14
+        body: "Subbab IV.4 dan Tabel F.1 · arsitektur asli Zhang dkk. (2017)"
+
+  # ======================================================================
   # 35 · HASIL RM-1 — benchmark diagnostik CWRU
   # ======================================================================
   - layout: content
@@ -2114,6 +2176,24 @@ slides:
           (Suharto dkk., 2025). Akurasi pada slide ini memakai protokol ablasi 50 epoch
           terkontrol, berbeda dari protokol utama ber-early-stopping yang menghasilkan 99,87%;
           diskriminabilitas dihitung pada subset ablasi 30 background / 50 sample uji.
+
+  # ======================================================================
+  # 40b · HASIL RM-2 — tiga varian ablasi berdampingan
+  # ======================================================================
+  - layout: content
+    eyebrow: "Hasil XAI · Novelti N2"
+    title: "Tiga Varian Ablasi Berdampingan: Kernel Lebar dan BatchNorm"
+    top: 1.74
+    blocks:
+      - type: figure
+        flex: true
+        image: ../assets/diagrams/wdcnn_ablation_trio.png
+      - type: source
+        gap: 0.14
+        body: >-
+          Tabel IV.7, protokol ablasi 50 epoch terkontrol · Varian B menguji peran kernel
+          lebar, Varian C menguji peran BatchNorm · angka 99,87% pada slide jawaban berasal
+          dari protokol utama ber-early-stopping.
 
   # ======================================================================
   # 41 · JAWABAN JALUR DIAGNOSTIK — RM-1 (diagnostik) dan RM-2
