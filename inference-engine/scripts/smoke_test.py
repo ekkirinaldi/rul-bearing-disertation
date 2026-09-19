@@ -105,6 +105,13 @@ def test_integrated_gradients() -> None:
     assert len(hm["values"]) == len(hm["feature_names"]), "heatmap rows != feature count"
     assert all(len(row) == hm["bins"] for row in hm["values"]), "ragged heatmap rows"
     print(f"  top feature: {expl['features'][0]['name']}, heatmap {len(hm['values'])}x{hm['bins']}")
+
+    # Streaming IG (reduced n_steps, runs under the model lock from the server).
+    stream_expl = session.compute_ig_stream()
+    assert stream_expl is not None, "compute_ig_stream returned None after warm-up"
+    assert stream_expl["features"], "streaming IG returned no per-feature importances"
+    assert stream_expl["n_steps"] <= expl["n_steps"], "streaming IG should use no more steps"
+    print(f"  streaming IG: {stream_expl['n_steps']} steps, top {stream_expl['features'][0]['name']}")
     print("  OK")
 
 
@@ -129,26 +136,99 @@ def test_xjtusy_bearing_1_5() -> None:
 
 
 def test_skf_ch15_or1_ch1_01_nde() -> None:
-    print("=== SKF CH-15 OR-1 ch1_01_nde (transfer) ===")
-    root = ROOT.parent / "data-bearing" / "skf-ch15-or1"
+    print("=== SKF CH-15 OR-1 6m ch1_01_nde (transfer) ===")
+    root = ROOT.parent / "data-bearing" / "skf-ch15-or1-6m"
     run = load_skf_stream(root, "ch1_01_nde")
-    assert run.n_acquisitions > 50, f"expected trending points, got {run.n_acquisitions}"
-    print(f"  aligned trending points: {run.n_acquisitions}, interval ~{run.acquisition_interval_s:.0f}s")
+    # The 6-month export is a full healthy → failure run, not the short tail.
+    assert run.n_acquisitions > 200, f"expected the long run, got {run.n_acquisitions}"
+    span_days = (run.points[-1].timestamp - run.points[0].timestamp).total_seconds() / 86400.0
+    assert span_days > 90.0, f"expected multi-month span, got {span_days:.1f}d"
+    assert run.failure_time is not None and 0 < run.eol_index < run.n_acquisitions
+    print(
+        f"  aligned points: {run.n_acquisitions}, span={span_days:.1f}d, "
+        f"EOL idx={run.eol_index} @ {run.failure_time:%Y-%m-%d %H:%M}, "
+        f"median dt~{run.acquisition_interval_s/3600:.1f}h"
+    )
 
     session = StreamSession(dataset_key="skf_ch15_or1", bearing_id="ch1_01_nde")
     preds: list[float] = []
+    remaining: list[float] = []
+    elapsed_seen: list[float] = []
+    rms_v_seen: list[float] = []
     while True:
         frame = session.step()
         if frame is None:
             break
-        assert frame["gt_rul"] is None
-        assert frame["has_gt_rul"] is False
+        # Plant data has NO labelled RUL ground truth — chart shows a single
+        # causal predicted curve, no truth overlay.
+        assert frame["has_gt_rul"] is False, "SKF must not expose ground-truth RUL"
+        assert frame["gt_rul"] is None, "SKF gt_rul must be None"
+        assert frame["gt_remaining_s"] is None, "SKF gt_remaining_s must be None"
+        elapsed_seen.append(frame["elapsed_s"])
+        # Raw HI scalars must be physically sane: the synthetic waveform RMS is
+        # normalised to accel/envelope (≲ ~10 gE), so a value in the hundreds
+        # means the rms_v feature index is wrong (regression guard).
+        if frame["hi"] is not None:
+            rms_v_seen.append(frame["hi"]["rms_v"])
         if not frame["warmup"] and frame["pred_rul"] is not None:
             _assert_rul_in_range(frame["pred_rul"], f"t={frame['t']}")
             preds.append(frame["pred_rul"])
+            if frame["pred_remaining_s"] is not None:
+                remaining.append(frame["pred_remaining_s"])
 
     assert len(preds) > 10
-    print(f"  transfer RUL predictions: {len(preds)}, first={preds[0]:.4f}, last={preds[-1]:.4f}")
+    # Elapsed time must be timestamp-driven (monotonic, non-uniform), not a
+    # fixed grid: total elapsed should match the multi-month wall-clock span.
+    assert elapsed_seen == sorted(elapsed_seen), "elapsed_s must be monotonic"
+    assert elapsed_seen[-1] / 86400.0 > 90.0, "elapsed_s must reflect the months-long run"
+    assert max(rms_v_seen) < 50.0, (
+        f"rms_v out of physical range (max={max(rms_v_seen):.1f}); feature index likely wrong"
+    )
+    assert preds[-1] < preds[0], (
+        f"causal envelope RUL should trend down: first={preds[0]:.4f} last={preds[-1]:.4f}"
+    )
+    print(f"  causal envelope RUL: {len(preds)} preds, first={preds[0]:.4f}, last={preds[-1]:.4f}")
+    print(f"  rms_v range: max={max(rms_v_seen):.3f} (sane, < 50)")
+    if remaining:
+        print(f"  predicted time-left: first={remaining[0]/86400:.1f}d last={remaining[-1]/3600:.1f}h")
+    print("  OK")
+
+
+def test_record_replay() -> None:
+    """Record a full run, locate + explain its drops, persist, reload, delete."""
+    from app import replay_store as rs
+
+    print("=== Record / replay (XJTU-SY 1_5) ===")
+    prog: list[tuple[int, int]] = []
+    run = rs.record_run("xjtusy", "1_5", progress_cb=lambda t, n: prog.append((t, n)))
+    rid = run["run_id"]
+    try:
+        m, s = run["meta"], run["summary"]
+        assert m["n_frames"] > 10, "expected a full run of frames"
+        assert prog and prog[-1][0] == prog[-1][1], "progress must reach 100%"
+        # Persisted frames must be replay-sufficient and size-bounded.
+        mid = run["frames"][m["n_frames"] // 2]
+        assert mid["waveform"]["horizontal"], "frame missing waveform for replay"
+        assert len(mid["waveform"]["horizontal"]) <= rs._WAVE_PTS + 1
+
+        # Drops should be explained with the existing interpretability tooling.
+        for d in run["drops"]:
+            assert 0.0 < d["magnitude"] <= 1.0, f"bad drop magnitude {d['magnitude']}"
+            assert d["from_t"] < d["to_t"], "drop must span forward in time"
+            assert d.get("hi_delta"), "drop missing raw-HI delta explanation"
+            if d.get("ig") is not None:
+                assert d["ig"]["features"], "drop IG present but empty"
+        print(f"  frames={m['n_frames']} drops={s['n_drops']} biggest={s['biggest_drop']:.3f}")
+
+        # Store roundtrip.
+        listed = {r["run_id"] for r in rs.list_runs()}
+        assert rid in listed, "saved run missing from index"
+        reloaded = rs.load_run(rid)
+        assert reloaded and len(reloaded["frames"]) == m["n_frames"], "reload mismatch"
+        print(f"  persisted + reloaded {rid}")
+    finally:
+        assert rs.delete_run(rid), "delete_run failed"
+        assert rs.load_run(rid) is None, "run not deleted"
     print("  OK")
 
 
@@ -157,6 +237,7 @@ def main() -> None:
     test_integrated_gradients()
     test_xjtusy_bearing_1_5()
     test_skf_ch15_or1_ch1_01_nde()
+    test_record_replay()
     print("\nAll smoke tests passed.")
 
 

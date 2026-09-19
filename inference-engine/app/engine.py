@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import threading
 import time
 from collections import deque
 from dataclasses import dataclass, field
@@ -26,6 +27,12 @@ from app.skf_loader import SkfTrendRun, load_skf_stream
 # Backward-based saliency runs only every Nth acquisition (drivers change slowly);
 # every other step is a cheap no_grad forward. Keeps M-series memory/CPU flat.
 _SALIENCY_EVERY = 12
+
+# Streaming Integrated Gradients: recompute in a background thread every Nth
+# acquisition (heavy Captum pass; cannot run every frame), at reduced n_steps for
+# speed. The on-demand "Refresh now" path keeps the full-precision default.
+_IG_STREAM_EVERY = 12
+_IG_STREAM_STEPS = 16
 
 
 def _pick_device() -> torch.device:
@@ -138,12 +145,21 @@ def _downsample_waveform(acq: np.ndarray, max_pts: int = 512) -> dict[str, list[
     return out
 
 
-def _hi_snapshot(raw_hi: np.ndarray) -> dict[str, float]:
-    """Extract a few interpretable raw HI scalars (before scaling)."""
-    # Feature layout: td_c0_rms=0, td_c1_rms=9, td_c0_kurtosis=2
+def _hi_snapshot(raw_hi: np.ndarray, per_channel: int) -> dict[str, float]:
+    """Extract a few interpretable raw HI scalars (before scaling).
+
+    The vector is laid out ``per_channel`` features at a time: 9 time-domain
+    (rms, peak, kurtosis, …) followed by ``4 + n_bands`` frequency-domain. So
+    channel-0 RMS is index 0 and channel-0 kurtosis index 2, while channel-1
+    RMS is the first time-domain slot of the *second* block at index
+    ``per_channel`` (e.g. 18 for n_bands=5). Indexing ``raw_hi[9]`` here was a
+    bug: that slot is ``fd_c0_centroid`` (spectral centroid in Hz), which made
+    the dashboard "RMS V" trace explode into the hundreds/thousands.
+    """
+    rms_v_idx = per_channel
     return {
         "rms_h": float(raw_hi[0]),
-        "rms_v": float(raw_hi[9]) if raw_hi.size > 9 else float(raw_hi[0]),
+        "rms_v": float(raw_hi[rms_v_idx]) if raw_hi.size > rms_v_idx else float(raw_hi[0]),
         "kurtosis_h": float(raw_hi[2]),
     }
 
@@ -167,6 +183,10 @@ class StreamSession:
     last_window: np.ndarray | None = field(default=None, init=False)
     last_drivers: list[dict[str, Any]] | None = field(default=None, init=False)
     start_wall_clock: float = field(default=0.0, init=False)
+    # Serializes all model forward/backward passes so a background streaming-IG
+    # thread never collides with the per-acquisition prediction on the same
+    # device. Created once with the session; never recreated in reset().
+    _model_lock: threading.Lock = field(default_factory=threading.Lock, init=False, repr=False)
 
     def __post_init__(self) -> None:
         self.spec = load_dataset_spec(self.dataset_key)
@@ -249,15 +269,53 @@ class StreamSession:
         return eol_unix, eol_iso
 
     def explain_current(self) -> dict[str, Any] | None:
-        """On-demand Integrated Gradients for the current buffered window."""
+        """On-demand, full-precision Integrated Gradients for the current window."""
         if self.last_window is None:
             return None
-        return integrated_gradients_explanation(
-            self.loaded.lit,
-            self.last_window,
-            self.loaded.device,
-            self.feature_names,
-        )
+        with self._model_lock:
+            return integrated_gradients_explanation(
+                self.loaded.lit,
+                self.last_window,
+                self.loaded.device,
+                self.feature_names,
+            )
+
+    def explain_window(self, window: np.ndarray | None, *, n_steps: int = 32) -> dict[str, Any] | None:
+        """Full-precision Integrated Gradients for an *arbitrary* cached window.
+
+        Used by the offline replay recorder to explain a specific acquisition
+        (e.g. a significant-drop point) without re-seeking the stream from zero.
+        The model lock serialises it against any other forward/backward pass.
+        """
+        if window is None:
+            return None
+        with self._model_lock:
+            return integrated_gradients_explanation(
+                self.loaded.lit,
+                np.ascontiguousarray(window, dtype=np.float32),
+                self.loaded.device,
+                self.feature_names,
+                n_steps=n_steps,
+            )
+
+    def compute_ig_stream(self) -> dict[str, Any] | None:
+        """Throttled, reduced-step Integrated Gradients for the live stream.
+
+        Runs in a background thread from the server; the model lock serializes it
+        against the per-acquisition prediction so two passes never touch the model
+        concurrently. Lighter ``n_steps`` than :meth:`explain_current` to keep the
+        stream smooth.
+        """
+        if self.last_window is None:
+            return None
+        with self._model_lock:
+            return integrated_gradients_explanation(
+                self.loaded.lit,
+                self.last_window,
+                self.loaded.device,
+                self.feature_names,
+                n_steps=_IG_STREAM_STEPS,
+            )
 
     def seek(self, t: int) -> dict[str, Any] | None:
         """Rewind and replay acquisitions 0..t inclusive; return the frame at t."""
@@ -313,7 +371,9 @@ class StreamSession:
             self.hi_buffer.popleft()
 
         self.t = next_t
-        hi_snap = _hi_snapshot(raw_hi)
+        # Per-channel block size: 9 time-domain + (4 + n_bands) frequency-domain.
+        per_channel = 9 + 4 + self.spec.n_bands
+        hi_snap = _hi_snapshot(raw_hi, per_channel)
         if self.skf_run is not None:
             # Replace the kurtosis slot with the actual gE envelope value —
             # it is the industry-standard bearing health indicator for this
@@ -331,33 +391,44 @@ class StreamSession:
             self.last_window = window
             # Prediction + gate run every step under no_grad (cheap, flat memory);
             # the backward-based saliency is throttled — top drivers change slowly.
+            # The model lock keeps this forward/backward from overlapping a
+            # background streaming-IG pass on the same device.
             want_saliency = (next_t % _SALIENCY_EVERY == 0) or (self.last_drivers is None)
-            try:
-                expl = live_explanation(
-                    self.loaded.lit,
-                    window,
-                    self.loaded.device,
-                    self.feature_names,
-                    with_saliency=want_saliency,
-                )
-                pred_rul = expl["pred"]
-                branch_gate = expl["branch_gate"]
-                if expl["top_drivers"] is not None:
-                    self.last_drivers = expl["top_drivers"]
-                top_drivers = self.last_drivers
-            except Exception:  # noqa: BLE001 — never let explainability break the stream
-                x = torch.from_numpy(window).unsqueeze(0).to(self.loaded.device)
-                with torch.no_grad():
-                    pred_rul = float(self.loaded.lit(x).squeeze().cpu().item())
+            with self._model_lock:
+                try:
+                    expl = live_explanation(
+                        self.loaded.lit,
+                        window,
+                        self.loaded.device,
+                        self.feature_names,
+                        with_saliency=want_saliency,
+                    )
+                    pred_rul = expl["pred"]
+                    branch_gate = expl["branch_gate"]
+                    if expl["top_drivers"] is not None:
+                        self.last_drivers = expl["top_drivers"]
+                    top_drivers = self.last_drivers
+                except Exception:  # noqa: BLE001 — never let explainability break the stream
+                    x = torch.from_numpy(window).unsqueeze(0).to(self.loaded.device)
+                    with torch.no_grad():
+                        pred_rul = float(self.loaded.lit(x).squeeze().cpu().item())
 
-        # For SKF data the gE envelope IS the health indicator — there is no
-        # separate "prediction" step.  Use the time-normalised ground-truth
-        # directly so predicted and truth overlap on the chart as one curve.
+        # SKF plant data carries no labelled RUL ground truth, so the displayed
+        # prediction is the *causal* envelope (gE) health index — the standard
+        # industrial bearing condition indicator — rather than the future-
+        # peeking field-failure normalisation (rul_fraction). The transfer-
+        # loaded Mamba-xLSTM-Net still runs above for the fusion gate and driver
+        # attribution, but does not generalise to gE trending for RUL itself.
         if self.skf_run is not None:
-            pred_rul = self.skf_run.rul_fraction(next_t)
+            pred_rul = self.skf_run.envelope_rul(next_t)
 
         gt_rul = self._ground_truth_rul(next_t) if self.spec.has_gt_rul else None
-        elapsed_s = next_t * self.interval_s
+        # Absolute progress: real wall-clock for the non-uniform SKF timeline,
+        # uniform grid otherwise. Drives the prediction-derived time-to-failure.
+        if self.skf_run is not None:
+            elapsed_s = self.skf_run.seconds_from_start(next_t)
+        else:
+            elapsed_s = next_t * self.interval_s
 
         # Prediction-derived "useful time left" (works without ground truth).
         pred_remaining_s: float | None = None
@@ -398,7 +469,11 @@ class StreamSession:
             "gt_remaining_s": gt_remaining_s,
             "branch_gate": branch_gate,
             "top_drivers": top_drivers,
-            "interval_s": self.interval_s,
+            "interval_s": (
+                self.skf_run.interval_at(next_t)
+                if self.skf_run is not None
+                else self.interval_s
+            ),
             "bearing_id": self.bearing_id,
             "dataset": self.dataset_key,
             "model": self.spec.model_name,

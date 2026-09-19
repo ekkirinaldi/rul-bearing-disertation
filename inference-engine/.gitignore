@@ -1,0 +1,5 @@
+# Saved/replayable run artefacts (local analysis output, can be large)
+runs/
+
+# Local test environment for scripts/browser_test.py
+.test-venv/

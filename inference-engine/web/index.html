@@ -19,7 +19,7 @@
       <div class="mark"><span></span></div>
       <div>
         <h1>RUL Streaming Inference Engine</h1>
-        <div class="sub">Simulated sensor stream · Mamba-xLSTM-Net · dissertation Tier-S</div>
+        <div class="sub">Mamba-xLSTM-Net · Tier 3 (Cloud/GPU) prognostics · mechanistic interpretability (SAE→BPFx)</div>
       </div>
     </div>
     <div class="status" id="status" data-state="idle">
@@ -27,195 +27,318 @@
     </div>
   </header>
 
-  <div class="row-top">
-    <!-- CTL-00: Acquisition Control -->
-    <div class="panel panel-ctl">
-      <div class="head"><span class="ttl">Acquisition Control</span><span class="tag">CTL-00</span></div>
-      <div class="body card-fill">
-        <p id="transfer-note" class="transfer-note field-span" hidden></p>
-        <div class="ctl-grid">
-          <div class="field">
-            <span class="lbl">Dataset</span>
-            <select id="dataset" name="dataset">
-              <option value="">Loading…</option>
-            </select>
-          </div>
-          <div class="field">
-            <span class="lbl">Test Bearing</span>
-            <select id="bearing" name="bearing"></select>
-          </div>
-          <div class="field field-span">
-            <span class="lbl">Stream Speed</span>
-            <div class="range-row">
-              <input type="range" id="speed" name="speed_ms" min="10" max="500" step="10" value="50" />
-              <span class="range-cap"><b id="speedVal">50</b> ms</span>
-            </div>
-          </div>
-          <div class="field">
-            <span class="lbl">Warn (%)</span>
-            <input type="number" id="warn" name="warn_thresh" value="40" min="1" max="99" />
-          </div>
-          <div class="field">
-            <span class="lbl">Crit (%)</span>
-            <input type="number" id="crit" name="crit_thresh" value="20" min="1" max="99" />
-          </div>
-          <div class="field field-span ctl-btns">
-            <button type="button" class="btn primary" id="btnStart" name="start">▶ Start</button>
-            <button type="button" class="btn warn" id="btnPause" name="pause" disabled>❚❚ Pause</button>
-            <button type="button" class="btn" id="btnStep" name="step" disabled>Step</button>
-            <button type="button" class="btn" id="btnReset" name="reset" disabled>Reset</button>
-          </div>
-          <div class="field field-span seek">
-            <span class="lbl">Seek</span>
-            <input type="range" id="seek" name="seek" min="0" max="0" value="0" disabled />
-            <div class="seek-meta"><b id="seekIdx">—</b> / <span id="seekMax">—</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="shell">
 
-    <!-- XAI-02: Live Explainability -->
-    <div class="panel panel-xai">
-      <div class="head"><span class="ttl">Live Explainability</span><span class="tag">XAI-02</span></div>
-      <div class="body card-fill">
-        <div class="xai-block">
-          <span class="lbl">Fusion Gate</span>
-          <div class="fusion" id="fusionBar">
-            <div class="seg xlstm" id="segX" style="flex-basis:50%"><span>xLSTM</span><span class="pc" id="pcX">50%</span></div>
-            <div class="seg mamba" id="segM" style="flex-basis:50%"><span class="pc" id="pcM">50%</span><span>Mamba</span></div>
-          </div>
-        </div>
-        <div class="xai-block xai-grow">
-          <span class="lbl">Top Drivers (|grad·input|)</span>
-          <div class="drivers" id="drivers"><div class="driver muted">Awaiting predictions…</div></div>
-        </div>
-        <button type="button" class="btn primary btn-block" id="btnExplain" name="explain" disabled>⊹ Integrated Gradients</button>
-      </div>
-    </div>
+    <!-- ===================== LEFT CONTROL RAIL ===================== -->
+    <aside class="rail">
 
-    <!-- RUL-01: Predicted Remaining Useful Life -->
-    <div class="panel panel-rul">
-      <div class="head"><span class="ttl">Predicted Remaining Useful Life</span><span class="tag">RUL-01</span></div>
-      <div class="body card-fill">
-        <div class="metrics metrics-compact">
-          <div class="mcell accent" id="mUsefulCell">
-            <div class="k">Useful Left (pred.)</div>
-            <div class="v v-hero" id="mUseful">—</div>
-          </div>
-          <div class="mcell">
-            <div class="k">Pred. End-of-Life</div>
-            <div class="v v-sm" id="mEol">—</div>
-          </div>
-          <div class="mcell">
-            <div class="k">Truth Remaining</div>
-            <div class="v v-sm" id="mTruth">—</div>
-          </div>
-          <div class="mcell-row">
-            <div class="mcell">
-              <div class="k">Acquisition</div>
-              <div class="v v-xs" id="mAcq">— / —</div>
+      <!-- RPL-00: Replay Control -->
+      <div class="panel panel-ctl">
+        <div class="head"><span class="ttl" title="Pick a recorded run and play it back. Every value, insight and drop is aligned from acquisition 0.">Replay Control</span><span class="tag">RPL-00</span></div>
+        <div class="body">
+          <div class="rail-form">
+            <p id="transfer-note" class="transfer-note" hidden></p>
+            <!-- Hidden selects retained to drive dataset-derived UI state -->
+            <select id="dataset" name="dataset" hidden></select>
+            <select id="bearing" name="bearing" hidden></select>
+            <div class="field">
+              <span class="lbl" title="A previously recorded run-to-failure. Choose one to load and play it.">Recorded Run</span>
+              <select id="runSelect"><option value="">— record runs first —</option></select>
             </div>
-            <div class="mcell">
-              <div class="k">Elapsed</div>
-              <div class="v v-xs" id="mElapsed">—</div>
+            <div class="field">
+              <span class="lbl">Playback Speed</span>
+              <div class="range-row">
+                <input type="range" id="speed" name="speed_ms" min="10" max="500" step="10" value="50" />
+                <span class="range-cap"><b id="speedVal">50</b> ms</span>
+              </div>
+            </div>
+            <div class="field-pair">
+              <div class="field">
+                <span class="lbl">Warn (%)</span>
+                <input type="number" id="warn" name="warn_thresh" value="40" min="1" max="99" />
+              </div>
+              <div class="field">
+                <span class="lbl">Crit (%)</span>
+                <input type="number" id="crit" name="crit_thresh" value="20" min="1" max="99" />
+              </div>
+            </div>
+            <div class="ctl-btns">
+              <button type="button" class="btn primary" id="btnStart" name="play">▶ Play</button>
+              <button type="button" class="btn warn" id="btnPause" name="pause" disabled>❚❚ Pause</button>
+              <button type="button" class="btn" id="btnStep" name="step" disabled>Step</button>
+              <button type="button" class="btn" id="btnReset" name="reset" disabled>Reset</button>
+            </div>
+            <div class="field seek">
+              <span class="lbl" title="Drag to scrub to any acquisition and read its exact values, waveform, drivers and time.">Seek / Review</span>
+              <input type="range" id="seek" name="seek" min="0" max="0" value="0" disabled
+                     title="Scrub to a specific acquisition to inspect its values and time." />
+              <div class="seek-meta"><b id="seekIdx">—</b> / <span id="seekMax">—</span></div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="cols block">
-    <div class="panel panel-chart">
-      <div class="head"><span class="ttl">RUL — Predicted vs Ground Truth</span><span class="tag">TRN-03</span></div>
-      <div class="body body-chart">
-        <div class="legend legend-compact">
-          <span class="it"><span class="sw" style="background:var(--blue)"></span>Predicted</span>
-          <span class="it gt-legend"><span class="sw dash"></span>Truth</span>
-          <span class="it"><span class="sw" style="background:var(--amber-wash);border:1px solid var(--amber)"></span>Warn</span>
-          <span class="it"><span class="sw" style="background:var(--red-wash);border:1px solid var(--red)"></span>Crit</span>
-        </div>
-        <div class="chart-wrap"><canvas id="cRul" height="240"></canvas></div>
-      </div>
-    </div>
-    <div class="panel panel-chart">
-      <div class="head"><span class="ttl">Latest Vibration Waveform</span><span class="tag">VIB-04</span></div>
-      <div class="body body-chart">
-        <div class="legend legend-compact">
-          <span class="it"><span class="sw" style="background:var(--blue)"></span>Horizontal</span>
-          <span class="it"><span class="sw" style="background:var(--rust)"></span>Vertical</span>
-        </div>
-        <div class="chart-wrap"><canvas id="cWave" height="240"></canvas></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="cols block">
-    <div class="panel panel-chart">
-      <div class="head"><span class="ttl">Integrated Gradients — Feature Attribution</span><span class="tag">XAI-05</span></div>
-      <div class="body body-chart">
-        <div class="legend legend-compact">
-          <span class="it"><span class="sw" style="background:var(--blue)"></span>Σ|attribution|</span>
-        </div>
-        <div class="chart-wrap chart-wrap-sm"><canvas id="cAttr" height="200"></canvas></div>
-        <div class="heat heat-compact">
-          <span class="lbl">Time × Feature Heatmap</span>
-          <div class="heatgrid" id="heatgrid"></div>
+      <!-- SYS-07: Run Details -->
+      <div class="panel panel-sys">
+        <div class="head"><span class="ttl">Run Details</span><span class="tag">SYS-07</span></div>
+        <div class="body body-tight">
+          <table class="kv kv-compact">
+            <tr><td class="k">Model</td><td class="v" id="info-model">—</td></tr>
+            <tr><td class="k">Checkpoint</td><td class="v" id="info-ckpt">—</td></tr>
+            <tr><td class="k">Device</td><td class="v" id="info-device">—</td></tr>
+            <tr><td class="k">Window</td><td class="v" id="info-window">—</td></tr>
+            <tr><td class="k">Acquisitions</td><td class="v" id="info-ntotal">—</td></tr>
+            <tr><td class="k">Interval</td><td class="v" id="info-interval">—</td></tr>
+            <tr><td class="k">Stage</td><td class="v stage" id="stage">—</td></tr>
+          </table>
+          <button type="button" class="btn btn-block" id="btnCsv" name="export_csv" disabled>⬇ Export CSV</button>
         </div>
       </div>
-    </div>
-    <div class="panel panel-chart">
-      <div class="head"><span class="ttl">Health Indicators (raw)</span><span class="tag">HI-06</span></div>
-      <div class="body body-chart">
-        <div class="legend legend-compact">
-          <span class="it"><span class="sw" style="background:var(--blue)"></span>RMS H</span>
-          <span class="it"><span class="sw" style="background:var(--rust)"></span>RMS V</span>
-          <span class="it"><span class="sw" style="background:var(--green)"></span>Kurt H</span>
+
+    </aside>
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <main class="main">
+
+      <!-- HERO: RUL metrics + plain-language insight -->
+      <section class="zone hero-zone">
+        <div class="hero-grid">
+          <!-- RUL-01: Predicted Remaining Useful Life -->
+          <div class="panel panel-rul">
+            <div class="head"><span class="ttl" title="The model's estimate of how much working life the bearing has left.">Predicted Remaining Useful Life</span><span class="tag">RUL-01</span></div>
+            <div class="body">
+              <div class="metrics metrics-compact">
+                <div class="mcell accent" id="mUsefulCell">
+                  <div class="k" title="Estimated time before the bearing reaches end-of-life, based on the current prediction.">Useful Time Left</div>
+                  <div class="v v-hero" id="mUseful">—</div>
+                </div>
+                <div class="mcell-row">
+                  <div class="mcell">
+                    <div class="k" title="The calendar date/time the bearing is predicted to fail.">Predicted Failure</div>
+                    <div class="v v-sm" id="mEol">—</div>
+                  </div>
+                  <div class="mcell">
+                    <div class="k" title="Actual time to the known failure. Not available for live plant data, which has no labelled failure point.">Actual Time Left</div>
+                    <div class="v v-sm" id="mTruth">—</div>
+                  </div>
+                </div>
+                <div class="mcell-row">
+                  <div class="mcell">
+                    <div class="k">Acquisition</div>
+                    <div class="v v-xs" id="mAcq">— / —</div>
+                  </div>
+                  <div class="mcell">
+                    <div class="k">Elapsed</div>
+                    <div class="v v-xs" id="mElapsed">—</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- INS-01: Plain-language insight banner -->
+          <div class="panel panel-insight" id="insightPanel" data-state="idle">
+            <div class="head">
+              <span class="ttl">What's Happening</span>
+              <span class="tag">PLAIN LANGUAGE</span>
+            </div>
+            <div class="body">
+              <div class="insight">
+                <div class="insight-top">
+                  <div class="insight-badge">
+                    <span class="insight-dot"></span>
+                    <span class="insight-state" id="insightState">Ready</span>
+                  </div>
+                  <p class="insight-headline" id="insightHeadline">Choose a bearing and press <b>Start</b> to watch its health be assessed in real time.</p>
+                </div>
+                <div class="insight-grid">
+                  <div class="insight-item">
+                    <span class="lbl" title="The vibration patterns the AI model is paying most attention to right now.">What the system sees</span>
+                    <p id="insightSees">Waiting for the first readings…</p>
+                  </div>
+                  <div class="insight-item">
+                    <span class="lbl" title="Suggested next step for a maintenance team, based on the current health stage.">Recommended action</span>
+                    <p id="insightAction">No action yet — streaming has not started.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="chart-wrap"><canvas id="cHealth" height="240"></canvas></div>
-      </div>
-    </div>
-  </div>
+      </section>
 
-  <div class="row-3 block">
-    <div class="panel panel-sys">
-      <div class="head"><span class="ttl">Run Details</span><span class="tag">SYS-07</span></div>
-      <div class="body body-tight">
-        <table class="kv kv-compact">
-          <tr><td class="k">Model</td><td class="v" id="info-model">—</td></tr>
-          <tr><td class="k">Checkpoint</td><td class="v" id="info-ckpt">—</td></tr>
-          <tr><td class="k">Device</td><td class="v" id="info-device">—</td></tr>
-          <tr><td class="k">Window</td><td class="v" id="info-window">—</td></tr>
-          <tr><td class="k">Acquisitions</td><td class="v" id="info-ntotal">—</td></tr>
-          <tr><td class="k">Interval</td><td class="v" id="info-interval">—</td></tr>
-          <tr><td class="k">Stage</td><td class="v stage" id="stage">—</td></tr>
-        </table>
-        <button type="button" class="btn btn-block" id="btnCsv" name="export_csv" disabled>⬇ Export CSV</button>
-      </div>
-    </div>
+      <!-- LIVE MONITORING -->
+      <section class="zone">
+        <h2 class="zone-ttl">Live Monitoring</h2>
+        <div class="zone-3">
+          <div class="panel panel-chart">
+            <div class="head"><span class="ttl" title="Remaining Useful Life: the share of healthy life the bearing has left, from 100% (new) down to 0% (failure).">RUL — Predicted vs Ground Truth</span><span class="tag">TRN-03</span></div>
+            <div class="body body-chart">
+              <p class="cap">How much healthy life is left over time. The line falls as the bearing wears; amber and red bands mark warning and critical levels.</p>
+              <div class="legend legend-compact">
+                <span class="it"><span class="sw" style="background:var(--blue)"></span>Predicted</span>
+                <span class="it gt-legend"><span class="sw dash"></span>Truth</span>
+                <span class="it"><span class="sw" style="background:var(--amber-wash);border:1px solid var(--amber)"></span>Warn</span>
+                <span class="it"><span class="sw" style="background:var(--red-wash);border:1px solid var(--red)"></span>Crit</span>
+              </div>
+              <div class="chart-wrap"><canvas id="cRul" height="240"></canvas></div>
+            </div>
+          </div>
 
-    <div class="panel panel-hi">
-      <div class="head"><span class="ttl">Health Indicators (all features)</span><span class="tag">HI-08</span></div>
-      <div class="body body-tight body-scroll">
-        <table class="ftable ftable-compact">
-          <thead><tr><th>Feature</th><th class="num">Raw</th><th class="num">Scaled</th></tr></thead>
-          <tbody id="featBody"><tr><td colspan="3" class="muted">—</td></tr></tbody>
-        </table>
-      </div>
-    </div>
+          <div class="panel panel-chart">
+            <div class="head"><span class="ttl" title="The most recent short snapshot of raw vibration from the sensor.">Latest Vibration Waveform</span><span class="tag">VIB-04</span></div>
+            <div class="body body-chart">
+              <p class="cap">The latest raw vibration snapshot. Sharp, repeating spikes are a classic sign of a developing bearing defect.</p>
+              <div class="legend legend-compact">
+                <span class="it"><span class="sw" style="background:var(--blue)"></span>Horizontal</span>
+                <span class="it"><span class="sw" style="background:var(--rust)"></span>Vertical</span>
+              </div>
+              <div class="chart-wrap"><canvas id="cWave" height="240"></canvas></div>
+            </div>
+          </div>
 
-    <div class="panel panel-log">
-      <div class="head">
-        <span class="ttl">Event Log</span>
-        <span class="btns">
-          <button type="button" class="btn sm" id="btnClear" name="clear_log">Clear</button>
-          <button type="button" class="btn sm" id="btnLogExport" name="export_log">Export</button>
-        </span>
-      </div>
-      <div class="body body-tight body-log">
-        <div class="logwrap"><div class="log" id="log"></div></div>
-      </div>
-    </div>
+          <div class="panel panel-chart">
+            <div class="head"><span class="ttl" title="Key vibration statistics tracked over the whole run.">Health Indicator Trend</span><span class="tag">HI-06</span></div>
+            <div class="body body-chart">
+              <p class="cap">Key vibration statistics over time. A steadily rising trend usually means increasing wear or a growing defect.</p>
+              <div class="legend legend-compact">
+                <span class="it"><span class="sw" style="background:var(--blue)" title="Overall vibration energy, horizontal sensor."></span>RMS H</span>
+                <span class="it"><span class="sw" style="background:var(--rust)" title="Overall vibration energy, vertical sensor."></span>RMS V</span>
+                <span class="it"><span class="sw" style="background:var(--green)"></span><span id="hiThirdLabel" title="Spikiness of the vibration — high values flag sharp, repeated impacts.">Kurt H</span></span>
+              </div>
+              <div class="chart-wrap"><canvas id="cHealth" height="240"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAILURE ANALYSIS (replay only) -->
+      <section class="zone" id="failZone" hidden>
+        <h2 class="zone-ttl" title="Significant predicted-health drops located in the saved run, each explained with the model's own interpretability.">Failure Analysis — Significant Drops</h2>
+        <div class="zone-2">
+          <div class="panel panel-drops">
+            <div class="head"><span class="ttl" title="Each moment where the predicted remaining-useful-life fell sharply. Click one to inspect it.">Drop Events</span><span class="tag" id="dropCount">0</span></div>
+            <div class="body body-tight body-scroll">
+              <div class="drop-list" id="dropList"><div class="muted">Record or load a run to locate significant drops.</div></div>
+            </div>
+          </div>
+          <div class="panel panel-dropdetail">
+            <div class="head"><span class="ttl" title="What changed when this drop happened — the raw vibration features that moved most, plus the model's own attribution (shown in the Integrated Gradients and Top Drivers panels below).">Why It Dropped</span><span class="tag">XAI</span></div>
+            <div class="body body-tight">
+              <p class="cap" id="dropHeadline">Select a drop to see what physically changed and which signals drove it.</p>
+              <span class="lbl" title="The raw Health-Indicator features with the largest change from just before the drop to the drop point. Click a feature to plot it on the Health Indicator Trend chart (HI-06).">Raw HI features that changed across the drop <span class="hint">— click to plot on Health Indicator Trend ↗</span></span>
+              <div class="hi-delta" id="hiDelta"><div class="muted">—</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- INTERPRETABILITY (Tier-3 prognostic view) -->
+      <section class="zone">
+        <h2 class="zone-ttl" title="This Tier-3 dashboard shows input attribution on the RUL backbone plus the dissertation's Layer 2 (SAE→BPFx). Layer 1 (Fault Signature Maps, raw-signal attribution) is a Tier-2 diagnostic artefact and is not shown here.">Interpretability — Tier 3 Prognostic</h2>
+        <div class="zone-3">
+
+          <!-- XAI-02: input attribution on the RUL backbone -->
+          <div class="panel panel-xai">
+            <div class="head"><span class="ttl" title="Input-level attribution on the Tier-3 RUL backbone: which input signals and which temporal mechanism drive the current prediction. This is the prognostic backbone's own input attribution — distinct from the dissertation's Layer-1 Fault Signature Maps (raw-signal attribution at Tier 2 diagnostics).">Input Attribution · RUL Backbone</span><span class="tag">XAI-02</span></div>
+            <div class="body card-fill">
+              <div class="xai-block">
+                <span class="lbl" title="The model blends two reasoning styles: xLSTM (long-term memory of the trend) and Mamba (fast local dynamics). This bar shows how much each contributes right now.">Fusion Gate</span>
+                <div class="fusion" id="fusionBar">
+                  <div class="seg xlstm" id="segX" style="flex-basis:50%"><span>xLSTM</span><span class="pc" id="pcX">50%</span></div>
+                  <div class="seg mamba" id="segM" style="flex-basis:50%"><span class="pc" id="pcM">50%</span><span>Mamba</span></div>
+                </div>
+              </div>
+              <div class="xai-block xai-grow">
+                <span class="lbl" title="The individual vibration features that most influenced the latest assessment. ▲ pushes toward healthy, ▼ pushes toward failure.">Top Drivers (signal influence)</span>
+                <div class="drivers" id="drivers"><div class="driver muted">Awaiting predictions…</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- XAI-05: Integrated Gradients at the selected drop -->
+          <div class="panel panel-chart panel-ig">
+            <div class="head"><span class="ttl" title="Integrated Gradients for the RUL prediction at the selected drop: which input signals most pushed the model's verdict. Computed during recording and saved with each drop.">Integrated Gradients · at Drop</span><span class="tag">XAI-05</span></div>
+            <div class="body body-chart">
+              <p class="cap">Which measured signals most shaped the model's verdict <b>at the selected drop</b>. Taller bars = more influence. Pick a drop in <b>Drop Events</b> to populate.</p>
+              <div class="ig-tools">
+                <span class="ig-cap" id="igCaption">No drop selected</span>
+              </div>
+              <div class="chart-wrap chart-wrap-sm"><canvas id="cAttr" height="200"></canvas></div>
+              <div class="heat heat-compact">
+                <span class="lbl">Time × Feature Heatmap (at the drop)</span>
+                <div class="heatgrid" id="heatgrid"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DIS-10: Layer 2 — SAE→BPFx -->
+          <div class="panel panel-bpfx">
+            <div class="head"><span class="ttl" title="Layer 2 of the dissertation's two-layer interpretability (Bab V, N3/N4): Top-k Sparse Autoencoder latents mapped to bearing fault frequencies (BPFx).">Layer 2 · Latent → Bearing Physics (SAE→BPFx)</span><span class="tag">DIS-10</span></div>
+            <div class="body body-tight">
+              <p class="cap" id="bpfxCap">Does the model's latent space track known bearing physics? Each bar is the share of learned SAE latent concepts that correlate with a bearing fault frequency.</p>
+              <p class="bpfx-verdict" id="bpfxVerdict" hidden></p>
+              <div class="bpfx-list" id="bpfxList"><div class="muted">Select a benchmark dataset…</div></div>
+              <p class="bpfx-foot" id="bpfxFoot" hidden></p>
+              <p class="bpfx-caveat" id="bpfxCaveat" hidden></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DIAGNOSTICS -->
+      <section class="zone">
+        <h2 class="zone-ttl">Diagnostics</h2>
+        <div class="zone-3">
+
+          <!-- DIS-09: Model accuracy benchmark -->
+          <div class="panel panel-acc">
+            <div class="head"><span class="ttl" title="How accurate this trained backbone is on the held-out test bearings, from Bab V of the dissertation.">Model Accuracy — Benchmark</span><span class="tag">DIS-09</span></div>
+            <div class="body body-tight">
+              <p class="cap" id="accCap">Test-set accuracy of the trained model (Bab V). Lower RMSE/MAE is better; higher R² and PHM Score are better.</p>
+              <div class="acc-grid">
+                <div class="mcell"><div class="k" title="Root-mean-square error of predicted vs true RUL (normalised 0–1). Lower is better.">RMSE</div><div class="v v-sm" id="accRmse">—</div></div>
+                <div class="mcell"><div class="k" title="Mean absolute error of predicted vs true RUL. Lower is better.">MAE</div><div class="v v-sm" id="accMae">—</div></div>
+                <div class="mcell"><div class="k" title="Coefficient of determination: how much of the RUL variance the model explains. Higher (max 1.0) is better.">R²</div><div class="v v-sm" id="accR2">—</div></div>
+                <div class="mcell"><div class="k" title="PHM2012 asymmetric competition score (0–1 here). Higher is better; under-prediction is penalised more than over-prediction.">PHM Score</div><div class="v v-sm" id="accPhm">—</div></div>
+              </div>
+              <table class="kv kv-compact acc-meta">
+                <tr><td class="k">Backbone</td><td class="v" id="accBackbone">—</td></tr>
+                <tr><td class="k">Parameters</td><td class="v" id="accParams">—</td></tr>
+                <tr><td class="k">Best epoch</td><td class="v" id="accEpoch">—</td></tr>
+              </table>
+              <p class="acc-note" id="accNote" hidden></p>
+            </div>
+          </div>
+
+          <!-- HI-08: Health indicators (all features) -->
+          <div class="panel panel-hi">
+            <div class="head"><span class="ttl">Health Indicators (all features)</span><span class="tag">HI-08</span></div>
+            <div class="body body-tight body-scroll">
+              <table class="ftable ftable-compact">
+                <thead><tr><th>Feature</th><th class="num">Raw</th><th class="num">Scaled</th></tr></thead>
+                <tbody id="featBody"><tr><td colspan="3" class="muted">—</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- LOG -->
+          <div class="panel panel-log">
+            <div class="head">
+              <span class="ttl">Event Log</span>
+              <span class="btns">
+                <button type="button" class="btn sm" id="btnClear" name="clear_log">Clear</button>
+                <button type="button" class="btn sm" id="btnLogExport" name="export_log">Export</button>
+              </span>
+            </div>
+            <div class="body body-tight body-log">
+              <div class="logwrap"><div class="log" id="log"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
   </div>
 
   <div class="foot">

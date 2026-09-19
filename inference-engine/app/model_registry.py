@@ -119,26 +119,35 @@ def _load_skf_spec() -> DatasetSpec:
         key="skf_ch15_or1",
         label=_DATASET_LABELS["skf_ch15_or1"],
         run_dir=run_dir,
-        data_root=_DATA_BEARING / "skf-ch15-or1",
-        cache_dir=_DATA_BEARING / "processed" / "skf-ch15-or1",
+        data_root=_DATA_BEARING / "skf-ch15-or1-6m",
+        cache_dir=_DATA_BEARING / "processed" / "skf-ch15-or1-6m",
         window_length=int(data.window_length),
         stride_eval=int(data.stride_eval),
         n_bands=int(data.n_bands),
         smoothing_alpha=float(data.smoothing_alpha),
         test_bearings=streams,
-        acquisition_interval_s=3600.0,
+        # Nominal/display cadence only; the run spans ~5.3 months at a
+        # non-uniform cadence (daily baseline → hourly fault regime), so the
+        # engine drives all timing from the per-acquisition timestamps.
+        acquisition_interval_s=86400.0,
         fs=25600,
         checkpoint=resolve_checkpoint(run_dir),
         hi_scaler_path=run_dir / "hi_scaler.json",
         model_name=str(cfg.model.name),
         inference_model_key=transfer_key,
-        has_gt_rul=True,
+        # Plant data has no labelled RUL ground truth — only the observed field
+        # failure event. The chart shows a single causal predicted RUL curve
+        # (envelope gE health index), with no ground-truth overlay.
+        has_gt_rul=False,
         stream_mode="skf_trending",
         transfer_note=(
-            "RUL from PHM2012-trained Mamba-xLSTM-Net (transfer demo); "
-            "Observer trending → synthetic waveform → HI pipeline. "
-            "EOL anchored at the field failure event (~31 Aug 2023, envelope "
-            "spike collapse); post-repair September baseline is segmented out."
+            "Predicted RUL from the causal envelope (gE) health index — no "
+            "labelled ground-truth RUL on plant data. PHM2012-trained "
+            "Mamba-xLSTM-Net runs as a transfer demo for the fusion gate and "
+            "driver attribution (Observer trending → synthetic waveform → HI "
+            "pipeline). Full ~5.3-month run (01 Apr → 31 Aug 2023): daily "
+            "healthy baseline then hourly through the fault regime; replay ends "
+            "at the field failure event (envelope spike collapse, ~31 Aug 2023)."
         ),
     )
 

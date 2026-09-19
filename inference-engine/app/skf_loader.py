@@ -16,6 +16,13 @@ quantities onto a common time axis. It additionally detects the field failure
 event (the envelope spike that collapses on ~31 Aug 2023) and segments the
 trailing post-repair baseline (the new bearing from ~02 Sep) out of the
 run-to-failure trajectory used for RUL replay.
+
+The active export (``skf-ch15-or1-6m``) covers the full ~5.3-month run, from a
+healthy baseline on 01 Apr 2023 to the same field failure on 31 Aug 2023. The
+acquisition cadence is **not uniform**: roughly daily during the long healthy
+baseline (Apr–late Aug), then hourly once the fault regime begins (~28 Aug).
+All RUL/time bookkeeping is therefore driven by the actual acquisition
+timestamps, never by an assumed fixed interval.
 """
 from __future__ import annotations
 
@@ -31,15 +38,15 @@ _DATE_FMT = "%d/%m/%y %I:%M:%S %p"
 SKF_STREAMS: dict[str, dict[str, str]] = {
     "ch1_01_nde": {
         "label": "Channel 1-01 OR-1 NDE (grinding)",
-        "accel": "OA CH 1-01-R-A-NDE.xls",
-        "velocity": "OA CH1-01-R-V-NDE.xls",
-        "envelope": "OA CH 1-01-R-ENV-NDE.xls",
+        "accel": "Ch1-01-R-A-NDE.xls",
+        "velocity": "CH1-01-R-V-NDE.xls",
+        "envelope": "Ch1-01-R-ENV-NDE.xls",
     },
     "ch3_02_de": {
         "label": "Channel 3-02 OR-1 DE (grinding)",
-        "accel": "OA Ch3-02-R-A-DE.xls",
-        "velocity": "OA CH3-02-R-V-DE.xls",
-        "envelope": "OA Ch3-02-R-ENV-DE.xls",
+        "accel": "Ch3-02-R-A-DE.xls",
+        "velocity": "CH3-02-R-V-DE.xls",
+        "envelope": "Ch3-02-R-ENV-DE.xls",
     },
 }
 
@@ -47,7 +54,6 @@ _PHM_SAMPLES = 2560
 _PHM_FS = 25600
 
 # Segmentation / failure-detection tuning.
-_GAP_HOURS = 72.0            # split timeline at acquisition gaps longer than this
 _ENV_MIN_FAULT = 0.3         # minimum envelope (gE) to consider a "fault" regime
 _COLLAPSE_RATIO = 0.35       # post-fault level must drop below ratio×peak to count as repair
 _MIN_FAULT_RUN = 3           # min consecutive high-envelope points to accept a fault regime
@@ -143,14 +149,40 @@ class SkfTrendRun:
 
     @property
     def acquisition_interval_s(self) -> float:
+        """Representative (median) step in seconds across the *whole* run.
+
+        The cadence is non-uniform (daily baseline → hourly fault regime), so
+        this is a display/nominal value only. Per-step timing must use
+        :meth:`interval_at`, and absolute progress must use
+        :meth:`seconds_from_start`.
+        """
         if len(self.points) < 2:
             return 3600.0
         deltas = [
             (self.points[i + 1].timestamp - self.points[i].timestamp).total_seconds()
-            for i in range(min(20, len(self.points) - 1))
+            for i in range(len(self.points) - 1)
         ]
         med = float(np.median(deltas))
         return med if med > 0 else 3600.0
+
+    def seconds_from_start(self, idx: int) -> float:
+        """Wall-clock seconds elapsed from the first acquisition to ``idx``.
+
+        Used by the streaming engine so prediction-derived time-to-failure is
+        anchored to real timestamps instead of an assumed fixed grid (which
+        would be badly wrong given the daily→hourly cadence change).
+        """
+        if not self.points or idx <= 0:
+            return 0.0
+        idx = min(idx, len(self.points) - 1)
+        return float((self.points[idx].timestamp - self.points[0].timestamp).total_seconds())
+
+    def interval_at(self, idx: int) -> float:
+        """Seconds between acquisition ``idx`` and the one before it."""
+        if idx <= 0 or idx >= len(self.points):
+            return self.acquisition_interval_s
+        dt = (self.points[idx].timestamp - self.points[idx - 1].timestamp).total_seconds()
+        return float(dt) if dt > 0 else self.acquisition_interval_s
 
     def rul_fraction(self, idx: int) -> float:
         """Time-normalised ground-truth RUL: remaining wall-clock time / total life.
