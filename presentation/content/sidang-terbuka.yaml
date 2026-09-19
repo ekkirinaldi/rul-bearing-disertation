@@ -2038,6 +2038,62 @@ slides:
   # ======================================================================
   # 39 · HASIL RM-2 — FSM dan validasinya
   # ======================================================================
+  # ======================================================================
+  # 39b · JEMBATAN — mengapa FSM punya tiga varian agregasi
+  # ======================================================================
+  - layout: content
+    eyebrow: "Pengantar · Membaca FSM"
+    title: "Tiga Varian FSM: Nilai SHAP yang Sama, Tiga Cara Meringkas"
+    top: 1.74
+    blocks:
+      - type: cards
+        flex: true
+        gutter: 0.24
+        pad: 0.18
+        title_size: 12.5
+        body_size: 10.8
+        items:
+          - title: "Signed — arah kontribusi"
+            body: >-
+              Rata-rata nilai SHAP dengan tanda dipertahankan. Positif berarti energi pada
+              posisi itu mendorong prediksi ke kelas tersebut, negatif berarti menjauhkan.
+              Karena bertanda, kontribusi positif satu sample dan negatif sample lain saling
+              menghapus saat dirata-rata. Panel kiri yang tampak pucat adalah bukti
+              pencoretan itu, dan diskriminabilitasnya paling rendah.
+            body_color: "1F2A3D"
+          - title: "Absolute — besar kontribusi, dipakai sebagai FSM utama"
+            body: >-
+              Nilai mutlak diambil lebih dahulu, baru dirata-rata. Tidak ada yang saling
+              menghapus, sehingga posisi yang selalu aktif tetap menonjol meski tandanya
+              berganti antar-sample. Varian inilah yang dipakai sebagai FSM utama, dan
+              ketiga angka validasi pada slide berikut dihitung darinya.
+            body_color: "1F2A3D"
+          - title: "Variance — konsistensi antar-sample"
+            body: >-
+              Variansi nilai SHAP antar-sample pada tiap posisi. Variansi rendah berarti model
+              memperlakukan posisi itu sama untuk semua sample, sehingga layak dipercaya
+              sebagai fingerprint; variansi tinggi menandakan respons yang goyah terhadap
+              variasi sample.
+            body_color: "1F2A3D"
+      - type: banner
+        gap: 0.20
+        tone: light
+        label: BAHAN BAKU SAMA
+        label_size: 12
+        size: 11.3
+        vpad: 0.16
+        body: >-
+          Ketiganya berangkat dari tensor yang sama, yaitu satu nilai SHAP per posisi sinyal
+          untuk tiap sample uji. Yang berbeda hanya cara meringkas tumpukan sample menjadi satu
+          baris per kelas: **mean bertanda**, **mean nilai mutlak**, dan **variansi**. Skala
+          warnanya pun ikut berbeda, yaitu diverging simetris terhadap nol untuk Signed,
+          viridis untuk Absolute, dan hot untuk Variance.
+      - type: source
+        gap: 0.14
+        body: >-
+          Definisi tiga varian pada Subbab IV.6 · implementasi fsm_signed, fsm_abs, dan fsm_var
+          pada notebook WDCNN-SHAP (repositori ai-bearing-conference).
+
   - layout: content
     eyebrow: "Hasil XAI · Novelti N1"
     title: "Fault Signature Maps: Tervalidasi pada Tiga Metrik"
@@ -2074,7 +2130,8 @@ slides:
         gap: 0.14
         body: >-
           SHAP DeepExplainer (Lundberg dan Lee, 2017) pada analisis utama 300 background /
-          500 sample uji; formalisasi FSM (Suharto dkk., 2025).
+          500 sample uji; formalisasi FSM (Suharto dkk., 2025). Ketiga metrik dihitung pada
+          varian Absolute, yang dipakai sebagai FSM utama.
 
   # ======================================================================
   # 40 · HASIL RM-2 — ablasi BatchNorm (N2)
