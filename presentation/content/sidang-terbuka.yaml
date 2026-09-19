@@ -56,7 +56,7 @@ slides:
         items:
           - num: "01"
             title: Pengantar Domain
-            body: "Mesin rotasi, biaya kegagalan, kurva P-F, ADM, dan vibration signature"
+            body: "Mesin rotasi, biaya failure, kurva P-F, ADM, dan vibration signature"
           - num: "02"
             title: Objek dan Rumusan Masalah
             body: "Bearing, production line PT SKF Indonesia, gap literatur, empat RM"
@@ -191,7 +191,7 @@ slides:
                   - badge: "3"
                     title: Pompa dan kompresor
                     body: >-
-                      Beroperasi nonstop di pembangkit, kilang, dan pabrik semen; kegagalan
+                      Beroperasi nonstop di pembangkit, kilang, dan pabrik semen; *failure*
                       bearing menghentikan aliran proses.
           - blocks:
               - type: figure
@@ -266,7 +266,7 @@ slides:
                   - value: "26 minggu"
                     note: "waktu pengiriman bull gear pengganti"
                   - value: "$26 juta"
-                    note: "produksi yang hilang selama mesin berhenti (26.000.000 dolar AS)"
+                    note: "kehilangan potensi produksi selama mesin berhenti (26.000.000 dolar AS)"
               - type: cards
                 gap: 0.14
                 flex: true
@@ -300,7 +300,7 @@ slides:
           The True Cost of Downtime 2022 (Siemens, 2022)
 
   # ======================================================================
-  # 6 · PENGANTAR DOMAIN — program keandalan yang baik menghemat (draft hal. 6)
+  # 6 · PENGANTAR DOMAIN — reliability program menekan biaya (draft hal. 6)
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar Domain · Nilai Program Keandalan"
@@ -324,14 +324,14 @@ slides:
                 italic: true
                 align: center
                 color: "6B7689"
-                text: "Struktur biaya sebelum dan sesudah program keandalan; komponen terbesar adalah produksi yang hilang"
+                text: "Struktur biaya sebelum dan sesudah *reliability program*; komponen terbesar adalah kehilangan potensi produksi"
           - blocks:
               - type: text
                 h: 0.62
                 size: 12
                 text: >-
-                  Biaya terbesar bukan suku cadang atau tenaga kerja, melainkan **produksi
-                  yang hilang dan masalah kualitas**. Program keandalan yang baik menekan
+                  Biaya terbesar bukan suku cadang atau tenaga kerja, melainkan **kehilangan potensi
+                  produksi dan masalah kualitas**. *Reliability program* yang baik menekan
                   komponen itu lebih dahulu, lalu energi, tenaga kerja, dan persediaan.
               - type: numbered
                 gap: 0.12
@@ -356,10 +356,10 @@ slides:
           intervensi berdasarkan kondisi mesin, bukan jadwal tetap.
       - type: source
         gap: 0.14
-        body: "diadaptasi dari materi pelatihan keandalan SKF Group (2017)"
+        body: "diadaptasi dari materi pelatihan *reliability* SKF Group (2017)"
 
   # ======================================================================
-  # 7 · PENGANTAR DOMAIN — kegagalan fungsional dan kurva P-F (draft hal. 7)
+  # 7 · PENGANTAR DOMAIN — functional failure dan kurva P-F (draft hal. 7)
   # ======================================================================
   - layout: content
     eyebrow: "Pengantar Domain · Kurva P-F"
@@ -383,7 +383,7 @@ slides:
                 italic: true
                 align: center
                 color: "6B7689"
-                text: "Kurva P-F: dari gejala awal (P) sampai kegagalan fungsional (F), lalu MTTR dan MTBF"
+                text: "Kurva P-F: dari gejala awal (P) sampai *functional failure* (F), lalu MTTR dan MTBF"
           - blocks:
               - type: cards
                 flex: true
@@ -398,14 +398,14 @@ slides:
                       Titik ketika kerusakan mulai terdeteksi oleh pengukuran, jauh sebelum
                       mesin kehilangan fungsinya.
                     body_color: "1F2A3D"
-                  - title: "F, kegagalan fungsional (*functional failure*)"
+                  - title: "F, *functional failure*"
                     body: >-
                       Mesin berhenti menjalankan fungsinya; risiko keselamatan dan biaya
                       perawatan berada di titik tertinggi.
                     body_color: "1F2A3D"
                   - title: "MTTR dan MTBF"
                     body: >-
-                      Lama perbaikan dan jarak antarkegagalan; keduanya memburuk bila
+                      Lama perbaikan dan jarak antar-*failure*; keduanya memburuk bila
                       intervensi baru dilakukan setelah titik F.
                     body_color: "1F2A3D"
       - type: banner
@@ -421,7 +421,7 @@ slides:
           sisa umur** menjawab "berapa lama lagi" (jalur prognostik).
       - type: source
         gap: 0.14
-        body: "diadaptasi dari materi pelatihan keandalan SKF Group (2017)"
+        body: "diadaptasi dari materi pelatihan *reliability* SKF Group (2017)"
 
   # ======================================================================
   # 8 · PENGANTAR DOMAIN — Asset Diagnostic Methodology (draft hal. 8-9)
@@ -467,9 +467,9 @@ slides:
         size: 11.5
         vpad: 0.14
         body: >-
-          Pendekatan **reaktif** bekerja dari atas: kegagalan terjadi, lalu komponennya
+          Pendekatan **reaktif** bekerja dari atas: *failure* terjadi, lalu komponennya
           diganti. Pendekatan **proaktif** bekerja dari bawah: pengukuran yang tepat
-          menangkap *key feature*, gejala, dan *fault* jauh sebelum kegagalan.
+          menangkap *key feature*, gejala, dan *fault* jauh sebelum *failure*.
       - type: source
         gap: 0.12
         body: "Asset Diagnostic Methodology (ADM), materi pelatihan SKF Group (2017)"
@@ -619,7 +619,7 @@ slides:
                   - title: "Ambang diagnosis"
                     body: "Jenis kerusakan dapat dikenali dari *signature*-nya; prognosis dimulai."
                     body_color: "1F2A3D"
-                  - title: "Ambang kegagalan fungsional"
+                  - title: "Ambang *functional failure*"
                     body: "Titik *end-of-life*; mesin harus berhenti sebelum titik ini tercapai."
                     body_color: "1F2A3D"
                   - title: "Sebaran RUL"
@@ -631,7 +631,7 @@ slides:
         size: 11.5
         vpad: 0.14
         body: >-
-          Remaining useful life (RUL) adalah jarak dari kondisi saat ini ke ambang kegagalan
+          Remaining useful life (RUL) adalah jarak dari kondisi saat ini ke ambang *functional failure*
           fungsional. Pada disertasi ini RUL dinyatakan sebagai fraksi 1 (baru) sampai 0
           (rusak), dengan ambang status **Warning 40%** dan **Critical 20%**.
       - type: source
@@ -658,7 +658,7 @@ slides:
                 text: >-
                   Pada hampir setiap mesin rotasi industri, mulai dari motor, pompa, kompresor,
                   hingga *production line* otomatis, ***rolling element bearing*** menjadi tumpuan.
-                  Komponen ini sekaligus yang paling sering gagal: survei keandalan IEEE dan
+                  Komponen ini sekaligus yang paling sering gagal: survei *reliability* IEEE dan
                   EPRI mencatat bearing menyumbang sekitar 40 sampai 50% dari seluruh kerusakan
                   motor industri, sekaligus menjadi penyebab utama *downtime* yang tidak
                   terencana di industri manufaktur.
@@ -683,7 +683,7 @@ slides:
                 note_size: 11.5
                 items:
                   - value: "40–50%"
-                    note: "kerusakan motor industri berakar pada kegagalan bearing  (Nandi dkk., 2005)"
+                    note: "kerusakan motor industri berakar pada *failure* bearing  (Nandi dkk., 2005)"
               - type: cards
                 gap: 0.14
                 align: center
@@ -806,7 +806,7 @@ slides:
                     body: >-
                       Tahap 1 hanya tampak pada zona frekuensi tinggi (gE/HFD); tahap 2 dan 3
                       memunculkan BPFO, BPFI, dan harmoniknya; tahap 4 berujung getaran
-                      acak berfrekuensi tinggi menjelang kegagalan.
+                      acak berfrekuensi tinggi menjelang *failure*.
                     body_color: "1F2A3D"
                   - title: "Mengapa fokus pada bearing"
                     body: >-
@@ -1329,10 +1329,10 @@ slides:
                 items:
                   - title: "Setiap lintasan rolling element di atas cacat"
                     body: >-
-                      Menghasilkan satu benturan singkat; struktur bearing berdering pada
+                      Menghasilkan satu benturan singkat; struktur bearing menghasilkan *ringing* pada
                       frekuensi naturalnya, lalu meluruh sampai benturan berikutnya.
                     body_color: "1F2A3D"
-                  - title: "Sensor seismik menangkap deret dering itu"
+                  - title: "Sensor seismik menangkap deret *ringing* itu"
                     body: >-
                       Yang tampak pada domain waktu adalah gelombang termodulasi: laju
                       benturannya sama dengan frekuensi karakteristik bearing.
@@ -1379,7 +1379,7 @@ slides:
                 italic: true
                 align: center
                 color: "6B7689"
-                text: "Sinyal mentah, hasil band-pass, dan envelope-nya"
+                text: "*Raw signal*, hasil band-pass, dan envelope-nya"
       - type: banner
         gap: 0.18
         tone: light
@@ -1496,7 +1496,7 @@ slides:
                     size: 11
                     text: >-
                       Tiga dataset publik menyediakan waveform utuh dan label kerusakan atau
-                      waktu kegagalan yang pasti, sehingga akurasi dan interpretabilitas
+                      waktu *failure* yang pasti, sehingga akurasi dan interpretabilitas
                       dapat diuji secara terukur dan dapat direproduksi peneliti lain.
           - blocks:
               - type: panel
@@ -1588,7 +1588,7 @@ slides:
                       rantai akuisisi SKF dan tiga dataset benchmark.
                   - title: "2 · Analyze"
                     body: >-
-                      Ekstraksi feature (HI 36-D) dan pemodelan; jembatan dari sinyal mentah
+                      Ekstraksi feature (HI 36-D) dan pemodelan; jembatan dari *raw signal*
                       ke sesuatu yang dapat dipelajari model.
                   - title: "3 · Diagnose"
                     body: >-
@@ -1667,7 +1667,7 @@ slides:
           - title: "Machine learning klasik: feature dirancang manusia"
             body: >-
               Seperti inspektur dengan lembar periksa: manusia memilih indikator (RMS,
-              kurtosis, energi pita frekuensi, 36 dimensi), lalu model menimbang
+              kurtosis, band energy, 36 dimensi), lalu model menimbang
               indikator itu. Transparan, ringan, tetapi bergantung pada kejelian
               perancang feature.
             body_color: "1F2A3D"
@@ -1731,7 +1731,7 @@ slides:
         widths: [2.55, 2.75, 2.85, 2.95]
         columns: [Model, Besaran *input*, Sensor dan *sampling rate*, Bentuk tensor]
         rows:
-          - ["WDCNN (diagnostik)", "Amplitudo getaran domain waktu (*raw signal*)", "Akselerometer *drive-end* CWRU, 48 kHz", "1 × 2.048 titik, sekitar 42,67 ms"]
+          - ["WDCNN (diagnostik)", "Amplitudo getaran domain waktu, tanpa ekstraksi *feature*", "Akselerometer *drive-end* CWRU, 48 kHz; segmentasi + normalisasi Z-score", "1 × 2.048 titik, sekitar 42,67 ms"]
           - ["SVM, LR, DT, RF, XGBoost", "*Feature* HI turunan sinyal, bukan *waveform*", "Akselerometer CWRU, 48 kHz", "Satu vektor HI per segmen 2.048 titik"]
           - ["Tiga *backbone* RUL", "*Feature* HI 36-D per rekaman, bukan *waveform*", "Akselerometer horizontal dan vertikal, 25,6 kHz", "64 × 36 (PHM2012); 32 × 36 (XJTU-SY)"]
           - ["Top-k SAE", "*Hidden state backbone*, bukan sinyal getaran", "*Output gated fusion*, *weights* dibekukan", "20.000 vektor 128-D per dataset"]
@@ -1875,7 +1875,7 @@ slides:
             body: >-
               Kelas rusak selalu jauh lebih sedikit daripada kelas sehat di lapangan.
               Alarm palsu menghentikan produksi tanpa sebab; alarm terlewat berujung
-              kegagalan fungsional. Penjelasan memungkinkan insinyur memverifikasi
+              *functional failure*. Penjelasan memungkinkan insinyur memverifikasi
               sebelum bertindak.
           - badge: "3"
             title: "Penjelasan menunjuk bagian yang harus dikoreksi"
@@ -1894,7 +1894,7 @@ slides:
           Disertasi ini memakai dua lapis interpretabilitas: **input attribution** (SHAP pada
           raw signal, jalur diagnostik) menjawab "bagian sinyal mana", dan **konsep laten**
           (SAE pada hidden state, jalur prognostik) menjawab "apakah model menyimpan
-          BPFx". Keduanya diuji dengan stabilitas, diskriminabilitas, dan kontrol negatif,
+          BPFx". Keduanya diuji dengan stabilitas, diskriminabilitas, dan *negative control*,
           bukan diterima begitu saja.
       - type: source
         gap: 0.16
@@ -2783,7 +2783,7 @@ slides:
         body: "Digambar ulang berdasarkan Gambar V.6."
 
   # ======================================================================
-  # 53 · HASIL RM-3 — hit-rate dan kontrol negatif
+  # 53 · HASIL RM-3 — hit-rate dan negative control
   # ======================================================================
   - layout: content
     eyebrow: "Hasil · Novelti N3 dan N4"
@@ -2842,7 +2842,7 @@ slides:
       - type: source
         gap: 0.16
         body: >-
-          Tabel V.6 (hit-rate utama) · Subbab V.7 (kontrol negatif) · Subbab V.8 (lintas
+          Tabel V.6 (hit-rate utama) · Subbab V.7 (*negative control*) · Subbab V.8 (lintas
           arsitektur: urutan dominansi konsisten dengan variasi magnituda 4–8 kali lipat).
 
   # ======================================================================
@@ -2861,7 +2861,7 @@ slides:
         vpad: 0.20
         body: >-
           Sebagian latent feature model RUL **terbukti berkorelasi dengan frekuensi karakteristik
-          bearing** dan lolos permutation test (p < 0,001) dengan dua kontrol negatif
+          bearing** dan lolos permutation test (p < 0,001) dengan dua *negative control*
           mendekati nol; korespondensi ini properti representasi terlatih, bukan artefak
           arsitektur, dan konsisten lintas tiga backbone.
       - type: panel
@@ -3053,7 +3053,7 @@ slides:
           **demonstrasi kualitatif** transferabilitas perilaku prognostik.
 
   # ======================================================================
-  # 58 · HASIL RM-4 — dashboard mesin inferensi
+  # 58 · HASIL RM-4 — dashboard inference engine
   # ======================================================================
   - layout: content
     eyebrow: "Validasi Industri · Subbab V.5.3"
@@ -3064,7 +3064,7 @@ slides:
         h: 0.50
         size: 12
         text: >-
-          Tangkapan layar mesin inferensi Mamba-xLSTM-Net (aplikasi web, WebSocket) pada
+          Tangkapan layar *inference engine* Mamba-xLSTM-Net (aplikasi web, WebSocket) pada
           akuisisi terakhir tiap kanal: kurva RUL, status kondisi, pembagian fusion gate,
           dan feature paling berpengaruh.
       - type: columns
@@ -3230,12 +3230,12 @@ slides:
           - key: RM-3
             title: Fisika terbukti pada representasi laten
             body: >-
-              Hit-rate BPFx p < 0,001 · kontrol negatif ≈ 0 · lintas arsitektur  ~~· N3, N4 ·
+              Hit-rate BPFx p < 0,001 · *negative control* ≈ 0 · lintas arsitektur  ~~· N3, N4 ·
               status empiris~~
           - key: RM-4
             title: Bukti awal kelayakan industri
             body: >-
-              EoL terpaut sekitar satu hari · tiga-tier sebagai cetak biru  ~~· N5 ·
+              EoL terpaut sekitar satu hari · tiga-tier sebagai *blueprint*  ~~· N5 ·
               status empiris-kualitatif / konseptual~~
       - type: banner
         gap: 0.20
@@ -3325,7 +3325,7 @@ slides:
               - "**Smith dan Randall (2015)**~~  ulasan dataset CWRU~~"
               - "**Nectoux dkk. (2012)**~~  PHM2012 / PRONOSTIA~~"
               - "**Wang dkk. (2020)**~~  XJTU-SY~~"
-              - "**Nandi dkk. (2005)**~~  survei kegagalan motor~~"
+              - "**Nandi dkk. (2005)**~~  survei *failure* motor~~"
               - "**SKF Group (2017)**~~  IMx-8, ADM, materi pelatihan~~"
               - "**Senseye, Siemens (2022)**~~  True Cost of Downtime~~"
           - title: ARSITEKTUR
@@ -3383,7 +3383,7 @@ slides:
     title: Materi Pendukung Sesi Tanya Jawab
     body: >-
       Rincian novelti, arsitektur WDCNN, panduan metrik, analisis sensitivitas,
-      test rig dataset, rantai akuisisi SKF, demonstrasi mesin inferensi pada
+      test rig dataset, rantai akuisisi SKF, demonstrasi *inference engine* pada
       dataset benchmark, dan konteks industri SKF.
 
   # ======================================================================
@@ -3471,7 +3471,7 @@ slides:
                     tag: KONSEPTUAL
                     title: Kerangka PdM multi-tier dan uji industri
                     body: >-
-                      Sintesis FSM dan SAE-BPFx menjadi cetak biru tiga-tier yang dapat
+                      Sintesis FSM dan SAE-BPFx menjadi *blueprint* tiga-tier yang dapat
                       diaudit, disertai pengujian diagnostik dan prognostik pada data
                       PT SKF Indonesia serta peta jalan integrasi data kualitas.
                     body_color: "1F2A3D"
@@ -3721,7 +3721,7 @@ slides:
         columns: [Dataset, BPFI, BPFO, BSF, FTF, p, Konsistensi Fisika]
         rows:
           - ["PHM2012", "2,3%", "2,0%", "0", "0", "< 0,001", "IR dan OR spalling campuran"]
-          - ["XJTU-SY", "1,5%", "0,7%", "1,6%", "0,2%", "< 0,001", "Keragaman mode kegagalan lintas kondisi"]
+          - ["XJTU-SY", "1,5%", "0,7%", "1,6%", "0,2%", "< 0,001", "Keragaman *failure mode* lintas kondisi"]
       - type: panel
         gap: 0.20
         flex: true
@@ -3851,7 +3851,7 @@ slides:
                 text: "Gambar III.7 Akselerometer piezoelectric SKF CMSS2200"
 
   # ======================================================================
-  # 73 · ARSITEKTUR MESIN INFERENSI STREAMING
+  # 73 · ARSITEKTUR INFERENCE ENGINE STREAMING
   # ======================================================================
   - layout: content
     eyebrow: "Cadangan · Subbab V.5.3"
@@ -3869,7 +3869,7 @@ slides:
           PHM2012, XJTU-SY, dan rekaman lapangan PT SKF Indonesia.
 
   # ======================================================================
-  # 74 · MESIN INFERENSI PADA BENCHMARK (V.5.4)
+  # 74 · INFERENCE ENGINE PADA BENCHMARK (V.5.4)
   # ======================================================================
   - layout: content
     eyebrow: "Cadangan · Subbab V.5.4"
