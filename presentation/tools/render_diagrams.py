@@ -258,8 +258,8 @@ INPUT_SPEC: dict[str, tuple[str, str, str]] = {
         "[[window]] 64 rekaman (PHM2012); 32 (XJTU-SY)",
     ),
     "wdcnn_full": (
-        "amplitudo getaran domain waktu ([[raw signal]])",
-        "akselerometer [[drive-end]] CWRU, 48 kHz",
+        "amplitudo getaran domain waktu, tanpa ekstraksi [[feature]]",
+        "akselerometer [[drive-end]] CWRU, 48 kHz; segmentasi + normalisasi Z-score",
         "1 × 2.048 titik, sekitar 42,67 ms",
     ),
     "shap_fsm_pipeline": (
@@ -646,7 +646,7 @@ def wdcnn_full():
     fig, ax = new_fig(12.0, 3.55, strip_pad("wdcnn_full"))
     my = 1.95
 
-    box(ax, 1.05, my, 1.70, 1.10, "[[Raw signal]]\n1 × 2.048", kind="input", sub="[[channel]] [[drive-end]]")
+    box(ax, 1.05, my, 1.70, 1.10, "[[Processed signal]]\n1 × 2.048", kind="input", sub="[[drive-end]], Z-score")
     waveform(ax, 0.40, my - 0.34, 1.30, 0.28, seed=11)
     arrow(ax, (1.92, my), (2.24, my))
 
@@ -694,8 +694,8 @@ def wdcnn_manuscript():
     ax.text(0.10, 3.96, "WDCNN ([[Wide First-layer Kernels]])", ha="left", va="center",
             fontsize=FS_TITLE, color=INK, fontweight="bold")
 
-    box(ax, 0.80, my1, 1.36, 0.92, "[[Raw signal]]\n1 × 2.048", kind="input",
-        fs=9, sub="[[channel]] [[drive-end]]")
+    box(ax, 0.80, my1, 1.36, 0.92, "[[Processed signal]]\n1 × 2.048", kind="input",
+        fs=9, sub="[[drive-end]], Z-score")
     waveform(ax, 0.22, my1 - 0.30, 1.16, 0.22, seed=11)
     arrow(ax, (1.50, my1), (1.86, my1))
 
