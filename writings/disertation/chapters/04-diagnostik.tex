@@ -474,7 +474,7 @@ Ketiga varian FSM didefinisikan sebagai:
        \sum_{\mathbf{x} \in \mathcal{D}_c} \bigl|\phi^{(c)}(\mathbf{x})[p]\bigr|
   \label{eq:bab4_fsm_abs}\\[4pt]
   \text{FSM}_c^{\text{var}}[p]
-    &= \frac{1}{|\mathcal{D}_c| - 1}
+    &= \frac{1}{|\mathcal{D}_c|}
        \sum_{\mathbf{x} \in \mathcal{D}_c}
        \bigl(\phi^{(c)}(\mathbf{x})[p] - \text{FSM}_c^{\text{signed}}[p]\bigr)^2
   \label{eq:bab4_fsm_var}
@@ -490,6 +490,10 @@ $\text{FSM}_c^{\text{var}}$ mengukur variabilitas atribusi antar sampel, dimana
 posisi dengan variansi rendah mengindikasikan pola yang konsisten dan dapat
 diandalkan sebagai \emph{fingerprint}, sedangkan variansi tinggi mengindikasikan
 respons model yang sensitif terhadap variasi sampel.
+Pembagi yang digunakan adalah $|\mathcal{D}_c|$, bukan $|\mathcal{D}_c| - 1$,
+karena $\text{FSM}_c^{\text{var}}$ diperlakukan sebagai deskripsi sebaran pada
+himpunan sampel yang dianalisis, bukan sebagai penduga tak-bias variansi
+populasi. Pilihan ini konsisten dengan implementasinya.
 
 \subsection{Validasi Tiga Metrik FSM}
 \label{subsec:bab4_fsm_validasi}
