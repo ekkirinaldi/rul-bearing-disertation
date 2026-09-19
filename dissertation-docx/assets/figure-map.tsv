@@ -58,3 +58,26 @@ figures/bab5/bpfx_phm2012_hitrate.png	assets/figures/bab5/bpfx_phm2012_hitrate.p
 figures/bab5/bpfx_xjtusy_hitrate.png	assets/figures/bab5/bpfx_xjtusy_hitrate.png	0.72
 figures/bab5/bpfx_phm2012_corr_heatmap.png	assets/figures/bab5/bpfx_phm2012_corr_heatmap.png	0.55
 figures/bab5/bpfx_xjtusy_corr_heatmap.png	assets/figures/bab5/bpfx_xjtusy_corr_heatmap.png	0.55
+## ── Lampiran D additions (validasi prognostik streaming PT SKF) ──────────────────
+figures/lampD/skf_ch1_dashboard.png	assets/figures/lampD/skf_ch1_dashboard.png	1.00
+figures/lampD/skf_ch1_analysis.png	assets/figures/lampD/skf_ch1_analysis.png	1.00
+figures/lampD/skf_ch3_dashboard.png	assets/figures/lampD/skf_ch3_dashboard.png	1.00
+figures/lampD/skf_ch3_analysis.png	assets/figures/lampD/skf_ch3_analysis.png	1.00
+## ── Lampiran E additions (matriks konfusi SVM/LR) ──────────────────────────────
+figures/lampE/lampE_cm_svm.png	assets/figures/lampE/lampE_cm_svm.png	0.90
+figures/lampE/lampE_cm_lr.png	assets/figures/lampE/lampE_cm_lr.png	0.90
+## ── Lampiran F additions (matriks konfusi DT/RF/XGB) ───────────────────────────
+figures/lampF/lampF_cm_dt.png	assets/figures/lampF/lampF_cm_dt.png	0.90
+figures/lampF/lampF_cm_rf.png	assets/figures/lampF/lampF_cm_rf.png	0.90
+figures/lampF/lampF_cm_xgb.png	assets/figures/lampF/lampF_cm_xgb.png	0.90
+## ── Lampiran G additions (FSM full-resolution WDCNN A/C) ───────────────────────
+figures/lampG/lampG_fsm_varA.png	assets/figures/lampG/lampG_fsm_varA.png	0.92
+figures/lampG/lampG_fsm_varC.png	assets/figures/lampG/lampG_fsm_varC.png	0.92
+## ── Lampiran D addition (inference data-flow schematic) ────────────────────────
+figures/lampD/lampD_skema_inferensi.png	assets/figures/lampD/lampD_skema_inferensi.png	0.92
+## ── Lampiran D additions (PHM2012 inference engine demo) ───────────────────────
+figures/lampD/phm2012_engine_dashboard.png	assets/figures/lampD/phm2012_engine_dashboard.png	1.00
+figures/lampD/phm2012_engine_analysis.png	assets/figures/lampD/phm2012_engine_analysis.png	1.00
+## ── Lampiran D additions (XJTU-SY inference engine demo) ───────────────────────
+figures/lampD/xjtusy_engine_dashboard.png	assets/figures/lampD/xjtusy_engine_dashboard.png	1.00
+figures/lampD/xjtusy_engine_analysis.png	assets/figures/lampD/xjtusy_engine_analysis.png	1.00
