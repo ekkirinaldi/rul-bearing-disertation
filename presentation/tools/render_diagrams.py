@@ -262,6 +262,11 @@ INPUT_SPEC: dict[str, tuple[str, str, str]] = {
         "akselerometer [[drive-end]] CWRU, 48 kHz; segmentasi + normalisasi Z-score",
         "1 × 2.048 titik, sekitar 42,67 ms",
     ),
+    "wdcnn_how_it_works": (
+        "amplitudo getaran domain waktu, tanpa ekstraksi [[feature]]",
+        "akselerometer [[drive-end]] CWRU, 48 kHz; segmentasi + normalisasi Z-score",
+        "1 × 2.048 titik, sekitar 42,67 ms",
+    ),
     "shap_fsm_pipeline": (
         "amplitudo getaran domain waktu ([[raw signal]])",
         "akselerometer [[drive-end]] CWRU, 48 kHz",
@@ -1729,6 +1734,180 @@ def block_nbeats():
 
 # Domain and block charts share the palette and the italics hook but are not
 # algorithm diagrams: no input contract, no strip.
+# --------------------------------------------------------------------------
+# 11 · How WDCNN works — the deep-learning counterpart of classic_ml_trio
+# --------------------------------------------------------------------------
+# The diagnostic run of the deck explained the three classic families and then
+# jumped straight to the benchmark, so WDCNN won its comparison without the
+# audience ever seeing how it works. This is that missing panel: what the wide
+# first kernel does, what the narrow blocks add, and where the ten classes come
+# from. It deliberately mirrors classic_ml_trio's three-panel geometry so the
+# two read as a pair.
+def wdcnn_how_it_works():
+    fig, ax = new_fig(12.0, 4.9, strip_pad("wdcnn_how_it_works"))
+    py, ph, pw, gap = 1.30, 2.80, 3.48, 0.38
+    xs = [0.40 + i * (pw + gap) for i in range(3)]
+
+    # --- 1 · the wide first kernel as a learned filter bank ----------------
+    _panel(ax, xs[0], py, pw, ph, "[[Kernel]] lebar 64 sebagai [[filter bank]]", tint="proj")
+    wx, wy, ww = xs[0] + 0.30, py + 2.08, pw - 0.60
+    waveform(ax, wx, wy, ww, 0.46, seed=11)
+    # one receptive window, and the same window after a stride hop
+    for i, (dx, alpha) in enumerate(((0.0, 1.0), (0.42, 0.45))):
+        ax.add_patch(Rectangle((wx + 0.62 + dx, wy - 0.30), 0.40, 0.60,
+                               fc=KIND["active"]["fc"], ec=KIND["active"]["ec"],
+                               lw=1.1, alpha=alpha, zorder=6))
+    ax.annotate("", xy=(wx + 1.04, wy - 0.40), xytext=(wx + 0.62, wy - 0.40),
+                arrowprops=dict(arrowstyle="-|>", color=GOLD, lw=1.0,
+                                shrinkA=0, shrinkB=0), zorder=7)
+    ax.text(wx + 0.83, wy - 0.56, "[[stride]] 16", ha="center", va="top",
+            fontsize=FS_TINY, color=GOLD)
+    # what the layer learns: three band-pass shaped kernels
+    ky = py + 0.92
+    for i, f in enumerate((3.0, 6.0, 11.0)):
+        kx = xs[0] + 0.42 + i * 0.98
+        ax.add_patch(FancyBboxPatch((kx, ky), 0.78, 0.46,
+                                    boxstyle="round,pad=0.02,rounding_size=0.06",
+                                    fc=KIND["proj"]["fc"], ec=KIND["proj"]["ec"],
+                                    lw=0.9, zorder=3))
+        t = np.linspace(-1, 1, 160)
+        ax.plot(kx + 0.39 + t * 0.32, ky + 0.23 + 0.16 * np.sin(2 * np.pi * f * t / 2)
+                * np.exp(-2.2 * t**2), color=INK, lw=0.9, zorder=5)
+    ax.text(xs[0] + pw / 2, py + 0.66, "64 [[filter]] yang dilatih, bukan dirancang",
+            ha="center", va="center", fontsize=FS_TINY, color=INK)
+    ax.text(xs[0] + pw / 2, py + 0.30,
+            "satu jendela 64 titik ≈ 1,33 ms pada 48 kHz,\n"
+            "cukup memuat satu impuls cacat beserta [[ringing]]-nya",
+            ha="center", va="center", fontsize=FS_TINY, color=MUTED)
+
+    # --- 2 · the narrow blocks build a hierarchy ---------------------------
+    _panel(ax, xs[1], py, pw, ph, "Empat blok [[kernel]] 3: hierarki", tint="seq")
+    bars = [("128", 2.30), ("64", 1.72), ("32", 1.20), ("16", 0.82), ("8", 0.52)]
+    by, step = py + 2.16, 0.31
+    for i, (lab, wdt) in enumerate(bars):
+        yy = by - i * step
+        ax.add_patch(FancyBboxPatch((xs[1] + pw / 2 - wdt / 2, yy - 0.12), wdt, 0.24,
+                                    boxstyle="round,pad=0.01,rounding_size=0.05",
+                                    fc=KIND["seq"]["fc"], ec=KIND["seq"]["ec"],
+                                    lw=0.9, zorder=3))
+        ax.text(xs[1] + pw / 2, yy, lab, ha="center", va="center",
+                fontsize=FS_TINY, color=INK, zorder=5)
+    ax.annotate("", xy=(xs[1] + 0.30, by - 4 * step), xytext=(xs[1] + 0.30, by),
+                arrowprops=dict(arrowstyle="-|>", color=MUTED, lw=1.0,
+                                shrinkA=0, shrinkB=0), zorder=4)
+    ax.text(xs[1] + 0.22, by - 2 * step, "MaxPool", rotation=90, ha="right",
+            va="center", fontsize=FS_TINY, color=MUTED)
+    ax.text(xs[1] + pw / 2, py + 0.38,
+            "panjang [[sequence]] menyusut, jangkauan tiap neuron\n"
+            "terhadap sinyal asal justru melebar",
+            ha="center", va="center", fontsize=FS_TINY, color=MUTED)
+
+    # --- 3 · flatten, FC, softmax -----------------------------------------
+    _panel(ax, xs[2], py, pw, ph, "[[Flatten]], dua [[layer]] FC, Softmax", tint="out")
+    fx = xs[2] + 0.34
+    box(ax, fx + 0.52, py + 2.10, 1.04, 0.40, "[[Flatten]]", kind="util", fs=8.5)
+    arrow(ax, (fx + 1.08, py + 2.10), (fx + 1.36, py + 2.10), lw=1.0)
+    for i in range(2):
+        box(ax, fx + 1.72 + i * 0.62, py + 2.10, 0.52, 0.40, "FC", kind="proj", fs=8.5)
+    ax.text(fx + 2.03, py + 1.72, "100 neuron + [[dropout]] 0,5", ha="center",
+            va="center", fontsize=FS_TINY, color=MUTED)
+    # softmax bars: ten classes, one clearly the winner
+    hx, hy, hw = xs[2] + 0.46, py + 0.72, pw - 0.92
+    heights = [0.10, 0.08, 0.13, 0.62, 0.11, 0.07, 0.09, 0.12, 0.08, 0.10]
+    bw = hw / len(heights)
+    for i, h in enumerate(heights):
+        kind = "active" if h > 0.4 else "out"
+        ax.add_patch(Rectangle((hx + i * bw + 0.04, hy), bw - 0.08, h,
+                               fc=KIND[kind]["fc"], ec=KIND[kind]["ec"],
+                               lw=0.8, zorder=4))
+    ax.plot([hx, hx + hw], [hy, hy], color=MUTED, lw=0.7, zorder=3)
+    ax.text(xs[2] + pw / 2, py + 0.38, "10 kelas CWRU · ±60.710 parameter",
+            ha="center", va="center", fontsize=FS_TINY, color=MUTED)
+
+    ax.text(0.45, 4.62, "WDCNN menemukan [[feature]]-nya sendiri dari sinyal getaran",
+            ha="left", va="center", fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
+    box(ax, 6.0, 0.62, 11.2, 0.56,
+        "[[Output]]: 10 kelas kerusakan CWRU  ·  XAI: SHAP DeepExplainer pada "
+        "2.048 posisi sinyal, bukan pada [[feature]] agregat",
+        kind="util", fs=8.5)
+    input_strip(ax, 12.0, "wdcnn_how_it_works")
+    save(fig, "wdcnn_how_it_works")
+
+
+# --------------------------------------------------------------------------
+# 12 · The three WDCNN ablation variants (Novelti N2)
+# --------------------------------------------------------------------------
+# Numbers are Tabel IV.7's controlled 50-epoch ablation protocol, not the
+# early-stopping run that gives 99,87% elsewhere in the deck.
+def wdcnn_ablation_trio():
+    fig, ax = new_fig(12.0, 5.05)
+    py, ph, pw, gap = 1.06, 3.30, 3.48, 0.38
+    xs = [0.40 + i * (pw + gap) for i in range(3)]
+
+    specs = [
+        ("Varian A — [[baseline]]", "proj", 64, True,
+         [("akurasi", "99,73%", GOLD), ("parameter", "60.710", INK),
+          ("diskriminabilitas FSM", "0,315", INK)],
+         "[[Kernel]] 64 dengan BatchNorm aktif:\nkonfigurasi rujukan Zhang dkk. (2017)"),
+        ("Varian B — [[kernel]] sempit", "seq", 3, True,
+         [("akurasi", "98,93%", INK), ("parameter", "443.734", "#C0392B"),
+          ("diskriminabilitas FSM", "0,369", INK)],
+         "[[Kernel]] 3, [[stride]] 1: tanpa reduksi dimensi,\n"
+         "parameter melonjak 7,3× demi kenaikan 17%"),
+        ("Varian C — tanpa BatchNorm", "mem", 64, False,
+         [("akurasi", "96,13%", "#C0392B"), ("parameter", "60.230", INK),
+          ("diskriminabilitas FSM", "0,735", GOLD)],
+         "BatchNorm dihapus: akurasi turun 3,60 pp,\ndiskriminabilitas FSM naik 2,3×"),
+    ]
+
+    for (title, tint, k, bn, stats, note), x in zip(specs, xs):
+        _panel(ax, x, py, pw, ph, title, tint=tint)
+        cx = x + pw / 2
+
+        # kernel width drawn to scale: 3 next to 64 is the whole point of the
+        # ablation, so the bar is what the eye compares, not the label.
+        sy = py + 2.64
+        ax.plot([cx - 0.76, cx + 0.76], [sy, sy], color=MUTED, lw=0.6, zorder=2)
+        bar = max(0.05, 1.52 * k / 64)
+        ax.add_patch(Rectangle((cx - bar / 2, sy - 0.07), bar, 0.14,
+                               fc=KIND["active"]["fc"], ec=KIND["active"]["ec"],
+                               lw=0.9, zorder=4))
+        ax.text(cx, sy - 0.16, f"lebar [[kernel]] pertama: {k}", ha="center",
+                va="top", fontsize=FS_TINY, color=MUTED)
+
+        box(ax, cx, py + 2.08, 1.52, 0.34, f"Conv1D {k}", kind="proj", fs=FS_TINY)
+        bx, by_ = cx, py + 1.66
+        ax.add_patch(FancyBboxPatch((bx - 0.76, by_ - 0.17), 1.52, 0.34,
+                                    boxstyle="round,pad=0.02,rounding_size=0.05",
+                                    fc=KIND["gate"]["fc"] if bn else "#F2F3F5",
+                                    ec=KIND["gate"]["ec"] if bn else MUTED,
+                                    lw=1.0, zorder=4))
+        ax.text(bx, by_, "BatchNorm", ha="center", va="center", fontsize=FS_TINY,
+                color=INK if bn else MUTED, zorder=5)
+        if not bn:
+            ax.plot([bx - 0.60, bx + 0.60], [by_ - 0.10, by_ + 0.10],
+                    color="#C0392B", lw=1.4, zorder=6)
+
+        for i, (lab, val, col) in enumerate(stats):
+            yy = py + 1.20 - i * 0.28
+            ax.text(x + 0.28, yy, lab, ha="left", va="center",
+                    fontsize=FS_TINY, color=MUTED)
+            ax.text(x + pw - 0.28, yy, val, ha="right", va="center",
+                    fontsize=FS_NOTE, color=col, fontweight="bold")
+        ax.text(cx, py + 0.26, note, ha="center", va="center",
+                fontsize=FS_TINY, color=MUTED)
+
+    ax.text(0.45, 4.78, "Tiga varian ablasi WDCNN", ha="left", va="center",
+            fontsize=FS_TITLE + 1, color=INK, fontweight="bold")
+    ax.text(11.60, 4.78, "Tabel IV.7, protokol 50 [[epoch]] terkontrol",
+            ha="right", va="center", fontsize=FS_NOTE, color=MUTED)
+    box(ax, 6.0, 0.56, 11.2, 0.52,
+        "Novelti N2: BatchNorm menaikkan akurasi tetapi menekan diskriminabilitas FSM; "
+        "[[kernel]] lebar tetap lebih efisien",
+        kind="util", fs=8.5)
+    save(fig, "wdcnn_ablation_trio")
+
+
 CHARTS = {
     "bearing_failure_stages": bearing_failure_stages,
     "block_mamba": block_mamba,
@@ -1770,6 +1949,8 @@ DIAGRAMS = {
     "sae_bpfx_pipeline": sae_bpfx_pipeline,
     "shap_fsm_pipeline": shap_fsm_pipeline,
     "classic_ml_trio": classic_ml_trio,
+    "wdcnn_how_it_works": wdcnn_how_it_works,
+    "wdcnn_ablation_trio": wdcnn_ablation_trio,
     "streaming_engine": streaming_engine,
 }
 
