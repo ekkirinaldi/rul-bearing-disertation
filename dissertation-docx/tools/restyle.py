@@ -103,6 +103,22 @@ def wel(tag, **attrs):
     return e
 
 
+def _is_layout_image_table(tbl):
+    """Side-by-side figure wrapper tables must not get content grid borders."""
+    return tbl.find(f".//{W}drawing") is not None
+
+
+def _apply_itb_tbl_borders(tblpr):
+    """ITB template grid: single line, sz=4, color=auto on all six sides."""
+    borders = tblpr.find(W + "tblBorders")
+    if borders is not None:
+        tblpr.remove(borders)
+    borders = wel("tblBorders")
+    for side in ("top", "left", "bottom", "right", "insideH", "insideV"):
+        borders.append(wel(side, val="single", sz="4", space="0", color="auto"))
+    tblpr.append(borders)
+
+
 def make_run(text, rpr=None):
     r = wel("r")
     if rpr is not None:
@@ -196,10 +212,13 @@ class Restyler:
 
     # -- step 1b (lampiran only) -----------------------------------------
     def lampiranify(self):
-        """Heading1/2 -> Lampiran/Lampiransub1 with literal numbering text
-        ("Lampiran A Judul", "A.1 Judul"): the template lampiran styles carry
-        no automatic numbering."""
+        """Heading1/2/3 -> Lampiran/Lampiransub1 with literal numbering text
+        ("Lampiran A Judul", "A.1 Judul", "A.1.1 Judul"): the template lampiran
+        styles carry no automatic numbering. Heading3 reuses Lampiransub1 (the
+        template has no Lampiransub2) but gets a three-part literal number so the
+        hierarchy stays legible; the sub-sub counter resets on each Heading2."""
         sub = 0
+        subsub = 0
         for p in self.doc.iter(W + "p"):
             ps = p.find(f"{W}pPr/{W}pStyle")
             if ps is None:
@@ -210,10 +229,13 @@ class Restyler:
                 text = f"Lampiran {self.lamp} "
             elif style == "Heading2":
                 sub += 1
+                subsub = 0
                 ps.set(W + "val", "Lampiransub1")
                 text = f"{self.lamp}.{sub} "
             elif style == "Heading3":
-                sys.exit("FATAL: Heading3 in lampiran - extend lampiranify")
+                subsub += 1
+                ps.set(W + "val", "Lampiransub1")
+                text = f"{self.lamp}.{sub}.{subsub} "
             else:
                 continue
             run = make_run(text)
@@ -238,11 +260,14 @@ class Restyler:
             expect = f"{self.prefix}.{self.seq[kind]}"
             if label not in self.labels:
                 # New label not yet in .aux (e.g. freshly added figure).
-                # Use the sequentially computed number and warn.
+                # Use the sequentially computed number and warn; record it so
+                # intra-document REF tokens to this float resolve locally
+                # instead of falling back to '?'.
                 import sys as _sys
                 print(f"WARNING: label {label} not in aux, assigning {expect}",
                       file=_sys.stderr)
                 aux_num = expect
+                self.labels[label] = aux_num
             else:
                 aux_num = self.number_for(label)
             roman, seqno = aux_num.rsplit(".", 1)
@@ -420,6 +445,9 @@ class Restyler:
             for col, wd in zip(grid, widths):
                 col.set(W + "w", str(wd))
             tblpr = tbl.find(W + "tblPr")
+            if tblpr is None:
+                tblpr = wel("tblPr")
+                tbl.insert(0, tblpr)
             for tag, attrs in (("tblW", {"w": content_twips, "type": "dxa"}),
                                ("tblLayout", {"type": "fixed"})):
                 el = tblpr.find(W + tag)
@@ -428,6 +456,8 @@ class Restyler:
                     tblpr.append(el)
                 for k, v in attrs.items():
                     el.set(W + k, str(v))
+            if not _is_layout_image_table(tbl):
+                _apply_itb_tbl_borders(tblpr)
             for tr in tbl.iter(W + "tr"):
                 ci = 0
                 for tc in tr.findall(W + "tc"):
@@ -529,8 +559,7 @@ class Restyler:
             ps = el.find(f"{W}pPr/{W}pStyle")
             return ps.get(W + "val") if ps is not None else "Normal"
 
-        NO_SEP_PAIRS = {("Gambar", "JudulGambar"), ("judulTabel", "tbl"),
-                        ("tbl", "JudulGambar")}
+        NO_SEP_PAIRS = {("Gambar", "JudulGambar"), ("tbl", "JudulGambar")}
         # body-level bookmarkStart/End (pandoc section anchors) are
         # transparent: pair only real content blocks across them
         blocks = [el for el in self.body
