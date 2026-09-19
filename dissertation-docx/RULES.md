@@ -1,9 +1,10 @@
 # RULES.md — Aturan Penulisan Disertasi dalam Format DOCX
 
-Dokumen DOCX di folder ini adalah **naskah utama** disertasi (LaTeX di
-`writings/disertation/` dibekukan setelah porting selesai). Semua suntingan
-naskah berikutnya dilakukan pada file `.docx` di sini, mengikuti aturan dalam
-dokumen ini. Aturan format bersumber dari *Pedoman Penulisan Disertasi Doktor
+Dokumen DOCX di folder ini adalah **naskah utama** disertasi. Naskah disunting
+langsung di Word; tidak ada format sumber untuk membangunnya kembali, karena
+pohon LaTeX asal porting sudah dihapus pada September 2026 dan hanya dapat
+diambil kembali dari riwayat git. Semua suntingan naskah dilakukan pada file
+`.docx` di sini, mengikuti aturan dalam dokumen ini. Aturan format bersumber dari *Pedoman Penulisan Disertasi Doktor
 ITB* (SPs, April 2016) dan *Juknis Disertasi Mei 2019*; template resmi:
 `assets/template.docx` (salinan `disertasi/template-disertasi_Mei2019.docx`).
 
@@ -87,10 +88,9 @@ run("Gambar ") + bookmarkStart + run("VI.") + { SEQ Gambar \* ARABIC \s 1 } + bo
 - Sitasi adalah **teks jadi** (baked) hasil pandoc citeproc + CSL resmi ITB-SPs
   (`assets/itb-sps.csl`, locale `id-ID`): format `(Penulis, tahun)`,
   ≥3 penulis → `dkk.` (bukan `et al.`), penghubung `dan` (bukan `and`/`&`).
-- **Sitasi baru ditulis tangan mengikuti format yang sama**, dan entrinya
-  ditambahkan ke `writings/disertation/references.bib` (tetap menjadi sumber
-  data pustaka), lalu Daftar Pustaka di-*re-bake* saat merge — atau entri
-  Daftar Pustaka ditulis manual mengikuti format ITB:
+- **Sitasi baru ditulis tangan mengikuti format yang sama**, dan entri
+  Daftar Pustaka disisipkan langsung pada posisi alfabetisnya mengikuti
+  format ITB:
   `Nama, I. (tahun): Judul kalimat, *Nama Jurnal*, **volume**, hal–hal.`
 - Daftar Pustaka tunggal di akhir dokumen master (style `Daftarpustaka`),
   alfabetis, tanpa nomor; setiap entri harus dirujuk di badan teks dan

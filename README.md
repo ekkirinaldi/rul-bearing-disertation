@@ -8,7 +8,7 @@ Doctoral dissertation by **Toto Suharto** at Institut Teknologi Bandung (ITB), P
 
 ## Overview
 
-This repository hosts the LaTeX dissertation manuscript and supporting artifacts for a doctoral thesis on **interpretable Predictive Maintenance (PdM) of rolling element bearings**. The work spans two parallel tracks plus a synthesis chapter:
+This repository hosts the dissertation manuscript (Word/DOCX), the sidang deck and supporting artifacts for a doctoral thesis on **interpretable Predictive Maintenance (PdM) of rolling element bearings**. The work spans two parallel tracks plus a synthesis chapter:
 
 - **Track A — Diagnostic** (Bab IV). Multi-model bearing fault classification on CWRU using three algorithm families (kernel: SVM/LR; tree: DT/RF/XGBoost; deep: WDCNN), each with its native SHAP explainer (Kernel / Tree / Deep), culminating in **Fault Signature Maps (FSM)** — signal-level XAI at 2 048-point resolution.
 - **Track B — Prognostic** (Bab V). RUL estimation on PHM2012, XJTU-SY, and IMS with three deep-learning backbones (**Mamba-xLSTM-Net**, **N-BEATS-xLSTM-RUL**, **SparseGate-TCN-RUL**), plus a **Top-*k* Sparse Autoencoder** that maps hidden states to bearing characteristic frequencies (BPFO/BPFI/BSF/FTF) under bootstrap CI + permutation test + two negative controls.
@@ -22,17 +22,24 @@ The dissertation structure, RQ/Tujuan/Novelti mapping, and per-chapter plan are 
 
 ```
 .
+├── dissertation-docx/            # ★ The manuscript (Word)
+│   ├── disertasi.docx            # Master document
+│   ├── chapters/                 # Bab I–VI
+│   ├── lampiran/                 # Lampiran A–G
+│   ├── RULES.md                  # Writing + formatting rules for DOCX work
+│   ├── tools/                    # insert_docx.py, lint_docx.sh, merge_master.py
+│   ├── assets/                   # template.docx, itb-sps.csl, figures/, figure-map.tsv
+│   └── Makefile                  # insert, insert-dry, lint, master, clean
+│
+├── presentation/                 # Sidang deck
+│   ├── content/*.yaml            # Slide spec (the deck is written here, not in Word)
+│   ├── build.py                  # build / lint / preview / inspect
+│   ├── tools/render_diagrams.py  # matplotlib figures used by the slides
+│   └── V16 …docx                 # Current manuscript draft circulated for review
+│
 ├── writings/
-│   ├── disertation/              # LaTeX manuscript (canonical ITB-format source)
-│   │   ├── disertasi.tex         # Master file
-│   │   ├── itbdisertasi.cls      # ITB dissertation class
-│   │   ├── chapters/             # Bab I–VI + front matter
-│   │   ├── lampiran/             # Lampiran A–D (planned: E/F/G)
-│   │   ├── figures/              # Figures per chapter (bab1/ … bab6/)
-│   │   ├── references.bib        # BibLaTeX bibliography
-│   │   ├── scripts/lint-itb.sh   # Automated ITB-format lint
-│   │   └── Makefile              # build, watch, clean, check, lint, spell, wordcount
 │   ├── dissertation-outline.md   # ★ Single source of truth for chapter structure
+│   ├── journal-q2/               # JETS Q2 paper (separate LaTeX project, not the thesis)
 │   ├── Outline_Disertasi_6Bab.pdf  # 6-bab structural target
 │   └── SK-Toto.pdf               # Proposal disertasi (Agustus 2025) — Bab I source
 │
@@ -48,7 +55,6 @@ The dissertation structure, RQ/Tujuan/Novelti mapping, and per-chapter plan are 
 │   └── Journal1_Fault Signature Maps.ipynb         # (Journal 2 notebook pending)
 │
 ├── CLAUDE.md                     # Project + ITB writing-rule instructions for Claude Code
-├── PLAN.md                       # Fase A–H implementation plan for the LaTeX manuscript
 ├── new_algorithm.md              # Algorithm brainstorming notes
 │
 ├── Mamba-xLSTM/                  # Python training pipeline (local-only, gitignored)
@@ -62,40 +68,29 @@ The dissertation structure, RQ/Tujuan/Novelti mapping, and per-chapter plan are 
 
 ---
 
-## Compiling the Dissertation
+## Building the Manuscript and the Deck
 
-**Default: Docker.** All commands run from [`writings/disertation/`](writings/disertation/). Engine: **LuaLaTeX** with **Biber**. The Docker route is the canonical build path — it pins the TeX Live distribution, requires no local TeX install, and produces byte-identical output on Windows, macOS, and Linux.
-
-```bash
-cd writings/disertation
-docker run --rm -v "$(pwd):/workdir" -w /workdir \
-  danteev/texlive \
-  latexmk -outdir=build -interaction=nonstopmode disertasi.tex
-```
-
-Output: `build/disertasi.pdf` (also copied to `disertasi.pdf`).
-
-For repeated builds, wrap the command in a shell alias or use the Makefile target via Docker:
+The manuscript is edited directly in Word; there is no source format to compile it from. The LaTeX tree it was ported from was removed in September 2026 and remains retrievable from git history. What the tooling does now is insert material, lint and merge.
 
 ```bash
-docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make build
-docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make check
-docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make pre-submit
+cd dissertation-docx
+make insert-dry        # preview an insertion spec without touching the manuscript
+make insert            # apply it (tools/insert_docx.py)
+make lint              # ITB format + prose lint; fix every [FATAL] before committing
+make master            # merge frontmatter + chapters + lampiran into disertasi.docx
 ```
 
-**Optional: Local TeX install.** If `latexmk` + LuaLaTeX + Biber + `hunspell` (Indonesian dictionary `id_ID`) + `texcount` are installed locally, the Makefile targets work directly without Docker:
+After a round of edits in Word, select all and press F9 once in the master so Daftar Isi, Daftar Gambar and Daftar Tabel repopulate.
+
+The sidang deck is generated from a YAML spec, not authored in PowerPoint:
 
 ```bash
-make build        # LuaLaTeX + Biber → build/disertasi.pdf
-make watch        # Live recompile on file changes (latexmk -pvc)
-make clean        # Remove intermediate build files
-make check        # chktex + ITB-format regex lint
-make spell        # Indonesian spell check (hunspell -d id_ID)
-make wordcount    # Word count per chapter (texcount)
-make pre-submit   # clean + build + wordcount + check (run before sending to promotor)
+cd presentation
+python3 build.py lint --spec content/sidang-terbuka.yaml              # structure + overflow
+python3 build.py build --spec content/sidang-terbuka.yaml --strict    # -> out/*.pptx
+python3 build.py preview --spec content/sidang-terbuka.yaml --png     # PDF + slide-NN.png
+python3 tools/render_diagrams.py [--only name1,name2]                 # regenerate figures
 ```
-
-This path is faster on a warm cache but is not the reference build — use Docker before submitting to promotor or for cross-machine reproducibility.
 
 ---
 
@@ -115,6 +110,28 @@ python scripts/run_algorithm_comparison.py \
 ```
 
 For the diagnostic track (CWRU + kernel/tree/deep), reproducibility notebooks in [`Notebook/`](Notebook/) run end-to-end on a CPU and do not require GPU.
+
+---
+
+## Inference Engine (Live RUL Demo)
+
+A local web dashboard (`inference-engine/`) that simulates a live sensor stream from real PHM2012 / XJTU-SY bearing data and runs the dissertation **Mamba-xLSTM-Net** checkpoint on each acquisition. An optional **PT SKF CH-15 OR-1** stream replays the six-month Observer trending export as a transfer demo. Requires `Mamba-xLSTM/.venv` (with checkpoints under `Mamba-xLSTM/results/runs/`) and a populated `data-bearing/` — both local-only.
+
+```bash
+# 1. Install web-server deps into the existing Mamba-xLSTM venv
+Mamba-xLSTM/.venv/bin/python -m pip install -r inference-engine/requirements.txt
+
+# 2. Launch the dashboard (FastAPI + WebSocket stream on port 8800)
+./inference-engine/run.sh
+```
+
+Then open **http://localhost:8800**. Headless smoke test:
+
+```bash
+cd inference-engine && ../Mamba-xLSTM/.venv/bin/python scripts/smoke_test.py
+```
+
+See [`inference-engine/README.md`](inference-engine/README.md) for architecture, dataset/model mapping, and the PT SKF six-month plant stream (`data-bearing/skf-ch15-or1-6m/`).
 
 ---
 
@@ -141,6 +158,8 @@ find data-bearing/xtju-sy -name '*.csv' | wc -l   # expect 9216
 The legacy `data-bearing.zip` alone does **not** include the repaired XJTU subtree; always add `xtju-sy.zip`. VPS workflow: `.cursor/rules/vps-ssh-key-access.mdc` §6 + §6.3.
 
 **Diagnostic — CWRU** (used by the three notebooks in `Notebook/`): download from the [Case Western Reserve University Bearing Data Center](https://engineering.case.edu/bearingdatacenter). Each notebook documents the exact subset (drive-end + fan-end accelerometer, Load 0–3 HP, 48 kHz, 10 classes).
+
+**Industrial — PT SKF CH-15 OR-1** (used by `inference-engine/` transfer demo only; not for training): place the six-month Observer trending export under `data-bearing/skf-ch15-or1-6m/` (six HTML `.xls` files: A/V/ENV for channels `Ch1-01-…-NDE` and `Ch3-02-…-DE`). This is local plant data, not on S3. See [`inference-engine/README.md`](inference-engine/README.md) for filenames, cadence, and how RUL is computed on this stream.
 
 **Additional prognostic dataset — IMS** (used in Bab V cross-dataset validation): NASA Ames IMS bearing dataset (Rexnord, 2 000 rpm, four bearings).
 
@@ -177,7 +196,7 @@ The four papers in [`Paper/`](Paper/) are the primary empirical sources for Bab 
 | `TotoSuharto2025Journal1FSM` | Journal 1 — WDCNN + SHAP DeepExplainer + FSM | Bab IV §IV.4–§IV.13; Bab II §II.3.3 |
 | `TotoSuharto2025Journal2RUL` | Journal 2 — Mamba-xLSTM + Top-*k* SAE + BPFx mapping | Bab V §V.1–§V.9 throughout |
 
-Use `\citetitb{...}` (defined in `itbdisertasi.cls`) — never bare `\cite{}` — to keep ITB-style citation formatting (`dkk.` for ≥ 3 authors, etc.).
+Citation text is baked into the DOCX rather than generated by a live field, so it is typed by hand and must follow ITB style exactly: `(Penulis, tahun)`, `dkk.` for ≥ 3 authors, `dan` before the last author in the Daftar Pustaka.
 
 ---
 

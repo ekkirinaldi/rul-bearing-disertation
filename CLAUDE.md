@@ -8,16 +8,21 @@ Doctoral dissertation by **Toto Suharto** at **ITB (Institut Teknologi Bandung)*
 
 **Working title:** *Perawatan Prediktif untuk Sistem Produksi dengan Pendekatan Analisis Big Data dan Kecerdasan Buatan Menggunakan Data Kondisi Mesin dan Informasi Kualitas yang Real Time*
 
-**Repository scope:** the **dissertation manuscript** (DOCX primary in [dissertation-docx/](dissertation-docx/), LaTeX frozen in [writings/disertation/](writings/disertation/)) and supporting writings. The Python training code ([Mamba-xLSTM/](Mamba-xLSTM/)) and datasets ([data-bearing/](data-bearing/)) live locally only — excluded via `.gitignore`.
+**Repository scope:** the **dissertation manuscript** ([dissertation-docx/](dissertation-docx/)), the sidang deck ([presentation/](presentation/)) and supporting writings. The Python training code ([Mamba-xLSTM/](Mamba-xLSTM/)) and datasets ([data-bearing/](data-bearing/)) live locally only — excluded via `.gitignore`.
 
-## ★ DOCX Is the Primary Manuscript
+## ★ DOCX Is the Manuscript
 
-As of June 2026 the manuscript of record is **[dissertation-docx/disertasi.docx](dissertation-docx/)**, ported from LaTeX onto the official ITB template (`template-disertasi_Mei2019.docx`). The LaTeX tree in [writings/disertation/](writings/disertation/) is **frozen** — it remains the source for the porting pipeline and the authoritative `.aux` cross-reference numbers, but content edits go to the DOCX.
+The manuscript of record is **[dissertation-docx/disertasi.docx](dissertation-docx/)**, on the official ITB template (`template-disertasi_Mei2019.docx`). It is edited directly in Word. **There is no source format to regenerate it from:** the LaTeX tree it was ported from was deleted in September 2026 once the port was finished, and is retrievable from git history if ever needed.
 
-- **Writing rules for DOCX work:** [dissertation-docx/RULES.md](dissertation-docx/RULES.md) — style map (Heading1–3, `Paragraf`, `JudulGambar`/`judulTabel`, `Daftarpustaka`), caption/REF/SEQ field recipes, citation convention (baked text via ITB-SPs CSL), and the full ITB prose rules carried over from this file.
+Drafts circulated for review live alongside the deck as `presentation/V<N> …docx`. **V16 is current.** Only the current version is tracked; `.gitignore` carries one negation line per version, added deliberately because each file is ~18 MB and a DOCX is a compressed zip that git cannot delta.
+
+- **Writing rules for DOCX work:** [dissertation-docx/RULES.md](dissertation-docx/RULES.md) — style map (Heading1–3, `Paragraf`, `JudulGambar`/`judulTabel`, `Daftarpustaka`), caption/REF/SEQ field recipes, citation convention (baked text via ITB-SPs CSL), and the ITB prose rules below.
 - **Lint:** `bash tools/lint_docx.sh chapters/*.docx disertasi.docx` from `dissertation-docx/` (or `make lint`). Fix `[FATAL]` before commit.
-- **Rebuild from LaTeX** (only while the port is still being revised): `make babN` / `make lampX` / `make frontmatter` / `make master` in `dissertation-docx/`; verify with `make verify-babN` and `tools/verify_chapter.sh`.
+- **Adding material:** `make insert-dry`, then `make insert`, from `dissertation-docx/`. This inserts into the hand-edited manuscript in place ([tools/insert_docx.py](dissertation-docx/tools/insert_docx.py)). Never regenerate a chapter wholesale — the Word edits *are* the content.
+- **`make master`** merges the existing chapter and lampiran files; it does not rebuild them.
 - **After manual edits in Word:** run the lint; in the final master, update fields once (Ctrl+A, F9) to populate Daftar Isi/Gambar/Tabel.
+
+**Editing a DOCX by script.** Text replacement over `word/document.xml` has three traps, each of which fails silently: a self-closing `<w:t xml:space="preserve"/>` matches a naive opening-tag regex and swallows the markup after it; the text uses non-breaking spaces (`Bab\u00a0III`, `HI\u00a036-D`); and several matches inside one run overwrite each other unless edits are recorded in original coordinates and applied back to front. Apply replacement pairs longest-first, and always diff the full `<m:oMath>` list before and after, since `<m:t>` math runs are a separate namespace that `<w:t>` edits never touch. Verify with: part count unchanged, every `.xml`/`.rels` still parses, no markup leaked into the extracted text.
 
 ## Main Goal — Modify and Finalize the Dissertation
 
@@ -29,29 +34,28 @@ The outline encodes a two-track narrative:
 - **Jalur B — Prognostik** (Bab V): PHM2012/XJTU-SY/IMS → 3 backbone RUL (Mamba-xLSTM, N-BEATS-xLSTM, SparseGate-TCN) → Top-*k* Sparse Autoencoder → BPFx mapping. Source: [Paper/Journal2_RUL_Journal.pdf](Paper/).
 - **Konvergensi** (Bab VI): kerangka PdM multi-tier (Edge IoT → Edge Server → Cloud/GPU) + interpretabilitas dua-lapis (input attribution ↔ latent concept).
 
-**Implementation phases** (from outline §Catatan Eksekusi):
-
-1. **Fase A** — Restrukturisasi [01-pendahuluan.tex](writings/disertation/chapters/01-pendahuluan.tex) selaras SK-Toto §I (RQ, Tujuan, Manfaat, Batasan, Kontribusi).
-2. **Fase B** — Split [03-dasar-teori.tex](writings/disertation/chapters/03-dasar-teori.tex) + [04-metodologi.tex](writings/disertation/chapters/04-metodologi.tex) menjadi Bab III shared / Bab IV diagnostik / Bab V prognostik.
-3. **Fase C** — Restrukturisasi [05-hasil-pembahasan.tex](writings/disertation/chapters/05-hasil-pembahasan.tex) (kernel+tree+deep results di Bab IV; RUL+SAE results di Bab V).
-4. **Fase D** — Tambah Lampiran E (SVM/LR), F (Tree), G (WDCNN+FSM); lembutkan [Lampiran D](writings/disertation/lampiran/D-klasifikasi-industri.tex) (PT~SKF sebagai validasi eksternal terbatas).
-5. **Fase E** — Restrukturisasi [abstrak ID](writings/disertation/chapters/00-abstrak-id.tex) + [EN](writings/disertation/chapters/00-abstract-en.tex) + [daftar singkatan](writings/disertation/chapters/00-daftar-singkatan.tex).
-6. **Fase F** — Update [06-kesimpulan.tex](writings/disertation/chapters/06-kesimpulan.tex) per VI.1–VI.5.
+**Where the work stands.** The six-bab restructuring the outline calls for is done and ported into the DOCX. What remains is revision: responding to Pak Toto's comments, keeping the deck and the manuscript in step, and closing the TODOs below.
 
 **Working rules for the dissertation:**
 
 - Always re-read [dissertation-outline.md](writings/dissertation-outline.md) before editing a chapter — section structure may have evolved.
 - Small commits per section so Pak Toto can review incrementally.
-- After every section edit, run `make build` and `make check` from [writings/disertation/](writings/disertation/) to catch lint and compile errors early.
-- Before claiming a phase is done, run `make pre-submit`.
-- Outstanding TODOs (track in commits / PR descriptions): verify venue+year for the 4 self-citations (`TotoSuharto20XXKey`); confirm PT~SKF data volume + ground-truth; flag missing Journal 2 notebook.
+- After every section edit, run `make lint` from [dissertation-docx/](dissertation-docx/) and fix every `[FATAL]`.
+- **Code is the ground truth.** When the manuscript and the run artifacts under `Mamba-xLSTM/results/` disagree, fix the writing, not the code — and identify which run produced a number before changing either.
+- Outstanding TODOs (track in commits / PR descriptions): verify venue+year for the 4 self-citations; confirm PT~SKF data volume + ground-truth; flag missing Journal 2 notebook.
 
 ## Repository Layout
 
 ```
+dissertation-docx/              # ★ The manuscript: disertasi.docx + chapters/ + lampiran/
+  RULES.md                      # Writing and formatting rules for DOCX work
+  tools/                        # insert_docx.py, lint_docx.sh, merge_master.py
+  assets/                       # template.docx, itb-sps.csl, figures/, figure-map.tsv
+presentation/                   # Sidang deck (content/*.yaml -> build.py) + V<N> draft DOCX
 writings/
   dissertation-outline.md       # ★ Single source of truth for chapter structure
-  disertation/                  # LaTeX manuscript (main tracked content)
+  journal-q2/                   # JETS Q2 paper — its own LaTeX project, unrelated to the
+                                #   dissertation build; jets-mechanistic-interp/ + jets-docs/
   Outline_Disertasi_6Bab.pdf    # Pak Toto's 6-bab structural target
   SK-Toto.pdf                   # Proposal disertasi (Agustus 2025) — Bab I source
   bab5-draft-hasil-performa.md
@@ -64,59 +68,25 @@ CLAUDE.md
 new_algorithm.md                # Algorithm brainstorming notes
 ```
 
-## Dissertation Build
+## Build and Checks
 
-**Default: Docker.** All commands run from [writings/disertation/](writings/disertation/). The Docker route is the canonical / reference build path — it pins the TeX Live distribution and produces reproducible output across machines. Use it before any commit you intend to send to Pak Toto or to verify lint/`pre-submit` status.
-
-One-shot build:
+All commands run from [dissertation-docx/](dissertation-docx/):
 
 ```bash
-cd writings/disertation
-docker run --rm -v "$(pwd):/workdir" -w /workdir \
-  danteev/texlive \
-  latexmk -outdir=build -interaction=nonstopmode disertasi.tex
+make insert-dry   # preview an insertion spec without touching the manuscript
+make insert       # apply it (tools/insert_docx.py)
+make lint         # ITB format + prose lint over the chapter DOCX files
+make master       # merge frontmatter + chapters + lampiran into disertasi.docx
 ```
 
-Makefile targets via Docker (preferred — covers lint + spell + wordcount + pre-submit):
+The sidang deck is separate, from [presentation/](presentation/):
 
 ```bash
-cd writings/disertation
-docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make build
-docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make check
-docker run --rm -v "$(pwd):/workdir" -w /workdir danteev/texlive make pre-submit
+python3 build.py lint --spec content/sidang-terbuka.yaml     # structure + overflow
+python3 build.py build --spec content/sidang-terbuka.yaml --strict
+python3 build.py preview --spec content/sidang-terbuka.yaml --png   # PDF + slide-NN.png
+python3 tools/render_diagrams.py [--only name1,name2]        # matplotlib figures
 ```
-
-**Optional: Local TeX install.** If `latexmk` + LuaLaTeX + Biber + `hunspell` (`id_ID`) + `texcount` are installed locally, the same Makefile targets work directly. Faster on a warm cache, but **not** the reference build — always re-verify via Docker before submitting.
-
-```bash
-make build        # LuaLaTeX + Biber compile → build/disertasi.pdf + disertasi.pdf
-make watch        # Live recompile on file changes (latexmk -pvc)
-make clean        # Remove intermediate build files, keep PDF
-make distclean    # Remove build/ directory and PDF entirely
-make check        # chktex + regex lint (calls make lint)
-make lint         # Regex checks via scripts/lint-itb.sh (enforces ITB rules below)
-make spell        # Indonesian spell check via hunspell -d id_ID
-make wordcount    # Word count per chapter via texcount
-make pre-submit   # clean + build + wordcount + check (run before sending to promotor)
-```
-
-Engine: **LuaLaTeX** (preferred) or pdfLaTeX. Bibliography backend: **Biber**.
-
-## LaTeX Source Layout
-
-[writings/disertation/](writings/disertation/)
-
-- [disertasi.tex](writings/disertation/disertasi.tex) — Master file; `\input` all chapters + front matter; sets `\title`, `\author`, `\nim`, `\prodi`, `\promotor`, `\bulan`, `\tahun`.
-- [itbdisertasi.cls](writings/disertation/itbdisertasi.cls) — Custom ITB class (Times Roman 12pt, 1.5-spacing, A4, mirror margins per ITB spec).
-- [itbdisertasi-layout.tex](writings/disertation/itbdisertasi-layout.tex) — Margin/layout parameters extracted from the class.
-- [chapters/](writings/disertation/chapters/):
-  - `00-abstrak-id.tex`, `00-abstract-en.tex` — Bilingual abstract (500–800 words each).
-  - `00-kata-pengantar.tex`, `00-daftar-singkatan.tex` — Front matter.
-  - `01-pendahuluan.tex` … `06-kesimpulan.tex` — Bab I–VI.
-- [lampiran/](writings/disertation/lampiran/) `A`–`D` (and planned `E`–`G` per outline).
-- [figures/](writings/disertation/figures/) organized per chapter (`bab1/` … `bab6/`, `v5/`).
-- [references.bib](writings/disertation/references.bib) — BibLaTeX bibliography, Indonesian style.
-- [scripts/lint-itb.sh](writings/disertation/scripts/lint-itb.sh) — automated ITB format lint (called by `make lint`).
 
 Manuscript language: **Bahasa Indonesia** (only the English abstract is in English).
 
@@ -124,21 +94,21 @@ Manuscript language: **Bahasa Indonesia** (only the English abstract is in Engli
 
 ## ITB Doctoral Dissertation Writing Rules
 
-These rules come from the official *Pedoman Penulisan Disertasi Doktor ITB* (SPs, April 2016) and must be followed for every paragraph, table, equation, citation, and lampiran written into the manuscript. Many are auto-enforced by [scripts/lint-itb.sh](writings/disertation/scripts/lint-itb.sh) — **fix lint violations before committing**.
+These rules come from the official *Pedoman Penulisan Disertasi Doktor ITB* (SPs, April 2016) and must be followed for every paragraph, table, equation, citation, and lampiran written into the manuscript. Many are auto-enforced by [dissertation-docx/tools/lint_docx.sh](dissertation-docx/tools/lint_docx.sh) — **fix lint violations before committing**. [RULES.md](dissertation-docx/RULES.md) carries the Word-mechanics counterpart: styles, fields, caption recipes.
 
 ### Language (Pedoman §III.1, §III.2)
 
 - **Bahasa Indonesia Baku.** Follow KBBI, EYD (PUEBI), and Pedoman Umum Pembentukan Istilah. Use complete, well-punctuated sentences.
-- **No first-person pronouns** (`saya`, `kami`, `kita`) anywhere in the body — restructure to passive voice. Allowed only in `00-kata-pengantar.tex`. *Lint-enforced.*
+- **No first-person pronouns** (`saya`, `kami`, `kita`) anywhere in the body — restructure to passive voice. Allowed only in Kata Pengantar. *Lint-enforced.*
 - **No `di mana`** as a relative pronoun (a `where`-calque). Use `yang`, `tempat`, `pada saat`, or restructure.
 - **Do not start sentences with conjunctions** `maka`, `sedangkan`, `sehingga`. Restructure.
 - **Do not start sentences with numerals or symbols.** Spell out (`Sepuluh model …`) or restructure.
-- **No `&` for `dan`.** Reserve `&` for math/tabular alignment only. *Lint-enforced.*
-- **Avoid foreign terms** when an established Indonesian term exists. When a foreign term is necessary, italicize consistently using `\emph{...}` (e.g., `\emph{deep learning}`, `\emph{Sparse Autoencoder}`, `\emph{envelope spectrum}`). Genus/species names are always italic (e.g., `\emph{Sonchus arvensis}`).
+- **No `&` for `dan`.** Reserve `&` for equations and table markup only. *Lint-enforced.*
+- **Avoid foreign terms** when an established Indonesian term exists. When a foreign term is necessary, italicize it consistently (*deep learning*, *Sparse Autoencoder*, *envelope spectrum*). Genus/species names are always italic (*Sonchus arvensis*).
 - **Domain terminology — bearing field: use English.** In rotating-machinery condition-monitoring literature the accepted international terms are `bearing` (not `bantalan`) and `rolling` (not `gelinding`). Always write `bearing` and `rolling element` in body text; do not substitute the Indonesian translations. *Lint-enforced (cek #17).*
-- **No foreign connecting words.** Indonesian text must never use foreign linker/preposition shorthands like `vs`, `via`, `etc.`, `i.e.`, `e.g.`, `cf.` as syntactic glue. Use Indonesian equivalents: `vs` → `dan` / `terhadap` / `dengan` / `dibandingkan dengan` (per context); `via` → `melalui`; `etc.` → `dll.`; `i.e.` → `yaitu`; `e.g.` → `misalnya`; `cf.` → `bandingkan dengan`. Italicized technical terms that *contain* such tokens (e.g., `\emph{one-vs-rest}`, scikit-learn `multi_class='ovr'`) are exempt — they are names, not connectors.
+- **No foreign connecting words.** Indonesian text must never use foreign linker/preposition shorthands like `vs`, `via`, `etc.`, `i.e.`, `e.g.`, `cf.` as syntactic glue. Use Indonesian equivalents: `vs` → `dan` / `terhadap` / `dengan` / `dibandingkan dengan` (per context); `via` → `melalui`; `etc.` → `dll.`; `i.e.` → `yaitu`; `e.g.` → `misalnya`; `cf.` → `bandingkan dengan`. Italicized technical terms that *contain* such tokens (*one-vs-rest*, scikit-learn `multi_class='ovr'`) are exempt — they are names, not connectors.
 - **Do not use `keluarga` to label a group of algorithms or models.** "Keluarga" carries a biological/genealogical connotation and reads unnaturally in Indonesian technical prose. Use instead: `jenis`, `varian`, `golongan`, `kelompok`, `kelas`, `algoritma`, or `model` — whichever fits the context. Examples: ~~"keluarga kernel"~~ → `model berbasis kernel`; ~~"keluarga tree"~~ → `algoritma berbasis pohon keputusan`; ~~"multi-keluarga"~~ → `multi-model`. *Lint-enforced (cek #16).*
-- **No em dashes (`—`) in prose.** Em dashes are a strong AI-writing marker absent from standard Indonesian academic style. Replace with: a comma (parenthetical insert), a semicolon (related clause), a colon (elaboration), or restructure into two sentences. In LaTeX source, avoid `---`, `\textemdash`, and the Unicode character `—` in body text. *Lint-enforced (cek #16).*
+- **No em dashes (`—`) in prose.** Em dashes are a strong AI-writing marker absent from standard Indonesian academic style. Replace with: a comma (parenthetical insert), a semicolon (related clause), a colon (elaboration), or restructure into two sentences. Watch for Word's AutoFormat turning `--` into `—` as you type. *Lint-enforced (cek #16).*
 - **One main idea per paragraph.** Never write a single-sentence paragraph.
 - **Spelling — baku KBBI** (lint-enforced sample): `objek` (not `obyek`), `analisis` (not `analisa`), `sintesis` (not `sintesa`), `aktivitas` (not `aktifitas`), `praktik` (not `praktek`), `nasihat` (not `nasehat`), `risiko` (not `resiko`), `frekuensi` (not `frekwensi`), `sistem` (not `sistim`), `jadwal` (not `jadual`), `manajemen` (not `managemen`), `teknologi` (not `technologi`), `efektif` (not `effektif`), `efisien` (not `effisien`), `asesmen` (not `assesment`), `asas` (not `azas`), `hipotesis` (not `hipotesa`).
 
@@ -196,7 +166,7 @@ Every paragraph must read as written by a researcher who thought carefully about
 
 ### Numbers and Units (Pedoman §VIII.3)
 
-- **Decimal separator: comma** (`25,5`). Never use a period. *Lint heuristically enforced.* In LaTeX, prefer `\num{25.5}` from `siunitx` (it renders as `25,5` with the right locale).
+- **Decimal separator: comma** (`25,5`). Never use a period. *Lint heuristically enforced.* Watch Word's locale: an English keyboard layout will produce `25.5`.
 - **Thousands separator: period** (`1.000.000`). To avoid ambiguity with the decimal comma, avoid 3-digit decimals — prefer `25,24` or `25,2472`, not `25,247`.
 - **Numbers < 10 written out** (`enam perguruan tinggi`); **≥ 10 use digits** (`17 mangga`).
 - **Vague/round quantities in words** (`sepuluh tahun yang lalu`, `lima kali sehari`).
@@ -208,8 +178,8 @@ Every paragraph must read as written by a researcher who thought carefully about
 
 - **No footnotes for references.** Cite inline; weave any auxiliary remark into the sentence.
 - **In-text format:** `(Surname, year)` parenthetical, or `Surname (year)` narrative.
-- **In-text max 2 authors.** For ≥ 3, use `Surname-pertama dkk. (tahun)` — **`dkk.`, never `et al.`**. *Lint-enforced.* (`biblatex` localization handles this — use `\citetitb{...}` macro.)
-- **In `references.bib`: list ALL authors.** Use `dan` (not `and` or `&`) before the last author. The `dkk.` shortening only applies in body text, not in the bibliography entry.
+- **In-text max 2 authors.** For ≥ 3, use `Surname-pertama dkk. (tahun)` — **`dkk.`, never `et al.`**. *Lint-enforced.* Citation text is baked into the document, not a live field, so it is typed and must be got right by hand.
+- **In the Daftar Pustaka: list ALL authors.** Use `dan` (not `and` or `&`) before the last author. The `dkk.` shortening only applies in body text, never in the bibliography entry.
 - **Style:** `Surname, Initial. (year): Title in sentence case, *Journal Name in italic*, **volume in bold**, start–end pages.` Example:
   > Cotton, F.A. (1998): Kinetics of gasification of brown coal, *Journal of American Chemical Society*, **54**, 38–43.
 - **Sentence case for paper titles** (capital only on the first word + proper nouns).
@@ -217,31 +187,21 @@ Every paragraph must read as written by a researcher who thought carefully about
 - **Hanging indent 1,27 cm** (7 ketukan) for each entry; single-spacing within and between entries.
 - **Alphabetical by first author's family name; no numbering.**
 - **Allowed source types:** journal/proceeding articles, books, theses/disertasi, websites (cite per discipline norm). Newspapers/TV/film are allowed **only when the artifact is itself the research object** — never for general background.
-- **Every entry in `references.bib` MUST be cited in the body**, and vice versa. *Lint-enforced for missing keys + broken cross-refs.*
-- **Citation macros in this project** (defined in [itbdisertasi.cls](writings/disertation/itbdisertasi.cls)): `\citetitb{key}`, `\citenameitb{key}`. Use these rather than raw `\cite{}`/`\citep{}` to keep formatting consistent.
+- **Every entry in the Daftar Pustaka MUST be cited in the body**, and vice versa. Entries are sorted alphabetically by the first author's family name; insert a new one in position rather than appending it.
+- **Style reference:** the ITB-SPs CSL (`dissertation-docx/assets/itb-sps.csl`) is what produced the existing entries. Match an existing entry's run structure when adding one: plain run for authors and title, italic run for journal name and volume.
 
-#### Required Additions to `references.bib`
+#### The Four Self-Papers
 
-The four self-papers in [Paper/](Paper/) are the **primary empirical sources** for Bab IV and Bab V and must be added to `references.bib` before those chapters are written. Skeleton entries already exist at the bottom of `references.bib` tagged with `TODO(verify-with-pembimbing)` — confirm venue, year, volume, and DOI with Pak Toto before finalising.
+The four self-papers in [Paper/](Paper/) are the **primary empirical sources** for Bab IV and Bab V. Cite them by the baked text in the Daftar Pustaka; confirm venue, year, volume and DOI with Pak Toto before finalising.
 
-| BibTeX key | File in `Paper/` | Cite in | Notes |
-|---|---|---|---|
-| `TotoSuharto2024Conf1SVM` | [Conference1_Classification_SVM_LR.pdf](Paper/Conference1_Classification_SVM_LR.pdf) | Bab IV §IV.2; Bab II §II.2.3 | SVM/LR + SHAP KernelExplainer on CWRU; 8 authors |
-| `TotoSuharto2024Conf2Tree` | [Conference2_Classification_Tree.docx](Paper/Conference2_Classification_Tree.docx) | Bab IV §IV.3; Bab II §II.2.3 | DT/RF/XGBoost + SHAP TreeExplainer on CWRU |
-| `TotoSuharto2025Journal1FSM` | [Journal1_Fault Signature Maps.docx](Paper/Journal1_Fault%20Signature%20Maps.docx) | Bab IV §IV.4–§IV.13; Bab II §II.3.3 | WDCNN + SHAP DeepExplainer + FSM; key result akurasi 99,87% |
-| `TotoSuharto2025Journal2RUL` | [Journal2_RUL_Journal.pdf](Paper/Journal2_RUL_Journal.pdf) | Bab V §V.1–§V.9 throughout | Mamba-xLSTM + SAE-BPFx; top-k SAE mechanistic interpretability |
-
-Additional entries required by the dissertation outline that are not yet in `references.bib`:
-
-| BibTeX key | What it is | Cite in |
+| File in `Paper/` | Cite in | Notes |
 |---|---|---|
-| `Zhang2017WDCNN` | Zhang et al. (2017) — original WDCNN (*Sensors* 17, 425) | Bab IV §IV.4 |
-| `Shrikumar2017DeepLIFT` | Shrikumar et al. (2017) — DeepLIFT (ICML 2017) | Bab IV §IV.5; Bab II §II.3 |
-| `Elhage2022Superposition` | Elhage et al. (2022) — Toy Models of Superposition (Anthropic) | Bab II §II.5; Bab V §V.2 |
-| `Cunningham2023TopkSAE` | Cunningham et al. (2023) — Top-*k* SAE (*arXiv* 2310.17230) | Bab V §V.2; Bab II §II.5 |
-| `Smith2015CWRU` | Smith & Randall (2015) — CWRU benchmark (*MSSP* 64, 100–131) | Bab III §III.2.1; Bab IV §IV.2 |
+| [Conference1_Classification_SVM_LR.pdf](Paper/Conference1_Classification_SVM_LR.pdf) | Bab IV §IV.2; Bab II §II.2.3 | SVM/LR + SHAP KernelExplainer on CWRU |
+| [Conference2_Classification_Tree.pdf](Paper/Conference2_Classification_Tree.pdf) | Bab IV §IV.3; Bab II §II.2.3 | DT/RF/XGBoost + SHAP TreeExplainer on CWRU |
+| [Journal1_Fault Signature Maps.pdf](Paper/Journal1_Fault%20Signature%20Maps.pdf) | Bab IV §IV.4–§IV.13; Bab II §II.3.3 | WDCNN + SHAP DeepExplainer + FSM; key result akurasi 99,87% |
+| [Journal2_RUL_Journal.pdf](Paper/Journal2_RUL_Journal.pdf) | Bab V §V.1–§V.9 throughout | Mamba-xLSTM + SAE-BPFx; top-k SAE mechanistic interpretability |
 
-**Self-citation format:** use `\citetitb{TotoSuharto2024Conf1SVM}` (never bare `\cite{}`). The ITB cls wraps these with the correct `dkk.` handling and bibliography style.
+A fifth paper is in progress and is **not** part of the dissertation build: the JETS Q2 manuscript in [writings/journal-q2/](writings/journal-q2/), on mechanistic interpretability of RUL models via top-*k* sparse autoencoders. It is its own LaTeX project with its own `references.bib` and class file — leave it alone when working on the dissertation.
 
 ### Page Format (Pedoman §III.2–III.4)
 
@@ -251,7 +211,7 @@ Additional entries required by the dissertation outline that are not yet in `ref
 - **Margins (mirror, two-sided print):**
   - Odd pages — left 4 cm, right 3 cm, top 3 cm, bottom 3 cm.
   - Even pages — left 3 cm, right 4 cm, top 3 cm, bottom 3 cm.
-- **Paragraphs: no indent.** New paragraph starts at left margin, separated from the previous paragraph by **one blank line** (1,5 spasi). *(Class file: `\setlength{\parindent}{0pt}` + `\setlength{\parskip}{...}`.)*
+- **Paragraphs: no indent.** New paragraph starts at left margin, separated from the previous paragraph by **one blank line** (1,5 spasi). *(Word style `Paragraf` carries this; do not indent by hand.)*
 - **No orphaned paragraphs:** never start a new paragraph at the bottom of a page unless ≥ 2 lines fit. Never leave a paragraph's last line alone at the top of the next page.
 - **Each Bab starts on a new page.**
 - **Page numbers:** Roman lowercase (`i`, `ii`, …) for front matter; Arabic for body; lampiran continues body numbering. Centered, 1,5 cm from the bottom edge. *(Handled by class file.)*
@@ -270,7 +230,7 @@ Additional entries required by the dissertation outline that are not yet in `ref
 ### Equations (Pedoman §VIII.5)
 
 - Centered, on their own line; long equations break at arithmetic operators (`+`, `−`, `×`, `÷`, parens) — never at `/`.
-- **Number on the right margin in parentheses:** `(BabRoman.urut)`, e.g., `(V.1)`. Use `\label{eq:bab5_rmse}` and reference via `\eqref{}` or `\autoref{}`.
+- **Number on the right margin in parentheses:** `(BabRoman.urut)`, e.g., `(V.1)`. Built with SEQ fields and referenced with REF fields — recipe in [RULES.md §5](dissertation-docx/RULES.md).
 - **Italic for variables/symbols** (math mode handles this).
 - **Use brackets in hierarchy** `[ { ( … ) } ]`.
 - **Do not start sentences with a formula.**
@@ -281,9 +241,9 @@ Additional entries required by the dissertation outline that are not yet in `ref
 - **Caption format:** `Gambar V.2 Judul gambar` (sentence case, no terminal period). Tables similarly: `Tabel V.5 Judul tabel`.
 - **Capitalize** `Gambar`, `Tabel`, `Bab`, `Lampiran`, `Persamaan` whenever followed by a number — e.g., `…seperti pada Gambar IV.3`, `…ditampilkan di Tabel V.2`. *(Title-case noun-before-number rule.)*
 - **Figure caption** below the figure; **table caption above** the table.
-- **Use `\autoref` or `\cref`** for cross-references — never hard-code "Gambar 5.2" — to stay consistent if numbering shifts.
+- **Use REF fields** for cross-references — never hard-code "Gambar 5.2" — so numbering survives insertions. Recipe in [RULES.md §4](dissertation-docx/RULES.md).
 - **Every float must be referenced** in the surrounding text. *Lint warns on orphan floats.*
-- **No empty `\caption{}`** — fill in before commit. *Lint-enforced fatal.*
+- **No empty caption** — fill it in before commit. *Lint-enforced fatal.*
 - **Cite the source** for figures borrowed from a paper, immediately in the caption.
 
 ### Bab Pendahuluan (Bab I) — Required Content (Pedoman §V.1)
@@ -333,9 +293,9 @@ The Bab Pendahuluan must contain at minimum (subbab structure flexible):
 ### Other ITB-Specific Conventions
 
 - **Hard-cover binding** (Sidang Promosi version): dark blue (Biru Dongker), Omega No. 10 paper, gold lettering. Not relevant during writing — only at final submission.
-- **No TODO / FIXME / `\dots` placeholders in the final manuscript.** Lint warns; remove before submission.
-- **All captions must be filled in** (`\caption{...}` cannot be empty). *Lint-enforced fatal.*
-- **`\ref` integrity:** every `\label` should be referenced by something; every `\ref` must point to an existing label. *Lint-enforced.*
+- **No TODO / FIXME / `…` placeholders in the final manuscript.** Lint warns; remove before submission.
+- **All captions must be filled in.** *Lint-enforced fatal.*
+- **Field integrity:** every REF field must resolve. After a round of edits, select all and press F9 so Daftar Isi, Daftar Gambar and Daftar Tabel repopulate; a field showing `Error! Reference source not found.` is a fatal.
 
 ---
 

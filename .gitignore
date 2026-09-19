@@ -84,7 +84,7 @@ wandb/
 *.nav
 *.snm
 *.vrb
-# Legacy dissertation tree, superseded by writings/disertation/
+# Legacy dissertation tree, superseded by dissertation-docx/
 disertasi-itb/
 
 # ITB reference PDFs/DOCX and internal spec drafts — keep locally, not in git
@@ -105,17 +105,6 @@ spec/
 # already a deflate-compressed zip), so every tracked version costs its full
 # size. Add the next version here deliberately rather than tracking V*.docx.
 !presentation/V16*.docx
-
-# =============================================================================
-# writings/disertation/figures/bab* — generated copies of dissertation-docx assets
-# The source of truth lives in dissertation-docx/assets/figures/
-# =============================================================================
-writings/disertation/figures/bab2/
-writings/disertation/figures/bab3/
-writings/disertation/figures/bab4/
-writings/disertation/figures/bab5/
-writings/disertation/figures/bab6/
-writings/disertation/figures/research_flow.png
 
 # dissertation-docx PDF build output (regenerable via make build)
 dissertation-docx/build/

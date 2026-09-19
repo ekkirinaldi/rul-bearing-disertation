@@ -629,12 +629,12 @@ Diadopsi dari Outline_6Bab; dipertahankan sebagai *anchor* kontribusi formal dis
    - **Fase C** — Restrukturisasi [05-hasil-pembahasan.tex](disertation/chapters/05-hasil-pembahasan.tex) menjadi (a) Bab IV hasil diagnostik dengan benchmark kernel/tree/deep, (b) Bab V hasil prognostik.
    - **Fase D** — Tambahkan Lampiran E/F/G; lembutkan Lampiran D.
    - **Fase E** — Restrukturisasi abstrak + daftar singkatan.
-   - **Fase F** — Update [06-kesimpulan.tex](disertation/chapters/06-kesimpulan.tex) selaras VI.1–VI.5.
+   - **Fase F** — Update Bab VI selaras VI.1–VI.5.
 2. **Komitmen kecil-kecil:** setiap perubahan section di-commit terpisah agar mudah di-review oleh Pak Toto.
-3. **Verifikasi build setelah setiap section:** `make build` di [writings/disertation/](disertation/).
-4. **Bahasa:** Bahasa Indonesia. Istilah teknis Inggris ditulis dengan `\emph{...}` (italik). Hindari *Indonesianisasi* paksa terhadap istilah baku (*deep learning*, *Sparse Autoencoder*, *backpropagation*, *envelope spectrum*).
-5. **Sitasi-diri:** gunakan format `\citetitb{TotoSuharto20XXKey}` mengikuti konvensi yang sudah ada di disertasi.
-6. **Konsistensi penomoran:** setelah Bab IV/V direstrukturisasi (kernel/tree/deep di awal Bab IV), semua referensi `\autoref{}` ke section lain harus diperbarui.
+3. **Verifikasi setelah setiap section:** `make lint` di [dissertation-docx/](../dissertation-docx/); perbaiki setiap `[FATAL]`.
+4. **Bahasa:** Bahasa Indonesia. Istilah teknis Inggris ditulis miring. Hindari *Indonesianisasi* paksa terhadap istilah baku (*deep learning*, *Sparse Autoencoder*, *backpropagation*, *envelope spectrum*).
+5. **Sitasi-diri:** tulis `(Suharto dkk., tahun)` mengikuti konvensi yang sudah ada di naskah.
+6. **Konsistensi penomoran:** setelah Bab IV/V direstrukturisasi (kernel/tree/deep di awal Bab IV), semua REF field ke subbab lain harus diperbarui (Ctrl+A lalu F9).
 7. **Konfirmasi data PT~SKF:** sebelum menulis Lampiran D versi softened, tanyakan ke Pak Toto: berapa titik data SKF yang tersedia? Apa labelnya? Bagaimana *ground-truth* ditetapkan?
 8. **Konfirmasi venue paper:** sebelum membuat bib entry self-citation, dapatkan judul lengkap + venue + tahun + halaman + DOI dari Pak Toto.
 9. **Verifikasi notebook ↔ paper alignment:** notebook Journal 2 belum ada di repositori — flag sebagai TODO untuk Pak Toto (kebutuhan reproduksi backbone RUL + Top-k SAE).
