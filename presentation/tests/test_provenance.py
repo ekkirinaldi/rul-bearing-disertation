@@ -1,19 +1,19 @@
 """Every figure on a slide must be traceable to the manuscript.
 
 The deck is a summary of the dissertation, so any number it shows has to
-appear in the V14 manuscript DOCX at the top of `presentation/` — the
-manuscript of record since August 2026. The older `dissertation-docx/` tree
-is deliberately NOT part of the corpus: its numbers conflict with V14 in
-places (XJTU-SY 15 rekaman vs 10 bearing, IMS dropped entirely, SKF moved
-from Lampiran D into Subbab IV.15 / V.5.3), and a claim passing via the
-stale tree would defeat the guard.
+appear in the newest V-series manuscript under `manuscript/` (V16, with
+earlier versions in `manuscript/versions/`). The June LaTeX-to-DOCX port in
+`archive/docx-port/` is deliberately NOT part of the corpus: its numbers
+conflict with the V-series in places (XJTU-SY 15 rekaman vs 10 bearing, IMS
+dropped entirely, SKF moved from Lampiran D into Subbab IV.15 / V.5.3), and
+a claim passing via the stale tree would defeat the guard.
 
 It is the automated form of the manual audit that caught, among others, a
 wrong bearing count for XJTU-SY, a wrong citation for the 40–50% figure, a
 wrong Critical threshold, and a set of benchmark findings that were never in
 the manuscript at all.
 
-Skips cleanly when the V14 DOCX is absent (it is a gitignored binary).
+Skips cleanly when no manuscript DOCX is present.
 """
 
 from __future__ import annotations
@@ -45,9 +45,12 @@ def _docx_text(path: Path) -> str:
 def manuscript() -> str:
     # The newest version wins: V15 adds the domain material ported from this
     # deck, so it is a superset of V14 and every claim still has to hold.
-    sources = sorted(ROOT.glob("V1? *.docx"))
+    manuscript_dir = ROOT.parent / "manuscript"
+    sources = sorted([*manuscript_dir.glob("V1?*.docx"),
+                      *(manuscript_dir / "versions").glob("V1?*.docx")],
+                     key=lambda p: p.name)
     if not sources:
-        pytest.skip(f"manuscript DOCX not found under {ROOT}")
+        pytest.skip(f"manuscript DOCX not found under {manuscript_dir}")
     text = _docx_text(sources[-1])
     # The manuscript writes "17,6 %" and "1 024"; normalise so a slide that
     # writes "17,6%" still matches.
@@ -244,7 +247,7 @@ def _slide_texts() -> list[str]:
 @pytest.mark.parametrize("claim,spellings", CLAIMS, ids=[c for c, _ in CLAIMS])
 def test_claim_appears_in_manuscript(manuscript, claim, spellings):
     assert any(s in manuscript for s in spellings), (
-        f"{claim!r} is on a slide but not in dissertation-docx/ — "
+        f"{claim!r} is on a slide but not in the manuscript — "
         f"looked for {spellings}"
     )
 

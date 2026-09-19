@@ -9,10 +9,10 @@
 # decimal comma, dkk., no em dash, no via/vs). Numbers are either already
 # in V14 (subbab cited) or credited inline (SKF Group, 2017; Siemens, 2022).
 #
-# Run:  make insert SPEC=inserts/v15/spec.yaml   (from dissertation-docx/)
+# Run:  make insert SPEC=inserts/v15/spec.yaml   (from manuscript/)
 
-source: "../../../presentation/V14 *.docx"
-output: "../../../presentation/V15 PERAWATAN PREDIKTIF UNTUK SISTEM PRODUKSI DENGAN PENDEKATAN ANALISIS BIG DATA DAN KECERDASAN BUATAN MENGGUNAKAN DATA KONDISI MESIN DAN INFORMASI KUALITAS YANG REAL TIME.docx"
+source: "../../versions/V14 *.docx"
+output: "../../versions/V15 PERAWATAN PREDIKTIF UNTUK SISTEM PRODUKSI DENGAN PENDEKATAN ANALISIS BIG DATA DAN KECERDASAN BUATAN MENGGUNAKAN DATA KONDISI MESIN DAN INFORMASI KUALITAS YANG REAL TIME.docx"
 
 edits:
   # ------------------------------------------------------------------

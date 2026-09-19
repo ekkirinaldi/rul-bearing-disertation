@@ -1,7 +1,7 @@
 """Derive IMS/CWRU-free crops of the manuscript result figures.
 
 IMS was dropped from the manuscript and CWRU is out of the SAE hit-rate
-narrative, but the figure artwork in ``dissertation-docx/assets`` still
+narrative, but the figure artwork in ``manuscript/assets`` still
 carries their panels (2x2 grids). The manuscript pipeline owns those files,
 so this script leaves them untouched and writes cropped copies that keep
 only the PHM2012 and XJTU-SY panels into ``assets/derived/``. Re-rendering
@@ -17,7 +17,7 @@ from pathlib import Path
 from PIL import Image, ImageChops
 
 ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT.parent / "dissertation-docx" / "assets" / "figures" / "bab5"
+SRC = ROOT.parent / "manuscript" / "assets" / "figures" / "bab5"
 OUT = ROOT / "assets" / "derived"
 
 # source name -> (target name, crop box as fractions of (W, H))

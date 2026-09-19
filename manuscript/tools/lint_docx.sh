@@ -1,7 +1,7 @@
 #!/bin/bash
-# ITB prose lint for DOCX chapters - adapted from writings/disertation/scripts/lint-itb.sh.
+# ITB prose lint for the manuscript DOCX.
 # Text-level rule families run on pandoc-extracted text; plus docx-specific checks.
-# Usage: tools/lint_docx.sh chapters/*.docx
+# Usage: tools/lint_docx.sh V16-disertasi.docx
 set -u
 GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[0;33m'; NC='\033[0m'
 FATAL=0
@@ -111,7 +111,7 @@ $(echo "$hits" | head -3)"
   )
   for pat in "${ai_patterns[@]}"; do
     hits=$(grep -inE "$pat" "$TXT" || true)
-    [ -n "$hits" ] && warn "frasa mesin /$pat/:
+    [ -n "$hits" ] && warn "frasa klise /$pat/:
 $(echo "$hits" | head -2)"
   done
 

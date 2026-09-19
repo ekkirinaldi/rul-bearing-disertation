@@ -1,6 +1,6 @@
 """The manuscript insertion tool must add material without disturbing the rest.
 
-`dissertation-docx/tools/insert_docx.py` edits a hand-edited Word document in
+`manuscript/tools/insert_docx.py` edits a hand-edited Word document in
 place, which is only safe if two things hold: nothing that was already in the
 document is lost, and every figure, table, and cross-reference number still
 agrees with the caption it points at after the insertion shifts them.
@@ -23,7 +23,8 @@ import pytest
 from lxml import etree
 
 ROOT = Path(__file__).resolve().parents[1]
-TOOLS = ROOT.parent / "dissertation-docx" / "tools"
+MANUSCRIPT = ROOT.parent / "manuscript"
+TOOLS = MANUSCRIPT / "tools"
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(TOOLS))
 
@@ -146,7 +147,8 @@ def test_renumber_leaves_an_untouched_chapter_alone():
 # Integration: against the real manuscript
 # --------------------------------------------------------------------------
 def _manuscripts() -> list[Path]:
-    return sorted(ROOT.glob("V1? *.docx"))
+    found = [*MANUSCRIPT.glob("V1?*.docx"), *(MANUSCRIPT / "versions").glob("V1?*.docx")]
+    return sorted(found, key=lambda p: p.name)
 
 
 def _rewritten_prefixes() -> list[str]:
@@ -155,7 +157,7 @@ def _rewritten_prefixes() -> list[str]:
     Deriving the exemptions this way keeps the test honest: an edit that
     rewrites a paragraph nobody declared still shows up as a loss.
     """
-    spec_path = ROOT.parent / "dissertation-docx" / "inserts" / "v15" / "spec.yaml"
+    spec_path = MANUSCRIPT / "inserts" / "v15" / "spec.yaml"
     if not spec_path.exists():
         return []
     yaml = pytest.importorskip("yaml")
@@ -179,9 +181,9 @@ def _rewritten_prefixes() -> list[str]:
 
 
 def _source() -> Path:
-    hits = sorted(ROOT.glob("V14 *.docx"))
+    hits = sorted((MANUSCRIPT / "versions").glob("V14 *.docx"))
     if not hits:
-        pytest.skip("V14 manuscript not present (gitignored)")
+        pytest.skip("V14 manuscript not present (manuscript/versions/ is local)")
     return hits[0]
 
 
@@ -342,7 +344,7 @@ def test_a_replaced_figure_keeps_no_stale_crop():
     if len(versions) < 2:
         pytest.skip("V15 not built yet (run make insert)")
     yaml = pytest.importorskip("yaml")
-    spec_path = ROOT.parent / "dissertation-docx" / "inserts" / "v15" / "spec.yaml"
+    spec_path = MANUSCRIPT / "inserts" / "v15" / "spec.yaml"
     spec = yaml.safe_load(spec_path.read_text(encoding="utf-8"))
     titles = [e["replace_figure"].get("caption_prefix") for e in spec.get("edits", [])
               if "replace_figure" in e and e["replace_figure"].get("image")]

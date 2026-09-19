@@ -188,7 +188,7 @@ To drop a real figure in place of a placeholder, point `image:` at a file
 
 ```yaml
 - type: figure
-  image: ../../dissertation-docx/assets/figures/bab5/hitrate_panel.png
+  image: ../../manuscript/assets/figures/bab5/hitrate_panel.png
 ```
 
 ## Linting
@@ -248,7 +248,7 @@ draws both sets.
 `CHARTS` also holds seven manuscript figures listed in
 `MANUSCRIPT_ONLY_CHARTS` (`pf_curve`, `adm_hierarchy`, `defect_ringing`,
 `rul_timeline`, `data_to_decision`, `vibration_signature`, `enveloping_steps`).
-They are placed by `dissertation-docx/inserts/v15/spec.yaml` rather than by a
+They are placed by `manuscript/inserts/v15/spec.yaml` rather than by a
 slide, so the "every diagram is on a slide" test skips them and a second test
 requires the insert spec to use them instead. `make montage` composes the four
 Wikimedia photographs into one figure for the same spec.
@@ -356,7 +356,7 @@ matching entry in `tests/test_provenance.py`, then rebuild.
 ### Porting the deck back into the manuscript
 
 The domain material this deck introduced does not exist in the manuscript, so
-`dissertation-docx/inserts/v15/spec.yaml` puts it there: the rotating-machine
+`manuscript/inserts/v15/spec.yaml` puts it there: the rotating-machine
 opening and the P-F curve into Bab I, the ADM hierarchy, the damage stages, the
 limits of explainability and the SAE requirements table into Bab II, the
 data-to-decision chain, the data-form table and the enveloping steps into Bab
@@ -391,7 +391,7 @@ row, and the "empat dataset" counts were removed, the primary-test arithmetic
 became enam uji primer / Bonferroni p < 0,008, and the embedded Gambar III.1 /
 V.15 / V.17 media were replaced with IMS/CWRU-free versions (V14 had been
 hiding those panels with Word picture-crops, which were cleared along with the
-swap). The source artwork in `dissertation-docx/assets` still carries the old
+swap). The source artwork in `manuscript/assets` still carries the old
 panels, so `make derived-assets` crops presentation-local copies into
 `assets/derived/`; regenerating the figures upstream makes the crops obsolete.
 The negative-controls chart has no PHM2012/XJTU-SY panels at all, so the deck

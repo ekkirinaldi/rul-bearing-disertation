@@ -3,7 +3,7 @@
 The V14 media stream is a deterministic 1:1 map from ``word/media/imageN.png``
 to figure numbers (image2+3 -> Gambar I.1, image4 -> I.2, ... image58 -> VI.1),
 so each figure can be extracted by index. Only figures that have no standalone
-PNG under ``dissertation-docx/assets/figures/`` are listed here.
+PNG under ``manuscript/assets/figures/`` are listed here.
 
 Usage: python3 tools/extract_v14_media.py  (or ``make v14-assets``)
 """
@@ -56,9 +56,10 @@ def _clean(data: bytes, bottom: int) -> bytes:
 
 
 def main() -> int:
-    matches = sorted(ROOT.glob("V14 *.docx"))
+    versions = ROOT.parent / "manuscript" / "versions"
+    matches = sorted(versions.glob("V14 *.docx"))
     if not matches:
-        print(f"V14 manuscript not found under {ROOT}", file=sys.stderr)
+        print(f"V14 manuscript not found under {versions}", file=sys.stderr)
         return 1
     docx = matches[0]
     OUT.mkdir(parents=True, exist_ok=True)

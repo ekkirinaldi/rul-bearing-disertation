@@ -4,7 +4,7 @@ The dissertation opens Bab I by naming the rotating machines that every
 industry runs, and one figure carries all four. Each photograph is
 centre-cropped to 4:3, scaled to a common width, and captioned (a)-(d) so the
 prose can point at a panel. Author and licence stay in the figure caption
-written by ``dissertation-docx/inserts/v15/spec.yaml``; the machine-readable
+written by ``manuscript/inserts/v15/spec.yaml``; the machine-readable
 record is ``assets/web/CREDITS.md`` (written by ``make web-assets``).
 
 Usage: python3 tools/compose_web_photos.py  (or ``make montage``)

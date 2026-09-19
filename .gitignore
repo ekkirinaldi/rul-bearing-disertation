@@ -99,12 +99,17 @@ spec/
 # Re-include tracked dissertation DOCX tree
 !dissertation-docx/**/*.docx
 !dissertation-docx/**/*.pptx
+# The ITB Word template the manuscript is built on
+!manuscript/assets/*.docx
 
 # Re-include the current V-series manuscript draft. One line per version on
 # purpose: each DOCX is ~18 MB and git cannot delta-compress it (a DOCX is
 # already a deflate-compressed zip), so every tracked version costs its full
 # size. Add the next version here deliberately rather than tracking V*.docx.
-!presentation/V16*.docx
+!manuscript/V16*.docx
+
+# Earlier versions, backups and the circulated sidang deck stay local
+manuscript/versions/
 
 # dissertation-docx PDF build output (regenerable via make build)
 dissertation-docx/build/

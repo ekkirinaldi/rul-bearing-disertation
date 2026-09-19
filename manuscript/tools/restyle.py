@@ -33,7 +33,6 @@ from pathlib import Path
 from lxml import etree
 
 sys.path.insert(0, str(Path(__file__).parent))
-from preprocess_tex import parse_aux, parse_figmap  # noqa: E402
 from unpack import unpack  # noqa: E402
 from pack import pack  # noqa: E402
 
@@ -721,6 +720,10 @@ def main():
     ap.add_argument("--lampiran", help="lampiran letter (A..G) - literal "
                     "heading numbers, per-lampiran SEQ names")
     args = ap.parse_args()
+
+    # The command line is the LaTeX-port pass and needs its parser, which now
+    # lives in archive/docx-port/tools. insert_docx.py uses only the helpers above.
+    from preprocess_tex import parse_aux, parse_figmap
 
     labels = parse_aux(args.aux)
     figmap = parse_figmap(args.figmap)

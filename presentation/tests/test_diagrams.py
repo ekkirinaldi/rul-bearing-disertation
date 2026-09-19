@@ -38,7 +38,7 @@ def test_diagram_rendered_and_sized(name):
 def test_every_diagram_is_referenced_by_the_deck():
     spec = (ROOT / "content" / "sidang-terbuka.yaml").read_text(encoding="utf-8")
     # Manuscript-only charts are dissertation figures drawn by the same tool;
-    # they are placed by dissertation-docx/inserts/, not by a slide.
+    # they are placed by manuscript/inserts/, not by a slide.
     unused = [n for n in {**DIAGRAMS, **CHARTS}
               if n not in MANUSCRIPT_ONLY_CHARTS and f"diagrams/{n}.png" not in spec]
     assert unused == [], f"diagrams rendered but not on any slide: {unused}"
@@ -47,7 +47,7 @@ def test_every_diagram_is_referenced_by_the_deck():
 def test_manuscript_charts_are_placed_by_the_insert_spec():
     """A chart exempted from the deck rule must earn the exemption: the
     dissertation insert spec has to reference it."""
-    spec = (ROOT.parent / "dissertation-docx" / "inserts" / "v15" / "spec.yaml")
+    spec = (ROOT.parent / "manuscript" / "inserts" / "v15" / "spec.yaml")
     if not spec.exists():
         pytest.skip("insert spec not present")
     text = spec.read_text(encoding="utf-8")

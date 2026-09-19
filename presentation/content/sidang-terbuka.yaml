@@ -1,7 +1,7 @@
 # Presentasi Sidang Disertasi — Toto Suharto (NIM 33420002)
 #
 # Angka, klaim, dan nomor gambar/tabel pada berkas ini bersumber dari naskah
-# disertasi V14 (presentation/V14 *.docx) — naskah rujukan sejak Agustus 2026.
+# disertasi V14 (manuscript/versions/V14 *.docx) — naskah rujukan sejak Agustus 2026.
 # Struktur dek: pengantar domain (materi SKF, dikreditkan), objek penelitian,
 # gap dan empat rumusan masalah (Subbab I.2), pengantar sinyal, lalu tiga
 # babak per jalur: diagnostik (RM-1, RM-2), prognostik (RM-1, RM-3), dan
@@ -834,7 +834,7 @@ slides:
             blocks:
               - type: figure
                 h: 2.30
-                image: ../../dissertation-docx/assets/figures/bab1/ball_bearing_components.png
+                image: ../../manuscript/assets/figures/bab1/ball_bearing_components.png
               - type: text
                 gap: 0.08
                 h: 0.30
@@ -1687,7 +1687,7 @@ slides:
               - type: figure
                 flex: true
                 h: 3.00
-                image: ../../dissertation-docx/assets/figures/bab2/fig_evolution_timeline.png
+                image: ../../manuscript/assets/figures/bab2/fig_evolution_timeline.png
               - type: text
                 gap: 0.06
                 h: 0.26
@@ -1978,7 +1978,7 @@ slides:
             blocks:
               - type: figure
                 flex: true
-                image: ../../dissertation-docx/assets/figures/bab4/shap_signal_ir21.png
+                image: ../../manuscript/assets/figures/bab4/shap_signal_ir21.png
               - type: text
                 gap: 0.08
                 h: 0.44
@@ -2101,7 +2101,7 @@ slides:
     blocks:
       - type: figure
         h: 2.78
-        image: ../../dissertation-docx/assets/figures/bab4/fsm_comparison.png
+        image: ../../manuscript/assets/figures/bab4/fsm_comparison.png
       - type: text
         gap: 0.08
         h: 0.28
@@ -2656,7 +2656,7 @@ slides:
             blocks:
               - type: figure
                 h: 2.56
-                image: ../../dissertation-docx/assets/figures/bab3/phm2012_rul_label_example.png
+                image: ../../manuscript/assets/figures/bab3/phm2012_rul_label_example.png
               - type: text
                 gap: 0.08
                 h: 0.42
@@ -2759,7 +2759,7 @@ slides:
           - blocks:
               - type: figure
                 h: 2.06
-                image: ../../dissertation-docx/assets/figures/bab5/pred_phm2012_1_3.png
+                image: ../../manuscript/assets/figures/bab5/pred_phm2012_1_3.png
               - type: text
                 gap: 0.08
                 h: 0.44
@@ -3212,7 +3212,7 @@ slides:
           - blocks:
               - type: figure
                 flex: true
-                image: ../../dissertation-docx/assets/figures/lampD/skf_ch1_dashboard.png
+                image: ../../manuscript/assets/figures/lampD/skf_ch1_dashboard.png
               - type: text
                 gap: 0.08
                 h: 0.30
@@ -3224,7 +3224,7 @@ slides:
           - blocks:
               - type: figure
                 flex: true
-                image: ../../dissertation-docx/assets/figures/lampD/skf_ch3_dashboard.png
+                image: ../../manuscript/assets/figures/lampD/skf_ch3_dashboard.png
               - type: text
                 gap: 0.08
                 h: 0.30
@@ -3653,7 +3653,7 @@ slides:
             blocks:
               - type: figure
                 h: 1.72
-                image: ../../dissertation-docx/assets/figures/bab4/wdcnn_training_curves.png
+                image: ../../manuscript/assets/figures/bab4/wdcnn_training_curves.png
               - type: text
                 gap: 0.06
                 h: 0.28
@@ -3821,7 +3821,7 @@ slides:
           - blocks:
               - type: figure
                 h: 2.40
-                image: ../../dissertation-docx/assets/figures/bab5/corr_scatter_phm2012.png
+                image: ../../manuscript/assets/figures/bab5/corr_scatter_phm2012.png
               - type: text
                 gap: 0.06
                 h: 0.40
@@ -3893,7 +3893,7 @@ slides:
           - blocks:
               - type: figure
                 flex: true
-                image: ../../dissertation-docx/assets/figures/bab3/cwru_test_rig.png
+                image: ../../manuscript/assets/figures/bab3/cwru_test_rig.png
               - type: text
                 gap: 0.06
                 h: 0.44
@@ -3905,7 +3905,7 @@ slides:
           - blocks:
               - type: figure
                 flex: true
-                image: ../../dissertation-docx/assets/figures/bab3/phm2012_test_rig.png
+                image: ../../manuscript/assets/figures/bab3/phm2012_test_rig.png
               - type: text
                 gap: 0.06
                 h: 0.44
@@ -3917,7 +3917,7 @@ slides:
           - blocks:
               - type: figure
                 flex: true
-                image: ../../dissertation-docx/assets/figures/bab3/xjtu_sy_test_rig.png
+                image: ../../manuscript/assets/figures/bab3/xjtu_sy_test_rig.png
               - type: text
                 gap: 0.06
                 h: 0.44
@@ -4020,7 +4020,7 @@ slides:
           - blocks:
               - type: figure
                 flex: true
-                image: ../../dissertation-docx/assets/figures/lampD/phm2012_engine_dashboard.png
+                image: ../../manuscript/assets/figures/lampD/phm2012_engine_dashboard.png
               - type: text
                 gap: 0.08
                 h: 0.42
@@ -4034,7 +4034,7 @@ slides:
           - blocks:
               - type: figure
                 flex: true
-                image: ../../dissertation-docx/assets/figures/lampD/xjtusy_engine_dashboard.png
+                image: ../../manuscript/assets/figures/lampD/xjtusy_engine_dashboard.png
               - type: text
                 gap: 0.08
                 h: 0.42
