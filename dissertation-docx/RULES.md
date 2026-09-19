@@ -112,7 +112,7 @@ run("Gambar ") + bookmarkStart + run("VI.") + { SEQ Gambar \* ARABIC \s 1 } + bo
 
 ## 8. Aturan Prosa (wajib — ditegakkan `tools/lint_docx.sh`)
 
-Diturunkan utuh dari aturan ITB di `CLAUDE.md`; ringkasan operasional:
+Diturunkan utuh dari aturan ITB di `docs/writing-guide.md`; ringkasan operasional:
 
 **Bahasa:**
 - Bahasa Indonesia baku (KBBI/PUEBI). Tanpa kata ganti orang pertama

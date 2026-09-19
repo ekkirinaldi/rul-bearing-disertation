@@ -138,10 +138,12 @@ Thumbs.db
 **/.venv-docx/
 
 # =============================================================================
-# Cursor IDE workspace files (agent transcripts, project caches, local config)
+# Editor workspace files and local notes (kept on disk, not in git)
 # =============================================================================
 .cursor/
 .claude/
+CLAUDE.md
+AGENTS.md
 
 # Loose PDFs at repo root (paper drafts, keep locally)
 *.pdf

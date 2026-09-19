@@ -89,7 +89,7 @@ def test_every_block_type_is_registered(spec):
 
 
 def test_no_ampersand_conjunction(spec):
-    """ITB Pedoman: `&` may never stand in for `dan` (see CLAUDE.md)."""
+    """ITB Pedoman: `&` may never stand in for `dan` (see docs/writing-guide.md)."""
     import yaml
 
     raw = yaml.safe_dump(spec, allow_unicode=True)
